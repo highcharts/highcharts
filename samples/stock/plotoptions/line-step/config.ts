@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'series[0].step',
-        value: true
+        value: 'left',
+        options: ['left', 'center', 'right']
     }],
     dataFile: 'usdeur.json',
     templates: [],

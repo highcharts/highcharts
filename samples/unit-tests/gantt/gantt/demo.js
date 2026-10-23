@@ -3,9 +3,9 @@
         getSpacing = function (chart, tick1, tick2) {
             var yAxis = chart.yAxis[0],
                 ticks = yAxis.ticks,
-                tick1Space = ticks[Highcharts.pick(tick1, '-1')].mark.getBBox()
+                tick1Space = ticks[tick1 ?? '-1'].mark.getBBox()
                     .y,
-                tick2Space = ticks[Highcharts.pick(tick2, '0')].mark.getBBox()
+                tick2Space = ticks[tick2 ?? '0'].mark.getBBox()
                     .y;
 
             return tick2Space - tick1Space;
@@ -783,6 +783,110 @@
         }
     );
 
+    QUnit.test('Navigator and Gantt first render (#24855)', assert => {
+        const chart = Highcharts.ganttChart('container', {
+            navigator: {
+                enabled: true
+            },
+            series: [{
+                data: [{
+                    name: 'Category 1',
+                    start: Date.UTC(2026, 0, 1),
+                    end: Date.UTC(2026, 0, 4)
+                }, {
+                    name: 'Category 2',
+                    start: Date.UTC(2026, 0, 2),
+                    end: Date.UTC(2026, 0, 6)
+                }]
+            }]
+        });
+
+        const seriesColY = chart.series[0].dataTable.getColumn('y'),
+            navSeriesColY = chart.navigator.series[0].dataTable.getColumn('y');
+
+        assert.notStrictEqual(
+            navSeriesColY,
+            undefined,
+            'Column "y" should exist in navigator series data table'
+        );
+
+        navSeriesColY.forEach((_, i) => {
+            assert.strictEqual(
+                seriesColY[i],
+                navSeriesColY[i],
+                '"y" column values in Nav and Chart series should be identical'
+            );
+        });
+    });
+
+    QUnit.test('Navigator inherits axis uniqueNames (#24975)', assert => {
+        const chart = Highcharts.ganttChart('container', {
+                yAxis: {
+                    uniqueNames: true
+                },
+                navigator: {
+                    enabled: true,
+                    series: {
+                        type: 'gantt'
+                    },
+                    yAxis: {
+                        type: 'treegrid'
+                    }
+                },
+                series: [{
+                    name: 'Series 1',
+                    data: [{
+                        start: Date.UTC(2026, 2, 1),
+                        end: Date.UTC(2026, 6, 1),
+                        name: 'Development'
+                    }, {
+                        start: Date.UTC(2026, 6, 1),
+                        end: Date.UTC(2026, 7, 15),
+                        name: 'Testing'
+                    }, {
+                        start: Date.UTC(2026, 6, 15),
+                        end: Date.UTC(2026, 8, 30),
+                        name: 'Development'
+                    }, {
+                        start: Date.UTC(2026, 9, 1),
+                        end: Date.UTC(2026, 9, 20),
+                        name: 'Testing'
+                    }]
+                }]
+            }),
+            nav = chart.navigator,
+            series = chart.series[0],
+            navSeries = nav.series[0];
+
+        assert.strictEqual(
+            nav.yAxis.uniqueNames,
+            true,
+            'Navigator should inherit uniqueNames from the base series axis.'
+        );
+
+        navSeries.points.forEach((_, i) => {
+            assert.strictEqual(
+                navSeries.points[i].y,
+                series.points[i].y,
+                'Navigator and main series should use the same Y positions.'
+            );
+        });
+
+        chart.update({
+            navigator: {
+                yAxis: {
+                    uniqueNames: false
+                }
+            }
+        });
+
+        assert.strictEqual(
+            nav.yAxis.uniqueNames,
+            false,
+            'Explicit navigator uniqueNames should override the main axis.'
+        );
+    });
+
     QUnit.test('Gantt using the keys feature #13768', function (assert) {
         var chart = Highcharts.ganttChart('container', {
             series: [
@@ -967,4 +1071,31 @@
                 'Icon restored after showing series'
             );
         });
+
+    QUnit.test(
+        `Points without a start value should not affect the xAxis extremes
+        (#24849)`,
+        function (assert) {
+            const start = Date.UTC(2019, 5, 19),
+                end = Date.UTC(2019, 5, 26),
+                chart = Highcharts.ganttChart('container', {
+                    yAxis: {
+                        uniqueNames: true
+                    },
+                    series: [{
+                        data: [
+                            { name: 'Main' },
+                            { name: 'First', start, end },
+                            { name: 'Second', start, end }
+                        ]
+                    }]
+                });
+
+            assert.strictEqual(
+                chart.xAxis[0].dataMin,
+                start,
+                'A point without a start should not set dataMin to 0.'
+            );
+        }
+    );
 }());

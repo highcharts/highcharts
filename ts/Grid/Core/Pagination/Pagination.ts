@@ -27,7 +27,8 @@ import type {
     PaginationOptions,
     PaginationLangOptions,
     PageSizeSelectorOptions,
-    PageButtonsOptions
+    PageButtonsOptions,
+    PageInfoOptions
 } from './PaginationOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
@@ -43,7 +44,8 @@ import {
     merge
 } from '../../../Shared/Utilities.js';
 
-const { makeHTMLElement, formatText } = GridUtils;
+const { makeHTMLElement, formatText, joinClassNames } =
+    GridUtils;
 
 const paginationAlignments = [
     'left',
@@ -179,6 +181,12 @@ class Pagination {
      */
     public isDirtyAlignment?: boolean;
 
+    /**
+     * Whether the pagination root user class name should be updated.
+     * @internal
+     */
+    public isDirtyClassName?: boolean;
+
 
     /* *
     *
@@ -257,6 +265,11 @@ class Pagination {
             delete diff.alignment;
         }
 
+        if ('className' in diff) {
+            this.isDirtyClassName = true;
+            delete diff.className;
+        }
+
         // TODO: Optimize more options here.
 
         if (Object.keys(diff).length > 0) {
@@ -296,9 +309,11 @@ class Pagination {
             this.contentWrapper = makeHTMLElement(
                 'nav',
                 {
-                    className: alignmentClass ?
-                        `${Globals.getClassName('pagination')} ${alignmentClass}` :
-                        Globals.getClassName('pagination')
+                    className: joinClassNames(
+                        Globals.getClassName('pagination'),
+                        alignmentClass,
+                        this.options?.className
+                    )
                 },
                 position === 'footer' ?
                     this.paginationContainer : grid.contentWrapper
@@ -335,14 +350,29 @@ class Pagination {
         const alignmentClasses = paginationAlignments.map(alignmentClassName);
 
         wrapper.classList.remove(...alignmentClasses);
+        wrapper.classList.add(this.getAlignmentClass());
+    }
 
-        const alignmentClass = this.getAlignmentClass();
-        wrapper.classList.add(alignmentClass);
+    public updateClassName(): void {
+        const wrapper = this.contentWrapper;
+
+        if (!wrapper) {
+            return;
+        }
+
+        wrapper.className = joinClassNames(
+            Globals.getClassName('pagination'),
+            this.options?.className
+        );
     }
 
     public redraw(): void {
         if (this.isDirtyQuerying) {
             this.updateControls(true);
+        }
+
+        if (this.isDirtyClassName) {
+            this.updateClassName();
         }
 
         if (this.isDirtyAlignment) {
@@ -351,6 +381,7 @@ class Pagination {
 
         delete this.isDirtyQuerying;
         delete this.isDirtyAlignment;
+        delete this.isDirtyClassName;
     }
 
     /**
@@ -394,13 +425,14 @@ class Pagination {
 
         this.paginationContainer = customContainer;
         const alignmentClass = this.getAlignmentClass();
-        const className = alignmentClass ?
-            `${Globals.getClassName('pagination')} ${alignmentClass}` :
-            Globals.getClassName('pagination');
 
         // Set content wrapper to the custom container
         this.contentWrapper = makeHTMLElement('div', {
-            className: className
+            className: joinClassNames(
+                Globals.getClassName('pagination'),
+                alignmentClass,
+                this.options?.className
+            )
         }, customContainer);
     }
 
@@ -417,7 +449,10 @@ class Pagination {
         }
 
         this.pageInfoElement = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageInfo')
+            className: joinClassNames(
+                Globals.getClassName('paginationPageInfo'),
+                (pageInfo as PageInfoOptions)?.className
+            )
         }, this.contentWrapper);
 
         this.updatePageInfo();
@@ -455,7 +490,7 @@ class Pagination {
             totalPages: totalPages
         });
 
-        this.pageInfoElement.innerHTML = pageInfoText;
+        this.pageInfoElement.textContent = pageInfoText;
     }
 
     /**
@@ -464,7 +499,10 @@ class Pagination {
     public renderControls(): void {
 
         const navContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationControls')
+            className: joinClassNames(
+                Globals.getClassName('paginationControls'),
+                this.options?.controls?.className
+            )
         }, this.contentWrapper);
 
         const controls = this.options?.controls || {};
@@ -886,7 +924,7 @@ class Pagination {
 
         const button = makeHTMLElement('button', {
             className: Globals.getClassName('button'),
-            innerHTML: pageNumber.toString()
+            innerText: pageNumber.toString()
         }, this.pageNumbersContainer);
 
         if (isActive) {
@@ -920,7 +958,7 @@ class Pagination {
         }
 
         const ellipsisElement = makeHTMLElement('span', {
-            innerHTML: '...'
+            innerText: '...'
         }, this.pageNumbersContainer);
         ellipsisElement.title = this.lang?.ellipsis ?? '';
 
@@ -945,11 +983,14 @@ class Pagination {
         }
 
         const container = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageSize')
+            className: joinClassNames(
+                Globals.getClassName('paginationPageSize'),
+                (pageSizeSelector as PageSizeSelectorOptions)?.className
+            )
         }, this.contentWrapper);
 
         makeHTMLElement('span', {
-            innerHTML: this.lang?.pageSizeLabel ?? ''
+            innerText: this.lang?.pageSizeLabel ?? ''
         }, container);
 
         this.pageSizeSelect = makeHTMLElement('select', {
@@ -960,7 +1001,7 @@ class Pagination {
         this.pageSizeSelectorOptions.forEach((option: number): void => {
             const optionElement = document.createElement('option');
             optionElement.value = option.toString();
-            optionElement.innerHTML = option.toString();
+            optionElement.textContent = option.toString();
 
             if (option === this.controller.currentPageSize) {
                 optionElement.selected = true;

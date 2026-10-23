@@ -300,6 +300,37 @@
             newSeries.navigatorSeries.points.length,
             'All points should have the same average value (#11191).'
         );
+
+        const ohlcDataSeries = chart.addSeries({
+            useOhlcData: true,
+            dataGrouping: {
+                approximation: () => [3, 5, 4, 2]
+            },
+            data: [
+                [0, 1, 3, 0, 2],
+                [1, 1, 5, 1, 2],
+                [2, 2, 2, 2, 2]
+            ]
+        });
+
+        assert.strictEqual(
+            typeof ohlcDataSeries.options.dataGrouping.approximation,
+            'function',
+            'A custom dataGrouping.approximation should not be overwritten ' +
+            'with the "ohlc" default when useOhlcData is set (#24692).'
+        );
+
+        assert.deepEqual(
+            [
+                ohlcDataSeries.points[0].open,
+                ohlcDataSeries.points[0].high,
+                ohlcDataSeries.points[0].low,
+                ohlcDataSeries.points[0].close
+            ],
+            [3, 5, 4, 2],
+            'The grouped point should reflect the custom approximation ' +
+            'callback output, not the "ohlc" approximation (#24692).'
+        );
     });
 
     QUnit.test('dataGrouping and multiple series', function (assert) {
@@ -399,6 +430,126 @@
             'Preserve X positions for shoulder points' // keyword: cropShoulder
         );
     });
+
+    QUnit.test(
+        'Forced data grouping zoomed in between sparse points (#23958)',
+        function (assert) {
+            const chart = Highcharts.stockChart('container', {
+                xAxis: {
+                    min: Date.UTC(2024, 0, 1)
+                },
+                series: [{
+                    dataGrouping: {
+                        forced: true
+                    },
+                    data: [
+                        [Date.UTC(2024, 0, 1), 1],
+                        [Date.UTC(2024, 0, 8), 2],
+                        [Date.UTC(2024, 0, 15), 3]
+                    ]
+                }]
+            });
+
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 10),
+                Date.UTC(2024, 0, 10, 0, 0, 1)
+            );
+
+            assert.deepEqual(
+                chart.series[0].getColumn('x', true),
+                [Date.UTC(2024, 0, 8), Date.UTC(2024, 0, 15)],
+                'A one second range between weekly points, with xAxis.min ' +
+                'disabling the automatic minRange, should group the shoulder ' +
+                'points without excessive group positions'
+            );
+
+            chart.series[0].setData([
+                [Date.UTC(2024, 0, 5, 16), 1],
+                ...Array.from({ length: 61 }, (_, i) => [
+                    Date.UTC(2024, 0, 8, 9, 30 + i),
+                    i
+                ]),
+                [Date.UTC(2024, 0, 9, 9, 30), 1]
+            ], false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 8, 9, 30),
+                Date.UTC(2024, 0, 8, 10, 30)
+            );
+
+            assert.ok(
+                chart.series[0].currentDataGrouping.totalRange < 6e4,
+                'An hour of minute data next to a shoulder point three ' +
+                'days away should be grouped by less than a minute'
+            );
+
+            const hourOfSeconds = Array.from({ length: 3600 }, (_, i) => [
+                Date.UTC(2024, 0, 8, 9) + i * 1000,
+                i
+            ]);
+
+            chart.series[0].setData(hourOfSeconds, false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 8, 9),
+                Date.UTC(2024, 0, 8, 10)
+            );
+
+            const { totalRange } = chart.series[0].currentDataGrouping;
+
+            chart.series[0].setData([
+                [Date.UTC(2023, 0, 8, 9), 0],
+                ...hourOfSeconds
+            ], false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 8, 9),
+                Date.UTC(2024, 0, 8, 10)
+            );
+
+            assert.strictEqual(
+                chart.series[0].currentDataGrouping.totalRange,
+                totalRange,
+                'An hour of second data should keep its grouping when a ' +
+                'stray point a year earlier is added'
+            );
+
+            chart.series[0].update({
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: Array.from({ length: 8760 }, (_, i) => [
+                    Date.UTC(2024, 0, 1) + i * 36e5,
+                    i
+                ])
+            }, false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 5, 1),
+                Date.UTC(2024, 5, 1, 2)
+            );
+
+            assert.ok(
+                chart.series[0].currentDataGrouping.totalRange < 3e5,
+                'With groupAll, a two hour range of hourly data from a ' +
+                'whole year should be grouped by less than five minutes'
+            );
+
+            chart.series[0].setData([
+                [Date.UTC(2024, 0, 1), 1],
+                [Date.UTC(2024, 0, 8), 2],
+                [Date.UTC(2024, 0, 15), 3]
+            ], false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 10),
+                Date.UTC(2024, 0, 10, 0, 0, 1)
+            );
+
+            assert.deepEqual(
+                chart.series[0].getColumn('x', true),
+                [Date.UTC(2024, 0, 8), Date.UTC(2024, 0, 15)],
+                'With groupAll, a one second range between weekly points ' +
+                'should group the shoulder points without excessive group ' +
+                'positions'
+            );
+        }
+    );
 
     QUnit.test('Switch from grouped to non-grouped', function (assert) {
         var chart = Highcharts.stockChart('container', {
@@ -1130,6 +1281,19 @@
                 chart.series[1].hasGroupedData,
                 `After zooming to a point where groupinng is no longer needed,
                 it should not be applied.`
+            );
+
+            assert.strictEqual(
+                chart.series[0].closestPointRange,
+                1,
+                `After zooming out of grouping, closestPointRange should reflect
+                the cropped data spacing, not the stale grouped value (#24858).`
+            );
+            assert.strictEqual(
+                chart.series[1].closestPointRange,
+                1,
+                `After zooming out of grouping, closestPointRange should reflect
+                the cropped data spacing, not the stale grouped value (#24858).`
             );
         }
     );

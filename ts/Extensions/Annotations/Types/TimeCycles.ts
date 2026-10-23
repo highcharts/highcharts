@@ -14,6 +14,10 @@
  * */
 
 import type { AnnotationEventObject } from '../EventEmitter';
+import type {
+    AnnotationOptions,
+    AnnotationTypeOptions
+} from '../AnnotationOptions';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -24,6 +28,8 @@ import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import ControlPoint from '../ControlPoint.js';
+import NBU from '../NavigationBindingsUtilities.js';
+const { getAxisFromOptions } = NBU;
 import { defined, isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -33,9 +39,9 @@ import { defined, isNumber, merge } from '../../../Shared/Utilities.js';
  * */
 
 /** @internal */
-interface TimeCyclesOptions extends CrookedLine.Options {
-    xAxis: number;
-    yAxis: number;
+interface TimeCyclesOptions extends AnnotationOptions {
+    xAxis: number|string;
+    yAxis: number|string;
 }
 
 if (defaultOptions.annotations?.types) {
@@ -274,15 +280,13 @@ class TimeCycles extends CrookedLine {
 
         const point1 = points[0] as any,
             point2 = points[1] as any,
-            xAxisNumber = options.xAxis || 0,
-            yAxisNumber = options.yAxis || 0,
-            xAxis = this.chart.xAxis[xAxisNumber],
-            yAxis = this.chart.yAxis[yAxisNumber],
+            xAxis = getAxisFromOptions(this.chart, 'xAxis', options.xAxis ?? 0),
+            yAxis = getAxisFromOptions(this.chart, 'yAxis', options.yAxis ?? 0),
             xValue1 = point1.x,
             yValue = point1.y,
             xValue2 = point2.x;
 
-        if (!xValue1 || !xValue2) {
+        if (!xValue1 || !xValue2 || !xAxis || !yAxis) {
             return;
         }
 
@@ -348,10 +352,10 @@ namespace TimeCycles {
      * @exclude      labelOptions
      * @optionparent annotations.types.timeCycles
      */
-    export interface Options extends CrookedLine.Options {
+    export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeOptions extends CrookedLine.TypeOptions {
+    export interface TypeOptions extends AnnotationTypeOptions {
         type: string;
         controlPointOptions: ControlPointOptionsObject[];
     }

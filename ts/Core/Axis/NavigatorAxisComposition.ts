@@ -23,13 +23,13 @@ import type { AxisSetExtremesEventObject } from './AxisOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
-const { isTouchDevice } = H;
+const { composed, isTouchDevice } = H;
 import {
     addEvent,
     correctFloat,
     defined,
     isNumber,
-    pick
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -148,9 +148,7 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (!AxisClass.keepProps.includes('navigatorAxis')) {
-            AxisClass.keepProps.push('navigatorAxis');
-
+        if (pushUnique(composed, 'Axis.Navigator')) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'setExtremes', onAxisSetExtremes);
         }
@@ -205,12 +203,10 @@ class NavigatorAxisAdditions {
         const axis = this.axis,
             halfPointRange = (axis.pointRange || 0) / 2;
 
-        let newMin = pick<number|undefined, number>(
-                fixedMin, axis.translate(pxMin as any, true, !axis.horiz)
-            ),
-            newMax = pick<number|undefined, number>(
-                fixedMax, axis.translate(pxMax as any, true, !axis.horiz)
-            );
+        let newMin =
+                fixedMin ?? axis.translate(pxMin as any, true, !axis.horiz),
+            newMax =
+                fixedMax ?? axis.translate(pxMax as any, true, !axis.horiz);
 
 
         // Add/remove half point range to/from the extremes (#1172)

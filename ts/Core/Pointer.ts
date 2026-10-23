@@ -51,7 +51,6 @@ import {
     isObject,
     objectEach,
     offset,
-    pick,
     pushUnique,
     splat
 } from '../Shared/Utilities.js';
@@ -158,9 +157,6 @@ class Pointer {
      * @internal
      */
     public hasDragged: number = 0;
-
-    /** @internal */
-    public hasPinched?: boolean;
 
     /**
      * Indicates if there has been a movement larger than ~4px during
@@ -602,6 +598,13 @@ class Pointer {
                 }
             }
         }
+
+        // Run a final transform with a drop trigger to display the reset
+        // zoom button after a pinch gesture (#22128)
+        if (e?.type === 'touchend' && this.hasDragged) {
+            chart.transform({ trigger: 'drop' });
+        }
+
         if (redraw) {
             chart.redraw();
         }
@@ -878,7 +881,7 @@ class Pointer {
                 return (
                     s.visible &&
                     !(!shared && s.directTouch) && // #3821
-                    pick(s.options.enableMouseTracking, true)
+                    (s.options.enableMouseTracking ?? true)
                 );
             };
 
@@ -1096,10 +1099,9 @@ class Pointer {
             touches ?
                 touches.length ?
                     touches.item(0) as Touch :
-                    (pick( // #13534
-                        touches.changedTouches,
+                    (
+                        touches.changedTouches ??
                         (e as TouchEvent).changedTouches
-                    )
                     )[0] :
                 e as unknown as PointerEvent
         );
@@ -1207,7 +1209,7 @@ class Pointer {
      * @function Highcharts.Pointer#onContainerMouseLeave
      */
     public onContainerMouseLeave(e: MouseEvent): void {
-        const { pointer } = charts[pick(Pointer.hoverChartIndex, -1)] || {};
+        const { pointer } = charts[(Pointer.hoverChartIndex ?? -1)] || {};
 
         e = this.normalize(e);
 
@@ -1342,7 +1344,7 @@ class Pointer {
             e?.preventDefault?.();
         }
 
-        charts[pick(Pointer.hoverChartIndex, -1)]
+        charts[(Pointer.hoverChartIndex ?? -1)]
             ?.pointer
             ?.drop(e);
     }
@@ -1438,6 +1440,10 @@ class Pointer {
                     from: boxFromTouches(lastTouches),
                     trigger: e.type
                 });
+
+                // Record a truthy value in order to trigger the final transform
+                // in the drop function
+                pointer.hasDragged = 1;
 
             });
 
@@ -1892,10 +1898,18 @@ class Pointer {
                     el.getRootNode() as ShadowRoot|undefined
                 )?.host?.parentElement;
 
-        container.onmousedown = this.onContainerMouseDown.bind(this);
-        container.onmousemove = this.onContainerMouseMove.bind(this);
-        container.onclick = this.onContainerClick.bind(this);
         this.eventsToUnbind.push(
+            addEvent(
+                container,
+                'mousedown',
+                this.onContainerMouseDown.bind(this)
+            ),
+            addEvent(
+                container,
+                'mousemove',
+                this.onContainerMouseMove.bind(this)
+            ),
+            addEvent(container, 'click', this.onContainerClick.bind(this)),
             addEvent(
                 container,
                 'mouseenter',
@@ -2030,7 +2044,7 @@ class Pointer {
      */
     public setHoverChartIndex(e?: MouseEvent): void {
         const chart = this.chart;
-        const hoverChart = H.charts[pick(Pointer.hoverChartIndex, -1)];
+        const hoverChart = H.charts[(Pointer.hoverChartIndex ?? -1)];
 
         if (
             hoverChart &&
@@ -2099,22 +2113,23 @@ class Pointer {
                         false;
                 }
 
-                if (pick(hasMoved, true)) {
+                if (hasMoved ?? true) {
                     this.pinch(e);
+                }
+
+                // If inside, capture touch-drag and display tooltip. If not
+                // inside, allow dragging the finger to scroll the page
+                if (
+                    this.hasPointerCapture && // #25095
+                    e.type === 'touchmove' &&
+                    !(chart.scrollablePixelsX || chart.scrollablePixelsY)
+                ) {
+                    e.preventDefault();
                 }
 
             } else if (start) {
                 // Hide the tooltip on touching outside the plot area (#1203)
                 this.reset();
-            }
-
-            // If inside, capture touch-drag and display tooltip. If not inside,
-            // allow dragging the finger to scroll the page
-            if (
-                (chart.tooltip?.options.followTouchMove ?? true) &&
-                isInside
-            ) {
-                e.preventDefault();
             }
 
         } else if ((e as any).touches.length === 2) {
@@ -2152,7 +2167,7 @@ class Pointer {
 
         // Look for the pinchType option
         if (/touch/.test(e.type)) {
-            zoomType = pick(chart.zooming.pinchType, zoomType);
+            zoomType = (chart.zooming.pinchType ?? zoomType);
         }
 
         this.zoomX = zoomX = /x/.test(zoomType);
@@ -2372,12 +2387,27 @@ namespace Pointer {
 
     /* *
      *
+     *  Variables
+     *
+     * */
+
+    let PointerClass: typeof Pointer = Pointer;
+
+    /* *
+     *
      *  Functions
      *
      * */
 
     /** @internal */
-    export function compose(ChartClass: typeof Chart): void {
+    export function compose(
+        ChartClass: typeof Chart,
+        PointerSubclass?: typeof Pointer
+    ): void {
+
+        // A subclass, like MSPointer in the ES5 build, replaces the class
+        // instead of adding a second pointer to each chart
+        PointerClass = PointerSubclass || PointerClass;
 
         if (pushUnique(composed, 'Core.Pointer')) {
             addEvent(ChartClass, 'beforeRender', function (): void {
@@ -2390,7 +2420,7 @@ namespace Pointer {
                  * @type {Highcharts.Pointer}
                  * @instance
                  */
-                this.pointer = new Pointer(this, this.options);
+                this.pointer = new PointerClass(this, this.options);
             });
         }
 

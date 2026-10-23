@@ -41,8 +41,7 @@ import {
     addEvent,
     css,
     defined,
-    extend,
-    pick
+    extend
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -59,14 +58,19 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
      *
      * */
 
+    /** @internal */
     public dispX?: number;
 
+    /** @internal */
     public dispY?: number;
 
+    /** @internal */
     public fixedPosition: DragNodesPoint['fixedPosition'];
 
+    /** @internal */
     public prevX?: number;
 
+    /** @internal */
     public prevY?: number;
 
     /* *
@@ -123,21 +127,14 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
             pointOptions = this.options;
 
         return {
-            'stroke-width': pick(
-                pointOptions.width,
-                (linkOptions as any).width
-            ),
+            'stroke-width': (pointOptions.width ?? (linkOptions as any).width),
             stroke: (
                 pointOptions.color || (linkOptions as any).color
             ),
             dashstyle: (
                 pointOptions.dashStyle || (linkOptions as any).dashStyle
             ),
-            opacity: pick(
-                pointOptions.opacity,
-                (linkOptions as any).opacity,
-                1
-            )
+            opacity: (pointOptions.opacity ?? (linkOptions as any).opacity ?? 1)
         };
     }
 
@@ -413,9 +410,12 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
  *
  * */
 
+/** @internal */
 interface NetworkgraphPoint extends NodesComposition.PointComposition {
+    /** @internal */
     className: NodesComposition.PointComposition['className'];
     degree: number;
+    /** @internal */
     formatPrefix: NodesComposition.PointComposition['formatPrefix'];
     from: NodesComposition.PointComposition['from'];
     fromNode: NetworkgraphPoint;

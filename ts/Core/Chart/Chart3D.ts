@@ -32,17 +32,15 @@ const { parse: color } = Color;
 import D from '../Defaults.js';
 const { defaultOptions: genericDefaultOptions } = D;
 import Fx from '../Animation/Fx.js';
-import Math3D from '../Math3D.js';
-const {
+import {
     perspective,
     shapeArea3D
-} = Math3D;
+} from '../Math3D.js';
 import Series from '../Series/Series.js';
 import {
     addEvent,
     isArray,
     merge,
-    pick,
     wrap
 } from '../../Shared/Utilities.js';
 
@@ -1741,8 +1739,8 @@ namespace Chart3D {
                 }
 
                 return {
-                    size: pick(options.size, 1),
-                    color: pick(options.color, 'none'),
+                    size: (options.size ?? 1),
+                    color: (options.color ?? 'none'),
                     frontFacing: faceOrientation > 0,
                     visible: isVisible
                 };

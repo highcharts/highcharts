@@ -258,4 +258,143 @@ test.describe('Synchronization Tests', () => {
 
         expect(result.noErrorThrown, 'No errors should be thrown').toBe(true);
     });
+
+    test(
+        'Grid highlight sync should point to correct chart point after sorting',
+        async ({ page }) => {
+            await page.setContent(dashboardsWithHighchartsAndGridHTML, {
+                waitUntil: 'networkidle'
+            });
+
+            const result = await page.evaluate(async () => {
+                const Highcharts = (window as any).Highcharts;
+                const Dashboards = (window as any).Dashboards;
+                const Grid = (window as any).Grid;
+
+                Dashboards.HighchartsPlugin.custom.connectHighcharts(
+                    Highcharts
+                );
+                Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+                Dashboards.GridPlugin.custom.connectGrid(Grid);
+                Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
+
+                const dashboard = await Dashboards.board('container', {
+                    dataPool: {
+                        connectors: [{
+                            id: 'data',
+                            type: 'JSON',
+                            firstRowAsNames: false,
+                            columnIds: ['Name', 'Value'],
+                            data: [
+                                ['A', 1],
+                                ['B', 3],
+                                ['C', 2]
+                            ]
+                        }]
+                    },
+                    gui: {
+                        layouts: [{
+                            rows: [{
+                                cells: [{ id: 'chart' }, { id: 'grid' }]
+                            }]
+                        }]
+                    },
+                    components: [{
+                        renderTo: 'chart',
+                        type: 'Highcharts',
+                        connector: { id: 'data' },
+                        chartOptions: {
+                            chart: {
+                                animation: false,
+                                height: 250
+                            },
+                            xAxis: { type: 'category' },
+                            tooltip: { animation: false }
+                        },
+                        sync: { highlight: true }
+                    }, {
+                        renderTo: 'grid',
+                        type: 'Grid',
+                        connector: { id: 'data' },
+                        sync: { highlight: true }
+                    }]
+                }, true);
+
+                const chartComponent = dashboard.mountedComponents.find(
+                    (mounted: any): boolean => (
+                        mounted.component.type === 'Highcharts'
+                    )
+                ).component;
+                const gridComponent = dashboard.mountedComponents.find(
+                    (mounted: any): boolean => mounted.component.type === 'Grid'
+                ).component;
+                const chart = chartComponent.chart;
+                const grid = gridComponent.grid;
+                const connector = await dashboard.dataPool.getConnector('data');
+                const cursorRows: number[] = [];
+
+                dashboard.dataCursor.addListener(
+                    connector.getTable().id,
+                    'point.mouseOver',
+                    (e: any): void => {
+                        cursorRows.push(e.cursor.row);
+                    }
+                );
+
+                await new Promise<void>((resolve) => {
+                    const waitForViewport = (): void => {
+                        if (grid.viewport?.columns?.length) {
+                            resolve();
+                        } else {
+                            requestAnimationFrame(waitForViewport);
+                        }
+                    };
+
+                    waitForViewport();
+                });
+
+                const valueColumn = grid.viewport.getColumn('Value');
+
+                await valueColumn.sorting.setOrder('desc');
+
+                const firstValueCell = grid.container.querySelector(
+                    'tr[data-row-index="0"] td[data-column-id="Value"]'
+                );
+
+                firstValueCell.dispatchEvent(new MouseEvent('mouseover', {
+                    bubbles: true
+                }));
+
+                const hoveredPoint = chart.series[0].data.find(
+                    (point: any): boolean => point.state === 'hover'
+                );
+
+                return {
+                    cursorRows,
+                    hoveredY: hoveredPoint?.y,
+                    firstGridValue: firstValueCell.getAttribute('data-value'),
+                    sortedValues: grid.dataProvider
+                        .getDataTable(true)
+                        .getColumn('Value')
+                };
+            });
+
+            expect(
+                result.sortedValues,
+                'Grid should be sorted by value.'
+            ).toEqual([3, 2, 1]);
+            expect(
+                result.firstGridValue,
+                'First grid row should represent the highest value.'
+            ).toBe('3');
+            expect(
+                result.cursorRows[result.cursorRows.length - 1],
+                'Grid should emit the source row of the sorted row.'
+            ).toBe(1);
+            expect(
+                result.hoveredY,
+                'Hover sync should point to the sorted row point.'
+            ).toBe(3);
+        }
+    );
 });

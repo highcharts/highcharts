@@ -142,7 +142,7 @@ document.querySelectorAll('.button-row button').forEach(btn => {
             link: {
                 type: val as ('curved' | 'orthogonal' | 'straight')
             }
-        } as Highcharts.SeriesTreegraphOptions);
+        } as Highcharts.SeriesOptionsRegistry['SeriesTreegraphOptions']);
         document.querySelectorAll('.button-row button')
             .forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -150,6 +150,6 @@ document.querySelectorAll('.button-row button').forEach(btn => {
 });
 
 // Safari layout hack (see demo.css)
-if (Highcharts.isSafari) {
+if ((Highcharts as any).isSafari) {
     document.getElementById('container').classList.add('safari');
 }

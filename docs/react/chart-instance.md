@@ -1,13 +1,22 @@
+---
+description: >-
+  Use the ref prop on Chart to obtain a reference to the underlying chart
+  instance and its container element, then access those values from a React
+  effect when needed.
+---
+
 # Chart instance
 
-If you need to access the specific chart instance, you can use the `ref` prop. The `ref` prop will be
-passed a reference to the chart instance, as well as the chart container element.
+If you need to access the specific chart instance, you can use the `ref` prop.
+The `ref` prop will be passed a reference to the chart instance, as well as the
+chart container element.
 
-```jsx
-import { Chart } from "@highcharts/react";
+```tsx
+import { useEffect, useRef } from "react";
+import { Chart, type HighchartsReactRefObject } from "@highcharts/react";
 
 function RefExample() {
-  const ref = useRef();
+  const chartRef = useRef<HighchartsReactRefObject>(null);
 
   useEffect(() => {
     if (ref.current?.chart) {

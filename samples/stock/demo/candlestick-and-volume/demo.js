@@ -74,6 +74,15 @@
             }
         },
 
+        navigator: {
+            series: {
+                dataMapping: {
+                    x: 'DateTime',
+                    y: 'Close'
+                }
+            }
+        },
+
         series: [{
             type: 'candlestick',
             name: 'AAPL',

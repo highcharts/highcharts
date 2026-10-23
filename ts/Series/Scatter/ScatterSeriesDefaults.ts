@@ -142,7 +142,7 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.scatter
- * @excluding cropThreshold, dataParser, dataURL, useOhlcData
+ * @excluding cropThreshold, useOhlcData
  * @product   highcharts highstock
  * @apioption series.scatter
  */
@@ -198,6 +198,8 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
  *         Arrays of datetime x and y
  * @sample {highcharts} highcharts/series/data-array-of-name-value/
  *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series-scatter/scatter-cluster/
+ *         Computed clusters
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *

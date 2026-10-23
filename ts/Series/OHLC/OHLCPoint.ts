@@ -44,12 +44,15 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public open!: number;
 
     public options!: OHLCPointOptions;
 
+    /** @internal */
     public plotOpen!: number;
 
+    /** @internal */
     public series!: OHLCSeries;
 
     /* *
@@ -118,6 +121,7 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      * Extend the parent method by resolving up/down colors (#15849)
      * @private
      **/
+    /** @internal */
     public applyOptions(): Point {
         super.applyOptions.apply(this, arguments);
         if (this.resolveColor) {

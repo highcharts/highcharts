@@ -114,7 +114,7 @@ export interface MarkerClusterEventsOptions {
      * by calling `event.preventDefault()`.
      *
      * @product   highcharts highmaps
-     * @see [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
+     * @see       [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
      * @requires  modules/marker-clusters
      */
     drillToCluster: MarkerClusterDrillCallbackFunction;
@@ -252,7 +252,7 @@ export interface MarkerClusterMarkerOptions extends PointMarkerOptions {
     /** @default 0 */
     lineWidth?: PointMarkerOptions['lineWidth'];
 
-    /** @default ${palette.backgroundColor} */
+    /** @default 'var(--highcharts-background-color)' */
     lineColor?: PointMarkerOptions['lineColor'];
 
     /** @default 15 */

@@ -37,6 +37,7 @@ Highcharts.chart('container', {
             useHTML: true,
             allowOverlap: true,
             step: 1,
+            x: -8,
             y: 3,
             style: {
                 fontSize: '13px'

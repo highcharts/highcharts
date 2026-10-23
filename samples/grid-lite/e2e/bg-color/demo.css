@@ -1,0 +1,14 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+/* `color-scheme: light` simulates an embedding context (e.g. jsFiddle) that
+   forces the consumer of the --highcharts-* variables to the light scheme.
+   In dark mode the background must still be dark, which only holds if those
+   page-level variables use concrete `@media (prefers-color-scheme)` values
+   rather than light-dark() (whose result would be pinned to the forced light
+   scheme). */
+#cbc {
+    color-scheme: light;
+    height: 100px;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}

@@ -1,0 +1,23 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.dataset-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 12px 0;
+    font-family: monospace;
+}
+
+#hint {
+    padding: 0 12px;
+    max-width: 60em;
+    font-family: sans-serif;
+}
+
+#container {
+    padding: 12px;
+
+    .hcg-container {
+        min-height: 320px;
+    }
+}

@@ -38,7 +38,6 @@ import { correctFloat, extend, merge } from '../../Shared/Utilities.js';
 /**
  * The pareto series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.pareto
  *
@@ -53,6 +52,7 @@ class ParetoSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ParetoSeriesOptions = merge(
         LineSeries.defaultOptions,
         ParetoSeriesDefaults
@@ -77,7 +77,7 @@ class ParetoSeries extends LineSeries {
     /**
      * Calculate y sum and each percent point.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#sumPointsPercents
      *
      * @param {Array<number>} yValues
@@ -134,7 +134,7 @@ class ParetoSeries extends LineSeries {
     /**
      * Calculate sum and return percent points.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#setDerivedData
      * @requires modules/pareto
      */
@@ -178,9 +178,6 @@ DerivedComposition.compose(ParetoSeries);
  *
  * */
 
-/**
- * @private
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pareto: typeof ParetoSeries;

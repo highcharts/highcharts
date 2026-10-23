@@ -33,6 +33,14 @@
             .animate({
                 fill: '#2caffe'
             });
+
+        chart.seriesGroup
+            .attr({
+                opacity: 0.25
+            })
+            .animate({
+                opacity: 1
+            });
     }
 
     function createButton(chart) {
@@ -43,17 +51,17 @@
             () => activateChart(chart),
             {
                 r: 18,
-                fill: '#2caffe',
+                fill: 'var(--highcharts-color-0)',
                 height: 24,
                 paddingLeft: 16,
                 paddingRight: 16,
                 style: {
-                    color: '#ffffff',
+                    color: 'var(--highcharts-background-color)',
                     fontSize: '18px'
                 }
             },
             {
-                fill: '#000066'
+                fill: 'var(--highcharts-color-1)'
             }
         )
             .attr({

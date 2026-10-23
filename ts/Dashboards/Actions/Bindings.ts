@@ -60,11 +60,9 @@ function getGUIElement(
     parentElement?: HTMLElement
 ): Cell|Row|Layout|undefined {
     let guiElement;
+    const selector = '#' + CSS.escape(idOrElement);
 
-    if (
-        typeof idOrElement === 'string' &&
-        document.querySelectorAll('#' + idOrElement).length > 1
-    ) {
+    if (document.querySelectorAll(selector).length > 1) {
         // eslint-disable-next-line no-console
         console.warn(
             `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
@@ -74,7 +72,7 @@ function getGUIElement(
     }
 
     const container = parentElement ?
-        parentElement.querySelector('#' + idOrElement) :
+        parentElement.querySelector(selector) :
         document.getElementById(idOrElement);
 
     if (container !== null) {
@@ -124,7 +122,7 @@ export async function addComponent(
     cell = cell || Bindings.getCell(renderTo, board.container);
 
     const componentContainer =
-        cell?.container || document.querySelector('#' + renderTo);
+        cell?.container || document.querySelector('#' + CSS.escape(renderTo));
 
     if (!componentContainer || !options.type) {
         // eslint-disable-next-line no-console

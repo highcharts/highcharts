@@ -13,7 +13,7 @@
         },
         series: [{
             data: data,
-            step: true
+            step: 'left'
         }]
     });
 

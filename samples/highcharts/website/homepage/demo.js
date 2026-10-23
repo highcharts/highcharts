@@ -466,7 +466,7 @@ const splineSeries = [
         {
             x: '2019-10-01',
             y: -8.90,
-            marker: { enable: false, symbol: 'circle', r: 5 }
+            marker: { enabled: false, symbol: 'circle', r: 5 }
         },
         ['2019-11-01', -11.30],
         ['2019-12-01', -6.30],
@@ -4041,7 +4041,7 @@ const heroChart = {
         // /3
         {
             type: 'networkgraph',
-            zindex: 1,
+            zIndex: 1,
             showInLegend: false,
             link: {
                 color: networklinkColor,

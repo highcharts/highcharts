@@ -72,7 +72,7 @@ QUnit.test(
                         5,
                         17
                     ],
-                    cropTreshold: 1
+                    cropThreshold: 1
                 },
                 {
                     keys: ['y', 'id'],
@@ -100,7 +100,7 @@ QUnit.test(
                         17
                     ],
                     marker: { enabled: false },
-                    cropTreshold: 1
+                    cropThreshold: 1
                 }
             ],
 

@@ -46,7 +46,7 @@ Highcharts.chart('container', {
     plotOptions: {
         spline: {
             marker: {
-                enable: false
+                enabled: false
             }
         }
     },

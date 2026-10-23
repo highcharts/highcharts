@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Width and resizing"
+description: >-
+  Set pixel, percentage, or automatic widths, constrain resizing with minimum
+  and maximum values, choose how neighboring columns respond to drag resizing,
+  and assess strict-width limitations for wide grids.
 ---
 
 # Column width and resizing
@@ -54,6 +58,33 @@ columns: [{
 }]
 ```
 
+## Strict widths
+
+For very wide grids, `rendering.columns.strictWidths` makes all columns share
+one fixed width, so the grid can skip per-column width and offset calculations.
+It is most useful together with
+[column virtualization](https://www.highcharts.com/docs/grid/columns/virtualization).
+
+```js
+rendering: {
+    columns: {
+        strictWidths: true
+    }
+}
+```
+
+The shared width is resolved from `columnDefaults.width` (pixels or a percentage
+of the table width), falling back to `100` when the option is not set or set to
+`'auto'`. It is then clamped by `columnDefaults.minWidth` and
+`columnDefaults.maxWidth`.
+
+Two limitations follow from the single shared width:
+
+- Per-column `columns[].width`, `minWidth`, and `maxWidth` are ignored, and
+  automatic width distribution does not run.
+- Column resizing is unavailable. No resize handles are rendered and
+  `rendering.columns.resizing` has no effect, even when explicitly enabled.
+
 ## Resizing
 
 End users can resize columns by dragging the handle on the right edge of each header.
@@ -88,6 +119,7 @@ See [Interaction / Events](https://www.highcharts.com/docs/grid/events) for even
 - [`columnDefaults.width`](https://api.highcharts.com/grid/columnDefaults.width)
 - [`columns.width`](https://api.highcharts.com/grid/columns.width)
 - [`rendering.columns.resizing`](https://api.highcharts.com/grid/rendering.columns.resizing)
+- [`rendering.columns.strictWidths`](https://api.highcharts.com/grid/rendering.columns.strictWidths)
 
 ## Demo
 

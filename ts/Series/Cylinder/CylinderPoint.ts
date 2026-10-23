@@ -46,6 +46,7 @@ class CylinderPoint extends ColumnPoint {
 
     public options!: CylinderPointOptions;
 
+    /** @internal */
     public series!: CylinderSeries;
 
 }
@@ -56,6 +57,7 @@ class CylinderPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 interface CylinderPoint {
     shapeType: string;
 }

@@ -2,14 +2,6 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-:root {
-    --text-color: #4d5156;
-
-    @media (prefers-color-scheme: dark) {
-        --text-color: #fff;
-    }
-}
-
 body {
     font-family:
         -apple-system,
@@ -23,7 +15,7 @@ body {
         "Segoe UI Symbol",
         sans-serif;
     background: var(--highcharts-background-color);
-    color: var(--text-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 h2 {
@@ -36,7 +28,7 @@ h2 {
 
 .highcharts-description {
     padding: 0 20px;
-    color: #000;
+    color: var(--highcharts-neutral-color-100);
 }
 
 #container {

@@ -584,6 +584,7 @@ namespace AxisDefaults {
          */
         dateTimeLabelFormats: {
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             millisecond: {
@@ -610,6 +611,7 @@ namespace AxisDefaults {
                 range: false
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             second: {
@@ -636,6 +638,7 @@ namespace AxisDefaults {
                 range: false
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             minute: {
@@ -662,6 +665,7 @@ namespace AxisDefaults {
                 range: false
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             hour: {
@@ -695,6 +699,7 @@ namespace AxisDefaults {
                 range: false
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             day: {
@@ -718,6 +723,7 @@ namespace AxisDefaults {
                 boundary: '%[eb]'
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             week: {
@@ -734,6 +740,7 @@ namespace AxisDefaults {
                 main: '%[eb]'
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             month: {
@@ -757,6 +764,7 @@ namespace AxisDefaults {
                 boundary: void 0
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             year: {
@@ -1033,15 +1041,16 @@ namespace AxisDefaults {
             /**
              * The label's pixel distance from the perimeter of the plot area.
              * On cartesian charts, this is overridden if the `labels.y` setting
-             * is set.
+             * is set. Defaults to 15 unless the labels are aligned inside the
+             * plot area, in which case it defaults to 0.
              *
              * @sample {highcharts} highcharts/yaxis/labels-distance/
              *         Polar chart, labels centered under the arc
              *
              * @type      {number}
              * @product   highcharts gantt
+             * @apioption xAxis.labels.distance
              */
-            distance: 15,
 
             /**
              * Enable or disable the axis labels.
@@ -1318,18 +1327,18 @@ namespace AxisDefaults {
          */
 
         /**
-         * Index of another axis that this axis is linked to. When an axis is
-         * linked to a master axis, it will take the same extremes as
-         * the master, but as assigned by min or max or by setExtremes.
-         * It can be used to show additional info, or to ease reading the
-         * chart by duplicating the scales.
+         * Index or [id](#xAxis.id) of another axis that this axis is linked to.
+         * When an axis is linked to a master axis, it will take the same
+         * extremes as the master, but as assigned by min or max or by
+         * `setExtremes`. It can be used to show additional info, or to ease
+         * reading the chart by duplicating the scales.
          *
          * @sample {highcharts} highcharts/xaxis/linkedto/
          *         Different string formats of the same date
          * @sample {highcharts} highcharts/yaxis/linkedto/
          *         Y values on both sides
          *
-         * @type      {number}
+         * @type      {number|string}
          * @since     2.0.2
          * @product   highcharts highstock gantt
          * @apioption xAxis.linkedTo
@@ -1624,7 +1633,7 @@ namespace AxisDefaults {
          * @sample {highstock} stock/xaxis/offset/
          *         Y axis offset by 70 px
          *
-         * @type {number}
+         * @type {number|string}
          */
         offset: void 0,
 
@@ -1776,6 +1785,16 @@ namespace AxisDefaults {
          * @since     4.2.6
          * @product   highstock
          * @apioption xAxis.scrollbar
+         */
+
+        /**
+         * Enable or disable the scrollbar on the X axis.
+         *
+         * @see [scrollbar.enabled](#scrollbar.enabled)
+         *
+         * @default   false
+         * @product   highstock
+         * @apioption xAxis.scrollbar.enabled
          */
 
         /**
@@ -2059,12 +2078,15 @@ namespace AxisDefaults {
          */
 
         /**
-         * The axis title, showing next to the axis line.
+         * The axis title, showing next to the axis line. Set to `null` to
+         * disable the title.
          *
          * @productdesc {highmaps}
          * In Highmaps, the axis is hidden by default, but adding an axis title
          * is still possible. X axis and Y axis titles will appear at the bottom
          * and left by default.
+         *
+         * @type {null|*}
          */
         title: {
 
@@ -2088,7 +2110,7 @@ namespace AxisDefaults {
             align: 'middle',
 
             /**
-             * Deprecated. Set the `text` to `undefined` to disable the title.
+             * Deprecated. Set the `text` to `null` to disable the title.
              *
              * @deprecated 3.0.0
              * @type      {boolean}
@@ -2916,14 +2938,14 @@ namespace AxisDefaults {
          */
 
         /**
-         * Enable the scrollbar on the Y axis.
+         * Enable or disable the scrollbar on the Y axis.
+         *
+         * @see [scrollbar.enabled](#scrollbar.enabled)
          *
          * @sample {highstock} stock/yaxis/scrollbar/
          *         Enabled on Y axis
          *
-         * @type      {boolean}
          * @default   false
-         * @since     4.2.6
          * @product   highstock
          * @apioption yAxis.scrollbar.enabled
          */
@@ -3069,13 +3091,13 @@ namespace AxisDefaults {
              * The actual text of the axis title. Horizontal texts can contain
              * HTML, but rotated texts are painted using vector techniques and
              * must be clean text. The Y axis title is disabled by setting the
-             * `text` option to `undefined`. The default value is overridden by
+             * `text` option to `null`. The default value is overridden by
              * the `lang.yAxisTitle` language option.
              *
              * @sample {highcharts} highcharts/xaxis/title-text/
              *         Custom HTML
              *
-             * @type    {string|undefined}
+             * @type    {string|null}
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt
@@ -3384,7 +3406,9 @@ namespace AxisDefaults {
              * @product highcharts
              */
             style: {
-                /** @type {Highcharts.ColorType} */
+                /**
+                 * @type {Highcharts.ColorType}
+                 */
                 color: 'var(--highcharts-neutral-color-100)',
 
                 /**

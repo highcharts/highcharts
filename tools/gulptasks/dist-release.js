@@ -6,6 +6,7 @@
 const gulp = require('gulp');
 const log = require('../libs/log');
 const fs = require('fs-extra');
+const glob = require('glob');
 // const fs = require('fs');
 // const fsLib = require('../libs/fs');
 const { join } = require('path');
@@ -14,7 +15,6 @@ const argv = require('yargs').argv;
 const childProcess = require('child_process');
 const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
 const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
-const sourcePackageJSON = require('../../package.json');
 
 const releaseRepos = {
     Highcharts: 'highcharts-dist',
@@ -24,6 +24,30 @@ const releaseRepos = {
     },
     Dashboards: 'dashboards-dist'
 };
+
+const releaseRepositoryMetadata = [
+    '^[.]git($|/)',
+    '^[.]github($|/)',
+    '^[.]gitignore$',
+    '^[.]npmignore$',
+    '^README[.]md$',
+    '^LICENSE[.]txt$',
+    '^SECURITY[.]md$',
+    '^package[.]json$',
+    '^bower[.]json$'
+];
+
+function getFilesForReleaseCleanup(folder) {
+    return glob.sync('**/*', {
+        cwd: folder,
+        dot: true,
+        follow: false,
+        ignore: {
+            childrenIgnored: path => /^[.]git(?:hub)?$/u.test(path.relativePosix())
+        },
+        nodir: true
+    }).map(file => file.replace(/\\/gu, '/'));
+}
 
 /**
  * Asks user a question, and waits for input.
@@ -164,7 +188,7 @@ async function npmPublish(push = false, releaseRepo = releaseRepos.Highcharts) {
  * @return {Promise<Array<*>>} result
  */
 async function removeFilesInFolder(folder, exceptions) {
-    const files = getFilesInFolder(folder, true, '');
+    const files = getFilesForReleaseCleanup(folder);
     const promises = files
     // Filter out files that should be kept
         .filter(file => !exceptions.some(pattern => file.match(pattern)))
@@ -182,9 +206,13 @@ async function removeFilesInFolder(folder, exceptions) {
  */
 function updateReleaseJSON(json, productName) {
     if (productName === 'Highcharts') {
-        if (sourcePackageJSON.module) {
-            json.module = sourcePackageJSON.module;
-        }
+        // The UMD submodules in `modules/*.js` read the shared namespace from
+        // `window._Highcharts`, which only the UMD bundle assigns. Declaring an
+        // ESM entry point makes bundlers resolve the bare specifier to the pure
+        // ESM bundle, while subpath imports keep loading UMD, leaving the
+        // namespace unassigned (#25072). Until subpath resolution follows the
+        // same bundle, the release package must not advertise one.
+        delete json.module;
 
         json.types = (
             json.main ?
@@ -540,8 +568,7 @@ async function release() {
             cwd: pathToDistRepo
         });
 
-        const keepFiles = ['^[.]git/', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt', 'SECURITY.md'];
-        await removeFilesInFolder(pathToDistRepo, keepFiles);
+        await removeFilesInFolder(pathToDistRepo, releaseRepositoryMetadata);
         log.message('Successfully removed content of ' + pathToDistRepo);
     }
 
@@ -577,3 +604,9 @@ release.flags = {
 };
 
 gulp.task('dist-release', release);
+
+module.exports = {
+    releaseRepositoryMetadata,
+    removeFilesInFolder,
+    updateReleaseJSON
+};

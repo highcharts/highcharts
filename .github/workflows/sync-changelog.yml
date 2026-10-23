@@ -1,0 +1,26 @@
+name: Sync changelog
+
+on:
+  push:
+    branches: [ 'master' ]
+    paths:
+      - 'changelog/**'
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch changelog sync
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.CHANGELOG_WORKFLOW_DISPATCH_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'highsoft-corp',
+              repo: 'highcharts-changelog',
+              workflow_id: 'sync-changelog.yml',
+              ref: 'main'
+            });

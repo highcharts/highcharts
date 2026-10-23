@@ -61,15 +61,18 @@ const syncPair: SyncPair = {
 
         const { dataCursor: cursor } = board;
         const table = this.getDataTable();
-        const dataProvider = grid.dataProvider;
-        const presentationTable = hasDataTableProvider(dataProvider) ?
-            dataProvider.getDataTable(true) :
-            void 0;
 
-        const onCellHover = (e: TableCellEvent): void => {
+        const emitCellCursor = (
+            cell: TableCellEvent['target'],
+            state: string
+        ): void => {
             if (table) {
-                const cell = e.target;
                 const localIndex = cell.row.index;
+                const dataProvider = grid.dataProvider;
+                const presentationTable =
+                    hasDataTableProvider(dataProvider) ?
+                        dataProvider.getDataTable(true) :
+                        void 0;
                 const originalIndex =
                     presentationTable?.getOriginalRowIndex(localIndex);
                 if (typeof originalIndex !== 'number') {
@@ -80,30 +83,18 @@ const syncPair: SyncPair = {
                     type: 'position',
                     row: originalIndex,
                     column: cell.column.id,
-                    state: 'point.mouseOver' + groupKey,
+                    state: state + groupKey,
                     sourceId: this.id
                 });
             }
         };
 
-        const onCellMouseOut = (e: TableCellEvent): void => {
-            if (table) {
-                const cell = e.target;
-                const localIndex = cell.row.index;
-                const originalIndex =
-                    presentationTable?.getOriginalRowIndex(localIndex);
-                if (typeof originalIndex !== 'number') {
-                    return;
-                }
+        const onCellHover = (e: TableCellEvent): void => {
+            emitCellCursor(e.target, 'point.mouseOver');
+        };
 
-                cursor.emitCursor(table, {
-                    type: 'position',
-                    row: originalIndex,
-                    column: cell.column.id,
-                    state: 'point.mouseOut' + groupKey,
-                    sourceId: this.id
-                });
-            }
+        const onCellMouseOut = (e: TableCellEvent): void => {
+            emitCellCursor(e.target, 'point.mouseOut');
         };
 
         addEvent(grid, 'cellMouseOver', onCellHover);
@@ -112,12 +103,12 @@ const syncPair: SyncPair = {
         // Return a function that calls the callbacks
         return function (): void {
             removeEvent(
-                grid.container,
+                grid,
                 'cellMouseOver',
                 onCellHover
             );
             removeEvent(
-                grid.container,
+                grid,
                 'cellMouseOut',
                 onCellMouseOut
             );

@@ -521,17 +521,17 @@ export interface AxisLabelOptions {
     autoRotationLimit: number;
 
     /**
-     * The label's pixel distance from the perimeter of the plot area.
-     * On cartesian charts, this is overridden if the `labels.y` setting
-     * is set.
+     * The label's pixel distance from the perimeter of the plot area. On
+     * cartesian charts, this is overridden if the `labels.y` setting is set.
+     * Defaults to a smart guess based on the orientation of the axis and
+     * whether it is straight or circular.
      *
      * @sample {highcharts} highcharts/yaxis/labels-distance/
      *         Polar chart, labels centered under the arc
      *
-     * @default 15
      * @product highcharts gantt
      */
-    distance: number;
+    distance?: number;
 
     /**
      * Enable or disable the axis labels.
@@ -708,7 +708,7 @@ export interface AxisLabelOptions {
      *         Red X axis labels
      */
     style: CSSObject & {
-        /** @default ${palette.neutralColor80} */
+        /** @default 'var(--highcharts-neutral-color-80)' */
         color?: CSSObject['color'];
 
         /** @default 'default' */
@@ -1091,11 +1091,11 @@ export interface AxisOptions {
     lineWidth: number;
 
     /**
-     * Index of another axis that this axis is linked to. When an axis is
-     * linked to a master axis, it will take the same extremes as
-     * the master, but as assigned by min or max or by setExtremes.
-     * It can be used to show additional info, or to ease reading the
-     * chart by duplicating the scales.
+     * Index or [id](#xAxis.id) of another axis that this axis is linked to.
+     * When an axis is linked to a master axis, it will take the same extremes
+     * as the master, but as assigned by min or max or by `setExtremes`. It can
+     * be used to show additional info, or to ease reading the chart by
+     * duplicating the scales.
      *
      * @sample {highcharts} highcharts/xaxis/linkedto/
      *         Different string formats of the same date
@@ -1105,7 +1105,7 @@ export interface AxisOptions {
      * @since   2.0.2
      * @product highcharts highstock gantt
      */
-    linkedTo?: number;
+    linkedTo?: (number|string);
 
     /**
      * If there are multiple axes on the same side of the chart, the pixel
@@ -2035,7 +2035,7 @@ export interface AxisTitleOptions {
     align: ('high'|'low'|'middle');
 
     /**
-     * Deprecated. Set the `text` to `undefined` to disable the title.
+     * Deprecated. Set the `text` to `null` to disable the title.
      *
      * @deprecated 3.0.0
      * @product highcharts
@@ -2100,7 +2100,7 @@ export interface AxisTitleOptions {
      *         Styled mode
      */
     style: CSSObject & {
-        /** @default ${palette.neutralColor60} */
+        /** @default 'var(--highcharts-neutral-color-60)' */
         color?: CSSObject['color'];
 
         /** @default '0.8em' */

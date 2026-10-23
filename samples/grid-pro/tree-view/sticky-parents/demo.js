@@ -90,17 +90,18 @@ const columns = [
 
 Grid.grid('container', {
     data: {
-        columns,
-        treeView: {
-            enabled: true,
-            input: {
-                type: 'path'
-            },
-            expandedRowIds: 'all'
+        columns
+    },
+    treeView: {
+        enabled: true,
+        input: {
+            type: 'path'
         }
     },
     rendering: {
         rows: {
+            expandedLevels: 'all',
+            stickyParents: true,
             virtualization: true
         }
     }

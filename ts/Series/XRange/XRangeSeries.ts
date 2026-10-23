@@ -124,6 +124,7 @@ class XRangeSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: XRangeSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         XRangeSeriesDefaults
@@ -135,6 +136,7 @@ class XRangeSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis
     ): void {
@@ -177,6 +179,7 @@ class XRangeSeries extends ColumnSeries {
      * Borrow the column series metrics, but with swapped axes. This gives
      * free access to features like groupPadding, grouping, pointWidth etc.
      * @private
+     * @internal
      */
     public getColumnMetrics(): ColumnMetricsObject {
         const swapAxes = (): void => {
@@ -270,6 +273,7 @@ class XRangeSeries extends ColumnSeries {
         return pointIndex;
     }
 
+    /** @internal */
     public alignDataLabel(point: XRangePoint): void {
         const oldPlotX = point.plotX;
         point.plotX = point.dlBox?.centerX ?? point.plotX;
@@ -382,6 +386,11 @@ class XRangeSeries extends ColumnSeries {
         };
 
         point.shapeArgs = shapeArgs;
+
+        // Rank data labels by the length of the bar. The point's `y` is a
+        // category index here, so the generic value based rank would order
+        // the labels by their row rather than by size (#23585).
+        point.labelrank = point.options.labelrank ?? width;
 
         // Move tooltip to default position
         if (!inverted) {
@@ -696,12 +705,19 @@ class XRangeSeries extends ColumnSeries {
  * */
 
 interface XRangeSeries {
+    /** @internal */
     pointClass: typeof XRangePoint;
+    /** @internal */
     columnMetrics: ColumnMetricsObject;
+    /** @internal */
     getExtremesFromAll: boolean;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     requireSorting: boolean;
+    /** @internal */
     type: string;
+    /** @internal */
     x2Data: Array<(number|undefined)>;
 }
 

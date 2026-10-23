@@ -151,12 +151,18 @@ async function getConnectorTable(dataPool, connectorId) {
 // - Adapted from https://www.highcharts.com/demo/dashboards/climate
 const kpiGaugeOptions = {
     chart: {
+        marginBottom: 48,
         spacing: [8, 8, 8, 8],
         type: 'solidgauge'
     },
     pane: {
         endAngle: 90,
         startAngle: -90
+    },
+    title: {
+        align: 'center',
+        floating: true,
+        verticalAlign: 'bottom'
     },
     yAxis: {
         labels: {
@@ -170,14 +176,6 @@ const kpiGaugeOptions = {
         tickAmount: 2,
         visible: true
     },
-    series: [{
-        data: null, // Populated later
-        dataLabels: {
-            format: '{y:.1f}',
-            y: -25
-        },
-        enableMouseTracking: false
-    }],
     accessibility: {
         typeDescription: 'The gauge chart with 1 data point.'
     }
@@ -398,13 +396,12 @@ async function setupDashboard() {
                 type: 'KPI',
                 columnId: 'temperature',
                 chartOptions: {
-                    chart: kpiGaugeOptions.chart,
-                    pane: kpiGaugeOptions.pane,
+                    ...kpiGaugeOptions,
                     title: {
+                        ...kpiGaugeOptions.title,
                         text: paramConfig.getColumnHeader(
                             'temperature', false
-                        ) + ' (latest)',
-                        verticalAlign: 'bottom'
+                        ) + ' (latest)'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -415,14 +412,7 @@ async function setupDashboard() {
                                 'temperature'
                             )
                         }
-                    },
-                    series: [{
-                        ...kpiGaugeOptions.series[0],
-                        dataLabels: {
-                            format: '{y:.1f} ' + paramConfig.temperature.unit,
-                            y: kpiGaugeOptions.series[0].dataLabels.y
-                        }
-                    }]
+                    }
                 },
                 events: {
                     click: function () {
@@ -449,13 +439,12 @@ async function setupDashboard() {
                 type: 'KPI',
                 columnId: 'wind',
                 chartOptions: {
-                    chart: kpiGaugeOptions.chart,
-                    pane: kpiGaugeOptions.pane,
+                    ...kpiGaugeOptions,
                     title: {
+                        ...kpiGaugeOptions.title,
                         text: paramConfig.getColumnHeader(
                             'wind', false
-                        ) + ' (latest)',
-                        verticalAlign: 'bottom'
+                        ) + ' (latest)'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -464,14 +453,7 @@ async function setupDashboard() {
                         accessibility: {
                             description: paramConfig.getColumnHeader('wind')
                         }
-                    },
-                    series: [{
-                        ...kpiGaugeOptions.series[0],
-                        dataLabels: {
-                            format: '{y:.1f} ' + paramConfig.wind.unit,
-                            y: kpiGaugeOptions.series[0].dataLabels.y
-                        }
-                    }]
+                    }
                 },
                 events: {
                     click: function () {
@@ -494,13 +476,12 @@ async function setupDashboard() {
                 type: 'KPI',
                 columnId: 'precipitation',
                 chartOptions: {
-                    chart: kpiGaugeOptions.chart,
-                    pane: kpiGaugeOptions.pane,
+                    ...kpiGaugeOptions,
                     title: {
+                        ...kpiGaugeOptions.title,
                         text: paramConfig.getColumnHeader(
                             'precipitation', false
-                        ) + ' (next 24 hours)',
-                        verticalAlign: 'bottom'
+                        ) + ' (next 24 hours)'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -511,14 +492,7 @@ async function setupDashboard() {
                                 'precipitation'
                             )
                         }
-                    },
-                    series: [{
-                        ...kpiGaugeOptions.series[0],
-                        dataLabels: {
-                            format: '{y:.1f} ' + paramConfig.precipitation.unit,
-                            y: kpiGaugeOptions.series[0].dataLabels.y
-                        }
-                    }]
+                    }
                 },
                 events: {
                     click: function () {

@@ -22,7 +22,7 @@ Highcharts.chart('container', {
             'both countries start to fall. By 2000, the numbers have fallen ' +
             'to 10,577 and 12,188 for the US and Russia, respectively. The ' +
             'decreases continue slowly after plateauing in the 2010s, and in ' +
-            '2024 the US has 3,708 weapons compared to Russia’s 4,380.'
+            '2026 the US has 3,700 weapons compared to Russia’s 4,400.'
     },
     title: {
         text: 'US and USSR nuclear stockpiles'
@@ -34,7 +34,7 @@ Highcharts.chart('container', {
     xAxis: {
         allowDecimals: false,
         accessibility: {
-            rangeDescription: 'Range: 1940 to 2024.'
+            rangeDescription: 'Range: 1940 to 2026.'
         }
     },
     yAxis: {
@@ -72,7 +72,7 @@ Highcharts.chart('container', {
             21392, 19008, 13708, 11511, 10979, 10904, 11011, 10903, 10732,
             10685, 10577, 10526, 10457, 10027, 8570, 8360, 7853, 5709, 5273,
             5113, 5066, 4897, 4881, 4804, 4717, 4571, 4018, 3822, 3785, 3805,
-            3750, 3708, 3708, 3708, 3708
+            3750, 3713, 3768, 3748, 3708, 3700, 3700
         ]
     }, {
         name: 'USSR/Russia',
@@ -85,7 +85,7 @@ Highcharts.chart('container', {
             32980, 29154, 26734, 24403, 21339, 18179, 15942, 15442, 14368,
             13188, 12188, 11152, 10114, 9076, 8038, 7000, 6643, 6286, 5929,
             5527, 5215, 4858, 4750, 4650, 4600, 4500, 4490, 4300, 4350, 4330,
-            4310, 4495, 4477, 4489, 4380
+            4310, 4495, 4477, 4489, 4380, 4309, 4400
         ]
     }]
 });

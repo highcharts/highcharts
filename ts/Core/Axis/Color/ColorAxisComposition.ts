@@ -37,7 +37,6 @@ import {
     addEvent,
     extend,
     merge,
-    pick,
     splat
 } from '../../../Shared/Utilities.js';
 
@@ -247,6 +246,8 @@ export namespace ColorAxisComposition {
                         }
                     }
                 });
+            } else {
+                colorAxis.destroyItems();
             }
         });
 
@@ -416,7 +417,7 @@ export namespace ColorAxisComposition {
                 series.isDirtyData = true;
             });
 
-            if (pick(options.redraw, true)) {
+            if (options.redraw ?? true) {
                 chart.redraw(options.animation);
             }
 

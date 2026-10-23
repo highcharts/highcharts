@@ -44,6 +44,12 @@ QUnit.test('Label position after redraw (#4133)', function (assert) {
         [52, 110]
     ]);
 
+    assert.deepEqual(
+        chart.series[0].points[1].dataLabels.map(label => label.text.textStr),
+        ['123', '68'],
+        'Upper and lower data labels render the high and low values (#23904)'
+    );
+
     const oldY = chart.series[0].points[1].dataLabelUpper.y;
 
     chart.setSize(300, 400);

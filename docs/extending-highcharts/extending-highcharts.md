@@ -1,3 +1,10 @@
+---
+description: >-
+  Extend Highcharts with class or instance events and wrapped prototype
+  methods. Learn how to contain plugin code and follow an example that adds
+  trackball markers through tooltip hooks.
+---
+
 # Extending Highcharts
 
 Since version 2.3, Highcharts is built in a modular way with extensions in mind. 
@@ -127,7 +134,7 @@ H.wrap(H.Tooltip.prototype, 'refresh', function (proceed, points) {
         var series = point.series,
             chart = series.chart,
             pointX = point.plotX + series.xAxis.pos,
-            pointY = H.pick(point.plotClose, point.plotY) + series.yAxis.pos;
+            pointY = (point.plotClose ?? point.plotY) + series.yAxis.pos;
 
         // If trackball functionality does not already exist
         if (!series.options.marker) {

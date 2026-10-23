@@ -239,10 +239,12 @@ Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
         rotationFrame = requestAnimationFrame(rotate);
 
         // Clear once the user drags the globe
-        document.getElementById('container')
-            ?.addEventListener('mouseover', () => {
-                cancelAnimationFrame(rotationFrame);
-            });
+        ['mouseover', 'touchstart'].forEach(eventType => {
+            document.getElementById('container')
+                ?.addEventListener(eventType, () => {
+                    cancelAnimationFrame(rotationFrame);
+                });
+        });
     }
 });
 

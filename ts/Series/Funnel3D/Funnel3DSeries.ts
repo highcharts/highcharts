@@ -26,21 +26,18 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import Funnel3DComposition from './Funnel3DComposition.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import { composeFunnel3D } from './Funnel3DComposition.js';
 import Funnel3DSeriesDefaults from './Funnel3DSeriesDefaults.js';
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Math3D from '../../Core/Math3D.js';
-const { perspective } = Math3D;
+import { perspective } from '../../Core/Math3D.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    series: Series
 } = SeriesRegistry;
-import { extend, merge, pick, relativeLength } from '../../Shared/Utilities.js';
+import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -51,7 +48,6 @@ import { extend, merge, pick, relativeLength } from '../../Shared/Utilities.js';
 /**
  * The funnel3d series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.funnel3d
  * @augments seriesTypes.column
@@ -67,7 +63,10 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    public static compose = Funnel3DComposition.compose;
+    /** @internal */
+    public static compose = composeFunnel3D;
+
+    /** @internal */
     public static defaultOptions: Funnel3DSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         Funnel3DSeriesDefaults
@@ -79,8 +78,10 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public center!: Array<number>;
 
+    /** @internal */
     public centerX?: number;
 
     public data!: Array<Funnel3DPoint>;
@@ -95,9 +96,7 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public alignDataLabel(
         point: Funnel3DPoint,
         _dataLabel: SVGLabel,
@@ -106,23 +105,20 @@ class Funnel3DSeries extends ColumnSeries {
         const series = this,
             dlBoxRaw = point.dlBoxRaw,
             inverted = series.chart.inverted,
-            below = (point.plotY as any) > pick(
-                series.translatedThreshold,
-                series.yAxis.len
-            ),
-            inside = pick(options.inside, !!series.options.stacking),
+            below =
+                (point.plotY as any) >
+                (series.translatedThreshold ?? series.yAxis.len),
+            inside = (options.inside ?? !!series.options.stacking),
             dlBox: BBoxObject = {
                 x: dlBoxRaw.x,
                 y: dlBoxRaw.y,
                 height: 0
             } as any;
 
-        options.align = pick(
-            options.align,
+        options.align = options.align ?? (
             !inverted || inside ? 'center' : below ? 'right' : 'left'
         );
-        options.verticalAlign = pick(
-            options.verticalAlign,
+        options.verticalAlign = options.verticalAlign ?? (
             inverted || inside ? 'middle' : below ? 'top' : 'bottom'
         );
 
@@ -153,18 +149,15 @@ class Funnel3DSeries extends ColumnSeries {
         }
 
         point.dlBox = dlBox;
-        ColumnSeries.prototype.alignDataLabel.apply(
-            series,
-            arguments
-        );
+        super.alignDataLabel.apply(series, arguments);
     }
 
     /**
      * Override default axis options with series required options for axes.
-     * @private
+     * @internal
      */
     public bindAxes(): void {
-        Series.prototype.bindAxes.apply(this, arguments);
+        super.bindAxes.apply(this, arguments);
 
         extend(this.xAxis.options, {
             gridLineWidth: 0,
@@ -181,9 +174,7 @@ class Funnel3DSeries extends ColumnSeries {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public translate(): void {
         Series.prototype.translate.apply(this, arguments);
 
@@ -271,10 +262,9 @@ class Funnel3DSeries extends ColumnSeries {
             h = y3 - y1;
             shapeArgs = {
                 // For fill setter
-                gradientForSides: pick(
-                    point.options.gradientForSides,
-                    options.gradientForSides
-                ),
+                gradientForSides:
+                    point.options.gradientForSides ??
+                    options.gradientForSides,
 
                 x: centerX,
                 y: y1,
@@ -368,8 +358,12 @@ class Funnel3DSeries extends ColumnSeries {
  * */
 
 interface Funnel3DSeries {
+    /** @internal */
     getWidthAt(y: number): number; // Added during translate
+
     pointClass: typeof Funnel3DPoint;
+
+    /** @internal */
     translate3dShapes(): void;
 }
 extend(Funnel3DSeries.prototype, {

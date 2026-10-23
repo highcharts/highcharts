@@ -36,7 +36,9 @@ import H from '../Core/Globals.js';
 const { doc } = H;
 import HU from './Utils/HTMLUtilities.js';
 const {
-    removeElement
+    escapeStringForHTML,
+    removeElement,
+    stripHTMLTagsFromString
 } = HU;
 
 import A11yI18n from './A11yI18n.js';
@@ -66,6 +68,7 @@ import { addEvent, extend, fireEvent, merge } from '../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../Core/Chart/ChartBase' {
     interface ChartBase {
         a11yDirty?: boolean;
@@ -85,7 +88,6 @@ declare module '../Core/Chart/ChartBase' {
 /**
  * The Accessibility class
  *
- * @private
  * @requires modules/accessibility
  *
  * @class
@@ -93,6 +95,8 @@ declare module '../Core/Chart/ChartBase' {
  *
  * @param {Highcharts.Chart} chart
  * Chart object
+ *
+ * @internal
  */
 class Accessibility {
 
@@ -132,9 +136,10 @@ class Accessibility {
 
     /**
      * Initialize the accessibility class
-     * @private
      * @param {Highcharts.Chart} chart
      *        Chart object
+     *
+     * @internal
      */
     public init(
         chart: Chart
@@ -161,9 +166,7 @@ class Accessibility {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public initComponents(): void {
         const chart = this.chart;
         const proxyProvider = this.proxyProvider;
@@ -196,7 +199,8 @@ class Accessibility {
 
     /**
      * Get order to update components in.
-     * @private
+     *
+     * @internal
      */
     public getComponentOrder(): string[] {
         if (!this.components) {
@@ -311,7 +315,8 @@ class Accessibility {
 
     /**
      * Return a list of the types of series we have in the chart.
-     * @private
+     *
+     * @internal
      */
     public getChartTypes(): Array<string> {
         const types: Record<string, number> = {};
@@ -329,6 +334,7 @@ class Accessibility {
  *
  * */
 
+/** @internal */
 namespace Accessibility {
 
     /* *
@@ -337,6 +343,7 @@ namespace Accessibility {
      *
      * */
 
+    /** @internal */
     export interface ComponentsObject {
         [key: string]: AccessibilityComponent;
         container: ContainerComponent;
@@ -349,21 +356,25 @@ namespace Accessibility {
         navigator: NavigatorComponent;
     }
 
+    /** @internal */
     export declare class ChartComposition extends Chart {
         options: Required<Options>;
         series: Array<SeriesComposition>;
     }
 
+    /** @internal */
     export declare class PointComposition extends Point {
         accessibility?: PointStateObject;
         series: SeriesComposition;
         value?: (number|null);
     }
 
+    /** @internal */
     export interface PointStateObject {
         valueDescription?: string;
     }
 
+    /** @internal */
     export declare class SeriesComposition extends Series {
         chart: ChartComposition;
         newDataAnnouncer?: NewDataAnnouncer;
@@ -377,6 +388,7 @@ namespace Accessibility {
      *
      * */
 
+    /** @internal */
     export const i18nFormat = A11yI18n.i18nFormat;
 
     /* *
@@ -387,7 +399,8 @@ namespace Accessibility {
 
     /**
      * Destroy with chart.
-     * @private
+     *
+     * @internal
      */
     function chartOnDestroy(
         this: ChartComposition
@@ -399,7 +412,8 @@ namespace Accessibility {
 
     /**
      * Handle updates to the module and send render updates to components.
-     * @private
+     *
+     * @internal
      */
     function chartOnRender(
         this: ChartComposition
@@ -422,8 +436,57 @@ namespace Accessibility {
     }
 
     /**
-     * Update with chart/series/point updates.
+     * Inject the accessibility description into the exported SVG as a
+     * Dublin Core RDF metadata block. Runs on the source chart so the
+     * `linkedDescription` selector resolves against the live DOM, then
+     * mutates the export copy's `<svg>` element before its `innerHTML`
+     * is serialized.
      * @private
+     */
+    function chartOnGetSVG(
+        this: ChartComposition,
+        e: { chartCopy: Chart }
+    ): void {
+        const a11y = this.accessibility;
+        if (!a11y || a11y.zombie) {
+            return;
+        }
+
+        const infoRegions = a11y.components.infoRegions;
+        const text = infoRegions && (
+            infoRegions.getLongdescText() ||
+            infoRegions.getTypeDescriptionText()
+        );
+        if (!text) {
+            return;
+        }
+
+        const safe = escapeStringForHTML(stripHTMLTagsFromString(text, true));
+        if (!safe.trim()) {
+            return;
+        }
+        const box = e.chartCopy.renderer.box;
+
+        box.querySelector(':scope > metadata')?.remove();
+        box.insertAdjacentHTML(
+            'afterbegin',
+            '<metadata>' +
+                '<rdf:RDF ' +
+                    'xmlns:rdf="http://www.w3.org/' +
+                        '1999/02/22-rdf-syntax-ns#" ' +
+                    'xmlns:dc="http://purl.org/dc/elements/1.1/">' +
+                    '<rdf:Description>' +
+                        '<dc:description>' + safe + '</dc:description>' +
+                    '</rdf:Description>' +
+                '</rdf:RDF>' +
+            '</metadata>'
+        );
+    }
+
+    /**
+     * Update with chart/series/point updates.
+     *
+     * @internal
      */
     function chartOnUpdate(
         this: ChartComposition,
@@ -450,9 +513,7 @@ namespace Accessibility {
         this.a11yDirty = true;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function chartUpdateA11yEnabled(
         this: ChartComposition
     ): void {
@@ -498,9 +559,7 @@ namespace Accessibility {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart,
         LegendClass: typeof Legend,
@@ -543,6 +602,11 @@ namespace Accessibility {
                 ChartClass as typeof ChartComposition,
                 'update',
                 chartOnUpdate
+            );
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'getSVG',
+                chartOnGetSVG
             );
 
             // Mark dirty for update
@@ -593,7 +657,8 @@ namespace Accessibility {
 
     /**
      * Mark dirty for update.
-     * @private
+     *
+     * @internal
      */
     function pointOnUpdate(
         this: PointComposition
@@ -630,4 +695,5 @@ merge(
  *
  * */
 
+/** @internal */
 export default Accessibility;

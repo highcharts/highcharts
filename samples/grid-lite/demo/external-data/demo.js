@@ -21,7 +21,7 @@ const initGrid = data => {
         'State',
         {
             columnId: 'UsedGB',
-            format: 'Disk used / size'
+            format: 'Disk Usage / Size'
         }, {
             columnId: 'HealthIndicator',
             format: 'Health'

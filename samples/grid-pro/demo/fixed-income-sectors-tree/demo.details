@@ -1,0 +1,15 @@
+---
+  name: Fixed income sectors tree
+  authors:
+    - Sebastian Bochan
+  js_wrap: b
+  is_morningstar: true
+  tags:
+    - Highcharts Grid demo
+    - Morningstar
+  categories:
+    - General:
+          priority: 90
+  use_png_thumbnail: true
+  is_pro: true
+...

@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Element variables"
+description: >-
+  Customize inputs, buttons, icons, and focus rings with global and
+  section-specific CSS variables; understand fallback behavior and inherit
+  typography, color, and border settings from Grid sections.
 ---
 
 # Element variables
@@ -15,6 +19,8 @@ Most element variables follow this pattern:
 1. Start from global element variables.
 2. Override with section-specific variables where needed.
 3. Fall back to global values when section variables are not defined.
+
+In the tables below, **Default Value** is the value provided by `.hcg-theme-default` (including light/dark pairs where shown). Without the default theme, unset tokens fall back to neutral values so custom themes and utility CSS are not fighting baked-in visuals. See [Applying themes with the API](https://www.highcharts.com/docs/grid/theming/index#applying-themes-with-the-api).
 
 Example:
 
@@ -188,4 +194,5 @@ Header toolbar controls use the dedicated `--hcg-icon-*` variables described bel
 1. Define global input, icon, and button variables first.
 2. Override by section using `--hcg-header-*`, `--hcg-cell-*`, and `--hcg-pagination-*`.
 3. Use shared focus ring variables for accessible focus styling.
-4. Combine with [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables) for full table and element theming.
+4. For Grid Pro editing and validation, use `--hcg-cell-editable-background`, `--hcg-notification-box-shadow`, and the status color tokens above.
+5. Combine with [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables) for full table and element theming.

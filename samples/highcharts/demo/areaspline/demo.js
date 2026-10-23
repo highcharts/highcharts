@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         type: 'areaspline'
     },
     title: {
-        text: 'Moose and deer hunting in Norway, 2000 - 2024'
+        text: 'Moose and deer hunting in Norway, 2000 - 2026'
     },
     subtitle: {
         text: 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>'
@@ -74,7 +74,9 @@ Highcharts.chart('container', {
                 31766,
                 29278,
                 27487,
-                26007
+                26003,
+                26384,
+                26609
             ]
     }, {
         name: 'Deer',
@@ -101,9 +103,11 @@ Highcharts.chart('container', {
                 43820,
                 46445,
                 50048,
-                52804,
-                49317,
-                52490
+                52840,
+                49452,
+                52503,
+                54216,
+                50148
             ]
     }]
 });

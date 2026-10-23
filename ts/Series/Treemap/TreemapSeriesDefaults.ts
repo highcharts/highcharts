@@ -412,6 +412,18 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      */
 
     /**
+     * Determines whether the chart should receive one color per point based
+     * on this level.
+     *
+     * @sample {highcharts} highcharts/demo/treemap-with-levels/
+     *         One color per point on the first level
+     *
+     * @type      {boolean}
+     * @product   highcharts
+     * @apioption plotOptions.treemap.levels.colorByPoint
+     */
+
+    /**
      * A configuration object to define how the color of a child varies from
      * the parent's color. The variation is distributed among the children
      * of node. For example when setting brightness, the brightness change
@@ -465,6 +477,16 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      */
 
     /**
+     * Can set the group padding on a specific level. Overrides the series
+     * option of the same name.
+     *
+     * @type      {number}
+     * @since     12.2.0
+     * @product   highcharts
+     * @apioption plotOptions.treemap.levels.groupPadding
+     */
+
+    /**
      * Can set the layoutAlgorithm option on a specific level.
      *
      * @type       {string}
@@ -497,18 +519,31 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @apioption plotOptions.treemap.levels.level
      */
 
+    /**
+     * Whether the `level` number is absolute, or relative to the currently
+     * visible root. Overrides the series option of the same name for this
+     * level.
+     *
+     * @type      {boolean}
+     * @product   highcharts
+     * @apioption plotOptions.treemap.levels.levelIsConstant
+     */
+
 
     // Presentational options
 
     /**
      * The color of the border surrounding each tree map item.
      *
-     * @type {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString}
+     * @product highcharts
      */
     borderColor: 'var(--highcharts-neutral-color-10)',
 
     /**
      * The width of the border surrounding each tree map item.
+     *
+     * @product highcharts
      */
     borderWidth: 1,
 
@@ -709,7 +744,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.treemap
- * @excluding dataParser, dataURL, stack, dataSorting
+ * @excluding stack, dataSorting
  * @product   highcharts
  * @requires  modules/treemap
  * @apioption series.treemap

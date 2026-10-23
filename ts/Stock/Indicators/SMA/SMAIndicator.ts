@@ -37,8 +37,7 @@ import {
     extend,
     fireEvent,
     isArray,
-    merge,
-    pick
+    merge
 } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -95,7 +94,6 @@ const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
 /**
  * The SMA series type.
  *
- * @internal
  */
 class SMAIndicator extends LineSeries {
 
@@ -119,8 +117,9 @@ class SMAIndicator extends LineSeries {
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking, useOhlcData
      * @product      highstock
-     * @requires     stock/indicators/indicators
+     * @requires     indicators/indicators
      * @optionparent plotOptions.sma
+     * @internal
      */
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
 
@@ -191,10 +190,13 @@ class SMAIndicator extends LineSeries {
 
     public data!: Array<SMAPoint>;
 
+    /** @internal */
     public dataEventsToUnbind!: Array<Function>;
 
+    /** @internal */
     public linkedParent!: LineSeriesType&IndicatorLinkedSeriesBase;
 
+    /** @internal */
     public nameBase?: string;
 
     public options!: SMAOptions;
@@ -232,7 +234,7 @@ class SMAIndicator extends LineSeries {
                 ): void {
                     params.push(
                         (this.options.params as any)[component] +
-                        pick(this.nameSuffixes[index], '')
+                        (this.nameSuffixes[index] ?? '')
                     );
                 },
                 this
@@ -572,7 +574,6 @@ class SMAIndicator extends LineSeries {
  *
  * */
 
-/** @internal */
 interface SMAIndicator extends IndicatorBase {
     calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
@@ -598,7 +599,6 @@ extend(SMAIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sma: typeof SMAIndicator;
@@ -612,7 +612,6 @@ SeriesRegistry.registerSeriesType('sma', SMAIndicator);
  *
  * */
 
-/** @internal */
 export default SMAIndicator;
 
 /* *
@@ -628,8 +627,8 @@ export default SMAIndicator;
  * @extends   series,plotOptions.sma
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL, useOhlcData
- * @requires  stock/indicators/indicators
+ * @excluding useOhlcData
+ * @requires  indicators/indicators
  * @apioption series.sma
  */
 

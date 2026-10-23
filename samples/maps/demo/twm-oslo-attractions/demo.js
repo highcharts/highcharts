@@ -19,7 +19,7 @@ Highcharts.mapChart('container', {
         buttonOptions: {
             align: 'left',
             theme: {
-                stroke: 'var(highcharts-neutral-color-10, #e6e6e6)'
+                stroke: 'var(--highcharts-neutral-color-10, #e6e6e6)'
             }
         }
     },
@@ -29,7 +29,7 @@ Highcharts.mapChart('container', {
         buttonOptions: {
             alignTo: 'spacingBox',
             theme: {
-                stroke: 'var(highcharts-neutral-color-10, #e6e6e6)'
+                stroke: 'var(--highcharts-neutral-color-10, #e6e6e6)'
             }
         }
     },
@@ -49,7 +49,6 @@ Highcharts.mapChart('container', {
     },
 
     legend: {
-        enabled: true,
         align: 'left',
         symbolWidth: 24,
         symbolHeight: 24,
@@ -61,7 +60,7 @@ Highcharts.mapChart('container', {
             var(--highcharts-background-color, white),
             transparent 15%
         )`,
-        float: true,
+        floating: true,
         borderRadius: 12,
         itemMarginBottom: 10,
         itemMarginTop: 10,

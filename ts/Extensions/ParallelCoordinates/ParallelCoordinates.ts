@@ -266,10 +266,14 @@ namespace ParallelCoordinates {
      */
     function onChartUpdate(
         this: ChartComposition,
-        e: { options: Partial<Options> }
+        e: { hasChanged: boolean, options: Partial<Options> }
     ): void {
         const chart = this,
             options = e.options;
+
+        if (e.hasChanged === false) {
+            return;
+        }
 
         if (options.chart) {
             if (defined(options.chart.parallelCoordinates)) {

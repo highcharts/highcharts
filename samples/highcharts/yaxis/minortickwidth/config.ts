@@ -11,7 +11,9 @@ export default {
     }],
     chartOptionsExtra: {
         yAxis: {
-            minorTicks: true
+            minorTicks: true,
+            minorTickLength: 10,
+            minorGridLineWidth: 0
         }
     }
 } satisfies SampleGeneratorConfig;

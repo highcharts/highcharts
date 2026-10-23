@@ -1295,6 +1295,44 @@ QUnit.test('Toggle data table (#13690)', function (assert) {
         'The table should re-render after a data update, #14320.'
     );
     chart.exporting.hideData();
+
+    // No series left to export, #25090
+    chart.series[0].remove();
+
+    assert.strictEqual(
+        chart.exporting.getCSV(),
+        '',
+        'A chart without series should produce no CSV content.'
+    );
+
+    let warning;
+    const removeEvent = Highcharts.addEvent(
+        Highcharts,
+        'displayError',
+        e => {
+            warning = e.code;
+        }
+    );
+
+    chart.exporting.downloadCSV();
+
+    assert.strictEqual(
+        warning,
+        'Warning: No data to export',
+        'The CSV download should be skipped with a warning, instead of ' +
+            'writing a file containing only a byte order mark, #25090.'
+    );
+
+    warning = void 0;
+    chart.exporting.downloadXLS();
+
+    assert.strictEqual(
+        warning,
+        'Warning: No data to export',
+        'The XLS download should be skipped with a warning, #25090.'
+    );
+
+    removeEvent();
 });
 
 QUnit.test('Point without y data, but with value (#13785)', function (assert) {
@@ -1774,17 +1812,26 @@ QUnit.test('Dot notation in exporting data (#20470)', function (assert) {
     );
 });
 
-QUnit.test('Thousand separator from lang options', function (assert) {
+QUnit.test('Lang thousandsSep and decimalPoint in table', function (assert) {
     const chart = Highcharts.chart('container', {
-        lang: {
-            thousandsSep: '_THOUSAND_SEPARATOR_'
-        },
-        series: [{
-            data: [
-                [10000]
-            ]
-        }]
-    });
+            lang: {
+                thousandsSep: '_THOUSAND_SEPARATOR_',
+                decimalPoint: '_DECIMAL_POINT_'
+            },
+            series: [{
+                data: [
+                    [10000.5]
+                ]
+            }]
+        }),
+        table = chart.getTable();
 
-    assert.ok(chart.getTable().includes('_THOUSAND_SEPARATOR_'));
+    assert.ok(
+        table.includes('_THOUSAND_SEPARATOR_'),
+        'lang.thousandsSep should be applied in the data table.'
+    );
+    assert.ok(
+        table.includes('_DECIMAL_POINT_'),
+        'lang.decimalPoint should be applied in the data table (#24845).'
+    );
 });

@@ -36,7 +36,6 @@ import {
     crisp,
     extend,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 composeTextPath(SVGElement);
@@ -56,7 +55,6 @@ const {
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.arcdiagram
  *
@@ -70,6 +68,7 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions =
         merge(SankeySeries.defaultOptions, ArcDiagramSeriesDefaults);
 
@@ -83,8 +82,10 @@ class ArcDiagramSeries extends SankeySeries {
 
     public options!: ArcDiagramSeriesOptions;
 
+    /** @internal */
     public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>>;
 
+    /** @internal */
     public nodes!: Array<ArcDiagramPoint>;
 
     public points!: Array<ArcDiagramPoint>;
@@ -242,16 +243,16 @@ class ArcDiagramSeries extends SankeySeries {
             translationFactor = series.translationFactor,
             pointOptions = point.options,
             seriesOptions = series.options,
-            linkWeight = pick(
-                pointOptions.linkWeight,
-                seriesOptions.linkWeight,
+            linkWeight = (
+                pointOptions.linkWeight ??
+                seriesOptions.linkWeight ??
                 Math.max(
                     (point.weight || 0) *
-                    translationFactor *
-                    fromNode.scale,
-                    (series.options.minLinkWidth || 0
-                    )
-                )),
+                        translationFactor *
+                        fromNode.scale,
+                    series.options.minLinkWidth || 0
+                )
+            ),
             centeredLinks = point.series.options.centeredLinks,
             nodeTop = fromNode.nodeY;
 
@@ -301,13 +302,10 @@ class ArcDiagramSeries extends SankeySeries {
 
         const linkRadius = (
             (toX + linkWeight - fromX) / Math.abs(toX + linkWeight - fromX)
-        ) * pick(
-            seriesOptions.linkRadius,
-            Math.min(
-                Math.abs(toX + linkWeight - fromX) / 2,
-                fromNode.nodeY - Math.abs(linkWeight)
-            )
-        );
+        ) * (seriesOptions.linkRadius ?? Math.min(
+            Math.abs(toX + linkWeight - fromX) / 2,
+            fromNode.nodeY - Math.abs(linkWeight)
+        ));
 
         point.shapeArgs = {
             d: [
@@ -392,13 +390,10 @@ class ArcDiagramSeries extends SankeySeries {
                 ),
             lineWidth = options.marker?.lineWidth || 0,
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeLeft = crisp(pick(
-                nodeOffset && nodeOffset.absoluteLeft,
-                (
-                    (column.sankeyColumn.left(translationFactor) || 0) +
+            fromNodeLeft = crisp(((nodeOffset && nodeOffset.absoluteLeft) ?? (
+                (column.sankeyColumn.left(translationFactor) || 0) +
                     (nodeOffset && nodeOffset.relativeLeft || 0)
-                )
-            ), lineWidth),
+            )), lineWidth),
             markerOptions = merge(options.marker, node.options.marker),
             symbol = markerOptions.symbol,
             markerRadius = markerOptions.radius,
@@ -489,6 +484,7 @@ class ArcDiagramSeries extends SankeySeries {
     }
     // Networkgraph has two separate collections of nodes and lines, render
     // dataLabels for both sets:
+    /** @internal */
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
             const textPath = this.options.dataLabels.textPath;
@@ -508,6 +504,7 @@ class ArcDiagramSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public pointAttribs(
         point?: ArcDiagramPoint,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -521,6 +518,7 @@ class ArcDiagramSeries extends SankeySeries {
         return super.pointAttribs.apply(this, arguments);
     }
 
+    /** @internal */
     public markerAttribs(
         point: ArcDiagramPoint
     ): SVGAttributes {
@@ -537,13 +535,13 @@ class ArcDiagramSeries extends SankeySeries {
  *
  * */
 
-/** @internal */
 interface ArcDiagramSeries {
     orderNodes: false;
     pointClass: typeof ArcDiagramPoint;
 }
 extend(ArcDiagramSeries.prototype, {
-    orderNodes: false
+    orderNodes: false,
+    useCircularLayout: false
 });
 
 /* *
@@ -552,7 +550,6 @@ extend(ArcDiagramSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arcdiagram: typeof ArcDiagramSeries;
@@ -567,5 +564,4 @@ SeriesRegistry.registerSeriesType('arcdiagram', ArcDiagramSeries);
  *
  * */
 
-/** @internal */
 export default ArcDiagramSeries;
