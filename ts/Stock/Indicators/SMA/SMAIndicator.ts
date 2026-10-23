@@ -483,10 +483,33 @@ class SMAIndicator extends LineSeries {
                 newX = processedData.xData,
                 overlapLast = Math.min(oldDataLength, newX.length) - 1;
 
-            const isIncrementalUpdate =
+            let isIncrementalUpdate =
                 Math.abs(newX.length - oldDataLength) === 1 &&
                 overlapLast >= 0 &&
                 oldX[overlapLast] === newX[overlapLast];
+
+            // Length +1/-1 with matching edge x is not enough.
+            // Overlapping y values may still have changed
+            // (setData), so verify the shared range.
+            if (isIncrementalUpdate) {
+                for (const key of pointArrayMap) {
+                    const oldColumn = indicator.getColumn(key),
+                        newColumn = valueColumns[key];
+
+                    if (newColumn && oldColumn) {
+                        for (let i = 0; i <= overlapLast; i++) {
+                            if (newColumn[i] !== oldColumn[i]) {
+                                isIncrementalUpdate = false;
+                                break;
+                            }
+                        }
+
+                        if (!isIncrementalUpdate) {
+                            break;
+                        }
+                    }
+                }
+            }
 
             // When data is cropped update only available points (#9493)
             if (indicator.cropped) {

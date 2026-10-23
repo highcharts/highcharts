@@ -494,5 +494,28 @@ QUnit.test(
         assertSmaSynced(
             'after setData with unrelated x values (+1 length, not append)'
         );
+
+        // Length +1/-1 with matching edge x looks like addPoint, but an
+        // overlapping y changed - must not take the incremental path.
+        main.setData([10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
+        const smaBefore = chart.get('sma').points.map(point => point.y);
+        const mutateIndex = 5;
+        const mutatedData = main.points.map(point => [point.x, point.y]);
+        mutatedData[mutateIndex][1] = 100;
+        mutatedData.push([
+            mutatedData[mutatedData.length - 1][0] + 1,
+            21
+        ]);
+        main.setData(mutatedData);
+        assertSmaSynced(
+            'after setData (+1 length) with mutated overlapping y'
+        );
+
+        const smaIndex = mutateIndex - period + 1;
+        assert.notStrictEqual(
+            chart.get('sma').points[smaIndex].y,
+            smaBefore[smaIndex],
+            'SMA window covering the mutated y should be recalculated'
+        );
     }
 );
