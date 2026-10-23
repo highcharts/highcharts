@@ -6,7 +6,7 @@ import { StockChart } from '@highcharts/react/Stock';
 import { SMASeries } from '@highcharts/react/indicators/SMA';
 import { EMASeries } from '@highcharts/react/indicators/EMA';
 import { PSARSeries } from '@highcharts/react/indicators/PSAR';
-import { Accessibility } from '@highcharts/react/options/Accessibility';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
 const priceSeriesId = 'price-series';
 const priceData = [
     [

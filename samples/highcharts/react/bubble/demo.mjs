@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Chart, Title } from '@highcharts/react';
-import { Accessibility } from '@highcharts/react/options/Accessibility';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
 import { BubbleSeries } from '@highcharts/react/series/Bubble';
 export default function ChartComponent() {
     const series1 = [
