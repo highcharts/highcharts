@@ -1,0 +1,37 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+/* Page-wide rules that should not affect the grid */
+table {
+    margin-bottom: 40px;
+}
+
+th,
+td {
+    border: 2px solid red;
+    vertical-align: bottom;
+    text-transform: uppercase;
+}
+
+button,
+input {
+    margin: 6px;
+    min-width: 120px;
+    box-shadow: 0 0 10px red;
+}
+
+div {
+    margin: 7px;
+    padding: 7px;
+}
+
+/* Rules targeting grid cells on purpose should still apply */
+.my-cell {
+    border-top: 3px solid green;
+}
+
+/* Layered, like Tailwind utilities */
+@layer utilities {
+    .my-cell {
+        text-align: right;
+    }
+}

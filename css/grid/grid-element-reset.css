@@ -1,0 +1,34 @@
+/*
+ * Revert properties that page-wide element rules, such as `td { border: … }`
+ * or `button { margin: … }`, would otherwise set on the Grid's own elements.
+ * One class of specificity, and imported before all other Grid CSS: beats
+ * bare element selectors, but not the Grid's own rules, the theme or class
+ * names. Only when themed, as these unlayered rules would also override
+ * layered utilities (e.g. Tailwind) used with `theme: ''`.
+ */
+.hcg-themed,
+.hcg-themed :where(
+    table, th, td, div, span, p, label, ul, li,
+    button, input, select, textarea, svg
+) {
+    margin: revert;
+    border: revert;
+    border-radius: revert;
+    box-shadow: revert;
+    min-width: revert;
+    color: revert;
+    font-size: revert;
+    font-weight: revert;
+    line-height: revert;
+    letter-spacing: revert;
+    text-transform: revert;
+    text-align: revert;
+    vertical-align: revert;
+    white-space: revert;
+}
+
+/* Not cells: revert drops their default padding (a presentational hint) */
+.hcg-themed,
+.hcg-themed :where(div, span, p, label, ul, li) {
+    padding: revert;
+}
