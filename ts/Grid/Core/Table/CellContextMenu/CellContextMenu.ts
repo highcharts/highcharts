@@ -25,6 +25,7 @@ import type TableCell from '../Body/TableCell';
 
 import ContextMenu from '../../UI/ContextMenu.js';
 import CellContextMenuBuiltInActions from './CellContextMenuBuiltInActions.js';
+import Globals from '../../Globals.js';
 import {
     openFocusedSubMenu,
     renderResolvedCellContextMenuItems
@@ -51,6 +52,13 @@ class CellContextMenu extends ContextMenu {
         }
 
         this.cell = cell;
+
+        // The menu takes the focus, so the cell needs its own marker to keep
+        // showing which one the actions apply to.
+        cell.htmlElement.classList.add(
+            Globals.getClassName('contextMenuCell')
+        );
+
         this.removeCellOutdateListener?.();
         this.removeCellOutdateListener = addEvent(cell, 'outdate', (): void => {
             this.hide();
@@ -74,6 +82,9 @@ class CellContextMenu extends ContextMenu {
 
     public override hide(): void {
         super.hide();
+        this.cell?.htmlElement.classList.remove(
+            Globals.getClassName('contextMenuCell')
+        );
         this.cursorAnchorElement?.remove();
         this.removeCellOutdateListener?.();
         delete this.cursorAnchorElement;

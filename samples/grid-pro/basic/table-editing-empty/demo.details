@@ -1,0 +1,6 @@
+---
+ name: Table editing from an empty table
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...

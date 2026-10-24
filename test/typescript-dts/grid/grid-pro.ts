@@ -79,7 +79,9 @@ function test_grid() {
                 deleteRow: 'Delete row',
                 addColumnBefore: 'Add column before',
                 addColumnAfter: 'Add column after',
-                deleteColumn: 'Delete column'
+                deleteColumn: 'Delete column',
+                addFirstRow: 'Add row',
+                addFirstColumn: 'Add column'
             }
         },
         header: [{
