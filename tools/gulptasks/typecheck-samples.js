@@ -210,10 +210,33 @@ function typecheckSamples(argv = {}) {
 
     let sampleCount = 0;
     let errorCount = 0;
+    const configCache = new Map();
     const formatHost = {
         getCanonicalFileName: file => file,
         getCurrentDirectory: ts.sys.getCurrentDirectory,
         getNewLine: () => ts.sys.newLine
+    };
+
+    const getConfigData = configPath => {
+        if (configCache.has(configPath)) {
+            return configCache.get(configPath);
+        }
+
+        const config = ts.readConfigFile(configPath, ts.sys.readFile);
+        const parsed = ts.parseJsonConfigFileContent(
+            config.config || {},
+            ts.sys,
+            path.dirname(configPath),
+            {
+                noEmit: true,
+                composite: false,
+                incremental: false
+            }
+        );
+
+        const data = { config, parsed };
+        configCache.set(configPath, data);
+        return data;
     };
 
     for (const product of products) {
@@ -249,17 +272,7 @@ function typecheckSamples(argv = {}) {
                 const configPath = fs.existsSync(demoConfigPath) ?
                     demoConfigPath :
                     productConfigPath;
-                const config = ts.readConfigFile(configPath, ts.sys.readFile);
-                const demoParsed = ts.parseJsonConfigFileContent(
-                    config.config || {},
-                    ts.sys,
-                    path.dirname(configPath),
-                    {
-                        noEmit: true,
-                        composite: false,
-                        incremental: false
-                    }
-                );
+                const { config, parsed: demoParsed } = getConfigData(configPath);
                 const declarations = demoParsed.fileNames.filter(
                     file => file.endsWith('.d.ts')
                 );
