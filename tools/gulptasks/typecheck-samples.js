@@ -406,78 +406,86 @@ function typecheckSamples(argv = {}) {
             sampleCount += demos.length;
 
             if (batchMode) {
-                const demoConfigPath = path.resolve(
-                    path.dirname(demos[0]),
-                    'tsconfig.json'
-                );
-                const configPath = fs.existsSync(demoConfigPath) ?
-                    demoConfigPath :
-                    productConfigPath;
-                const { config, parsed: demoParsed } = getConfigData(configPath);
-                const declarations = demoParsed.fileNames.filter(
-                    file => file.endsWith('.d.ts')
-                );
+                const batchGroups = new Map();
 
-                if (tsgo) {
-                    const result = runTsgoTypecheck(
-                        configPath,
-                        config,
-                        demoParsed,
-                        demos[0],
-                        declarations,
-                        demos
+                for (const demo of demos) {
+                    const demoConfigPath = path.resolve(
+                        path.dirname(demo),
+                        'tsconfig.json'
                     );
-                    const output = result && result.output ? result.output : '';
-                    const hasTsgoErrors = result && result.status !== 0 || /error TS\d+:/.test(output);
-                    const tsgoFailureCount = countTsErrors(output);
-                    tsgoErrorCount += tsgoFailureCount;
-                    diagnostics = diagnostics.concat(
-                        ...(config.error ? [config.error] : []),
-                        ...demoParsed.errors,
-                        ...normalizeTsgoFailure(
+                    const configPath = fs.existsSync(demoConfigPath) ?
+                        demoConfigPath :
+                        productConfigPath;
+                    const demosForConfig = batchGroups.get(configPath) || [];
+                    demosForConfig.push(demo);
+                    batchGroups.set(configPath, demosForConfig);
+                }
+
+                for (const [configPath, batchDemos] of batchGroups) {
+                    const { config, parsed: demoParsed } = getConfigData(configPath);
+                    const declarations = demoParsed.fileNames.filter(
+                        file => file.endsWith('.d.ts')
+                    );
+
+                    if (tsgo) {
+                        const result = runTsgoTypecheck(
+                            configPath,
                             config,
                             demoParsed,
-                            output,
-                            result && result.status !== void 0 ? result.status : 1
-                        )
-                    );
-                    if (hasTsgoErrors) {
-                        const discoveredFiles = collectFailedFiles(output, demos);
-                        discoveredFiles.forEach(file => failedFiles.add(file));
-                    }
-                    if (!batchMode) {
-                        process.stdout.write(result && result.status === 0 ? '.' : 'F');
-                    }
-                } else {
-                    const host = ts.createCompilerHost(demoParsed.options);
-                    const getSourceFile = host.getSourceFile.bind(host);
-                    const sourceFiles = new Map();
-
-                    host.getSourceFile = (file, ...args) => {
-                        if (!sourceFiles.has(file)) {
-                            sourceFiles.set(file, getSourceFile(file, ...args));
+                            batchDemos[0],
+                            declarations,
+                            batchDemos
+                        );
+                        const output = result && result.output ? result.output : '';
+                        const hasTsgoErrors = result && result.status !== 0 || /error TS\d+:/.test(output);
+                        const tsgoFailureCount = countTsErrors(output);
+                        tsgoErrorCount += tsgoFailureCount;
+                        diagnostics = diagnostics.concat(
+                            ...(config.error ? [config.error] : []),
+                            ...demoParsed.errors,
+                            ...normalizeTsgoFailure(
+                                config,
+                                demoParsed,
+                                output,
+                                result && result.status !== void 0 ? result.status : 1
+                            )
+                        );
+                        if (hasTsgoErrors) {
+                            const discoveredFiles = collectFailedFiles(output, batchDemos);
+                            discoveredFiles.forEach(file => failedFiles.add(file));
                         }
-                        return sourceFiles.get(file);
-                    };
+                        process.stdout.write(result && result.status === 0 ? '.' : 'F');
+                    } else {
+                        const host = ts.createCompilerHost(demoParsed.options);
+                        const getSourceFile = host.getSourceFile.bind(host);
+                        const sourceFiles = new Map();
 
-                    const program = ts.createProgram({
-                        rootNames: [...new Set([...declarations, ...demos])],
-                        options: demoParsed.options,
-                        host
-                    });
-                    const demoDiagnostics = ts.getPreEmitDiagnostics(program);
-                    const hasDemoErrors = demoDiagnostics.some(
-                        diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
-                    );
-                    diagnostics = diagnostics.concat(
-                        ...(config.error ? [config.error] : []),
-                        ...demoParsed.errors,
-                        ...demoDiagnostics
-                    );
-                    if (hasDemoErrors) {
-                        demos.forEach(file => failedFiles.add(file));
+                        host.getSourceFile = (file, ...args) => {
+                            if (!sourceFiles.has(file)) {
+                                sourceFiles.set(file, getSourceFile(file, ...args));
+                            }
+                            return sourceFiles.get(file);
+                        };
+
+                        const program = ts.createProgram({
+                            rootNames: [...new Set([...declarations, ...batchDemos])],
+                            options: demoParsed.options,
+                            host
+                        });
+                        const demoDiagnostics = ts.getPreEmitDiagnostics(program);
+                        const hasDemoErrors = demoDiagnostics.some(
+                            diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
+                        );
+                        diagnostics = diagnostics.concat(
+                            ...(config.error ? [config.error] : []),
+                            ...demoParsed.errors,
+                            ...demoDiagnostics
+                        );
+                        if (hasDemoErrors) {
+                            batchDemos.forEach(file => failedFiles.add(file));
+                        }
+                        process.stdout.write(hasDemoErrors ? 'F' : '.');
                     }
-                    process.stdout.write(hasDemoErrors ? 'F' : '.');
                 }
                 process.stdout.write('\n');
             } else {

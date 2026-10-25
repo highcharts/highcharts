@@ -175,6 +175,33 @@ test('isolates globals between demos and emits no files', () => {
     });
 });
 
+test('batch mode groups samples by their local tsconfig, not by product alone', () => {
+    withFixture(root => {
+        for (const sample of ['first', 'second']) {
+            const directory = join(root, 'samples/highcharts/demo', sample);
+            mkdirSync(directory, { recursive: true });
+            writeFileSync(join(directory, 'tsconfig.json'), JSON.stringify({
+                extends: '../../../tsconfig.json',
+                files: ['../../../tsglobal.d.ts', 'demo.ts']
+            }, null, 2));
+            writeFileSync(join(directory, 'demo.ts'), `
+                declare namespace Highcharts {
+                    interface ChartOptions {
+                        custom?: string;
+                    }
+                }
+                const duplicate = 1;
+                Highcharts.chart('container', {
+                    value: duplicate,
+                    custom: 'works'
+                });
+            `);
+        }
+
+        typecheckSamples({ batch: true, path: 'samples/highcharts/demo/*/demo.ts' });
+    });
+});
+
 test('supports compiling multiple demos together in batch mode', () => {
     withFixture(root => {
         for (const sample of ['first', 'second']) {
@@ -195,8 +222,8 @@ test('supports compiling multiple demos together in batch mode', () => {
         }
 
         throws(
-            () => typecheckSamples({ serial: true, path: 'samples/highcharts/*/demo.ts' }),
-            /Sample typechecking failed/
+            () => typecheckSamples({ batch: true, path: 'samples/highcharts/*/demo.ts' }),
+            /errors in/
         );
     });
 });
@@ -215,7 +242,7 @@ test('throws for a real demo type error', () => {
             });
         `);
 
-        throws(() => typecheckSamples(), /Sample typechecking failed/);
+        throws(() => typecheckSamples(), /errors in/);
     });
 });
 
@@ -227,7 +254,7 @@ test('does not leak namespace augmentations between demos', () => {
             Highcharts.chart('container', { value: 1, custom: 'leaked' });
         `);
 
-        throws(() => typecheckSamples(), /Sample typechecking failed/);
+        throws(() => typecheckSamples(), /errors in/);
     });
 });
 
@@ -269,7 +296,7 @@ test('repeated --path selections include failures in every selected product', ()
                 'samples/maps/demo/demo.ts',
                 'samples/{highcharts,stock}/demo/demo.ts'
             ]
-        }), /Sample typechecking failed/);
+        }), /errors in/);
     });
 });
 
