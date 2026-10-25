@@ -5,6 +5,7 @@
 const gulp = require('gulp');
 const fs = require('node:fs');
 const path = require('node:path');
+const Colors = require('colors');
 const { spawnSync } = require('node:child_process');
 
 function resolveTsgoBinary() {
@@ -124,8 +125,8 @@ function createTsgoConfig(configPath, config, demoParsed, demo, declarations, ba
         demoParsed
     );
     const compilerOptions = Object.fromEntries(
-        Object.entries(rawCompilerOptions).filter(([key]) =>
-            allowedOptions.has(key)
+        Object.entries(rawCompilerOptions).filter(
+            ([key]) => allowedOptions.has(key)
         ).map(([key, value]) => [key, normalizeTsgoConfigOption(key, value)])
     );
     const files = [...new Set([
@@ -188,19 +189,125 @@ function resolveTypeScript(log = { message: () => {} }) {
     return ts;
 }
 
+function countTsErrors(output = '') {
+    return (output.match(/error TS\d+:/g) || []).length ||
+        (output.trim() ? 1 : 0);
+}
+
+function collectFailedFiles(output = '', fallbackFiles = []) {
+    const matches = [...output.matchAll(
+        /(?:^|\s)([A-Za-z0-9_./-]+\.ts(?:x)?)(?:\(\d+,\d+\))?:\s*error TS\d+:/g
+    )];
+    const files = new Set(matches.map(match => match[1]).filter(Boolean));
+
+    if (files.size) {
+        return files;
+    }
+
+    return fallbackFiles.length ? new Set(fallbackFiles) : new Set();
+}
+
+function parseTsgoDiagnostics(output = '') {
+    const ts = require('typescript');
+    const lines = output.split(/\r?\n/).filter(Boolean);
+    const diagnostics = [];
+
+    for (const line of lines) {
+        const match = line.match(/^(.+?)\((\d+),(\d+)\):\s*error\s+TS(\d+):\s*(.*)$/);
+        if (!match) {
+            continue;
+        }
+
+        const [, fileName, lineText, columnText, codeText, messageText] = match;
+        diagnostics.push({
+            category: ts.DiagnosticCategory.Error,
+            messageText: messageText.trim(),
+            code: Number(codeText),
+            fileName,
+            line: Number(lineText),
+            column: Number(columnText)
+        });
+    }
+
+    return diagnostics;
+}
+
 function normalizeTsgoFailure(config, demoParsed, output, status) {
     const ts = require('typescript');
     const messageText = output || 'Sample typechecking failed.';
     const hasFailure = status !== 0 || /error TS\d+:/.test(messageText);
 
-    return hasFailure ? [{
+    if (!hasFailure) {
+        return [];
+    }
+
+    const parsed = parseTsgoDiagnostics(messageText);
+
+    if (parsed.length) {
+        return parsed;
+    }
+
+    return [{
         category: ts.DiagnosticCategory.Error,
         messageText,
         code: 0,
-        file: undefined,
-        start: undefined,
-        length: undefined
-    }] : [];
+        file: void 0,
+        start: void 0,
+        length: void 0
+    }];
+}
+
+function formatDiagnosticMessage(diagnostic) {
+    if (!diagnostic) {
+        return '';
+    }
+    if (typeof diagnostic.messageText === 'string') {
+        return diagnostic.messageText;
+    }
+    if (diagnostic.messageText && typeof diagnostic.messageText.messageText === 'string') {
+        return diagnostic.messageText.messageText;
+    }
+    return String(diagnostic.messageText || '');
+}
+
+function formatDiagnosticList(diagnostics, ts) {
+    const groups = new Map();
+
+    for (const diagnostic of diagnostics) {
+        if (!diagnostic || (!diagnostic.file && !diagnostic.fileName && !diagnostic.messageText)) {
+            continue;
+        }
+
+        const fileName = diagnostic.fileName || (diagnostic.file ? diagnostic.file.fileName : '(unknown)');
+        const list = groups.get(fileName) || [];
+        list.push(diagnostic);
+        groups.set(fileName, list);
+    }
+
+    return [...groups.entries()].map(([fileName, fileDiagnostics]) => {
+        const locationLines = fileDiagnostics.map(diagnostic => {
+            if (diagnostic.fileName && typeof diagnostic.line === 'number' && typeof diagnostic.column === 'number') {
+                const code = diagnostic.code ? `TS${diagnostic.code}` : 'TS0';
+                const location = `${diagnostic.line}:${diagnostic.column}`;
+                return `  ${Colors.gray(location.padEnd(8, ' '))}  ${Colors.red(code)}  ${formatDiagnosticMessage(diagnostic)}`;
+            }
+
+            if (!diagnostic.file) {
+                return `  ${Colors.gray('(unknown)')}  TS0  ${formatDiagnosticMessage(diagnostic)}`;
+            }
+
+            const start = diagnostic.start ?? 0;
+            const { line, character } = ts.getLineAndCharacterOfPosition(
+                diagnostic.file,
+                start
+            );
+            const code = diagnostic.code ? `TS${diagnostic.code}` : 'TS0';
+            const location = `${line + 1}:${character + 1}`;
+            return `  ${Colors.gray(location.padEnd(8, ' '))}  ${Colors.red(code)}  ${formatDiagnosticMessage(diagnostic)}`;
+        });
+
+        return `\n${Colors.underline(fileName)}\n${locationLines.join('\n')}`;
+    }).join('\n');
 }
 
 /**
@@ -235,6 +342,8 @@ function typecheckSamples(argv = {}) {
 
     let sampleCount = 0;
     let errorCount = 0;
+    let tsgoErrorCount = 0;
+    const failedFiles = new Set();
     const configCache = new Map();
     const formatHost = {
         getCanonicalFileName: file => file,
@@ -242,7 +351,7 @@ function typecheckSamples(argv = {}) {
         getNewLine: () => ts.sys.newLine
     };
 
-    const getConfigData = configPath => {
+    function getConfigData(configPath) {
         if (configCache.has(configPath)) {
             return configCache.get(configPath);
         }
@@ -262,7 +371,7 @@ function typecheckSamples(argv = {}) {
         const data = { config, parsed };
         configCache.set(configPath, data);
         return data;
-    };
+    }
 
     for (const product of products) {
         const productConfigPath = path.resolve(`samples/tsconfig.${product}.json`);
@@ -319,6 +428,9 @@ function typecheckSamples(argv = {}) {
                         demos
                     );
                     const output = result && result.output ? result.output : '';
+                    const hasTsgoErrors = result && result.status !== 0 || /error TS\d+:/.test(output);
+                    const tsgoFailureCount = countTsErrors(output);
+                    tsgoErrorCount += tsgoFailureCount;
                     diagnostics = diagnostics.concat(
                         ...(config.error ? [config.error] : []),
                         ...demoParsed.errors,
@@ -326,9 +438,13 @@ function typecheckSamples(argv = {}) {
                             config,
                             demoParsed,
                             output,
-                            result && result.status !== undefined ? result.status : 1
+                            result && result.status !== void 0 ? result.status : 1
                         )
                     );
+                    if (hasTsgoErrors) {
+                        const discoveredFiles = collectFailedFiles(output, demos);
+                        discoveredFiles.forEach(file => failedFiles.add(file));
+                    }
                     if (!batchMode) {
                         process.stdout.write(result && result.status === 0 ? '.' : 'F');
                     }
@@ -350,16 +466,18 @@ function typecheckSamples(argv = {}) {
                         host
                     });
                     const demoDiagnostics = ts.getPreEmitDiagnostics(program);
+                    const hasDemoErrors = demoDiagnostics.some(
+                        diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
+                    );
                     diagnostics = diagnostics.concat(
                         ...(config.error ? [config.error] : []),
                         ...demoParsed.errors,
                         ...demoDiagnostics
                     );
-                    process.stdout.write(
-                        demoDiagnostics.some(
-                            diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
-                        ) ? 'F' : '.'
-                    );
+                    if (hasDemoErrors) {
+                        demos.forEach(file => failedFiles.add(file));
+                    }
+                    process.stdout.write(hasDemoErrors ? 'F' : '.');
                 }
                 process.stdout.write('\n');
             } else {
@@ -385,6 +503,9 @@ function typecheckSamples(argv = {}) {
                             declarations
                         );
                         const output = result && result.output ? result.output : '';
+                        const hasDemoErrors = result && result.status !== 0 || /error TS\d+:/.test(output);
+                        const tsgoFailureCount = countTsErrors(output);
+                        tsgoErrorCount += tsgoFailureCount;
                         diagnostics = diagnostics.concat(
                             ...(config.error ? [config.error] : []),
                             ...demoParsed.errors,
@@ -392,9 +513,12 @@ function typecheckSamples(argv = {}) {
                                 config,
                                 demoParsed,
                                 output,
-                                result && result.status !== undefined ? result.status : 1
+                                result && result.status !== void 0 ? result.status : 1
                             )
                         );
+                        if (hasDemoErrors) {
+                            failedFiles.add(demo);
+                        }
                         process.stdout.write(result && result.status === 0 ? '.' : 'F');
                         continue;
                     }
@@ -417,23 +541,26 @@ function typecheckSamples(argv = {}) {
                         host
                     });
                     const demoDiagnostics = ts.getPreEmitDiagnostics(program);
+                    const hasDemoErrors = demoDiagnostics.some(
+                        diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
+                    );
                     diagnostics = diagnostics.concat(
                         ...(config.error ? [config.error] : []),
                         ...demoParsed.errors,
                         ...demoDiagnostics
                     );
-                    process.stdout.write(
-                        demoDiagnostics.some(
-                            diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
-                        ) ? 'F' : '.'
-                    );
+                    if (hasDemoErrors) {
+                        failedFiles.add(demo);
+                    }
+                    process.stdout.write(hasDemoErrors ? 'F' : '.');
                 }
                 process.stdout.write('\n');
             }
         }
 
         if (diagnostics.length) {
-            log.message(ts.formatDiagnostics(diagnostics, formatHost));
+            /* eslint-disable-next-line no-console */
+            console.log(formatDiagnosticList(diagnostics, ts));
             errorCount += diagnostics.filter(
                 diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
             ).length;
@@ -443,8 +570,12 @@ function typecheckSamples(argv = {}) {
     if (sampleCount) {
         process.stdout.write('\n');
     }
-    if (errorCount) {
-        throw new Error(`Sample typechecking failed with ${errorCount} errors.`);
+    if (errorCount || tsgoErrorCount) {
+        const summaryErrorCount = tsgoErrorCount || errorCount;
+        const summaryFileCount = failedFiles.size || (summaryErrorCount ? 1 : 0);
+        const summary = `${summaryErrorCount} errors in ${summaryFileCount} out of ${sampleCount} files`;
+        log.failure(summary);
+        throw new Error(summary);
     }
     if (!sampleCount) {
         throw new Error('No demo.ts samples matched.');
