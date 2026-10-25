@@ -175,6 +175,32 @@ test('isolates globals between demos and emits no files', () => {
     });
 });
 
+test('supports compiling multiple demos together in batch mode', () => {
+    withFixture(root => {
+        for (const sample of ['first', 'second']) {
+            const directory = join(root, 'samples/highcharts', sample);
+            mkdirSync(directory, { recursive: true });
+            writeFileSync(join(directory, 'demo.ts'), `
+                declare namespace Highcharts {
+                    interface ChartOptions {
+                        custom?: string;
+                    }
+                }
+                const duplicate = 1;
+                Highcharts.chart('container', {
+                    value: duplicate,
+                    custom: 'works'
+                });
+            `);
+        }
+
+        throws(
+            () => typecheckSamples({ serial: true, path: 'samples/highcharts/*/demo.ts' }),
+            /Sample typechecking failed/
+        );
+    });
+});
+
 test('throws for a real demo type error', () => {
     withFixture(root => {
         writeFileSync(join(root, 'samples/maps/demo/demo.ts'), `

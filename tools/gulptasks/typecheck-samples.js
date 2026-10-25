@@ -101,7 +101,7 @@ function resolveTsgoCompilerOptions(configPath, config, demoParsed) {
     };
 }
 
-function createTsgoConfig(configPath, config, demoParsed, demo, declarations) {
+function createTsgoConfig(configPath, config, demoParsed, demo, declarations, batchFiles = null) {
     const allowedOptions = new Set([
         'allowUmdGlobalAccess',
         'checkJs',
@@ -128,6 +128,10 @@ function createTsgoConfig(configPath, config, demoParsed, demo, declarations) {
             allowedOptions.has(key)
         ).map(([key, value]) => [key, normalizeTsgoConfigOption(key, value)])
     );
+    const files = [...new Set([
+        ...declarations,
+        ...(batchFiles || [demo])
+    ])];
     const configData = {
         compilerOptions: {
             ...compilerOptions,
@@ -136,7 +140,7 @@ function createTsgoConfig(configPath, config, demoParsed, demo, declarations) {
             noImplicitAny: true,
             noImplicitThis: true
         },
-        files: [...new Set([...declarations, demo])]
+        files
     };
     const tempDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'tsgo-demo-'));
     const configFile = path.join(tempDir, 'tsconfig.tsgo.json');
@@ -145,7 +149,7 @@ function createTsgoConfig(configPath, config, demoParsed, demo, declarations) {
     return { configFile, tempDir };
 }
 
-function runTsgoTypecheck(configPath, config, demoParsed, demo, declarations) {
+function runTsgoTypecheck(configPath, config, demoParsed, demo, declarations, batchFiles = null) {
     const tsgo = resolveTsgoBinary();
     if (!tsgo) {
         return null;
@@ -156,7 +160,8 @@ function runTsgoTypecheck(configPath, config, demoParsed, demo, declarations) {
         config,
         demoParsed,
         demo,
-        declarations
+        declarations,
+        batchFiles
     );
     try {
         const result = spawnSync(
@@ -183,6 +188,21 @@ function resolveTypeScript(log = { message: () => {} }) {
     return ts;
 }
 
+function normalizeTsgoFailure(config, demoParsed, output, status) {
+    const ts = require('typescript');
+    const messageText = output || 'Sample typechecking failed.';
+    const hasFailure = status !== 0 || /error TS\d+:/.test(messageText);
+
+    return hasFailure ? [{
+        category: ts.DiagnosticCategory.Error,
+        messageText,
+        code: 0,
+        file: undefined,
+        start: undefined,
+        length: undefined
+    }] : [];
+}
+
 /**
  * Typecheck demo.ts samples against generated declarations without emitting files.
  *
@@ -198,10 +218,15 @@ function typecheckSamples(argv = {}) {
         log.message(`Using TypeScript compiler: ${tsgo.name}`);
     }
     const products = ['highcharts', 'stock', 'maps', 'gantt'];
+    const batchMode = Boolean(argv.batch);
     const selectedPath = argv.p || argv.path;
     const selected = selectedPath && new Set(
         glob.sync(selectedPath)
-            .map(file => path.resolve(file))
+            .flatMap(file => {
+                const absolute = path.resolve(file);
+                const relative = path.relative(process.cwd(), absolute);
+                return [absolute, relative, file];
+            })
     );
 
     if (!fs.existsSync('code/highcharts.d.ts')) {
@@ -252,10 +277,16 @@ function typecheckSamples(argv = {}) {
                 incremental: false
             }
         );
-        const demos = parsed.fileNames.filter(file => (
-            path.basename(file) === 'demo.ts' &&
-            (!selected || selected.has(path.resolve(file)))
-        ));
+        const demos = parsed.fileNames.filter(file => {
+            if (path.basename(file) !== 'demo.ts') {
+                return false;
+            }
+            if (!selected) {
+                return true;
+            }
+            const normalized = path.resolve(file);
+            return selected.has(normalized) || selected.has(file);
+        });
         let diagnostics = [
             ...(productConfig.error ? [productConfig.error] : []),
             ...parsed.errors
@@ -264,9 +295,10 @@ function typecheckSamples(argv = {}) {
         if (demos.length) {
             log.message(`Typechecking ${product}: ${demos.length} samples...`);
             sampleCount += demos.length;
-            for (const demo of demos) {
+
+            if (batchMode) {
                 const demoConfigPath = path.resolve(
-                    path.dirname(demo),
+                    path.dirname(demos[0]),
                     'tsconfig.json'
                 );
                 const configPath = fs.existsSync(demoConfigPath) ?
@@ -282,57 +314,122 @@ function typecheckSamples(argv = {}) {
                         configPath,
                         config,
                         demoParsed,
-                        demo,
-                        declarations
+                        demos[0],
+                        declarations,
+                        demos
                     );
                     const output = result && result.output ? result.output : '';
-                    const errorMatches = (output.match(/error TS\d+:/g) || []).length;
                     diagnostics = diagnostics.concat(
                         ...(config.error ? [config.error] : []),
                         ...demoParsed.errors,
-                        ...(errorMatches ? [{
-                            category: ts.DiagnosticCategory.Error,
-                            messageText: output,
-                            code: 0,
-                            file: undefined,
-                            start: undefined,
-                            length: undefined
-                        }] : [])
+                        ...normalizeTsgoFailure(
+                            config,
+                            demoParsed,
+                            output,
+                            result && result.status !== undefined ? result.status : 1
+                        )
                     );
-                    process.stdout.write(result && result.status === 0 ? '.' : 'F');
-                    continue;
-                }
-
-                const host = ts.createCompilerHost(demoParsed.options);
-                const getSourceFile = host.getSourceFile.bind(host);
-                const sourceFiles = new Map();
-
-                // Reuse parsed declarations, but keep each demo's globals isolated.
-                host.getSourceFile = (file, ...args) => {
-                    if (!sourceFiles.has(file)) {
-                        sourceFiles.set(file, getSourceFile(file, ...args));
+                    if (!batchMode) {
+                        process.stdout.write(result && result.status === 0 ? '.' : 'F');
                     }
-                    return sourceFiles.get(file);
-                };
+                } else {
+                    const host = ts.createCompilerHost(demoParsed.options);
+                    const getSourceFile = host.getSourceFile.bind(host);
+                    const sourceFiles = new Map();
 
-                const program = ts.createProgram({
-                    rootNames: [...new Set([...declarations, demo])],
-                    options: demoParsed.options,
-                    host
-                });
-                const demoDiagnostics = ts.getPreEmitDiagnostics(program);
-                diagnostics = diagnostics.concat(
-                    ...(config.error ? [config.error] : []),
-                    ...demoParsed.errors,
-                    ...demoDiagnostics
-                );
-                process.stdout.write(
-                    demoDiagnostics.some(
-                        diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
-                    ) ? 'F' : '.'
-                );
+                    host.getSourceFile = (file, ...args) => {
+                        if (!sourceFiles.has(file)) {
+                            sourceFiles.set(file, getSourceFile(file, ...args));
+                        }
+                        return sourceFiles.get(file);
+                    };
+
+                    const program = ts.createProgram({
+                        rootNames: [...new Set([...declarations, ...demos])],
+                        options: demoParsed.options,
+                        host
+                    });
+                    const demoDiagnostics = ts.getPreEmitDiagnostics(program);
+                    diagnostics = diagnostics.concat(
+                        ...(config.error ? [config.error] : []),
+                        ...demoParsed.errors,
+                        ...demoDiagnostics
+                    );
+                    process.stdout.write(
+                        demoDiagnostics.some(
+                            diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
+                        ) ? 'F' : '.'
+                    );
+                }
+                process.stdout.write('\n');
+            } else {
+                for (const demo of demos) {
+                    const demoConfigPath = path.resolve(
+                        path.dirname(demo),
+                        'tsconfig.json'
+                    );
+                    const configPath = fs.existsSync(demoConfigPath) ?
+                        demoConfigPath :
+                        productConfigPath;
+                    const { config, parsed: demoParsed } = getConfigData(configPath);
+                    const declarations = demoParsed.fileNames.filter(
+                        file => file.endsWith('.d.ts')
+                    );
+
+                    if (tsgo) {
+                        const result = runTsgoTypecheck(
+                            configPath,
+                            config,
+                            demoParsed,
+                            demo,
+                            declarations
+                        );
+                        const output = result && result.output ? result.output : '';
+                        diagnostics = diagnostics.concat(
+                            ...(config.error ? [config.error] : []),
+                            ...demoParsed.errors,
+                            ...normalizeTsgoFailure(
+                                config,
+                                demoParsed,
+                                output,
+                                result && result.status !== undefined ? result.status : 1
+                            )
+                        );
+                        process.stdout.write(result && result.status === 0 ? '.' : 'F');
+                        continue;
+                    }
+
+                    const host = ts.createCompilerHost(demoParsed.options);
+                    const getSourceFile = host.getSourceFile.bind(host);
+                    const sourceFiles = new Map();
+
+                    // Reuse parsed declarations, but keep each demo's globals isolated.
+                    host.getSourceFile = (file, ...args) => {
+                        if (!sourceFiles.has(file)) {
+                            sourceFiles.set(file, getSourceFile(file, ...args));
+                        }
+                        return sourceFiles.get(file);
+                    };
+
+                    const program = ts.createProgram({
+                        rootNames: [...new Set([...declarations, demo])],
+                        options: demoParsed.options,
+                        host
+                    });
+                    const demoDiagnostics = ts.getPreEmitDiagnostics(program);
+                    diagnostics = diagnostics.concat(
+                        ...(config.error ? [config.error] : []),
+                        ...demoParsed.errors,
+                        ...demoDiagnostics
+                    );
+                    process.stdout.write(
+                        demoDiagnostics.some(
+                            diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
+                        ) ? 'F' : '.'
+                    );
+                }
+                process.stdout.write('\n');
             }
-            process.stdout.write('\n');
         }
 
         if (diagnostics.length) {
@@ -363,7 +460,8 @@ function task() {
 task.description = 'Typecheck demo.ts samples after running gulp jsdoc-dts';
 task.flags = {
     '--path': 'Check matching demo.ts files (repeat for multiple globs)',
-    '-p': 'Alias for --path'
+    '-p': 'Alias for --path',
+    '--batch': 'Bundle matched demo.ts files into one project (expected to expose duplicate symbol errors)'
 };
 
 gulp.task('typecheck-samples', task);
