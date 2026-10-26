@@ -3895,6 +3895,8 @@ class Chart {
             }
         }
 
+        setAnimation(animation, chart);
+
         // Moved up, because tooltip needs updated plotOptions (#6218)
         if (!chart.styledMode && options.colors) {
             this.options.colors = options.colors;
