@@ -1,7 +1,8 @@
 Highcharts.chart('container', {
     accessibility: {
         point: {
-            valueDescriptionFormat: '{point.name}: {point.longDescription}.'
+            valueDescriptionFormat:
+                '{point.name}: {point.custom.longDescription}.'
         }
     },
     series: [{
@@ -25,7 +26,7 @@ Highcharts.chart('container', {
                 longDescription: `In Venn diagrams the curves are overlapped in
                     every possible way, showing all possible relations
                     between the sets. Unlike the Euler diagram, Venn diagrams
-                    can show impossible, non exis tant, or theoretical
+                    can show impossible, non-existent, or theoretical
                     relationships.`
             }
         }, {

@@ -279,7 +279,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * A series specific or series type specific color set to apply instead
-     * instead of the global [colors](#colors) when [colorByPoint](
+     * of the global [colors](#colors) when [colorByPoint](
      * #plotOptions.series.colorByPoint) is true.
      *
      * @type      {Array<Highcharts.ColorType>}

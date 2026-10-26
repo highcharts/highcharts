@@ -1,4 +1,4 @@
-function getDataTableOptions(n: number): Highcharts.DataTableOptions {
+function getDataTableOptions(n: number): Highcharts.DataTableOptionsObject {
     const xColumn = new Float64Array(n),
         yColumn = new Float64Array(n);
     let i,

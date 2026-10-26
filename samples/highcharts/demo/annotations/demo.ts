@@ -36,6 +36,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                 type: 'x'
             },
             panning: {
+                enabled: true,
                 type: 'x'
             },
             panKey: 'shift',
