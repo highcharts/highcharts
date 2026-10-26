@@ -23,6 +23,7 @@
 
 import type Column from '../Table/Column';
 import type Grid from '../Grid';
+import type Table from '../Table/Table';
 import type TableCell from '../Table/Body/TableCell';
 import type TableRow from '../Table/Body/TableRow';
 
@@ -75,6 +76,23 @@ export interface ElementMenuTarget {
 }
 
 /**
+ * The table body itself, where no cell was opened on, which is the whole of it
+ * while the table holds no row.
+ */
+export interface TableMenuTarget {
+
+    /**
+     * The table body element the menu belongs to.
+     */
+    element: HTMLElement;
+
+    /**
+     * Discriminator of the target variant.
+     */
+    type: 'table';
+}
+
+/**
  * The surfaces a context menu can open on, keyed by the discriminator of
  * each. A feature adds its own through module augmentation, so that opening
  * menus somewhere new needs no change here:
@@ -102,6 +120,11 @@ export interface MenuTargetRegistry {
      * An element given a menu with `grid.contextMenu.attach()`.
      */
     element: ElementMenuTarget;
+
+    /**
+     * The table body, next to the cells rather than on one.
+     */
+    table: TableMenuTarget;
 }
 
 /**
@@ -163,6 +186,28 @@ export function getCellMenuContext(
             column: cell.column,
             row: cell.row,
             type: 'cell'
+        }
+    };
+}
+
+/**
+ * Builds the context of a menu opened on the table body rather than on one of
+ * its cells.
+ *
+ * @param table
+ * The table the menu opens on.
+ *
+ * @return
+ * The menu context.
+ */
+export function getTableMenuContext(
+    table: Table
+): MenuContext<TableMenuTarget> {
+    return {
+        grid: table.grid,
+        target: {
+            element: table.tbodyElement,
+            type: 'table'
         }
     };
 }

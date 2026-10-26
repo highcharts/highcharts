@@ -24,6 +24,7 @@
  * */
 
 import type TableCell from './Body/TableCell';
+import type { MenuContext } from '../ContextMenu/ContextMenuTarget';
 import type { RowId } from '../Data/DataProvider';
 
 import GridUtils from '../GridUtils.js';
@@ -42,7 +43,10 @@ import ColumnLayout from './Layout/ColumnLayout.js';
 import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
 import { addLongPressContextMenu } from '../ContextMenu/ContextMenuLongPress.js';
-import { getCellMenuContext } from '../ContextMenu/ContextMenuTarget.js';
+import {
+    getCellMenuContext,
+    getTableMenuContext
+} from '../ContextMenu/ContextMenuTarget.js';
 
 const { makeHTMLElement, applyUserClassNames } = GridUtils;
 
@@ -762,17 +766,19 @@ class Table {
     };
 
     /**
-     * Delegated context menu handler for cells.
+     * Delegated context menu handler for the table body. A press that misses
+     * every cell opens the menu of the body itself, which is the whole of it
+     * while the table holds no row.
+     *
      * @param e Mouse event
      */
     private onCellContextMenu = (e: MouseEvent): void => {
         const tableCell = this.getTableCellFromTarget(e.target);
-        if (!tableCell) {
-            return;
-        }
-
+        const context: MenuContext = tableCell ?
+            getCellMenuContext(tableCell) :
+            getTableMenuContext(this);
         const opened = this.grid.contextMenu.open(
-            getCellMenuContext(tableCell),
+            context,
             e.clientX,
             e.clientY
         );
@@ -821,13 +827,26 @@ class Table {
      */
     private onCellKeyDown = (e: KeyboardEvent): void => {
         const cell = this.getCellFromElement(e.target);
-        if (!cell) {
-            return;
-        }
-
         const isContextMenuKey = (
             e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
         );
+
+        if (!cell) {
+            // The body holds the tab stop while it has no cell to focus, so
+            // that its menu is reachable without a pointer.
+            if (isContextMenuKey && e.target === this.tbodyElement) {
+                const rect = this.tbodyElement.getBoundingClientRect();
+
+                if (this.grid.contextMenu.open(
+                    getTableMenuContext(this),
+                    rect.left + 4,
+                    rect.top + 4
+                )) {
+                    e.preventDefault();
+                }
+            }
+            return;
+        }
 
         if (isContextMenuKey && 'column' in cell && 'row' in cell) {
             const tableCell = cell as TableCell;

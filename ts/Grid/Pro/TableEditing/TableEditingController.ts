@@ -131,17 +131,21 @@ class TableEditingController {
     }
 
     /**
+     * Returns whether a row can be added without one to add it next to, which
+     * is what the menu of a table holding no row offers.
+     */
+    public canAppendRow(): boolean {
+        return this.isEnabled() && !!this.getDataTable();
+    }
+
+    /**
      * Returns whether row actions can be used for the current context.
      *
      * @param context
      * Context menu runtime context.
      */
     public canEditRows(context: TableEditingContext): boolean {
-        return (
-            this.isEnabled() &&
-            context.rowId !== void 0 &&
-            !!this.getDataTable()
-        );
+        return this.canAppendRow() && context.rowId !== void 0;
     }
 
     /**
@@ -177,6 +181,25 @@ class TableEditingController {
             table.getColumnIds().length > 1 &&
             !this.isIdColumn(sourceColumnId)
         );
+    }
+
+    /**
+     * Adds an empty row at the end of the table.
+     */
+    public async appendRow(): Promise<void> {
+        const table = this.getDataTable();
+
+        if (!table) {
+            return;
+        }
+
+        table.setRows(
+            [this.getEmptyRow(table)],
+            table.getRowCount(),
+            true,
+            { fromGrid: true }
+        );
+        await this.updateRowsFromTable(table);
     }
 
     /**
