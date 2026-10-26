@@ -205,8 +205,8 @@ export default class Loader {
                 }
 
                 const fullKey = path.concat(key).join('.'),
-                    // Pick up properties that are set on series items or in
-                    // plotOptions of a series type, like `dragDrop` or `label`
+                    // Options of series items and plotOptions.<type>, see
+                    // normalizeKey in dependency-mapping.js
                     seriesKey = fullKey.replace(
                         /^(?:series|plotOptions)\.[a-zA-Z0-9]+/,
                         'plotOptions.series'

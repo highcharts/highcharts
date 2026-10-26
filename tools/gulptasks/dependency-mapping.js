@@ -300,6 +300,16 @@ code {
 
 }
 
+// Convert an API tree key to the key the Loader looks up.
+function normalizeKey(key) {
+    return key
+        .replace(/^plotOptions\.([a-zA-Z0-9]+)$/u, 'series.$1')
+        .replace(
+            /^(?:plotOptions|series)\.[a-zA-Z0-9]+\./u,
+            'plotOptions.series.'
+        );
+}
+
 /**
  * Create the DependencyMapping module file
  *
@@ -340,25 +350,22 @@ async function dependencyMapping() {
         );
     }
 
-    // Remove plotOptions.* entries, and combine them with series.* entries
+    // plotOptions.<type> and series.<type> must have the same dependencies
     let seriesMismatch = false;
     Object.keys(mapping).forEach(key => {
-        if (key.startsWith('plotOptions.')) {
-            const seriesKey = key.replace('plotOptions.', 'series.');
-            if (!/^series\.[a-zA-Z0-9]+$/u.test(seriesKey)) {
-                mapping[seriesKey] = Array.from(
-                    new Set([...(mapping[seriesKey] || []), ...mapping[key]])
-                );
-            } else if (
-                mapping[key].join(',') !== mapping[seriesKey]?.join(',')
-            ) {
-                log.warn(
-                    `Mismatched dependencies for ${key} and ${seriesKey}:\n` +
-                    ` ${mapping[key]} vs ${mapping[seriesKey]}`
-                );
-                seriesMismatch = true;
-            }
-            delete mapping[key];
+        const seriesKey = key.replace(
+            /^plotOptions\.([a-zA-Z0-9]+)$/u,
+            'series.$1'
+        );
+        if (
+            seriesKey !== key &&
+            mapping[key].join(',') !== mapping[seriesKey]?.join(',')
+        ) {
+            log.warn(
+                `Mismatched dependencies for ${key} and ${seriesKey}:\n` +
+                ` ${mapping[key]} vs ${mapping[seriesKey]}`
+            );
+            seriesMismatch = true;
         }
     });
     if (seriesMismatch) {
@@ -367,13 +374,12 @@ async function dependencyMapping() {
         );
     }
 
-    // Rename key series.series to plotOptions.series
-    const deepSeriesRegex = /^series\.[a-zA-Z0-9]+\./u;
-    Object.entries(mapping).forEach(([key, value]) => {
-        if (deepSeriesRegex.test(key)) {
-            const newKey = key.replace(deepSeriesRegex, 'plotOptions.series.');
+    // Convert keys to what the Loader looks up
+    Object.keys(mapping).forEach(key => {
+        const newKey = normalizeKey(key);
+        if (newKey !== key) {
             mapping[newKey] = Array.from(
-                new Set([...(mapping[newKey] || []), ...value])
+                new Set([...(mapping[newKey] || []), ...mapping[key]])
             );
             delete mapping[key];
         }
