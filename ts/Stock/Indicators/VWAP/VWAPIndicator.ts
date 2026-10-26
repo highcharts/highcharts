@@ -30,8 +30,8 @@ import type {
 } from './VWAPOptions';
 import type VWAPPoint from './VWAPPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { isArray, merge } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
