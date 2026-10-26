@@ -27,7 +27,7 @@ const dataTable = new Grid.DataTable({
     }
 });
 
-const chart = Highcharts.chart('chart', {
+Highcharts.chart('chart', {
     dataTable,
     title: {
         text: 'U.S. Solar Employment Growth'
@@ -62,14 +62,6 @@ Grid.grid('grid', {
             editMode: {
                 enabled: true,
                 validationRules: ['notEmpty', 'number']
-            },
-            events: {
-                afterEdit: function () {
-                    // Series don't listen to cell edits, so re-read them from
-                    // the shared DataTable
-                    chart.series.forEach(s => s.setData(undefined, false));
-                    chart.redraw();
-                }
             }
         }
     },
