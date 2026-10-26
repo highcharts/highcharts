@@ -40,6 +40,7 @@ const ColumnPoint = ColumnSeries.prototype.pointClass;
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         crosshairWidth?: VariwidePoint['crosshairWidth'];
