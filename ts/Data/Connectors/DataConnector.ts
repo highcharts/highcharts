@@ -384,6 +384,9 @@ abstract class DataConnector implements DataEventEmitter<Event> {
         refreshTime: number = 1000
     ): void {
         const connector = this;
+        const pollingInterval = Number.isFinite(refreshTime) ?
+            refreshTime :
+            1000;
 
         // Assign a new abort controller.
         this.pollingController = new AbortController();
@@ -402,10 +405,10 @@ abstract class DataConnector implements DataEventEmitter<Event> {
                 )
                 .then((): void => {
                     if (connector._polling) {
-                        connector.startPolling(refreshTime);
+                        connector.startPolling(pollingInterval);
                     }
                 })
-            , refreshTime
+            , pollingInterval
         );
     }
 
