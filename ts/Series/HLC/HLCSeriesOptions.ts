@@ -52,7 +52,14 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export interface HLCSeriesOptions extends ColumnSeriesOptions {
 
     /**
+     * Determines what data value should be used to calculate point color
+     * if `colorAxis` is used. Requires to set `min` and `max` if some
+     * custom point property is used or if approximation for data grouping
+     * is set to `'sum'`.
+     *
      * @default 'close'
+     *
+     * @product highstock
      */
     colorKey?: string;
 
@@ -159,6 +166,11 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
 
     states?: SeriesStatesOptions<HLCSeriesOptions>;
 
+    /**
+     * @default null
+     *
+     * @product highstock
+     */
     threshold?: number|null;
 
     tooltip?: HLCSeriesTooltipOptions;
@@ -169,7 +181,14 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      *
      * */
 
+    edgeColor?: undefined;
+    edgeWidth?: undefined;
+    groupZPadding?: undefined;
+    lowMarker?: undefined;
     marker?: undefined;
+    nullInteraction?: undefined;
+    onPoint?: undefined;
+    zoomEnabled?: undefined;
 
 }
 
