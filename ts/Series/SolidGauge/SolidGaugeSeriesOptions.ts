@@ -129,10 +129,7 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
      *         Individual radius and innerRadius
      *
-     * @default undefined
-     *
      * @since 4.1.6
-     *
      * @product highcharts
      */
     innerRadius?: string;
@@ -173,10 +170,7 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
      *         Individual radius and innerRadius
      *
-     * @default undefined
-     *
      * @since 4.1.6
-     *
      * @product highcharts
      */
     radius?: string;
