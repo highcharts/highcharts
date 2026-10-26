@@ -154,23 +154,9 @@ export abstract class Menu extends Popup {
 
     protected override onClickOutside(event: MouseEvent): void {
         const target = event.target as Node;
-        if (this.isInDescendantPopup(target)) {
-            return;
-        }
 
-        super.onClickOutside(event);
-    }
-
-    /**
-     * Checks whether an element is contained in any descendant popup.
-     *
-     * @param target
-     * Target node from click event.
-     *
-     * @returns
-     * True when the target is inside any descendant popup container.
-     */
-    private isInDescendantPopup(target: Node): boolean {
+        // A click in a submenu of this one is not a click outside, however
+        // deep it sits.
         const queue: Popup[] = [];
 
         for (const button of this.buttons) {
@@ -181,30 +167,27 @@ export abstract class Menu extends Popup {
 
         while (queue.length) {
             const popup = queue.shift();
+
             if (!popup?.container) {
                 continue;
             }
 
             if (popup.container.contains(target)) {
-                return true;
+                return;
             }
 
             const popupButtons = (popup as {
                 buttons?: MenuButton[];
             }).buttons;
 
-            if (!popupButtons) {
-                continue;
-            }
-
-            for (const button of popupButtons) {
+            for (const button of popupButtons || []) {
                 if (button.popup?.container) {
                     queue.push(button.popup);
                 }
             }
         }
 
-        return false;
+        super.onClickOutside(event);
     }
 
     /**

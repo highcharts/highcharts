@@ -59,26 +59,6 @@ function closeSiblingSubMenus(menu: Menu, activeButton: MenuButton): void {
 }
 
 /**
- * Closes the full chain of menus from the current submenu up to the root.
- *
- * @param menu
- * Current menu in the chain.
- */
-function closeMenuTree(menu: Menu): void {
-    let currentMenu: Menu | undefined = menu;
-
-    while (currentMenu) {
-        const parentMenu: Menu | undefined =
-            currentMenu instanceof ContextSubMenu ?
-                currentMenu.openerButton?.menu :
-                void 0;
-
-        currentMenu.hide();
-        currentMenu = parentMenu;
-    }
-}
-
-/**
  * Opens the submenu of the focused branch, when there is one.
  *
  * @param menu
@@ -160,7 +140,19 @@ export function renderMenuItems(
                 }
 
                 item.onClick?.();
-                closeMenuTree(menu);
+
+                // The whole chain goes, from this level up to the root.
+                let openMenu: Menu | undefined = menu;
+
+                while (openMenu) {
+                    const parent: Menu | undefined =
+                        openMenu instanceof ContextSubMenu ?
+                            openMenu.openerButton?.menu :
+                            void 0;
+
+                    openMenu.hide();
+                    openMenu = parent;
+                }
             },
             onHover: (): void => {
                 // The branch already showing is the one the pointer is on.
