@@ -686,6 +686,34 @@ if (Highcharts.Series.types.flags) {
         },
         {
             type: 'flags',
+            name: 'Dashboards',
+            shape: 'squarepin',
+            y: -80,
+            data: [
+                {
+                    x: '2023-06-29',
+                    text: 'Highcharts Dashboards version 1.0 released',
+                    title: 'Dashboards'
+                }
+            ],
+            showInLegend: false
+        },
+        {
+            type: 'flags',
+            name: 'Grid',
+            shape: 'squarepin',
+            y: -55,
+            data: [
+                {
+                    x: '2025-03-25',
+                    text: 'Highcharts Grid Lite version 1.0 released',
+                    title: 'Grid'
+                }
+            ],
+            showInLegend: false
+        },
+        {
+            type: 'flags',
             name: 'Highcharts',
             shape: 'circlepin',
             data: [
@@ -764,6 +792,18 @@ if (Highcharts.Series.types.flags) {
                         'Pictorial charts, Treegraphs, Geographical heatmaps,' +
                         ' Audio charts',
                     title: '11.0'
+                },
+                {
+                    x: '2024-11-27',
+                    text: 'Series data in DataTables, date strings, ' +
+                        'locale-aware date formats, tree-shakable builds',
+                    title: '12.0'
+                },
+                {
+                    x: '2026-06-11',
+                    text: 'Palette for light and dark mode, DataTable ' +
+                        'options, gauge facelift, autoloading of modules',
+                    title: '13.0'
                 }
             ],
             showInLegend: false

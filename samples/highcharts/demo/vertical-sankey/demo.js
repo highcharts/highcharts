@@ -47,7 +47,7 @@ Highcharts.chart('container', {
             },
             style: {
                 textOutline: 'none',
-                color: 'var(--highcharts-neutral-color-80, #333)'
+                color: 'contrast'
             }
         },
         borderRadius: 0,

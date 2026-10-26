@@ -10,5 +10,7 @@ tags:
 categories:
   - Basics:
       priority: 12
+  - Inspiration:
+      priority: 13
   - General
 ...

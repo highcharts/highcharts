@@ -4,8 +4,11 @@ authors:
   - Karol Kołodziej
 js_wrap: b
 tags:
+  - Highcharts overview
   - Highcharts Stock demo
 categories:
+  - Inspiration:
+      priority: 15
   - Flags and Technical indicators:
       priority: 4
 ...

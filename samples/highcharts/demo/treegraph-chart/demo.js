@@ -142,7 +142,7 @@ Highcharts.chart('container', {
             marker: {
                 symbol: 'circle',
                 radius: 6,
-                fillColor: '#ffffff',
+                fillColor: 'var(--highcharts-background-color, #ffffff)',
                 lineWidth: 3
             },
             dataLabels: {
