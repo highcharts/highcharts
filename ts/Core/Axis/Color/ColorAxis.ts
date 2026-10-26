@@ -41,9 +41,7 @@ import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
-import SeriesRegistry from '../../Series/SeriesRegistry.js';
-import SeriesClass from '../../Series/Series';
-const { series: Series } = SeriesRegistry;
+import Series from '../../Series/Series.js';
 import {
     defined,
     extend,
@@ -926,7 +924,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
                             this: ColorAxis.LegendItemObject
                         ): void {
                             this.visible = vis = axis.visible = !vis;
-                            const affectedSeries: SeriesClass[] = [];
+                            const affectedSeries: Series[] = [];
                             for (const point of getPointsInDataClass(i)) {
                                 point.setVisible(vis);
                                 point.hiddenInDataClass = !vis; // #20441

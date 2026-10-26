@@ -35,12 +35,6 @@ const ohlcvConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector(
 });
 ```
 
-## Relevant demos
-
-- **Highcharts Stock + Morningstar OHLCV TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve `OHLCV` time series and display in an OHLC
-chart.
-
 ## Morningstar API Reference
 
 For more details, see [Morningstar’s Time Series API].
