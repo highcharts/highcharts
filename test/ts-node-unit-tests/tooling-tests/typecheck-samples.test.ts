@@ -1,4 +1,4 @@
-import { deepStrictEqual, throws } from 'node:assert';
+import { deepStrictEqual, match, throws } from 'node:assert';
 import { test } from 'node:test';
 import {
     copyFileSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync
@@ -148,6 +148,86 @@ test('uses inherited compilerOptions from extended tsconfig files without conver
         `);
 
         typecheckSamples({ path: 'samples/highcharts/demo/nested/demo.ts' });
+    });
+});
+
+test('preserves inherited exact and wildcard paths in local sample configs', () => {
+    withFixture(root => {
+        const directory = join(root, 'samples/highcharts/demo/nested');
+        mkdirSync(directory, { recursive: true });
+        mkdirSync(join(root, 'code/modules'), { recursive: true });
+        writeFileSync(join(root, 'code/modules/example.d.ts'),
+            'export const value: number;');
+        writeFileSync(join(directory, 'tsconfig.json'), JSON.stringify({
+            extends: '../../../tsconfig.json',
+            files: ['../../../tsglobal.d.ts', 'demo.ts']
+        }));
+        writeFileSync(join(directory, 'demo.ts'), `
+            import Highcharts from 'highcharts';
+            import { value } from 'highcharts/modules/example';
+            Highcharts.chart('container', { value });
+        `);
+
+        for (const batch of [false, true]) {
+            typecheckSamples({
+                batch,
+                path: 'samples/highcharts/demo/nested/demo.ts'
+            });
+        }
+        deepStrictEqual(findEmittedFiles(root), []);
+    });
+});
+
+test('resolves overridden paths relative to the config that defines them', () => {
+    withFixture(root => {
+        const directory = join(root, 'samples/highcharts/demo/nested');
+        mkdirSync(join(directory, 'types'), { recursive: true });
+        writeFileSync(join(directory, 'types/api.d.ts'),
+            'export const value: number;');
+        writeFileSync(join(directory, 'tsconfig.json'), JSON.stringify({
+            extends: '../../../tsconfig.json',
+            compilerOptions: { paths: { 'sample-api': ['./types/api'] } },
+            files: ['../../../tsglobal.d.ts', 'demo.ts']
+        }));
+        writeFileSync(join(directory, 'demo.ts'), `
+            import { value } from 'sample-api';
+            Highcharts.chart('container', { value });
+        `);
+
+        for (const batch of [false, true]) {
+            typecheckSamples({
+                batch,
+                path: 'samples/highcharts/demo/nested/demo.ts'
+            });
+        }
+    });
+});
+
+test('prints nested overload explanations and subsequent diagnostics', context => {
+    const output = context.mock.method(console, 'log', () => {});
+
+    withFixture(root => {
+        writeFileSync(join(root, 'samples/highcharts/demo/demo.ts'), `
+            declare function convert(value: number): void;
+            declare function convert(value: string): void;
+            convert(true);
+            const invalid: number = 'not a number';
+        `);
+
+        for (const batch of [false, true]) {
+            output.mock.resetCalls();
+            throws(() => typecheckSamples({
+                batch,
+                path: 'samples/highcharts/demo/demo.ts'
+            }), /2 errors in 1 out of 1 files/);
+
+            const diagnostics = output.mock.calls.map(
+                call => call.arguments.join(' ')
+            ).join('\n');
+            match(diagnostics, /TS2769/);
+            match(diagnostics, /boolean.*string/);
+            match(diagnostics, /TS2322/);
+        }
     });
 });
 
