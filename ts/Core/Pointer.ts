@@ -2524,15 +2524,15 @@ export default Pointer;
  * @name Highcharts.PointerEventObject#chartY
  * @type {number}
  *//**
- * Axis positions of the pointer interaction on the x-axis.
+ * Axis positions on the x-axis, when available for a chart click.
  *
  * @name Highcharts.PointerEventObject#xAxis
- * @type {Array<Highcharts.PointerAxisCoordinateObject>}
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>|undefined}
  *//**
- * Axis positions of the pointer interaction on the y-axis.
+ * Axis positions on the y-axis, when available for a chart click.
  *
  * @name Highcharts.PointerEventObject#yAxis
- * @type {Array<Highcharts.PointerAxisCoordinateObject>}
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>|undefined}
  */
 
 /**
