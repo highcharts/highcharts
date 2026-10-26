@@ -1,3 +1,10 @@
+---
+description: >-
+  Adjust chart layout, spacing, element positions, borders, backgrounds, and
+  fonts. Learn which options control these features and how initial series
+  animation differs from animation during chart updates.
+---
+
 Design and style
 ================
 All Highcharts elements are customizable, either through options or via CSS using [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css). 

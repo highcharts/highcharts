@@ -18,12 +18,8 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import Math3D from '../../Core/Math3D.js';
-const { perspective } = Math3D;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    line: { prototype: lineProto }
-} = SeriesRegistry.seriesTypes;
+import { perspective } from '../../Core/Math3D.js';
+import LineSeries from '../Line/LineSeries.js';
 import { pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
@@ -67,7 +63,7 @@ function wrapAreaSeriesGetGraphPath(
         return svgPath;
     }
 
-    const getGraphPath = lineProto.getGraphPath,
+    const getGraphPath = LineSeries.prototype.getGraphPath,
         options = series.options,
         translatedThreshold = Math.round( // #10909
             series.yAxis.getThreshold(options.threshold as any)

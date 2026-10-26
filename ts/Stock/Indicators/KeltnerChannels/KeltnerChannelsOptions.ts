@@ -43,8 +43,8 @@ import type {
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart,showInNavigator,
  *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/keltner-channels
+ * @requires     indicators/indicators
+ * @requires     indicators/keltner-channels
  * @interface Highcharts.KeltnerChannelsOptions
  */
 export interface KeltnerChannelsOptions extends SMAOptions {

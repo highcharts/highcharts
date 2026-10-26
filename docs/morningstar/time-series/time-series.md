@@ -1,3 +1,10 @@
+---
+description: >-
+  Choose a Morningstar time-series type and securities, set dates or currency,
+  and load performance data for charts or Dashboards; the overview links to
+  return, price, growth, rating, dividend, and OHLCV guides.
+---
+
 # Time Series
 
 Time Series gives data on performance for securities. This data can for
@@ -111,10 +118,9 @@ Dashboards.board('container', {
 
 ## Relevant demos
 
-You will find examples of how to use the time series connector in our demos.
+You will find examples of how to use the `TimeSeriesConnector` in our demos.
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve `Dividend` time series.
+- [Highcharts Stock + Morningstar Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
 
 ## Morningstar API Reference
 

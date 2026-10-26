@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable drag resizing between axes in multi-pane Stock charts, set minimum
+  and maximum axis lengths, control which neighboring axes move, and style the
+  resizer line with options or CSS.
+---
+
 Axis resizer
 ===
 

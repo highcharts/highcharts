@@ -1,3 +1,10 @@
+---
+description: >-
+  Set chart title and subtitle text, understand how alignment and scaling
+  adapt to available space, and learn how to override positioning or update
+  titles after the chart renders.
+---
+
 Title and subtitle
 ==================
 

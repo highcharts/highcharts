@@ -87,7 +87,16 @@ class TextContent extends CellContent {
     }
 
     public override update(): void {
-        setHTMLContent(this.cell.htmlElement, this.format());
+        const { format, formatter } = this.cell.column.options.cells || {};
+        const content = this.format();
+
+        // Only a format or a formatter is an opt-in to HTML, a raw value is
+        // rendered as text.
+        if (format || formatter) {
+            setHTMLContent(this.cell.htmlElement, content);
+        } else {
+            this.cell.htmlElement.innerText = content;
+        }
     }
 
     /**

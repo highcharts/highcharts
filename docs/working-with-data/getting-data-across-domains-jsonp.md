@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn how JSONP wraps data in a callback for loading from another domain.
+  Follow a PHP response example and a jQuery request that assigns the returned
+  data to a chart series.
+---
+
 Cross domain data
 =================
 

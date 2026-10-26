@@ -32,8 +32,7 @@ const {
 } = H;
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
+import Series from '../../Core/Series/Series.js';
 import {
     arrayMax,
     clamp,

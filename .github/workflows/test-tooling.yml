@@ -17,6 +17,7 @@ on:
       - 'tools/**/*'
       - '.github/workflows/visual-compare-playwright.yml'
       - '.github/workflows/test-tooling.yml'
+      - '.github/workflows/nightly.yml'
       - 'tests/internal/*'
   workflow_dispatch:
 
