@@ -5000,7 +5000,7 @@ class Series {
         fireEvent(this, 'afterUpdate');
 
         if (redraw ?? true) {
-            chart.redraw(keepPoints ? void 0 : false);
+            chart.redraw();
         }
     }
 
