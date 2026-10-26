@@ -155,6 +155,10 @@ export class MenuButton implements Button {
         buttonEl.setAttribute('type', 'button');
         buttonEl.setAttribute('tabindex', '-1');
 
+        if (cfg.disabled) {
+            buttonEl.setAttribute('disabled', '');
+        }
+
         this.refreshState();
 
         if (cfg.chevron) {
@@ -347,6 +351,11 @@ export interface MenuButtonOptions {
      * If the chevron icon should be rendered.
      */
     chevron?: boolean;
+
+    /**
+     * Whether the button is shown but cannot be used.
+     */
+    disabled?: boolean;
 
     /**
      * The click handler for the button.

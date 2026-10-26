@@ -177,9 +177,10 @@ function resolveItem(
         typeof item === 'string' ? { id: item } : item;
 
     if (options.separator === true || options.type === 'separator') {
+        // A divider has nothing to say, so nothing of it is resolved.
         return {
             disabled: false,
-            label: resolveValue(options.label, context) || '',
+            label: '',
             separator: true
         };
     }

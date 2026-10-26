@@ -89,6 +89,8 @@ export function registerMenuItem<T extends MenuTarget = CellMenuTarget>(
  * @return
  * The item, or undefined when nothing is registered under the id or it does
  * not apply here.
+ *
+ * @internal
  */
 export function getMenuItemFor(
     id: string,
@@ -125,6 +127,8 @@ export function getMenuItemFor(
  *
  * @return
  * Ids in registration order.
+ *
+ * @internal
  */
 export function getDefaultMenuItemIds(
     targetType: MenuTargetType

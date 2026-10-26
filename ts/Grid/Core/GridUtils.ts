@@ -616,6 +616,8 @@ export function waitForAnimationFrame(): Promise<void> {
  *
  * @param message
  * Warning text.
+ *
+ * @internal
  */
 export function warnOnce(key: string, message: string): void {
     if (warnedKeys.has(key)) {

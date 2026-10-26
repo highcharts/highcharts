@@ -964,6 +964,70 @@ test.describe('Cell Context Menu', () => {
             await expect(popups).toHaveCount(1);
         });
 
+        test('A disabled branch opens for neither pointer nor keyboard', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-disabled');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-disabled';
+                document.body.appendChild(container);
+
+                (window as any).cmDisabledRan = [];
+                (window as any).Grid.grid(container, {
+                    data: {
+                        columns: {
+                            id: ['ROW-001'],
+                            value: [1]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: {
+                            contextMenu: {
+                                enabled: true,
+                                items: [{
+                                    label: 'Disabled branch',
+                                    disabled: true,
+                                    items: [{ label: 'Child' }]
+                                }, {
+                                    label: 'Disabled leaf',
+                                    disabled: true,
+                                    onClick: (): void => {
+                                        (window as any).cmDisabledRan
+                                            .push('leaf');
+                                    }
+                                }]
+                            }
+                        }
+                    }
+                });
+            });
+
+            const cell = page.locator(
+                '#cm-disabled tbody tr[data-row-index="0"] td[data-column-id="id"]'
+            );
+            await cell.click({ button: 'right' });
+
+            const popups = page.locator('.hcg-popup');
+            const items = popups.first().locator('.hcg-menu-item');
+
+            await expect(items.first()).toHaveAttribute('disabled', '');
+
+            await items.first().hover({ force: true });
+            await expect(popups).toHaveCount(1);
+
+            // The branch button is disabled, so the key that activates it is
+            // ignored by the button itself.
+            await page.keyboard.press('ArrowDown');
+            await page.keyboard.press('ArrowRight');
+            await expect(popups).toHaveCount(1);
+
+            await items.last().click({ force: true });
+            expect(
+                await page.evaluate(() => (window as any).cmDisabledRan)
+            ).toEqual([]);
+        });
+
         test('The focused item is marked once the keyboard is used', async ({ page }) => {
             await page.evaluate(() => {
                 const existing = document.getElementById('cm-focus-ring');

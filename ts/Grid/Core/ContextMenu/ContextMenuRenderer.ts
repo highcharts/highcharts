@@ -85,16 +85,9 @@ function closeMenuTree(menu: Menu): void {
  * Menu instance.
  */
 export function openFocusedSubMenu(menu: Menu): void {
-    const focusedButton = menu.buttons[menu.focusCursor];
-
-    if (
-        !focusedButton ||
-        focusedButton.wrapper?.querySelector('button[disabled]')
-    ) {
-        return;
-    }
-
-    focusedButton.click();
+    // A disabled button ignores `click()`, so an item nobody can use needs no
+    // check of its own here.
+    menu.buttons[menu.focusCursor]?.click();
 }
 
 /**
@@ -153,6 +146,7 @@ export function renderMenuItems(
             label: item.label,
             icon: item.icon,
             chevron: isBranch,
+            disabled: item.disabled,
             onClick: (): void => {
                 if (!button || item.disabled) {
                     return;
@@ -192,13 +186,6 @@ export function renderMenuItems(
                 }
             }
         }).add(menu);
-
-        if (button && item.disabled) {
-            button.wrapper?.querySelector('button')?.setAttribute(
-                'disabled',
-                ''
-            );
-        }
     }
 }
 
