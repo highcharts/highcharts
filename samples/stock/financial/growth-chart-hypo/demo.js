@@ -89,8 +89,13 @@ async function renderChart() {
     // Load data
     await connector.load();
 
+    // Get data table and remove the trailing row with zero values
+    const dataTable = connector.getTable('Growth');
+    dataTable.deleteRows(dataTable.getRowCount() - 1);
+
     // Create chart
     Highcharts.stockChart('container', {
+        dataTable,
         chart: {
             plotBorderColor: '#E1E1E1',
             plotBorderWidth: 1,
@@ -284,6 +289,9 @@ async function renderChart() {
         },
         plotOptions: {
             series: {
+                dataMapping: {
+                    x: 'Date'
+                },
                 states: {
                     hover: {
                         enabled: false
@@ -300,24 +308,21 @@ async function renderChart() {
         },
         series: [{
             name: 'Portfolio',
-            data: connector.getTable('Growth').getRows(void 0, void 0, [
-                'Date',
-                'Value'
-            ]).slice(0, -1), // Remove trailing 0
+            dataMapping: {
+                y: 'Value'
+            },
             color: '#014CE5'
         }, {
             name: 'Benchmark',
-            data: connector.getTable('Growth').getRows(void 0, void 0, [
-                'Date',
-                'Value_Benchmark'
-            ]).slice(0, -1), // Remove trailing 0
+            dataMapping: {
+                y: 'Value_Benchmark'
+            },
             color: '#EA293C'
         }, {
             name: 'Net Invested',
-            data: connector.getTable('Growth').getRows(void 0, void 0, [
-                'Date',
-                'Value_NetAmountInvested'
-            ]).slice(0, -1), // Remove trailing 0
+            dataMapping: {
+                y: 'Value_NetAmountInvested'
+            },
             color: 'light-dark(#2F2E38,#afabd2)'
         }],
         legend: {
