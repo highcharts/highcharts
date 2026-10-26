@@ -22,7 +22,6 @@ import '../Column/ColumnSeries.js';
 import { composePatternFill } from '../../Extensions/PatternFill.js';
 
 import type ColorType from '../../Core/Color/ColorType.js';
-import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
 
@@ -32,6 +31,7 @@ import PictorialPoint from './PictorialPoint.js';
 import PictorialSeriesDefaults from './PictorialSeriesDefaults.js';
 import PictorialUtilities from './PictorialUtilities.js';
 import Series from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -57,8 +57,6 @@ composePatternFill(Chart, Series, SVGRenderer);
  *  Constants
  *
  * */
-
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
 const {
     getStackMetrics,
