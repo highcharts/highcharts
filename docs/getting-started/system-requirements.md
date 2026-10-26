@@ -1,3 +1,10 @@
+---
+description: >-
+  Review the browser and server requirements for running Highcharts, find
+  links to framework integrations, and learn how to load ES5 builds when
+  supporting Internet Explorer or other legacy browsers.
+---
+
 System requirements
 ===
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable data sorting and control the sort key and display order. Learn how
+  point matching, linked series, animated category labels, and DataTables work
+  with sorted chart data.
+---
+
 Data sorting
 ===
 

@@ -473,6 +473,15 @@ async function createDashboard() {
     }
 }
 
+function createTextEl(tag, text, className) {
+    const el = document.createElement(tag);
+    el.textContent = text ?? '';
+    if (className) {
+        el.className = className;
+    }
+    return el;
+}
+
 // Power plants: Name indexes topic and traffic stats.
 // Dynamically updated by incoming messages.
 const powPlantList = {};
@@ -526,42 +535,51 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
     }
 
     function getHeaderFields(fields) {
-        return getInfoRecord(null, fields).map(col => `<th>${col.name}</th>`);
+        return getInfoRecord(null, fields)
+            .map(col => createTextEl('th', col.name));
     }
 
     function getUnitFields(fields) {
-        return getInfoRecord(null, fields).map(col => `<th>${col.unit}</th>`);
+        return getInfoRecord(null, fields)
+            .map(col => createTextEl('th', col.unit));
     }
 
     function getDataFields(item, fields) {
-        return getInfoRecord(item, fields).map(col => {
-            const value = col.value.toFixed(col.precision);
-            return `<td>${value}</td>`;
-        });
+        return getInfoRecord(item, fields).map(
+            col => createTextEl('td', col.value.toFixed(col.precision))
+        );
     }
 
     function createInfoTable(header, fields, data) {
         if (Object.keys(data).length === 0) {
-            return '';
+            return null;
         }
 
-        // Fields to display
-        const colHtml = getHeaderFields(fields).join('');
-        const colHtmlUnit = getUnitFields(fields).join('');
+        const table = document.createElement('table');
+        table.className = 'info-field';
+        table.createCaption().textContent = header;
 
-        let html = `<table class="info-field"><caption>${header}</caption>
-            <tr><th>Name</th>${colHtml}</tr>
-            <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
+        // Fields to display
+        const head = table.createTBody();
+        const nameRow = document.createElement('tr');
+        const unitRow = document.createElement('tr');
+
+        nameRow.append(createTextEl('th', 'Name'), ...getHeaderFields(fields));
+        unitRow.className = 'unit';
+        unitRow.append(createTextEl('th', ''), ...getUnitFields(fields));
+        head.append(nameRow, unitRow);
 
         // Populate fields
         data.forEach(item => {
-            const name = item.name.replace('_', ' ');
-            const dataHtml = getDataFields(item, fields).join('');
-            html += `<tr><td>${name}</td>${dataHtml}</tr>`;
+            const row = document.createElement('tr');
+            row.append(
+                createTextEl('td', item.name.replace('_', ' ')),
+                ...getDataFields(item, fields)
+            );
+            head.appendChild(row);
         });
-        html += '</table>';
 
-        return html;
+        return table;
     }
 
     async function addIntakeMarkers(mapComp, data) {
@@ -648,39 +666,42 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
             title: data.name + ' (details)'
         });
 
+        const container = document.createElement('div');
+        container.id = 'info-container';
+
         // Description of power plant (if available)
-        let html = '';
         if (data.description !== null) {
-            html = `<span class="pw-descr">
-                ${data.description}</span>`;
+            container.appendChild(
+                createTextEl('span', data.description, 'pw-descr')
+            );
         }
 
         // Location info
         if (data.location) {
             const loc = data.location;
-            html += `<h3>${loc.lon} (lon.), ${loc.lat} (lat.)</h3>`;
+            container.appendChild(createTextEl(
+                'h3', `${loc.lon} (lon.), ${loc.lat} (lat.)`
+            ));
         }
 
-        // Power plant info
-        html += createInfoTable(
-            'Power plant', powerPlantConfig.infoFields, data.aggs
-        );
+        // Power plant, intakes and reservoir info
+        container.append(...[
+            createInfoTable(
+                'Power plant', powerPlantConfig.infoFields, data.aggs
+            ),
+            createInfoTable(
+                'Water intakes', intakeConfig.infoFields, data.intakes
+            ),
+            createInfoTable(
+                'Water reservoirs', reservoirConfig.infoFields, data.reservoirs
+            )
+        ].filter(Boolean));
 
-        // Intakes info
-        html += createInfoTable(
-            'Water intakes', intakeConfig.infoFields, data.intakes
-        );
-
-        // Reservoir info
-        html += createInfoTable(
-            'Water reservoirs', reservoirConfig.infoFields, data.reservoirs
-        );
-
-        // Render HTML
+        // Render
         const el = document.querySelector(
             'div#el-info .highcharts-dashboards-component-html-content'
         );
-        el.innerHTML = '<div id="info-container">' + html + '</div';
+        el.replaceChildren(container);
     }
 
     // Update map component
@@ -787,7 +808,7 @@ class ControlBar {
         this.elDropdownContent = document.getElementById('dropdown-content');
 
         this.elDropdownButton.title = 'Click to select a power plant';
-        this.elDropdownButton.innerHTML = 'Power plant';
+        this.elDropdownButton.textContent = 'Power plant';
     }
 
     setConnectState(connected) {
@@ -818,7 +839,8 @@ class ControlBar {
 
     showStatus(msg) {
         if (this.elConnectStatus) {
-            this.elConnectStatus.innerHTML = msg;
+            // Reached with a power plant name from an MQTT message
+            this.elConnectStatus.textContent = msg;
         }
     }
 
@@ -830,22 +852,25 @@ class ControlBar {
     }
 
     updatePowPlantDropdown(powPlantList) {
-        const tag = '<a class="dropdown-select" href="#">';
-        const el = this.elDropdownContent;
+        const items = [];
+        const addItem = name => {
+            const item = createTextEl('a', name, 'dropdown-select');
+            item.href = '#';
+            items.push(item);
+        };
 
-        el.innerHTML = '';
         for (const [key, value] of Object.entries(powPlantList)) {
             if (value.aggs.length === 0) {
                 // Single generator, no need to specify
-                el.innerHTML += `${tag}${key}</a>`;
+                addItem(key);
             } else {
                 // Multiple generators, list them all
                 for (let i = 0; i < value.aggs.length; i++) {
-                    const id = i + 1;
-                    el.innerHTML += `${tag}${key}-${id}</a>`;
+                    addItem(`${key}-${i + 1}`);
                 }
             }
         }
+        this.elDropdownContent.replaceChildren(...items);
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -920,7 +945,7 @@ class ControlBar {
         }
         if (event.target === this.elToggle) {
             // Connect/Disconnect button
-            this.elDropdownButton.innerHTML = 'Power plant';
+            this.elDropdownButton.textContent = 'Power plant';
             activeItem.fullName = '';
             await this.onConnectClicked();
 

@@ -23,11 +23,9 @@ import type {
 } from './SlowStochasticOptions';
 import type SlowStochasticPoint from './SlowStochasticPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
+import StochasticIndicator from '../Stochastic/StochasticIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator,
-    stochastic: StochasticIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -63,9 +61,9 @@ class SlowStochasticIndicator extends StochasticIndicator {
      * @extends      plotOptions.stochastic
      * @since        8.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/stochastic
-     * @requires     stock/indicators/slow-stochastic
+     * @requires     indicators/indicators
+     * @requires     indicators/stochastic
+     * @requires     indicators/slow-stochastic
      * @optionparent plotOptions.slowstochastic
      * @internal
      */
@@ -209,9 +207,9 @@ export default SlowStochasticIndicator;
  * @extends   series,plotOptions.slowstochastic
  * @since     8.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/stochastic
- * @requires  stock/indicators/slow-stochastic
+ * @requires  indicators/indicators
+ * @requires  indicators/stochastic
+ * @requires  indicators/slow-stochastic
  * @apioption series.slowstochastic
  */
 

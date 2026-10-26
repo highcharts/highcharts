@@ -1,3 +1,10 @@
+---
+description: >-
+  Play brief notes or speech when data crosses a threshold, using
+  conditional tracks or event handlers. The article shows playNote and speak
+  calls for notifications and points to context cues.
+---
+
 Notifications and Earcons
 ===
 
