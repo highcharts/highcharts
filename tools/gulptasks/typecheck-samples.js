@@ -96,10 +96,19 @@ function resolveTsgoCompilerOptions(configPath, config, demoParsed) {
         }
     }
 
-    return {
-        ...inheritedOptions,
-        ...(rawConfig.compilerOptions || {})
-    };
+    const compilerOptions = { ...(rawConfig.compilerOptions || {}) };
+    if (compilerOptions.paths) {
+        // The temporary config must not change where inherited aliases resolve.
+        const pathsBase = demoParsed.options.baseUrl || path.dirname(configPath);
+        compilerOptions.paths = Object.fromEntries(
+            Object.entries(compilerOptions.paths).map(([alias, targets]) => [
+                alias,
+                targets.map(target => path.resolve(pathsBase, target))
+            ])
+        );
+    }
+
+    return { ...inheritedOptions, ...compilerOptions };
 }
 
 function createTsgoConfig(configPath, config, demoParsed, demo, declarations, batchFiles = null) {
@@ -115,6 +124,7 @@ function createTsgoConfig(configPath, config, demoParsed, demo, declarations, ba
         'noEmit',
         'noImplicitAny',
         'noImplicitThis',
+        'paths',
         'strict',
         'target',
         'types'
@@ -215,6 +225,9 @@ function parseTsgoDiagnostics(output = '') {
     for (const line of lines) {
         const match = line.match(/^(.+?)\((\d+),(\d+)\):\s*error\s+TS(\d+):\s*(.*)$/);
         if (!match) {
+            if (/^\s/u.test(line) && diagnostics.length) {
+                diagnostics[diagnostics.length - 1].messageText += `\n${line}`;
+            }
             continue;
         }
 
@@ -257,17 +270,9 @@ function normalizeTsgoFailure(config, demoParsed, output, status) {
     }];
 }
 
-function formatDiagnosticMessage(diagnostic) {
-    if (!diagnostic) {
-        return '';
-    }
-    if (typeof diagnostic.messageText === 'string') {
-        return diagnostic.messageText;
-    }
-    if (diagnostic.messageText && typeof diagnostic.messageText.messageText === 'string') {
-        return diagnostic.messageText.messageText;
-    }
-    return String(diagnostic.messageText || '');
+function formatDiagnosticMessage(diagnostic, ts) {
+    return diagnostic ?
+        ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n') : '';
 }
 
 function formatDiagnosticList(diagnostics, ts) {
@@ -289,11 +294,11 @@ function formatDiagnosticList(diagnostics, ts) {
             if (diagnostic.fileName && typeof diagnostic.line === 'number' && typeof diagnostic.column === 'number') {
                 const code = diagnostic.code ? `TS${diagnostic.code}` : 'TS0';
                 const location = `${diagnostic.line}:${diagnostic.column}`;
-                return `  ${Colors.gray(location.padEnd(8, ' '))}  ${Colors.red(code)}  ${formatDiagnosticMessage(diagnostic)}`;
+                return `  ${Colors.gray(location.padEnd(8, ' '))}  ${Colors.red(code)}  ${formatDiagnosticMessage(diagnostic, ts)}`;
             }
 
             if (!diagnostic.file) {
-                return `  ${Colors.gray('(unknown)')}  TS0  ${formatDiagnosticMessage(diagnostic)}`;
+                return `  ${Colors.gray('(unknown)')}  TS0  ${formatDiagnosticMessage(diagnostic, ts)}`;
             }
 
             const start = diagnostic.start ?? 0;
@@ -303,7 +308,7 @@ function formatDiagnosticList(diagnostics, ts) {
             );
             const code = diagnostic.code ? `TS${diagnostic.code}` : 'TS0';
             const location = `${line + 1}:${character + 1}`;
-            return `  ${Colors.gray(location.padEnd(8, ' '))}  ${Colors.red(code)}  ${formatDiagnosticMessage(diagnostic)}`;
+            return `  ${Colors.gray(location.padEnd(8, ' '))}  ${Colors.red(code)}  ${formatDiagnosticMessage(diagnostic, ts)}`;
         });
 
         return `\n${Colors.underline(fileName)}\n${locationLines.join('\n')}`;
