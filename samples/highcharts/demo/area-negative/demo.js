@@ -12,7 +12,9 @@ dataTable.setColumns({
 Highcharts.chart('container', {
     dataTable,
     chart: {
-        type: 'area'
+        type: 'area',
+        plotBorderRadius: 4,
+        plotBorderWidth: 1
     },
     title: {
         text: 'Import, Export of goods in Norway (NOK million)'
@@ -29,7 +31,8 @@ Highcharts.chart('container', {
     },
     xAxis: {
         type: 'datetime',
-        lineWidth: 0
+        lineWidth: 0,
+        tickColor: 'var(--highcharts-neutral-color-20)'
     },
     yAxis: {
         title: {
