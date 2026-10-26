@@ -16,7 +16,7 @@
  *
  * */
 
-import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type RenkoPointOptions from './RenkoPointOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ColorType from '../../Core/Color/ColorType';
@@ -59,7 +59,7 @@ import type ColorType from '../../Core/Color/ColorType';
  *
  * @requires modules/renko
  */
-export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
+export interface RenkoSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * The width of the border surrounding each box.

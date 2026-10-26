@@ -46,6 +46,7 @@ async function renderChart() {
     await performanceConnector.load();
 
     Highcharts.chart('container', {
+        dataTable: performanceConnector.getTable('CalendarYearReturn'),
         chart: {
             type: 'column',
             zooming: {
@@ -80,6 +81,9 @@ async function renderChart() {
         },
         plotOptions: {
             series: {
+                dataMapping: {
+                    x: 'Id'
+                },
                 dataGrouping: {
                     enabled: true,
                     groupPixelWidth: 50
@@ -88,18 +92,14 @@ async function renderChart() {
         },
         series: [{
             name: 'Portfolio',
-            data: performanceConnector.getTable('CalendarYearReturn').getRows(
-                void 0,
-                void 0,
-                ['Id', 'Value']
-            )
+            dataMapping: {
+                y: 'Value'
+            }
         }, {
             name: 'Benchmark',
-            data: performanceConnector.getTable('CalendarYearReturn').getRows(
-                void 0,
-                void 0,
-                ['Id', 'Value_Benchmark']
-            )
+            dataMapping: {
+                y: 'Value_Benchmark'
+            }
         }],
         legend: {
             layout: 'horizontal',

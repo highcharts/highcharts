@@ -1898,10 +1898,18 @@ class Pointer {
                     el.getRootNode() as ShadowRoot|undefined
                 )?.host?.parentElement;
 
-        container.onmousedown = this.onContainerMouseDown.bind(this);
-        container.onmousemove = this.onContainerMouseMove.bind(this);
-        container.onclick = this.onContainerClick.bind(this);
         this.eventsToUnbind.push(
+            addEvent(
+                container,
+                'mousedown',
+                this.onContainerMouseDown.bind(this)
+            ),
+            addEvent(
+                container,
+                'mousemove',
+                this.onContainerMouseMove.bind(this)
+            ),
+            addEvent(container, 'click', this.onContainerClick.bind(this)),
             addEvent(
                 container,
                 'mouseenter',
@@ -2379,12 +2387,27 @@ namespace Pointer {
 
     /* *
      *
+     *  Variables
+     *
+     * */
+
+    let PointerClass: typeof Pointer = Pointer;
+
+    /* *
+     *
      *  Functions
      *
      * */
 
     /** @internal */
-    export function compose(ChartClass: typeof Chart): void {
+    export function compose(
+        ChartClass: typeof Chart,
+        PointerSubclass?: typeof Pointer
+    ): void {
+
+        // A subclass, like MSPointer in the ES5 build, replaces the class
+        // instead of adding a second pointer to each chart
+        PointerClass = PointerSubclass || PointerClass;
 
         if (pushUnique(composed, 'Core.Pointer')) {
             addEvent(ChartClass, 'beforeRender', function (): void {
@@ -2397,7 +2420,7 @@ namespace Pointer {
                  * @type {Highcharts.Pointer}
                  * @instance
                  */
-                this.pointer = new Pointer(this, this.options);
+                this.pointer = new PointerClass(this, this.options);
             });
         }
 

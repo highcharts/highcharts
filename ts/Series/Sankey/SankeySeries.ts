@@ -35,12 +35,10 @@ import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
 import SankeyPoint from './SankeyPoint.js';
 import SankeySeriesDefaults from './SankeySeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SankeyColumnComposition from './SankeyColumnComposition.js';
-const {
-    column: ColumnSeries,
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
@@ -526,6 +524,11 @@ class SankeySeries extends ColumnSeries {
         for (const column of nodeColumns) {
             for (const node of column) {
                 series.translateNode(node, column);
+
+                // Rank node labels by the node size. The node's `y` is only
+                // a placeholder, so the generic value based rank would let
+                // the data order decide (#23585).
+                node.labelrank = node.options.labelrank ?? node.getSum();
             }
         }
 

@@ -22,12 +22,10 @@ import type {
     AnnotationMockPointOptionsObject
 } from './AnnotationMockPointOptionsObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type Series from '../../Core/Series/Series';
 
 import NBU from './NavigationBindingsUtilities.js';
 const { getAxisFromOptions } = NBU;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { series: { prototype: seriesProto } } = SeriesRegistry;
+import Series from '../../Core/Series/Series.js';
 import { defined, fireEvent } from '../../Shared/Utilities.js';
 
 /* *
@@ -227,7 +225,7 @@ class MockPoint {
         this.series = {
             visible: true,
             chart: chart,
-            getPlotBox: seriesProto.getPlotBox
+            getPlotBox: Series.prototype.getPlotBox
         };
 
         /**

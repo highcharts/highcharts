@@ -39,11 +39,9 @@ const {
 } = CU;
 import H from '../../Core/Globals.js';
 const { noop } = H;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import TreemapSeries from '../Treemap/TreemapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    treemap: TreemapSeries
-} = SeriesRegistry.seriesTypes;
 import SunburstPoint from './SunburstPoint.js';
 import SunburstUtilities from './SunburstUtilities.js';
 import TU from '../TreeUtilities.js';
