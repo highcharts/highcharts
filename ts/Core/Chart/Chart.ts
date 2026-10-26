@@ -3809,8 +3809,6 @@ class Chart {
             updateAllSeries,
             runSetSize;
 
-        setAnimation(animation, chart);
-
         options = diffObjects(options, chart.options);
 
         const e: AnyRecord = {
@@ -3896,6 +3894,8 @@ class Chart {
                 chart.renderer.setStyle(chart.options.chart.style || {});
             }
         }
+
+        setAnimation(animation, chart);
 
         // Moved up, because tooltip needs updated plotOptions (#6218)
         if (!chart.styledMode && options.colors) {
