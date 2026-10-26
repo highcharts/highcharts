@@ -24,10 +24,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -114,8 +112,8 @@ class ATRIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/atr
+     * @requires     indicators/indicators
+     * @requires     indicators/atr
      * @optionparent plotOptions.atr
      * @internal
      */
@@ -257,8 +255,8 @@ export default ATRIndicator;
  * @extends   series,plotOptions.atr
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/atr
+ * @requires  indicators/indicators
+ * @requires  indicators/atr
  * @apioption series.atr
  */
 

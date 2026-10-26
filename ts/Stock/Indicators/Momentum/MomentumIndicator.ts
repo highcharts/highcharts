@@ -21,8 +21,8 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import type MomentumOptions from './MomentumOptions';
 import type MomentumPoint from './MomentumPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -76,8 +76,8 @@ class MomentumIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/momentum
+     * @requires     indicators/indicators
+     * @requires     indicators/momentum
      * @optionparent plotOptions.momentum
      * @internal
      */
@@ -200,8 +200,8 @@ export default MomentumIndicator;
  * @extends   series,plotOptions.momentum
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/momentum
+ * @requires  indicators/indicators
+ * @requires  indicators/momentum
  * @apioption series.momentum
  */
 

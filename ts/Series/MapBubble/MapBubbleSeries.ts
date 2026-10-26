@@ -24,17 +24,9 @@ import type PointerEvent from '../../Core/PointerEvent';
 
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
+import MapPointSeries from '../MapPoint/MapPointSeries.js';
+import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        map: {
-            prototype: mapProto
-        },
-        mappoint: {
-            prototype: mapPointProto
-        }
-    }
-} = SeriesRegistry;
 import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -267,7 +259,7 @@ class MapBubbleSeries extends BubbleSeries {
 
     public points!: Array<MapBubblePoint>;
 
-    public clearBounds = mapProto.clearBounds;
+    public clearBounds = MapSeries.prototype.clearBounds;
 
     /** @internal */
     public searchPoint(
@@ -282,7 +274,7 @@ class MapBubbleSeries extends BubbleSeries {
 
     /** @internal */
     translate(): void {
-        mapPointProto.translate.call(this);
+        MapPointSeries.prototype.translate.call(this);
         this.getRadii();
         this.translateBubble();
     }
@@ -299,19 +291,19 @@ interface MapBubbleSeries {
     /** @internal */
     type: string;
     /** @internal */
-    getProjectedBounds: typeof mapProto.getProjectedBounds;
+    getProjectedBounds: typeof MapSeries.prototype.getProjectedBounds;
     /** @internal */
     pointArrayMap: Array<string>;
     /** @internal */
     pointClass: typeof MapBubblePoint;
     /** @internal */
-    setData: typeof mapProto.setData;
+    setData: typeof MapSeries.prototype.setData;
     /** @internal */
-    processData: typeof mapProto.processData;
+    processData: typeof MapSeries.prototype.processData;
     /** @internal */
-    projectPoint: typeof mapPointProto.projectPoint;
+    projectPoint: typeof MapPointSeries.prototype.projectPoint;
     /** @internal */
-    setOptions: typeof mapProto.setOptions;
+    setOptions: typeof MapSeries.prototype.setOptions;
     /** @internal */
     xyFromShape: boolean;
 }
@@ -320,7 +312,7 @@ extend(MapBubbleSeries.prototype, {
 
     axisTypes: ['colorAxis'],
 
-    getProjectedBounds: mapProto.getProjectedBounds,
+    getProjectedBounds: MapSeries.prototype.getProjectedBounds,
 
     isCartesian: false,
 
@@ -329,15 +321,15 @@ extend(MapBubbleSeries.prototype, {
 
     pointClass: MapBubblePoint,
 
-    processData: mapProto.processData,
+    processData: MapSeries.prototype.processData,
 
-    projectPoint: mapPointProto.projectPoint,
+    projectPoint: MapPointSeries.prototype.projectPoint,
 
     kdAxisArray: ['plotX', 'plotY'],
 
-    setData: mapProto.setData,
+    setData: MapSeries.prototype.setData,
 
-    setOptions: mapProto.setOptions,
+    setOptions: MapSeries.prototype.setOptions,
 
     useMapGeometry: true,
 
