@@ -26,6 +26,7 @@ import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type {
+    CellEvent,
     Column,
     ColumnCollection,
     ColumnEvent,
@@ -2125,12 +2126,8 @@ class Series {
                     (): void => chart.renderer && chart.redraw(),
                     0
                 );
-            };
-
-        eventsToUnbind.push(addEvent(
-            dataTable,
-            'afterSetRows',
-            (e: RowEvent): void => {
+            },
+            onSetRow = (e: CellEvent|RowEvent): void => {
                 const rowIndex = e.rowIndex;
 
                 if (isNumber(rowIndex)) {
@@ -2155,36 +2152,38 @@ class Series {
                         }
                     }
                 }
-            }
-        ));
+            };
 
-        eventsToUnbind.push(addEvent(
-            dataTable,
-            'afterDeleteRows',
-            (e: RowEvent): void => {
-                const { rowCount, rowIndex } = e;
+        eventsToUnbind.push(
+            addEvent(dataTable, 'afterSetCell', onSetRow),
+            addEvent(dataTable, 'afterSetRows', onSetRow),
+            addEvent(
+                dataTable,
+                'afterDeleteRows',
+                (e: RowEvent): void => {
+                    const { rowCount, rowIndex } = e;
 
-                if (isNumber(rowIndex)) {
-                    for (
-                        let i = rowIndex + rowCount - 1;
-                        i >= rowIndex;
-                        i--
-                    ) {
-                        this.removePoint(i, false);
+                    if (isNumber(rowIndex)) {
+                        for (
+                            let i = rowIndex + rowCount - 1;
+                            i >= rowIndex;
+                            i--
+                        ) {
+                            this.removePoint(i, false);
+                        }
+
+                        queueRedraw();
                     }
-
-                    queueRedraw();
                 }
-            }
-        ));
-
-        eventsToUnbind.push(addEvent(
-            dataTable,
-            'afterSetColumns',
-            (e: ColumnEvent): void => {
-                this.setData(e.target);
-            }
-        ));
+            ),
+            addEvent(
+                dataTable,
+                'afterSetColumns',
+                (e: ColumnEvent): void => {
+                    this.setData(e.target);
+                }
+            )
+        );
 
         this.hasBoundDataTableEvents = true;
     }
