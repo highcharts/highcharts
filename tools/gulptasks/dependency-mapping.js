@@ -16,12 +16,15 @@ function treeToMappingRecursive(key, branch, keyPath, mapping = {}) {
     if (branch.doclet?.requires) {
         const fullKey = (keyPath.filter(Boolean).join('.') + '.' + key)
             .replace(/^\./u, '');
-        mapping[
-            fullKey
-        ] = branch.doclet.requires.map(
-            r => r
-                .replace(/module:/u, '')
+        const requires = branch.doclet.requires.map(
+            r => r.replace(/module:/u, '')
         );
+        // Dependencies after product:x are built into x, so load them first.
+        const marker = requires.findIndex(r => r.startsWith('product:'));
+        mapping[fullKey] = marker < 0 ? requires : [
+            ...requires.slice(marker + 1),
+            ...requires.slice(0, marker)
+        ];
     }
     return mapping;
 }
