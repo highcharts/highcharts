@@ -113,9 +113,10 @@ Grid.grid('container', {
 
 A summary column derives its value from the other columns of the same row, for
 example a `Total` column summing quarterly columns. It is the per-row mirror of
-a [summary row](https://www.highcharts.com/docs/grid/rows/summary-rows). Set `columnAggregator` to an aggregation function name (`SUM`,
-`AVERAGE`, `MIN`, `MAX`, `COUNT`, `MEDIAN`, `PRODUCT`, ...) and list the source
-columns in `aggregatedColumns`:
+a [summary row](https://www.highcharts.com/docs/grid/rows/summary-rows). Set
+`columnAggregator` to an aggregation function name (`SUM`, `AVERAGE`, `MIN`,
+`MAX`, `COUNT`, `MEDIAN`, `PRODUCT`, ...) and list the source columns in
+`aggregatedColumns`:
 
 ```js
 Grid.grid('container', {
