@@ -1,5 +1,5 @@
 ---
- name: Horizontal scrollable legend demo
+ name: Vertical scrollable legend demo
  authors:
    - Hubert Kozik
  js_wrap: b

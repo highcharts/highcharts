@@ -22,17 +22,16 @@
 import GeoHeatmapPointOptions from '../GeoHeatmap/GeoHeatmapPointOptions.js';
 import GeoHeatmapSeries from '../GeoHeatmap/GeoHeatmapSeries.js';
 import { PointShortOptions } from '../../Core/Series/PointOptions.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import MapSeries from '../Map/MapSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
 
-const {
-    map: {
-        prototype: {
-            pointClass: MapPoint
-        }
-    }
-} = SeriesRegistry.seriesTypes;
+/* *
+ *
+ *  Constants
+ *
+ * */
 
+const MapPoint = MapSeries.prototype.pointClass;
 
 /* *
  *
@@ -40,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/KDPointSearchObjectBase' {
     interface KDPointSearchObjectBase {
         lat?: number;
@@ -47,6 +47,7 @@ declare module '../../Core/Series/KDPointSearchObjectBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         lat?: number;
@@ -87,7 +88,7 @@ class GeoHeatmapPoint extends MapPoint {
 
 
     /**
-     * @private
+     * @internal
      */
     public applyOptions(
         options: (GeoHeatmapPointOptions | PointShortOptions),

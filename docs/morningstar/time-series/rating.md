@@ -1,3 +1,10 @@
+---
+description: >-
+  Retrieve monthly Morningstar star-rating history, which measures
+  risk-adjusted fund performance within its category on a one-to-five scale,
+  by setting the Rating series type on TimeSeriesConnector.
+---
+
 # Rating
 
 This type yields Morningstar Rating time series data for single or multiple
@@ -37,8 +44,7 @@ const ratingConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector
 
 ## Relevant demos
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve Rating time series. Specify type `Rating`.
+- [Highcharts Stock + Morningstar Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
 
 ## Morningstar API Reference
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure a 3D funnel whose segment heights follow point values, enable
+  chart 3D, and set funnel width, height, and neck dimensions. The article
+  lists the required scripts and series options.
+---
+
 3D funnel
 ===
 

@@ -1,6 +1,10 @@
 ---
 tags: ["grid-pro"]
 sidebar_label: "Grouping"
+description: >-
+  Group repeated values from local flat data into expandable Grid Pro rows,
+  configure grouping levels and the generated group column, aggregate parent
+  values, and control expansion through runtime APIs.
 ---
 
 # Row grouping

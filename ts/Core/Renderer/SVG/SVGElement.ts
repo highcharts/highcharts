@@ -1322,33 +1322,30 @@ class SVGElement implements SVGElementBase {
      * @param {string} value
      */
     public dashstyleSetter(value: string): void {
-        let i,
-            strokeWidth = this['stroke-width'];
-
-        // If "inherit", like maps in IE, assume 1 (#4981). With HC5 and the new
-        // strokeWidth function, we should be able to use that instead.
-        if (strokeWidth as unknown as string === 'inherit') {
-            strokeWidth = 1;
-        }
         if (value) {
-            value = value.toLowerCase();
-            const v = value
-                .replace('shortdashdotdot', '3,1,1,1,1,1,')
-                .replace('shortdashdot', '3,1,1,1')
-                .replace('shortdot', '1,1,')
-                .replace('shortdash', '3,1,')
-                .replace('longdash', '8,3,')
-                .replace(/dot/g, '1,3,')
-                .replace('dash', '4,3,')
-                .replace(/,$/, '')
-                .split(','); // Ending comma
+            this.element.setAttribute(
+                'stroke-dasharray',
+                value
+                    .toLowerCase()
 
-            i = v.length;
-            while (i--) {
-                v[i] = '' + (pInt(v[i]) * (strokeWidth ?? NaN));
-            }
-            value = v.join(',').replace(/NaN/g, 'none'); // #3226
-            this.element.setAttribute('stroke-dasharray', value);
+                    .replace('shortdashdotdot', '3,1,1,1,1,1,')
+                    .replace('shortdashdot', '3,1,1,1')
+                    .replace('shortdot', '1,1,')
+                    .replace('shortdash', '3,1,')
+                    .replace('longdash', '8,3,')
+                    .replace(/dot/g, '1,3,')
+                    .replace('dash', '4,3,')
+                    .replace(/,$/, '') // Ending comma
+
+                    .split(',')
+
+                    // Scale to stroke width
+                    .map((num: string): number =>
+                        +num * (this['stroke-width'] ?? NaN)
+                    )
+                    .join(',')
+                    .replace(/NaN/g, 'none')
+            );
         }
     }
 
@@ -2357,15 +2354,14 @@ class SVGElement implements SVGElementBase {
             );
         }
 
-        // Apply rotation
+        // Apply rotation. The origin falls back to 0 also for NaN, the position
+        // of a useHTML element that is not placed yet (#25277).
         if (rotation) {
-            transform.push(
-                'rotate(' + rotation + ' ' +
-                (rotationOriginX ?? element.getAttribute('x') ?? this.x ?? 0) +
-                ' ' +
-                (rotationOriginY ?? element.getAttribute('y') ?? this.y ?? 0) +
-                ')'
-            );
+            transform.push(`rotate(${rotation} ${
+                (rotationOriginX ?? element.getAttribute('x') ?? this.x) || 0
+            } ${
+                (rotationOriginY ?? element.getAttribute('y') ?? this.y) || 0
+            })`);
         }
 
         // Apply scale

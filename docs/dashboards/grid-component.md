@@ -1,3 +1,10 @@
+---
+description: >-
+  Connect Grid Pro to Dashboards, load connector data into a Grid cell,
+  configure modifiers and synchronization, and enable automatic scrolling to
+  rows highlighted by linked components.
+---
+
 # Grid Component
 
 The **Grid Component** acts as a wrapper for **Highcharts Grid** that can be placed inside a dashboards cell to allow users to visualize data a tabular format. Keep reading to learn how to embed **Highcharts Grid** in **Highcharts Dashboards**, or check out the full documentation for [Highcharts Grid](https://www.highcharts.com/docs/grid/general).

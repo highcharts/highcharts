@@ -18,14 +18,8 @@
  *
  * */
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import CandlestickSeries from '../Candlestick/CandlestickSeries.js';
 import HollowCandlestickSeries from './HollowCandlestickSeries.js';
-
-const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
-} = SeriesRegistry;
 
 /* *
  *
@@ -41,7 +35,6 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      *
      * */
 
-    /** @internal */
     public series!: HollowCandlestickSeries;
 
     /* *
@@ -50,10 +43,9 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      *
      * */
 
-
     /**
      * Update class name if needed.
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.hollowcandlestick#getClassName
      */
     public getClassName(): string {
@@ -69,12 +61,6 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
         return className;
     }
 }
-
-/* *
- *
- *  Class Namespace
- *
- * */
 
 /* *
  *
