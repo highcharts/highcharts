@@ -1677,9 +1677,7 @@ class WGLRenderer {
         if (this.isInited) {
             this.renderChart(chart);
         } else {
-            setTimeout((): void => {
-                this.render(chart);
-            }, 1);
+            return false;
         }
     }
 
