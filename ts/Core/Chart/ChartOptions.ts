@@ -411,7 +411,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/backgroundcolor-gradient/
      *         Gradient
      *
-     * @default ${palette.backgroundColor}
+     * @default 'var(--highcharts-background-color)'
      */
     backgroundColor?: ColorType;
 
@@ -428,7 +428,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/border/
      *         Border options
      *
-     * @default ${palette.highlightColor80}
+     * @default 'var(--highcharts-highlight-color-80)'
      */
     borderColor?: ColorType;
 
@@ -787,7 +787,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @default ${palette.neutralColor20}
+     * @default 'var(--highcharts-neutral-color-20)'
      */
     plotBorderColor?: ColorType;
 

@@ -782,7 +782,7 @@ export interface TooltipOptions {
      *         Greater padding, bold text
      */
     style: CSSObject & {
-        /** @default ${palette.neutralColor80} */
+        /** @default 'var(--highcharts-neutral-color-80)' */
         color?: CSSObject['color'];
 
         /** @default 'default' */

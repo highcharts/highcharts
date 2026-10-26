@@ -36,8 +36,8 @@ import ApproximationRegistry from '../../../Extensions/DataGrouping/Approximatio
 import Axis from '../../../Core/Axis/Axis.js';
 import Color from '../../../Core/Color/Color.js';
 const { parse: color } = Color;
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import {
     defined,
     extend,

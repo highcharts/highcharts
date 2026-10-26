@@ -197,7 +197,7 @@ for how to start, including child components and the `options` object.
 
 Now that Grid is installed, explore what you can build:
 
-- **[Introduction guide](https://www.highcharts.com/docs/grid/general)** – Build more complex grids with real data
+- **[Introduction guide](https://www.highcharts.com/docs/grid/general)** – Build your first grid
 - **[Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid)** – Configure columns, data sources, and events
 - **[Theming guide](https://www.highcharts.com/docs/grid/theming/index)** – Customize the look and feel
 - **[API reference](https://api.highcharts.com/grid/)** – Complete options and methods documentation
