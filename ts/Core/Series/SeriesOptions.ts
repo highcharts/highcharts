@@ -572,6 +572,8 @@ export interface SeriesOptions {
      *         One specific series
      * @sample {highcharts} highcharts/plotoptions/series-color-area/
      *         Area color
+     * @sample {highcharts} highcharts/plotoptions/column-color-gradient/
+     *         Columns with gradient fill
      * @sample {highcharts} highcharts/series/infographic/
      *         Pattern fill
      * @sample {highmaps} maps/demo/category-map/
