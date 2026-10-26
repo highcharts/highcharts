@@ -344,14 +344,17 @@ async function dependencyMapping() {
     let seriesMismatch = false;
     Object.keys(mapping).forEach(key => {
         if (key.startsWith('plotOptions.')) {
-            const seriesType = key.replace('plotOptions.', 'series.');
-            if (
-                /^series\.[a-zA-Z]+$/u.test(seriesType) &&
-                mapping[key].join(',') !== mapping[seriesType]?.join(',')
+            const seriesKey = key.replace('plotOptions.', 'series.');
+            if (!/^series\.[a-zA-Z0-9]+$/u.test(seriesKey)) {
+                mapping[seriesKey] = Array.from(
+                    new Set([...(mapping[seriesKey] || []), ...mapping[key]])
+                );
+            } else if (
+                mapping[key].join(',') !== mapping[seriesKey]?.join(',')
             ) {
                 log.warn(
-                    `Mismatched dependencies for ${key} and ${seriesType}:\n` +
-                    ` ${mapping[key]} vs ${mapping[seriesType]}`
+                    `Mismatched dependencies for ${key} and ${seriesKey}:\n` +
+                    ` ${mapping[key]} vs ${mapping[seriesKey]}`
                 );
                 seriesMismatch = true;
             }
@@ -365,12 +368,13 @@ async function dependencyMapping() {
     }
 
     // Rename key series.series to plotOptions.series
-    const deepSeriesRegex = /^series\.[a-zA-Z]+\./u;
+    const deepSeriesRegex = /^series\.[a-zA-Z0-9]+\./u;
     Object.entries(mapping).forEach(([key, value]) => {
         if (deepSeriesRegex.test(key)) {
-            mapping[
-                key.replace(deepSeriesRegex, 'plotOptions.series.')
-            ] = value;
+            const newKey = key.replace(deepSeriesRegex, 'plotOptions.series.');
+            mapping[newKey] = Array.from(
+                new Set([...(mapping[newKey] || []), ...value])
+            );
             delete mapping[key];
         }
     });
