@@ -213,6 +213,8 @@ QUnit.test('Chart.update with entrance animation', assert => {
             }]
         });
 
+        const exitingPoint = chart.series[0].points[0];
+
         chart.update({
             series: [{
                 data: [
@@ -222,18 +224,26 @@ QUnit.test('Chart.update with entrance animation', assert => {
                     [4, 1]
                 ]
             }]
-        }, true, true, { duration: 100 });
+        }, true, true, { duration: 2000 });
 
-        const lastPoint = chart.series[0].points[3];
+        const enteringPoint = chart.series[0].points[3];
 
         setTimeout(() => {
+            // Testing with long animation because the point was destroyed
+            // before the animation was finished
             assert.close(
-                lastPoint.graphic.opacity,
+                exitingPoint.graphic.opacity,
+                0.5,
+                0.3,
+                'The old point should be semi-opaque mid exit'
+            );
+            assert.close(
+                enteringPoint.graphic.opacity,
                 0.5,
                 0.3,
                 'The new point should be semi-opaque mid entrance'
             );
-        }, 50);
+        }, 1000);
 
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {

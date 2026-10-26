@@ -48,11 +48,9 @@ const {
     noop
 } = H;
 import Series from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapNode from './TreemapNode.js';
 import TreemapPoint from './TreemapPoint.js';

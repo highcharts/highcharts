@@ -301,6 +301,7 @@ class Series {
     public static keepProps = [
         'colorIndex',
         'eventOptions',
+        'hasBoundDataTableEvents',
         'navigatorSeries',
         'symbolIndex',
         'baseSeries'
@@ -2119,7 +2120,7 @@ class Series {
             return;
         }
 
-        const { chart, eventsToUnbind } = this,
+        const { chart } = this,
             queueRedraw = (): void => {
                 clearTimeout(chart.redrawTimeout);
                 chart.redrawTimeout = setTimeout(
@@ -2154,35 +2155,35 @@ class Series {
                 }
             };
 
-        eventsToUnbind.push(
-            addEvent(dataTable, 'afterSetCell', onSetRow),
-            addEvent(dataTable, 'afterSetRows', onSetRow),
-            addEvent(
-                dataTable,
-                'afterDeleteRows',
-                (e: RowEvent): void => {
-                    const { rowCount, rowIndex } = e;
+        addEvent(dataTable, 'afterSetCell', onSetRow);
+        addEvent(dataTable, 'afterSetRows', onSetRow);
 
-                    if (isNumber(rowIndex)) {
-                        for (
-                            let i = rowIndex + rowCount - 1;
-                            i >= rowIndex;
-                            i--
-                        ) {
-                            this.removePoint(i, false);
-                        }
+        addEvent(
+            dataTable,
+            'afterDeleteRows',
+            (e: RowEvent): void => {
+                const { rowCount, rowIndex } = e;
 
-                        queueRedraw();
+                if (isNumber(rowIndex)) {
+                    for (
+                        let i = rowIndex + rowCount - 1;
+                        i >= rowIndex;
+                        i--
+                    ) {
+                        this.removePoint(i, false);
                     }
+
+                    queueRedraw();
                 }
-            ),
-            addEvent(
-                dataTable,
-                'afterSetColumns',
-                (e: ColumnEvent): void => {
-                    this.setData(e.target);
-                }
-            )
+            }
+        );
+
+        addEvent(
+            dataTable,
+            'afterSetColumns',
+            (e: ColumnEvent): void => {
+                this.setData(e.target);
+            }
         );
 
         this.hasBoundDataTableEvents = true;
@@ -4999,7 +5000,7 @@ class Series {
         fireEvent(this, 'afterUpdate');
 
         if (redraw ?? true) {
-            chart.redraw(keepPoints ? void 0 : false);
+            chart.redraw();
         }
     }
 

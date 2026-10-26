@@ -34,10 +34,8 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import OHLCPoint from './OHLCPoint.js';
 import OHLCSeriesDefaults from './OHLCSeriesDefaults.js';
+import HLCSeries from '../HLC/HLCSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    hlc: HLCSeries
-} = SeriesRegistry.seriesTypes;
 import {
     addEvent,
     crisp,

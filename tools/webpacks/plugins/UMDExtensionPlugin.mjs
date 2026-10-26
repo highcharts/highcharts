@@ -71,7 +71,7 @@ function convertAMD(_, amdPrefix, amdRequires, amdSuffix) {
             requireToArgMap[requireKey] = factoryArg;
         }
 
-        factoryArgs.push(factoryArg + pathItems.map(pi => `[${pi}]`).join());
+        factoryArgs.push(factoryArg + pathItems.map(pi => `[${pi}]`).join(''));
     }
 
     return (

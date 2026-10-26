@@ -27,12 +27,18 @@ import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
 
 import DPU from '../DrawPointUtilities.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: { prototype: { pointClass: PiePoint } },
-    scatter: { prototype: { pointClass: ScatterPoint } }
-} = SeriesRegistry.seriesTypes;
+import PieSeries from '../Pie/PieSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { extend, isNumber } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const PiePoint = PieSeries.prototype.pointClass;
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *
