@@ -86,7 +86,10 @@ if (!Object.values) {
 const ElementPrototype = window.Element.prototype;
 
 if (typeof ElementPrototype.matches !== 'function') {
-    ElementPrototype.matches = function matches(selector: string): boolean {
+    ElementPrototype.matches = function matches(
+        this: Element,
+        selector: string
+    ): boolean {
         let element = this;
         const elements = element.ownerDocument.querySelectorAll(selector);
         let index = 0;
@@ -94,7 +97,7 @@ if (typeof ElementPrototype.matches !== 'function') {
             ++index;
         }
         return Boolean(elements[index]);
-    };
+    } as Element['matches'];
 }
 
 if (typeof ElementPrototype.closest !== 'function') {

@@ -43,8 +43,8 @@ import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
  *               minSize, navigatorOptions, pointRange, allowTraversingTree,
  *               alternateStartingDirection, borderRadius, breadcrumbs,
  *               interactByLeaf, layoutStartingDirection, levelIsConstant,
- *               lineWidth, negativeColor, nodes, sortIndex, zoneAxis,
- *               zones, cluster
+ *               lineWidth, negativeColor, nodes, nodeSizeBy, sortIndex,
+ *               zoneAxis, zones, cluster
  *
  * @product      highcharts
  * @since        10.3.0
@@ -143,6 +143,12 @@ const TreegraphSeriesDefaults = {
      * @extends   plotOptions.treegraph.dataLabels
      * @product   highcharts
      * @apioption plotOptions.treegraph.levels.dataLabels
+     */
+    /**
+     * Set marker options for nodes at the level.
+     *
+     * @extends   plotOptions.treegraph.marker
+     * @apioption plotOptions.treegraph.levels.marker
      */
     /**
      * Options applied to collapse Button. The collapse button is the

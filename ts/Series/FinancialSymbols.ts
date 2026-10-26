@@ -49,7 +49,7 @@ declare module '../Core/Renderer/SVG/SymbolType' {
  *  Composition
  *
  * */
-
+/** @internal */
 namespace FinancialSymbols {
 
     /* *
@@ -174,4 +174,5 @@ namespace FinancialSymbols {
  *
  * */
 
+/** @internal */
 export default FinancialSymbols;

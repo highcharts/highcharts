@@ -20,15 +20,11 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import ColumnSeries from '../../../Series/Column/ColumnSeries.js';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    column: {
-        prototype: columnProto
-    },
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     correctFloat,
     extend,
@@ -71,8 +67,8 @@ class AOIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               params, pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ao
+     * @requires     indicators/indicators
+     * @requires     indicators/ao
      * @optionparent plotOptions.ao
      * @internal
      */
@@ -258,11 +254,11 @@ interface AOIndicator {
     nameComponents: Array<string>|undefined;
     pointClass: typeof AOPoint;
     /** @internal */
-    crispCol: typeof columnProto.crispCol;
-    drawPoints: typeof columnProto.drawPoints;
+    crispCol: typeof ColumnSeries.prototype.crispCol;
+    drawPoints: typeof ColumnSeries.prototype.drawPoints;
     /** @internal */
-    getColumnMetrics: typeof columnProto.getColumnMetrics;
-    translate: typeof columnProto.translate;
+    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
+    translate: typeof ColumnSeries.prototype.translate;
 }
 
 extend(AOIndicator.prototype, {
@@ -271,10 +267,10 @@ extend(AOIndicator.prototype, {
 
     // Columns support:
     markerAttribs: noop as any,
-    getColumnMetrics: columnProto.getColumnMetrics,
-    crispCol: columnProto.crispCol,
-    translate: columnProto.translate,
-    drawPoints: columnProto.drawPoints
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
+    crispCol: ColumnSeries.prototype.crispCol,
+    translate: ColumnSeries.prototype.translate,
+    drawPoints: ColumnSeries.prototype.drawPoints
 });
 
 /* *
@@ -315,8 +311,8 @@ export default AOIndicator;
  * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ao
+ * @requires  indicators/indicators
+ * @requires  indicators/ao
  * @apioption series.ao
  */
 

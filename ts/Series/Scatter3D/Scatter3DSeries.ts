@@ -23,8 +23,7 @@
 import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
-import Math3D from '../../Core/Math3D.js';
-const { pointCameraDistance } = Math3D;
+import { pointCameraDistance } from '../../Core/Math3D.js';
 import Scatter3DPoint from './Scatter3DPoint.js';
 import Scatter3DSeriesDefaults from './Scatter3DSeriesDefaults.js';
 import ScatterSeries from '../Scatter/ScatterSeries.js';

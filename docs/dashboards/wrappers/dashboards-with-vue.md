@@ -1,3 +1,10 @@
+---
+description: >-
+  Install Dashboards in Vue, connect the Highcharts plugin, and mount a board
+  with the built-in layout or custom markup; examples use Vue refs, props, and
+  watchers to render the dashboard.
+---
+
 # Highcharts Dashboards with Vue
 
 To create a dashboard with **Vue**, please follow the steps below:

@@ -1,13 +1,16 @@
 {
     "compilerOptions": {
+        "alwaysStrict": false,
         "declaration": true,
         "noEmit": false,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strict": false,
-        "module": "none",
-        "moduleResolution": "node",
+        "module": "esnext",
+        "moduleDetection": "auto",
+        "moduleResolution": "bundler",
         "target": "es5",
+        "ignoreDeprecations": "6.0",
         "lib": [
             "dom",
             "es5"

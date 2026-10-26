@@ -1,3 +1,10 @@
+---
+description: >-
+  Load core files directly in a browser page for debugging and development,
+  accepting smaller downloads and increased delay from many requests, then
+  connect an NPM-installed plugin such as Grid through the plugin registry.
+---
+
 # Installation with ES6 modules
 
 Highcharts Dashboards packages are available as ES6-compatible modules.

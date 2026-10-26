@@ -40,12 +40,11 @@ import type { TypedArray, TypedArrayConstructor } from '../Shared/Types';
 import DataTableCore from './DataTableCore.js';
 
 import ColumnUtils from './ColumnUtils.js';
-const { splice } = ColumnUtils;
+const { setLength, splice } = ColumnUtils;
 
 import {
     addEvent,
     defined,
-    extend,
     fireEvent,
     isNumber
 } from '../Shared/Utilities.js';
@@ -895,13 +894,23 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         columnId: string,
         newColumnId: string
     ): boolean {
+        if (
+            columnId === '__proto__' ||
+            columnId === 'constructor' ||
+            newColumnId === '__proto__' ||
+            newColumnId === 'constructor'
+        ) {
+            return false;
+        }
+
         const table = this,
             columns = table.columns;
 
-        if (columns[columnId]) {
+        if (Object.hasOwnProperty.call(columns, columnId)) {
             if (columnId !== newColumnId) {
                 columns[newColumnId] = columns[columnId];
                 delete columns[columnId];
+                table.versionTag = uniqueKey();
             }
 
             return true;
@@ -939,11 +948,20 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         cellValue: CellType,
         eventDetail?: DataEventDetail
     ): void {
+        if (
+            columnId === '__proto__' ||
+            columnId === 'constructor'
+        ) {
+            return;
+        }
+
         const table = this,
             columns = table.columns,
             modifier = table.modifier;
 
-        let column = columns[columnId];
+        let column = Object.hasOwnProperty.call(columns, columnId) ?
+            columns[columnId] :
+            void 0;
 
         if (column && column[rowIndex] === cellValue) {
             return;
@@ -962,7 +980,9 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         }
 
         if (rowIndex >= table.rowCount) {
-            table.rowCount = (rowIndex + 1);
+            // Typed arrays ignore out-of-range writes, so make room first
+            table.applyRowCount(rowIndex + 1);
+            column = columns[columnId];
         }
 
         column[rowIndex] = cellValue;
@@ -1013,7 +1033,8 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
-            columnIds = Object.keys(columns);
+            columnIds = Object.keys(columns),
+            columnStart = rowIndex || 0;
 
         let rowCount = table.rowCount;
 
@@ -1029,9 +1050,17 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             super.setColumns(
                 columns,
                 rowIndex,
-                extend(eventDetail, { silent: true })
+                { ...eventDetail, silent: true }
             );
         } else {
+            // Resolved up front, so that every column is allocated only once
+            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+                rowCount = Math.max(
+                    rowCount,
+                    columnStart + columns[columnIds[i]].length
+                );
+            }
+
             for (
                 let i = 0,
                     iEnd = columnIds.length,
@@ -1046,6 +1075,14 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                 ++i
             ) {
                 columnId = columnIds[i];
+
+                if (
+                    columnId === '__proto__' ||
+                    columnId === 'constructor'
+                ) {
+                    continue;
+                }
+
                 column = columns[columnId];
                 tableColumn = tableColumns[columnId];
 
@@ -1055,29 +1092,37 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
 
                 if (!tableColumn) {
                     tableColumn = new ArrayConstructor(rowCount);
-                } else if (ArrayConstructor === Array) {
-                    if (!Array.isArray(tableColumn)) {
+                } else {
+                    if (
+                        ArrayConstructor === Array &&
+                        !Array.isArray(tableColumn)
+                    ) {
                         tableColumn = Array.from(tableColumn);
                     }
-                } else if (tableColumn.length < rowCount) {
-                    tableColumn =
-                        new ArrayConstructor(rowCount) as TypedArray;
-                    tableColumn.set(
-                        tableColumns[columnId] as ArrayLike<number>
-                    );
+
+                    if (tableColumn.length < rowCount) {
+                        if (ArrayConstructor === Array) {
+                            tableColumn = setLength(tableColumn, rowCount);
+                        } else {
+                            const grown =
+                                new ArrayConstructor(rowCount) as TypedArray;
+                            grown.set(tableColumn as ArrayLike<number>);
+                            tableColumn = grown;
+                        }
+                    }
                 }
                 tableColumns[columnId] = tableColumn;
 
-                for (
-                    let i = (rowIndex || 0),
-                        iEnd = column.length;
-                    i < iEnd;
-                    ++i
-                ) {
-                    tableColumn[i] = column[i];
+                if (Array.isArray(tableColumn)) {
+                    for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
+                        tableColumn[columnStart + j] = column[j];
+                    }
+                } else {
+                    tableColumn.set(
+                        column as ArrayLike<number>,
+                        columnStart
+                    );
                 }
-
-                rowCount = Math.max(rowCount, column.length);
             }
 
             this.applyRowCount(rowCount);
@@ -1267,6 +1312,11 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             rowIndex,
             rows
         });
+
+        // Typed arrays ignore out-of-range writes, `insert` grows via `splice`
+        if (!insert && rowIndex + rowCount > table.rowCount) {
+            table.applyRowCount(rowIndex + rowCount);
+        }
 
         for (
             let i = 0,

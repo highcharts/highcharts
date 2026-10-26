@@ -1,3 +1,10 @@
+---
+description: >-
+  Represent quantities as individual symbols in rectangular or circular
+  layouts, with examples for parliament-style charts. Configure row counts,
+  center and size, or custom marker symbols for different groups.
+---
+
 Item chart
 ===
 
