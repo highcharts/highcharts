@@ -540,6 +540,8 @@ extend(WordcloudSeries.prototype, {
     animateDrilldown: noop,
     animateDrillupFrom: noop,
     isCartesian: false,
+    // A word cloud has no x axis, so there is nothing to share (#25448)
+    noSharedTooltip: true,
     pointClass: WordcloudPoint,
     setClip: noop,
 
