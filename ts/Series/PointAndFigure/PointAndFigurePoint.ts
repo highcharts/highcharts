@@ -21,16 +21,15 @@
 import type { PointAndFigurePointOptions } from './PointAndFigurePointOptions';
 import type PointAndFigureSeries from './PointAndFigureSeries';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *

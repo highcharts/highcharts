@@ -227,6 +227,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         One specific series
      * @sample {highcharts} highcharts/plotoptions/series-color-area/
      *         Area color
+     * @sample {highcharts} highcharts/plotoptions/column-color-gradient/
+     *         Columns with gradient fill
      * @sample {highcharts} highcharts/series/infographic/
      *         Pattern fill
      * @sample {highmaps} maps/demo/category-map/
@@ -235,6 +237,31 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @basic
      * @type      {Highcharts.ColorType}
      * @apioption plotOptions.series.color
+     */
+
+    /**
+     * When using automatic point colors pulled from the global
+     * [colors](colors) or series-specific
+     * [plotOptions.series.colors](series.colors) collections, this option
+     * determines whether the chart should receive one color per series or
+     * one color per point.
+     *
+     * In styled mode, the `colors` or `series.colors` arrays are not
+     * supported, and instead this option gives the points individual color
+     * class names on the form `highcharts-color-{n}`.
+     *
+     * @see [series colors](#plotOptions.series.colors)
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
+     *         False by default
+     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
+     *         True
+     *
+     * @type      {boolean}
+     * @default   false
+     * @since     2.0
+     * @product   highcharts highstock gantt
+     * @apioption plotOptions.series.colorByPoint
      */
 
     /**
@@ -250,6 +277,17 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type      {number}
      * @since     5.0.0
      * @apioption plotOptions.series.colorIndex
+     */
+
+    /**
+     * A series specific or series type specific color set to apply instead
+     * of the global [colors](#colors) when [colorByPoint](
+     * #plotOptions.series.colorByPoint) is true.
+     *
+     * @type      {Array<Highcharts.ColorType>}
+     * @since     3.0
+     * @product   highcharts highstock gantt
+     * @apioption plotOptions.series.colors
      */
 
     /**
@@ -556,7 +594,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @see [navigator.series](#navigator.series)
      *
-     * @type      {Highcharts.PlotSeriesOptions}
+     * @type      {Highcharts.NavigatorSeriesOptions}
      * @since     5.0.0
      * @product   highstock gantt
      * @apioption plotOptions.series.navigatorOptions
@@ -2016,12 +2054,12 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
-         * Text rotation in degrees. Note that due to a more complex
-         * structure, backgrounds, borders and padding will be lost on a
-         * rotated data label.
+         * Text rotation in degrees.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
          *         Vertical labels
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-rotationmode-plugin
+         *         Perpendicular rotation in pie series via plugin
          *
          * @type      {number}
          * @default   0

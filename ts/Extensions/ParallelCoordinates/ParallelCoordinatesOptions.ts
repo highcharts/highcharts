@@ -53,7 +53,7 @@ interface ParallelCoordinatesOptions {
     parallelCoordinates?: boolean;
 
     /**
-     * Common options for all yAxes rendered in a parallel coordinates plot.
+     * Common options for all y axes rendered in a parallel coordinates plot.
      * This feature requires `modules/parallel-coordinates.js`.
      *
      * The default options are:
@@ -93,7 +93,6 @@ interface ParallelAxesOptions extends DeepPartial<Omit<
     | 'id'
     | 'gridLineColor'
     | 'gridLineDashStyle'
-    | 'gridLineWidth'
     | 'minorGridLineColor'
     | 'minorGridLineDashStyle'
     | 'minorGridLineWidth'
