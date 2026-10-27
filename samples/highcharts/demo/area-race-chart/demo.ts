@@ -59,7 +59,7 @@ const chart = Highcharts.chart('container', {
         y: -110
     },
     data: {
-        csv: (document.getElementById('csv') as HTMLElement).innerHTML,
+        csv: (document.getElementById('csv') as HTMLElement).innerText.trim(),
         itemDelimiter: '\t',
         complete: function (options): void {
             for (let i = 0; i < options.series.length; i++) {

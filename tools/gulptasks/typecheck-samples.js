@@ -350,11 +350,6 @@ function typecheckSamples(argv = {}) {
     let tsgoErrorCount = 0;
     const failedFiles = new Set();
     const configCache = new Map();
-    const formatHost = {
-        getCanonicalFileName: file => file,
-        getCurrentDirectory: ts.sys.getCurrentDirectory,
-        getNewLine: () => ts.sys.newLine
-    };
 
     function getConfigData(configPath) {
         if (configCache.has(configPath)) {
