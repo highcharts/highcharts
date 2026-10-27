@@ -40,8 +40,7 @@ import type SymbolOptions from './SymbolOptions';
 import type { SymbolKey } from './SymbolType';
 
 import AST from '../HTML/AST.js';
-import D from '../../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../../Defaults.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
