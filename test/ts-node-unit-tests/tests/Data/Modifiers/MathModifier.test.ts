@@ -94,6 +94,30 @@ describe('MathModifier', () => {
                 'Opposite celsius is a negative value.'
             );
         });
+
+        it('should not add rows past the row count', async () => {
+            const table = new DataTable({ columns: { A: [1, 2] } });
+
+            await table.setModifier(new MathModifier({
+                columnFormulas: [{
+                    column: 'B',
+                    formula: 'A1',
+                    rowEnd: 10000
+                }]
+            }));
+
+            strictEqual(
+                table.getModified().getRowCount(),
+                2,
+                'Modified table should keep the original row count.'
+            );
+
+            deepStrictEqual(
+                table.getModified().getColumn('B'),
+                [1, 2],
+                'Column formula should be applied to existing rows only.'
+            );
+        });
     });
 
     describe('advanced formulas', () => {
