@@ -1,6 +1,44 @@
 let success = 0,
     failed = 0;
 
+// contour test
+(async () => {
+    const { default: Highcharts } = await import(
+        'https://code.highcharts.com/esm/highcharts-autoload.js'
+    );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
+
+    try {
+        await Highcharts.mapChart(container, {
+            title: {
+                text: 'Testing contour'
+            },
+            series: [{
+                type: 'contour',
+                data: [1, 3, 2, 4]
+            }]
+        });
+        success++;
+        document.getElementById('success').innerText = success;
+    } catch (e) {
+        container.innerText = 'contour failed';
+        container.className += ' failed';
+        failed++;
+        document.getElementById('failed').innerText = failed;
+        console.error('Failed to load contour', e);
+    }
+})();
+
 // flowmap test
 (async () => {
     const { default: Highcharts } = await import(

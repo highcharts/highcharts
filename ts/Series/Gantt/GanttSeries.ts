@@ -140,7 +140,7 @@ class GanttSeries extends XRangeSeries {
      * This override draws the point as a diamond if point.options.milestone
      * is true, and uses the original drawPoint() if it is false or not set.
      *
-     * @requires highcharts-gantt
+     * @requires modules/gantt
      *
      * @internal
      * @function Highcharts.seriesTypes.gantt#drawPoint
