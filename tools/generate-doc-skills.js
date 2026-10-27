@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Generate agent skills from the docs markdown tree.
+ * Generate skill references from the docs markdown tree.
  */
 
 'use strict';
@@ -11,29 +11,6 @@ const os = require('node:os');
 const path = require('node:path');
 
 const repoRoot = path.resolve(__dirname, '..');
-
-function validateStringList(file, field, value) {
-    if (!Array.isArray(value) || !value.every(item => typeof item === 'string')) {
-        throw new Error(`${file}: skillMd.${field} must be an array of strings`);
-    }
-}
-
-function validateSkillMd(file, skillMd) {
-    if (typeof skillMd === 'string') {
-        return;
-    }
-    if (!skillMd || typeof skillMd !== 'object') {
-        throw new Error(`${file}: skillMd must be a string or structured object`);
-    }
-    for (const key of ['description', 'title', 'scope']) {
-        if (typeof skillMd[key] !== 'string' || !skillMd[key]) {
-            throw new Error(`${file}: skillMd.${key} must be a non-empty string`);
-        }
-    }
-    for (const key of ['workflow', 'boundaries', 'references']) {
-        validateStringList(file, key, skillMd[key]);
-    }
-}
 
 function loadSkills(root) {
     const configDir = path.join(__dirname, 'skill-configs');
@@ -49,10 +26,6 @@ function loadSkills(root) {
                 throw new Error(`${f}: missing required property "${key}"`);
             }
         }
-        if (!skill.skillMd) {
-            throw new Error(`${f}: missing required property "skillMd"`);
-        }
-        validateSkillMd(f, skill.skillMd);
         return skill;
     });
 }
@@ -61,8 +34,8 @@ const SKILLS = loadSkills(repoRoot);
 
 function printHelp() {
     process.stdout.write([
-        'Generate agent skills from docs markdown.',
-        'Output: skills/<name>/ with bundled reference docs.',
+        'Generate skill references from docs markdown.',
+        'Output: skills/<name>/references/docs/. Authored SKILL.md files are preserved.',
         '',
         'Usage:',
         '  node tools/generate-doc-skills.js --yes',
@@ -73,8 +46,8 @@ function printHelp() {
         'Options:',
         '  --docs=<path>       Docs markdown source directory. Default: docs',
         '  --skill=<a,b>       Generate only selected skills. Default: all',
-        '  --check            Check all generated skills without rewriting output',
-        '  --yes, -y           Required for generation: confirms directory replacement',
+        '  --check             Check all generated references without rewriting output',
+        '  --yes, -y           Required for generation: confirms reference replacement',
         '  --self-test         Run the script self-test',
         '  --help, -h          Print this help text'
     ].join('\n') + '\n');
@@ -159,46 +132,6 @@ function selectDocs(docsRoot, skill) {
         !matchesFilter(file, skill.docs.exclude)
     ));
 }
-
-
-function numberedLines(lines) {
-    return lines.map((line, index) => `${index + 1}. ${line}`);
-}
-
-function bulletLines(lines) {
-    return lines.map(line => `- ${line}`);
-}
-
-function renderSkillMd(name, skillMd) {
-    if (typeof skillMd === 'string') {
-        return skillMd;
-    }
-
-    return [
-        '---',
-        `name: ${name}`,
-        `description: ${skillMd.description}`,
-        '---',
-        '',
-        `# ${skillMd.title}`,
-        '',
-        skillMd.scope,
-        '',
-        '## Workflow',
-        '',
-        ...numberedLines(skillMd.workflow),
-        '',
-        '## Boundaries',
-        '',
-        ...bulletLines(skillMd.boundaries),
-        '',
-        '## References',
-        '',
-        ...bulletLines(skillMd.references),
-        ''
-    ].join('\n');
-}
-
 // Note: Only detects fenced code blocks starting at column 0 (^ anchor in
 // multiline mode). Indented fences (e.g. inside list items) are not tracked,
 // so strippable content inside them may be incorrectly removed. Low risk for
@@ -232,7 +165,6 @@ function buildSkill(skill, docsRoot, tempRoot) {
     const docsOut = path.join(skillRoot, 'references', 'docs');
 
     fs.mkdirSync(docsOut, { recursive: true });
-    fs.writeFileSync(path.join(skillRoot, 'SKILL.md'), renderSkillMd(skill.name, skill.skillMd));
 
     for (const file of files) {
         const source = path.join(docsRoot, file);
@@ -267,22 +199,37 @@ function buildSkill(skill, docsRoot, tempRoot) {
     fs.writeFileSync(path.join(docsOut, 'index.md'), indexLines.join('\n'));
 
     return {
-        root: skillRoot,
+        root: docsOut,
         files
     };
+}
+
+function readSkillMd(skillRoot) {
+    const file = path.join(skillRoot, 'SKILL.md');
+    if (!fs.existsSync(skillRoot) || !fs.lstatSync(skillRoot).isDirectory() ||
+        !fs.existsSync(file) || !fs.lstatSync(file).isFile()) {
+        throw new Error(`Missing authored skill file: ${file}`);
+    }
+    return fs.readFileSync(file, 'utf8');
 }
 
 function publishSkill(skill, generated, yes) {
     const published = [];
 
     for (const destination of skill.destinations) {
-        if (fs.existsSync(destination.path) && !yes) {
-            throw new Error(`Refusing to replace ${path.relative(repoRoot, destination.path)} without --yes`);
+        readSkillMd(destination.path);
+        const references = path.join(destination.path, 'references');
+        if (fs.existsSync(references) && !fs.lstatSync(references).isDirectory()) {
+            throw new Error(`Expected a references directory: ${references}`);
         }
-        fs.rmSync(destination.path, { force: true, recursive: true });
-        fs.mkdirSync(path.dirname(destination.path), { recursive: true });
-        fs.cpSync(generated.root, destination.path, { recursive: true });
-        published.push(destination.path);
+        const docs = path.join(references, 'docs');
+        if (fs.existsSync(docs) && !yes) {
+            throw new Error(`Refusing to replace ${path.relative(repoRoot, docs)} without --yes`);
+        }
+        fs.rmSync(docs, { force: true, recursive: true });
+        fs.mkdirSync(references, { recursive: true });
+        fs.cpSync(generated.root, docs, { recursive: true });
+        published.push(docs);
     }
 
     if (!published.length) {
@@ -317,7 +264,11 @@ function checkSkills(skills, docsRoot, outputRoot) {
     try {
         for (const skill of skills) {
             const generated = buildSkill(skill, docsRoot, tempRoot);
-            if (!sameDirectory(generated.root, path.join(outputRoot, skill.name))) {
+            const skillRoot = path.join(outputRoot, skill.name);
+            readSkillMd(skillRoot);
+            const references = path.join(skillRoot, 'references');
+            if (!fs.existsSync(references) || !fs.lstatSync(references).isDirectory() ||
+                !sameDirectory(generated.root, path.join(references, 'docs'))) {
                 stale.push(skill.name);
             }
         }
@@ -331,7 +282,7 @@ function checkSkills(skills, docsRoot, outputRoot) {
         }
         if (stale.length) {
             throw new Error(
-                `Generated skills are out of date: ${stale.sort().join(', ')}.\n` +
+                `Generated skill references are out of date: ${stale.sort().join(', ')}.\n` +
                 'Run npm run generate:skills -- --yes and remove outputs for deleted configurations.'
             );
         }
@@ -342,7 +293,7 @@ function checkSkills(skills, docsRoot, outputRoot) {
 
 function generate(args) {
     if (!args.yes) {
-        throw new Error('Pass --yes to replace generated skill directories.');
+        throw new Error('Pass --yes to replace generated reference directories.');
     }
     if (!fs.existsSync(args.docs) || !fs.statSync(args.docs).isDirectory()) {
         throw new Error(`Missing docs directory: ${args.docs}`);
@@ -421,9 +372,18 @@ function selfTest() {
         const testSkill = {
             name: 'test-skill',
             docs: { include: ['getting-started/'], exclude: [] },
-            destinations: [{ path: path.join(outputRoot, 'test-skill') }],
-            skillMd: '---\nname: test-skill\ndescription: Test skill for self-test.\n---\n\n# Test skill\n'
+            destinations: [{ path: path.join(outputRoot, 'test-skill') }]
         };
+        const skillRoot = path.join(outputRoot, 'test-skill');
+        const skillFile = path.join(skillRoot, 'SKILL.md');
+        const authoredMarkdown = '---\nname: test-skill\ndescription: Test skill for self-test.\n---\n\n# Test skill\n';
+        fs.mkdirSync(path.join(skillRoot, 'references'), { recursive: true });
+        fs.writeFileSync(skillFile, authoredMarkdown);
+        const customReference = path.join(skillRoot, 'references', 'custom.md');
+        fs.writeFileSync(customReference, 'Authored reference.\n');
+        fs.mkdirSync(path.join(skillRoot, 'scripts'));
+        const customScript = path.join(skillRoot, 'scripts', 'example.js');
+        fs.writeFileSync(customScript, '// Authored script.\n');
         const generated = buildSkill(testSkill, docsRoot, path.join(tempRoot, 'build'));
         const result = publishSkill(testSkill, generated, true);
 
@@ -434,7 +394,7 @@ function selfTest() {
             'getting-started/with-noise.md'
         ]);
         assert.equal(result.published.length, 1);
-        const staleFile = path.join(outputRoot, 'test-skill', 'stale.md');
+        const staleFile = path.join(skillRoot, 'references', 'docs', 'stale.md');
         fs.writeFileSync(staleFile, 'Removed from source docs.\n');
         assert.throws(() => publishSkill(testSkill, generated, false), /without --yes/u);
         assert.ok(fs.existsSync(staleFile), 'refusing replacement must preserve installed files');
@@ -453,7 +413,7 @@ function selfTest() {
         for (const change of [
             () => fs.unlinkSync(installedDoc),
             () => fs.writeFileSync(staleFile, 'Unexpected output.\n'),
-            () => fs.mkdirSync(path.join(outputRoot, 'test-skill', 'unexpected-directory'))
+            () => fs.mkdirSync(path.join(skillRoot, 'references', 'docs', 'unexpected-directory'))
         ]) {
             publishSkill(testSkill, generated, true);
             change();
@@ -466,10 +426,34 @@ function selfTest() {
             () => checkSkills([{ ...testSkill, name: 'renamed-skill' }], docsRoot, outputRoot),
             /renamed-skill/u
         );
-        assert.throws(
-            () => checkSkills([{ ...testSkill, skillMd: `${testSkill.skillMd}Changed instructions.\n` }], docsRoot, outputRoot),
-            /test-skill/u
-        );
+        assert.throws(() => checkSkills([{
+            ...testSkill,
+            docs: { ...testSkill.docs, exclude: ['getting-started/installation.md'] }
+        }], docsRoot, outputRoot), /test-skill/u);
+
+        const editedMarkdown = authoredMarkdown + '\nUpdated instructions.\n';
+        fs.writeFileSync(skillFile, editedMarkdown);
+        checkSkills([testSkill], docsRoot, outputRoot);
+        publishSkill(testSkill, generated, true);
+        assert.equal(readSkillMd(skillRoot), editedMarkdown, 'regeneration must preserve edited instructions');
+        assert.equal(fs.readFileSync(customReference, 'utf8'), 'Authored reference.\n');
+        assert.equal(fs.readFileSync(customScript, 'utf8'), '// Authored script.\n');
+        fs.unlinkSync(skillFile);
+        assert.throws(() => checkSkills([testSkill], docsRoot, outputRoot), /Missing authored skill file/u);
+        assert.throws(() => publishSkill(testSkill, generated, true), /Missing authored skill file/u);
+        assert.ok(fs.existsSync(installedDoc), 'a missing entrypoint must not remove references');
+        assert.equal(fs.existsSync(skillFile), false, 'generation must not create the authored entrypoint');
+        fs.writeFileSync(skillFile, editedMarkdown);
+
+        const references = path.join(skillRoot, 'references');
+        const savedReferences = path.join(skillRoot, 'saved-references');
+        fs.renameSync(references, savedReferences);
+        fs.symlinkSync(savedReferences, references, process.platform === 'win32' ? 'junction' : 'dir');
+        assert.throws(() => publishSkill(testSkill, generated, true), /Expected a references directory/u);
+        assert.throws(() => checkSkills([testSkill], docsRoot, outputRoot), /test-skill/u);
+        assert.ok(fs.existsSync(path.join(savedReferences, 'docs', 'index.md')));
+        fs.unlinkSync(references);
+        fs.renameSync(savedReferences, references);
 
         const newDoc = path.join(docsRoot, 'getting-started', 'new.md');
         fs.writeFileSync(newDoc, '# New page\n');
@@ -479,53 +463,7 @@ function selfTest() {
         assert.throws(() => checkSkills([testSkill], docsRoot, outputRoot), /test-skill/u);
         fs.writeFileSync(path.join(docsRoot, 'getting-started', 'installation.md'), '# Install\n');
         checkSkills([testSkill], docsRoot, outputRoot);
-        assert.equal(
-            fs.readFileSync(path.join(outputRoot, 'test-skill', 'SKILL.md'), 'utf8'),
-            '---\nname: test-skill\ndescription: Test skill for self-test.\n---\n\n# Test skill\n'
-        );
-
-        const structuredSkill = {
-            name: 'structured-skill',
-            docs: { include: ['react/'], exclude: [] },
-            destinations: [{ path: path.join(outputRoot, 'structured-skill') }],
-            skillMd: {
-                description: 'Structured skill description.',
-                title: 'Structured Skill',
-                scope: 'Use this for structured skill generation.',
-                workflow: ['Read the index.', 'Read matching docs.'],
-                boundaries: ['Use another skill for unrelated work.'],
-                references: ['Live docs: https://example.com/']
-            }
-        };
-        const structuredGenerated = buildSkill(structuredSkill, docsRoot, path.join(tempRoot, 'build-structured'));
-        publishSkill(structuredSkill, structuredGenerated, true);
-        assert.equal(
-            fs.readFileSync(path.join(outputRoot, 'structured-skill', 'SKILL.md'), 'utf8'),
-            [
-                '---',
-                'name: structured-skill',
-                'description: Structured skill description.',
-                '---',
-                '',
-                '# Structured Skill',
-                '',
-                'Use this for structured skill generation.',
-                '',
-                '## Workflow',
-                '',
-                '1. Read the index.',
-                '2. Read matching docs.',
-                '',
-                '## Boundaries',
-                '',
-                '- Use another skill for unrelated work.',
-                '',
-                '## References',
-                '',
-                '- Live docs: https://example.com/',
-                ''
-            ].join('\n')
-        );
+        assert.equal(readSkillMd(skillRoot), editedMarkdown);
 
         const stripped = fs.readFileSync(
             path.join(outputRoot, 'test-skill', 'references', 'docs', 'getting-started', 'with-noise.md'),
@@ -600,47 +538,8 @@ function selfTest() {
             const built = buildSkill(skill, sourceDocs, path.join(tempRoot, 'build-real'));
             assert.deepEqual(built.files, expectedDocs);
             assert.equal(built.files.some(file => /^(grid|dashboards|morningstar)\//u.test(file)), false);
-            const markdown = fs.readFileSync(path.join(built.root, 'SKILL.md'), 'utf8');
-            assert.ok(markdown.includes('`references/docs/index.md`'));
-            assert.ok(markdown.includes(`name: highcharts-${topic}\n`));
-            assert.ok(markdown.includes(`description: ${skill.skillMd.description}\n`));
-            if (topic === 'react') {
-                assert.deepEqual(skill.docs, { include: ['react/'], exclude: [] });
-                for (const rule of [
-                    'use the relevant child component first, including JSX children where supported; use chart-level props or the `options` prop only when no child component expresses the behavior',
-                    'Drive dynamic values through React state and props',
-                    'Use chart instance APIs only when neither declarative route works',
-                    'Render series as direct children of `Chart`',
-                    'Prefer dedicated series components; use the generic `Series` component when series are dynamic or a dedicated component is impractical',
-                    'keep hooks and state in the parent and pass values through props',
-                    'verify child support and static parsing behavior before preferring children over chart-level options',
-                    'Use dedicated series and module components and import only what the chart renders',
-                    'Import a module from `highcharts/es-modules/masters/...` only when no React component exists',
-                    'load a complete product bundle only when its feature set is required',
-                    'use a `Chart` ref only when the behavior cannot be expressed through child components or chart props/options',
-                    'Add \'use client\' to files containing Highcharts components or modules',
-                    'keep Highcharts imports and rendering in the client component',
-                    'Server code may fetch or stream data into that component but must not instantiate Highcharts'
-                ]) {
-                    assert.ok(markdown.includes(rule), rule);
-                }
-            }
-            if (topic === 'js') {
-                for (const file of [
-                    'getting-started/your-first-chart.md',
-                    'chart-concepts/series.md',
-                    'accessibility/accessibility-module-feature-overview.md'
-                ]) {
-                    assert.ok(built.files.includes(file), file);
-                }
-                assert.equal(built.files.some(file => /^(working-with-data|export-module)\//u.test(file)), false);
-                for (const route of ['data', 'accessibility', 'exporting']) {
-                    assert.ok(markdown.includes(`\`highcharts-${route}\``));
-                }
-                assert.ok(markdown.includes('Basic `series.data` setup remains in this skill'));
-            }
             const index = fs.readFileSync(
-                path.join(built.root, 'references', 'docs', 'index.md'), 'utf8'
+                path.join(built.root, 'index.md'), 'utf8'
             );
             assert.equal(
                 index.split('\n').filter(line => line.startsWith('- [')).length,
@@ -649,7 +548,7 @@ function selfTest() {
             for (const file of expectedDocs) {
                 assert.ok(index.includes(`](${file})`), file);
                 assert.equal(
-                    fs.readFileSync(path.join(built.root, 'references', 'docs', file), 'utf8'),
+                    fs.readFileSync(path.join(built.root, file), 'utf8'),
                     stripContent(fs.readFileSync(path.join(sourceDocs, file), 'utf8')),
                     file
                 );
@@ -660,15 +559,13 @@ function selfTest() {
             assert.deepEqual(skill.destinations, [
                 { path: path.join(repoRoot, 'skills', skill.name) }
             ]);
-            assert.match(
-                renderSkillMd(skill.name, skill.skillMd),
-                /^---\nname: .+\ndescription: .+\n---/u,
-                `${skill.name}: skillMd must render name and description frontmatter`
-            );
             const built = buildSkill(skill, sourceDocs, path.join(tempRoot, 'build-portable'));
-            const markdown = fs.readFileSync(path.join(built.root, 'SKILL.md'), 'utf8');
+            const markdown = readSkillMd(path.join(repoRoot, 'skills', skill.name));
             for (const match of markdown.matchAll(/`(references\/docs\/[^`]+)`/gu)) {
-                assert.ok(fs.existsSync(path.join(built.root, match[1])), `${skill.name}: missing ${match[1]}`);
+                assert.ok(
+                    fs.existsSync(path.join(built.root, match[1].slice('references/docs/'.length))),
+                    `${skill.name}: missing ${match[1]}`
+                );
             }
         }
     } finally {
@@ -692,7 +589,7 @@ function main() {
 
     if (args.check) {
         checkSkills(SKILLS, args.docs, path.join(repoRoot, 'skills'));
-        process.stdout.write(`All ${SKILLS.length} generated skills are up to date.\n`);
+        process.stdout.write(`All ${SKILLS.length} generated skill references are up to date.\n`);
         return;
     }
 

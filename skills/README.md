@@ -57,6 +57,7 @@ To move from a pinned snapshot to another version, install again using the new
 tag or commit URL. Replacing the whole directory keeps instructions, references,
 and the index together and removes stale pages.
 
-Maintainers should edit the original documentation and skill configurations,
-then regenerate these directories. See the
-[generator guide](../tools/GENERATE-DOC-SKILLS.md).
+Maintainers edit instructions directly in each `SKILL.md`. For reference
+changes, edit the original documentation or skill configurations, then
+regenerate `references/docs/`. Generation preserves the authored instructions
+and other resources. See the [generator guide](../tools/GENERATE-DOC-SKILLS.md).

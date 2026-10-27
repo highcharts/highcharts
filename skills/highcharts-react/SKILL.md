@@ -23,8 +23,8 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 ## Workflow
 
-1. Start with the mixed-series example in `references/docs/react/getting-started.md`; use `references/docs/index.md` to find a guide for a specific integration or unfamiliar behavior.
-2. Read the relevant example or section before implementing it. Use installed TypeScript declarations or the API reference for exact options and signatures.
+1. Choose the chart entry point first: for Stock, Maps, or Gantt, read the matching section in `references/docs/react/components/chart.md` and use its chart component. For Core charts, start with the mixed-series example in `references/docs/react/getting-started.md`.
+2. Use `references/docs/index.md` to find a guide for a specific integration or unfamiliar behavior, then read the relevant example or section. Use installed TypeScript declarations or the API reference for exact options and signatures.
 3. Build the chart declaratively: use the relevant child component first, including JSX children where supported; use chart-level props or the `options` prop only when no child component expresses the behavior. Drive dynamic values through React state and props. Use chart instance APIs only when neither declarative route works.
 4. Render series as direct children of `Chart`. Prefer dedicated series components; use the generic `Series` component when series are dynamic or a dedicated component is impractical.
 5. Use dedicated series and module components and import only what the chart renders. Import a module from `highcharts/es-modules/masters/...` only when no React component exists; load a complete product bundle only when its feature set is required.
