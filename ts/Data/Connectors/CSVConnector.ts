@@ -87,7 +87,7 @@ class CSVConnector extends DataConnector {
 
         if (mergedOptions.enablePolling) {
             this.startPolling(
-                Math.max(mergedOptions.dataRefreshRate || 0, 1) * 1000
+                DataConnector.getPollingInterval(mergedOptions.dataRefreshRate)
             );
         }
     }

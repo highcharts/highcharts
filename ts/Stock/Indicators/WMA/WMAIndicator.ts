@@ -27,8 +27,8 @@ import type {
 } from './WMAOptions';
 import type WMAPoint from './WMAPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *

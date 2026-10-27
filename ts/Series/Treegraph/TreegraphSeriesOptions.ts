@@ -139,9 +139,9 @@ export interface TreegraphSeriesLevelOptions extends TreegraphSeriesLevelBase {
  *            colorKey, compare, dataGrouping, endAngle, gapSize, gapUnit,
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *            minSize, navigatorOptions, pointRange, allowTraversingTree,
- *            alternateStartingDirection, borderRadius, breadcrumbs,
+ *            alternateStartingDirection, breadcrumbs,
  *            interactByLeaf, layoutStartingDirection, levelIsConstant,
- *            lineWidth, negativeColor, nodes, sortIndex, zoneAxis,
+ *            lineWidth, negativeColor, nodes, nodeSizeBy, sortIndex, zoneAxis,
  *            zones
  *
  * @product highcharts

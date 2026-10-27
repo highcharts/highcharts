@@ -28,6 +28,14 @@ QUnit.test('Outside tooltip and styledMode (#11783)', function (assert) {
         'path',
         'A label box should be generated'
     );
+
+    const { container } = chart.tooltip;
+
+    assert.ok(
+        container.offsetWidth < chart.chartWidth &&
+            container.offsetHeight < chart.chartHeight,
+        'The tooltip container should not stretch to the page size (#25518)'
+    );
 });
 
 QUnit.test('Outside tooltip styling and correct position', function (assert) {

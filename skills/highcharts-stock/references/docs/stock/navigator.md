@@ -8,7 +8,7 @@ description: >-
 Navigator
 ================
 
-The navigator is a small chart below the main chart area, displaying a view of the entire dataset. Its built-in functionality allows zooming in and out on the dataset as well as panning across it. By default, navigator is connected with the scrollbar, but both of them can be enabled and disabled separately. The default series type for navigator is `areaspline`, but that can be easily changed via [`navigator.series.type`](https://api.highcharts.com/highstock/navigator.series.type).
+The navigator is a small chart below the main chart area, displaying a view of the entire dataset. Its built-in functionality allows zooming in and out on the dataset as well as panning across it. By default, navigator is connected with the scrollbar, but both of them can be enabled and disabled separately: use `navigator: { enabled: false }` to hide the navigator and `scrollbar: { enabled: false }` to hide the scrollbar. The default series type for navigator is `areaspline`, but that can be easily changed via [`navigator.series.type`](https://api.highcharts.com/highstock/navigator.series.type).
 
 Navigator, just like any other chart, apart from the series datasets, contains [`xAxis`](https://api.highcharts.com/highstock/navigator.xAxis) and [`yAxis`](https://api.highcharts.com/highstock/navigator.yAxis). Therefore all of the Axis options apply to the navigator as well.
 ```js
