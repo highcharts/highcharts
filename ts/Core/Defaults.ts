@@ -1942,6 +1942,11 @@ const defaultOptions: DefaultOptions = {
 
     }
 };
+// To do: export directly when highchatrs-documentation-generators is fixed.
+export { defaultOptions };
+
+// Named as exposed on the namespace, to resolve as an external (`G.time`)
+export { defaultTime as time };
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
@@ -1971,7 +1976,7 @@ export function getOptions(): DefaultOptions {
  * @return {Highcharts.Options}
  * Updated options.
  */
-function setOptions(
+export function setOptions(
     options: DeepPartial<DefaultOptions>
 ): Options {
     fireEvent(H, 'setOptions', { options });

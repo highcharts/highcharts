@@ -41,8 +41,7 @@ import {
     animObject,
     setAnimation
 } from '../Animation/AnimationUtilities.js';
-import D from '../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Defaults.js';
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -1967,7 +1966,8 @@ namespace Legend {
                 );
             });
 
-            merge(true, defaultOptions, { legend: LegendDefaults });
+            // Register defaults in a way that produces smaller bundle.
+            defaultOptions.legend = LegendDefaults;
         }
 
     }

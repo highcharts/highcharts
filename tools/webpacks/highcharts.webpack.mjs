@@ -44,6 +44,15 @@ const productMasters = [
 
 loadExternalsJSON(FSLib.path([import.meta.dirname, 'externals.json']));
 
+/**
+ * Keep bare imports of defaults modules in place, so masters can bundle them
+ * next to related defaults for better gzip compression.
+ */
+const sideEffectsRule = {
+    test: /Defaults\.js$/u,
+    sideEffects: true
+};
+
 
 /* *
  *
@@ -65,6 +74,9 @@ const umdWebpacks = FSLib
             // path to the main file
             entry: './' + masterFile.replaceAll(Path.sep, Path.posix.sep),
             mode: 'production',
+            module: {
+                rules: [sideEffectsRule]
+            },
             optimization: {
                 concatenateModules: true,
                 mangleExports: false,
@@ -167,6 +179,7 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
         externalsType: 'module-import',
         module: {
             rules: [
+                sideEffectsRule,
                 {
                     test: /\.src\.js$/u,
                     exclude: /node_modules/u,
