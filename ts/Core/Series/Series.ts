@@ -26,6 +26,7 @@ import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type {
+    CellEvent,
     Column,
     ColumnCollection,
     ColumnEvent,
@@ -2139,12 +2140,8 @@ class Series {
                     (): void => chart.renderer && chart.redraw(),
                     0
                 );
-            };
-
-        addEvent(
-            dataTable,
-            'afterSetRows',
-            (e: RowEvent): void => {
+            },
+            onSetRow = (e: CellEvent|RowEvent): void => {
                 const rowIndex = e.rowIndex;
 
                 if (isNumber(rowIndex)) {
@@ -2169,8 +2166,10 @@ class Series {
                         }
                     }
                 }
-            }
-        );
+            };
+
+        addEvent(dataTable, 'afterSetCell', onSetRow);
+        addEvent(dataTable, 'afterSetRows', onSetRow);
 
         addEvent(
             dataTable,
