@@ -8,13 +8,19 @@
 function getFullChartOptions({ datasets, colors, boxPlotData }) {
     return {
         chart: {
-            type: 'scatter'
+            type: 'scatter',
+            height: 380
         },
 
         colors,
 
         title: {
-            text: 'Scatter chart with jitter'
+            text: 'Measurements by sample'
+        },
+
+        subtitle: {
+            text: 'Hover a row in the table to highlight a sample, click up ' +
+                'to two rows to compare them'
         },
 
         xAxis: {
@@ -34,7 +40,11 @@ function getFullChartOptions({ datasets, colors, boxPlotData }) {
                 showInLegend: false,
                 enableMouseTracking: false,
                 grouping: false,
-                pointRange: 0.6
+                pointRange: 0.6,
+                fillColor: 'transparent',
+                lineWidth: 1,
+                medianWidth: 2,
+                whiskerLength: '40%'
             },
             scatter: {
                 showInLegend: false,
@@ -43,10 +53,11 @@ function getFullChartOptions({ datasets, colors, boxPlotData }) {
                     y: 0
                 },
                 marker: {
-                    radius: 2,
+                    radius: 3,
                     symbol: 'circle'
                 },
                 tooltip: {
+                    headerFormat: '<b>{series.name}</b><br/>',
                     pointFormat: 'Measurement: {point.y:.3f}'
                 }
             }
@@ -80,28 +91,34 @@ function getFullChartOptions({ datasets, colors, boxPlotData }) {
     };
 }
 
+// Titles shown in the QQ-plots and histograms while no sample is selected
+// for them. Reapplied when a selection is cleared.
+const qqPlaceholderTitles = {
+    title: { text: 'QQ-plot' },
+    subtitle: { text: 'Select a sample in the table' }
+};
+const histogramPlaceholderTitles = {
+    title: { text: 'Histogram' },
+    subtitle: { text: 'Select a sample in the table' }
+};
+
 // Two placeholder scatter charts (QQ-plots), populated once a dataset row
 // is selected in the grid.
-const scatterPlotOptions = [
-    {
-        title: { text: '' },
-        data: []
-    },
-    {
-        title: { text: '' },
-        data: []
-    }
-].map((options, i) => ({
+const scatterPlotOptions = [0, 1].map(i => ({
     chart: {
         type: 'scatter',
-        height: 360
+        height: 300
     },
-    title: options.title,
+    ...qqPlaceholderTitles,
     xAxis: {
-        text: 'Theoretical quantiles'
+        title: {
+            text: 'Theoretical quantiles'
+        }
     },
     yAxis: {
-        text: 'Sample quantiles'
+        title: {
+            text: 'Sample quantiles'
+        }
     },
     credits: {
         enabled: false
@@ -109,28 +126,37 @@ const scatterPlotOptions = [
     legend: {
         enabled: false
     },
+    tooltip: {
+        pointFormat: 'Theoretical: {point.x:.2f}<br/>Sample: {point.y:.3f}'
+    },
     series: [{
-        data: options.data,
-        colorIndex: i
+        name: 'Quantiles',
+        data: [],
+        colorIndex: i,
+        marker: {
+            radius: 3,
+            symbol: 'circle'
+        }
     }]
 }));
 
 // Two placeholder histogram charts, populated once a dataset row is
 // selected in the grid.
-const histogramPlotOptions = [
-    {
-        title: { text: '' },
-        data: []
-    },
-    {
-        title: { text: '' },
-        data: []
-    }
-].map((options, i) => ({
+const histogramPlotOptions = [0, 1].map(i => ({
     chart: {
-        height: 160
+        height: 300
     },
-    title: options.title,
+    ...histogramPlaceholderTitles,
+    xAxis: {
+        title: {
+            text: 'Measurement'
+        }
+    },
+    yAxis: {
+        title: {
+            text: 'Count'
+        }
+    },
     credits: {
         enabled: false
     },
@@ -139,19 +165,28 @@ const histogramPlotOptions = [
     },
     series: [{
         type: 'histogram',
-        data: options.data,
+        name: 'Count',
+        data: [],
         colorIndex: i,
-        binsNumber: 10
+        binsNumber: 10,
+        borderRadius: 2
     }]
 }));
 
 // Placeholder for the detail chart before any dataset row is selected.
 const detailChartPlaceholderOptions = {
+    chart: {
+        height: 420
+    },
     title: {
-        text: 'Dataset detail'
+        text: 'Compare distributions'
     },
     subtitle: {
-        text: 'Click a row in the grid to inspect its raw measurements'
+        text: 'Click up to two rows in the table to compare their fitted ' +
+            'normal distributions'
+    },
+    credits: {
+        enabled: false
     },
     xAxis: {
         min: null,
@@ -404,6 +439,14 @@ const minMax = helpers.getMinMax(datasets);
 const activeRows = [];
 let board;
 
+// KPI subtitle while fewer than two datasets are selected, indexed by the
+// number of selected datasets.
+const kpiHints = [
+    'Select two samples in the table to test whether they come from the ' +
+        'same distribution',
+    'Select one more sample to run the test'
+];
+
 const fullChartOptions = getFullChartOptions({ datasets, colors, boxPlotData });
 
 // ============================================================
@@ -431,30 +474,32 @@ async function setupBoard() {
                     }]
                 }, {
                     cells: [{
-                        id: 'grid-container'
-                    }, {
-                        id: 'info-panel',
+                        id: 'selection-panel',
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'info-scatter-1'
-                                }, {
-                                    id: 'info-scatter-2'
+                                    id: 'grid-container'
                                 }]
                             }, {
                                 cells: [{
-                                    id: 'info-hist-1'
-                                }, {
-                                    id: 'info-hist-2'
+                                    id: 'chart-detail-info'
                                 }]
                             }]
                         }
+                    }, {
+                        id: 'chart-detail'
                     }]
                 }, {
+                    // Diagnostics for each selected sample: QQ-plot and
+                    // histogram side by side.
                     cells: [{
-                        id: 'chart-detail'
+                        id: 'info-scatter-1'
                     }, {
-                        id: 'chart-detail-info'
+                        id: 'info-hist-1'
+                    }, {
+                        id: 'info-scatter-2'
+                    }, {
+                        id: 'info-hist-2'
                     }]
                 }]
             }]
@@ -470,16 +515,8 @@ async function setupBoard() {
         }, {
             renderTo: 'chart-detail-info',
             type: 'KPI',
-            title: 'Kolmogorov-Smirnov Test',
-            subtitle: {
-                text: 'Testing against the null hypothesis that the two ' +
-                      'datasets originate from the same distribution',
-                style: {
-                    fontSize: '0.9rem',
-                    fontWeight: 'normal',
-                    color: 'var(--highcharts-neutral-color-60)'
-                }
-            },
+            title: 'Kolmogorov–Smirnov test',
+            subtitle: kpiHints[0],
             valueFormatter: helpers.formatPValue,
             threshold: 0.05,
             thresholdColors: [
@@ -517,7 +554,7 @@ async function setupBoard() {
                 header: [
                     {
                         columnId: 'dID',
-                        format: 'Dataset ID'
+                        format: 'Sample'
                     }, {
                         columnId: 'mean',
                         format: 'Mean'
@@ -526,13 +563,20 @@ async function setupBoard() {
                         format: 'Variance'
                     }, {
                         columnId: 'sd',
-                        format: 'Standard Deviation'
+                        format: 'Std. deviation'
                     }
                 ],
                 columns: [{
                     id: 'dID',
                     cells: {
-                        format: '{value:.0f}'
+                        // Color swatch matching the sample's series color
+                        formatter: function () {
+                            const color =
+                                Highcharts.getOptions().colors[this.value];
+                            return '<span class="sample-swatch" ' +
+                                `style="background-color: ${color}"></span>` +
+                                `Sample ${this.value + 1}`;
+                        }
                     }
                 }],
                 columnDefaults: {
@@ -597,9 +641,12 @@ function setActiveRowStyle(cell) {
     });
 }
 
-function clearSeries(chart) {
+// Redraw explicitly, since chart.update() skips the redraw when the options
+// are unchanged (e.g. the placeholder title is already shown).
+function clearSeries(chart, placeholderTitles) {
     chart.series.forEach(series => series.setData([], false));
-    chart.update({ title: { text: '' } }, true);
+    chart.update(placeholderTitles, false);
+    chart.redraw();
 }
 
 // Samples the KS test on the two active datasets and shows the result in the
@@ -609,17 +656,76 @@ function updateKpi() {
 
     if (activeRows.length < 2) {
         kpi.update({
-            value: ''
+            value: '',
+            subtitle: kpiHints[activeRows.length]
         });
         return;
     }
 
     const sample1 = datasets[activeRows[0]].map(row => row[1]);
     const sample2 = datasets[activeRows[1]].map(row => row[1]);
-    const { pValue } = helpers.kolmogorovSmirnovTest(sample1, sample2);
+    const { statistic, pValue } =
+        helpers.kolmogorovSmirnovTest(sample1, sample2);
+    const names = activeRows.map(rowId => `Sample ${Number(rowId) + 1}`)
+        .join(' and ');
 
     kpi.update({
-        value: pValue
+        value: pValue,
+        subtitle: (
+            pValue < 0.05 ?
+                `${names} likely come from different distributions` :
+                `No significant difference between ${names}`
+        ) + ` (D = ${statistic.toFixed(3)}, α = 0.05)`
+    });
+}
+
+// Populates the QQ-plot and histogram for one selected dataset, or resets
+// them to their placeholders when no dataset is given.
+function updateSampleCharts(qqChart, histChart, rowId) {
+    if (rowId === void 0) {
+        clearSeries(qqChart, qqPlaceholderTitles);
+        clearSeries(histChart, histogramPlaceholderTitles);
+        return;
+    }
+
+    const sampleName = `Sample ${Number(rowId) + 1}`;
+    const values = datasets[rowId].map(row => row[1]);
+    const qqData = helpers.getQQData(values);
+
+    qqChart.update({
+        title: {
+            text: `QQ-plot · ${sampleName}`
+        },
+        subtitle: {
+            text: 'Points close to the line suggest normality'
+        },
+        series: [{
+            colorIndex: Number(rowId),
+            data: qqData
+        }, {
+            type: 'line',
+            name: 'Normal reference line',
+            data: helpers.getQQLineData(qqData, datasets[rowId]),
+            color: 'var(--highcharts-neutral-color-60)',
+            dashStyle: 'ShortDash',
+            lineWidth: 1.5,
+            marker: { enabled: false },
+            enableMouseTracking: false,
+            showInLegend: false
+        }]
+    }, true, true);
+
+    histChart.update({
+        title: {
+            text: `Histogram · ${sampleName}`
+        },
+        subtitle: {
+            text: `${values.length} measurements in 10 bins`
+        },
+        series: [{
+            colorIndex: Number(rowId),
+            data: values
+        }]
     });
 }
 
@@ -630,13 +736,12 @@ function updateChart() {
     const hist1 = board.getComponentByCellId('info-hist-1').chart;
     const hist2 = board.getComponentByCellId('info-hist-2').chart;
 
+    updateSampleCharts(qq1, hist1, activeRows[0]);
+    updateSampleCharts(qq2, hist2, activeRows[1]);
+    updateKpi();
+
     if (activeRows.length === 0) {
         detailChart.update(detailChartPlaceholderOptions, true, true);
-        clearSeries(qq1);
-        clearSeries(qq2);
-        clearSeries(hist1);
-        clearSeries(hist2);
-        updateKpi();
         return;
     }
 
@@ -644,119 +749,58 @@ function updateChart() {
 
     detailChart.update({
         title: {
-            text: `${sampleNames.join(' vs ')} normal distribution`
+            text: 'Fitted normal distributions'
         },
         subtitle: {
-            text: 'Assuming normality of data, this is not guaranteed.'
+            text: `${sampleNames.join(' vs ')}, assuming the data is ` +
+                'normally distributed'
         },
         xAxis: {
             min: minMax[0],
             max: minMax[1],
+            title: {
+                text: 'Measurement'
+            },
             plotLines: activeRows.map((rowId, i) => ({
                 value: statistics[rowId][1],
-                width: 2,
+                width: 1.5,
                 color: Highcharts.getOptions().colors[Number(rowId)],
                 label: {
                     text: `${sampleNames[i]} mean`,
-                    allign: 'top'
+                    rotation: 0,
+                    align: 'left',
+                    x: 6,
+                    // Stack the labels so they don't overlap when the means
+                    // are close
+                    y: 16 + i * 18,
+                    style: {
+                        color: 'var(--highcharts-neutral-color-80)',
+                        fontSize: '0.75em'
+                    }
                 },
-                dashStyle: 'dash',
+                dashStyle: 'ShortDash',
                 zIndex: 5
             }))
         },
-        yAxis: [{
-            visible: false
-        },
-        {
+        yAxis: {
             title: {
-                text: 'Distribution'
-            }
-        }],
-        plotOptions: {
-            scatter: {
-                showInLegend: false,
-                jitter: {
-                    x: 0,
-                    y: 0.3
-                },
-                marker: {
-                    radius: 5,
-                    symbol: 'circle'
-                },
-                tooltip: {
-                    pointFormat: '{series.name} measurement: {point.x:.3f}'
-                },
-                opacity: 0.5
+                text: 'Probability density'
             }
         },
         series: activeRows.map((rowId, i) => ({
-            name: sampleNames[i] + ' distribution',
+            name: sampleNames[i],
             type: 'bellcurve',
             data: datasets[rowId].map(row => row[1]),
             colorIndex: Number(rowId),
-            yAxis: 1
-
+            lineWidth: 2,
+            marker: {
+                enabled: false
+            },
+            tooltip: {
+                headerFormat: '<b>{series.name}</b><br/>',
+                pointFormat: 'Measurement: {point.x:.3f}<br/>' +
+                    'Density: {point.y:.2f}'
+            }
         }))
     }, true, true);
-
-    const qqData1 = helpers.getQQData(
-        datasets[activeRows[0]].map(row => row[1])
-    );
-    qq1.update({
-        title: {
-            text: 'QQ-plot for Sample ' + (activeRows[0] + 1)
-        },
-        series: [{
-            colorIndex: Number(activeRows[0]),
-            data: qqData1
-        }, {
-            type: 'line',
-            name: 'Normal reference line',
-            data: helpers.getQQLineData(qqData1, datasets[activeRows[0]]),
-            color: 'var(--highcharts-neutral-color-80)',
-            marker: { enabled: false },
-            enableMouseTracking: false,
-            showInLegend: false
-        }]
-    }, true, true);
-    hist1.update({
-        series: [{
-            colorIndex: Number(activeRows[0]),
-            data: datasets[activeRows[0]].map(row => row[1])
-        }]
-    });
-
-    if (activeRows.length === 2) {
-        const qqData2 = helpers.getQQData(
-            datasets[activeRows[1]].map(row => row[1])
-        );
-        qq2.update({
-            title: {
-                text: 'QQ-plot for Sample ' + (activeRows[1] + 1)
-            },
-            series: [{
-                colorIndex: Number(activeRows[1]),
-                data: qqData2
-            }, {
-                type: 'line',
-                name: 'Normal reference line',
-                data: helpers.getQQLineData(qqData2, datasets[activeRows[1]]),
-                color: 'var(--highcharts-neutral-color-80)',
-                marker: { enabled: false },
-                enableMouseTracking: false,
-                showInLegend: false
-            }]
-        }, true, true);
-        hist2.update({
-            series: [{
-                colorIndex: Number(activeRows[1]),
-                data: datasets[activeRows[1]].map(row => row[1])
-            }]
-        });
-    } else {
-        clearSeries(qq2);
-        clearSeries(hist2);
-    }
-
-    updateKpi();
 }
