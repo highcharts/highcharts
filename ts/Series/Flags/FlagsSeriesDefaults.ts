@@ -346,6 +346,14 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  */
 
 /**
+ * The shape of an individual flag.
+ *
+ * @type      {string}
+ * @product   highstock
+ * @apioption series.flags.data.shape
+ */
+
+/**
  * The longer text to be shown in the flag's tooltip.
  *
  * @type      {string}

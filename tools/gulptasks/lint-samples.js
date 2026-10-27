@@ -12,15 +12,15 @@ const argv = require('yargs').argv;
  * */
 
 const DEFAULT_GLOBS = [
-    'samples/*/*/*/demo.js',
-    'samples/*/*/*/demo.ts'
-    // 'samples/*/*/*/test.js',
-    // 'samples/*/*/*/unit-tests.js'
+    'samples/**/*.{js,ts}'
 ];
 
+// Generated files ignored by Git, but not by ESLint.
 const IGNORE_GLOBS = [
-    'samples/highcharts/common-js/*/demo.js',
-    'samples/cloud/*/*/demo.js'
+    'samples/**/config.js',
+    'samples/stock/demo/candlestick/demo.js',
+    'samples/unit-tests/performance/highcharts-chart/demo.js',
+    'samples/unit-tests/performance/test-template/demo.js'
 ];
 
 /* *
@@ -36,7 +36,8 @@ const IGNORE_GLOBS = [
  *
  * - `--fix`: Fix eslint failures
  *
- * - `-p`/`--path`: Change glob pattern. e.g. `npx gulp lint -p './samples/**'`
+ * - `-p`/`--path`: Change glob pattern.
+ *   e.g. `npx gulp lint-samples -p samples/highcharts/demo/accessible-line/demo.js`
  *
  * @return {Promise<void>}
  *         Promise to keep
@@ -47,6 +48,7 @@ async function task() {
     const log = require('../libs/log');
 
     const linter = new eslint.ESLint({
+        overrideConfigFile: 'samples/.eslintrc',
         fix: argv.fix,
         overrideConfig: {
             ignorePatterns: IGNORE_GLOBS
@@ -71,6 +73,10 @@ async function task() {
         'Finished linting...\n',
         await formatter.format(results)
     );
+
+    if (results.some(result => result.errorCount > 0)) {
+        throw new Error('Sample linting failed.');
+    }
 }
 
 gulp.task('lint-samples', task);

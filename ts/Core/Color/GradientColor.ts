@@ -38,16 +38,16 @@ export interface GradientColorStop {
 }
 
 export interface LinearGradientColor {
-    x1: number;
-    x2: number;
-    y1: number;
-    y2: number;
+    x1: number|string;
+    x2: number|string;
+    y1: number|string;
+    y2: number|string;
 }
 
 export interface RadialGradientColor {
-    cx: number;
-    cy: number;
-    r: number;
+    cx: number|string;
+    cy: number|string;
+    r: number|string;
 }
 
 /* *

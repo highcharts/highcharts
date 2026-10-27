@@ -34,10 +34,8 @@ import DPU from '../DrawPointUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudSeriesDefaults from './WordcloudSeriesDefaults.js';
 import WU from './WordcloudUtils.js';
