@@ -1,0 +1,43 @@
+---
+description: >-
+  Load open, high, low, close, and volume time-series values for a single
+  security by setting the OHLCV series type, then use the returned data in a
+  Highcharts Stock OHLC chart.
+---
+
+# OHLCV
+
+This type yields OHLCV time series data for a single or multiple securities.
+
+Returns Open, High, Low, Close, Volume for the securities specified.
+
+> **NOTE:** At the moment only a single security is supported.
+
+## How to use OHLCV
+
+In order to fetch a OHLCV time series, specify series type `OHLCV` in the
+Time Series Connector options.
+
+```js
+const ohlcvConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
+    },
+    series: {
+        type: 'OHLCV'
+    },
+    securities: [{
+        id: 'F0GBR04S23',
+        idType: 'MSID'
+    }]
+});
+```
+
+## Morningstar API Reference
+
+For more details, see [Morningstar’s Time Series API].
+
+<!-- Links -->
+[Morningstar’s Time Series API]: https://developer.morningstar.com/direct-web-services/documentation/enterprise-component-apis/time-series/about

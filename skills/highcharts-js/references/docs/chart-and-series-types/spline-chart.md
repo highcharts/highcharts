@@ -1,0 +1,18 @@
+---
+description: >-
+  Connect data points with a curved line and reuse the line-series options,
+  except for the step feature. The article includes an example and links to
+  the spline API reference.
+---
+
+Spline chart
+============
+
+The spline chart draws a curved line between the points in a data series.
+
+[Live demo](https://www.highcharts.com/samples/embed/highcharts/demo/spline-inverted)
+
+Spline chart features
+---------------------
+
+The spline chart offers the same options as the [line chart](https://highcharts.com/docs/chart-and-series-types/line-chart) and [series](https://highcharts.com/docs/chart-concepts/series), except the step feature. See the [API reference](https://api.highcharts.com/highcharts/plotOptions.spline) for more information on the spline chart options.

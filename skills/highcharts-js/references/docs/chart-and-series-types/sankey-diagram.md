@@ -1,0 +1,65 @@
+---
+description: >-
+  Define weighted links between nodes with from, to, and weight, then
+  customize generated nodes and spacing. Learn how cyclic links wrap around
+  the diagram and how row order affects return flows.
+---
+
+Sankey diagram
+===
+
+A Sankey diagram is a type of flow diagram, in which the width of the link between two nodes is shown proportionally to the flow quantity.
+
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.sankey)_
+
+[Live demo](https://www.highcharts.com/samples/embed/highcharts/demo/sankey-diagram)
+
+Data structure
+--------------
+
+A Sankey diagram consists of two types of data. The nodes are the boxes that the items or other measures flow between. The links are the bands visualizing the flow itself. In Highcharts, only the values of the links need to be defined; the nodes will be generated dynamically. Each link has three parameters `from`, `to` and `weight`.
+
+
+    keys: ['from', 'to', 'weight'],
+    data: [
+             ['Oil', 'Transportation', 94],
+             ['Natural Gas', 'Transportation', 3],
+             ['Coal', 'Transportation', 0],
+             ['Renewable', 'Transportation', 0],
+             ['Nuclear', 'Transportation', 3],
+
+             ['Oil', 'Industrial', 41],
+             ['Natural Gas', 'Industrial', 40],
+             ['Coal', 'Industrial', 7],
+             ['Renewable', 'Industrial', 11],
+             ['Nuclear', 'Industrial', 0],
+
+             ['Oil', 'Residential & Commercial', 17],
+             ['Natural Gas', 'Residential & Commercial', 76],
+             ['Coal', 'Residential & Commercial', 1],
+             ['Renewable', 'Residential & Commercial', 7],
+             ['Nuclear', 'Residential & Commercial', 0],
+
+             ['Oil', 'Electric Power', 1],
+             ['Natural Gas', 'Electric Power', 18],
+             ['Coal', 'Electric Power', 48],
+             ['Renewable', 'Electric Power', 11],
+             ['Nuclear', 'Electric Power', 22]
+    ],
+
+
+Nodes
+-----
+
+The nodes are generated so that the total weight going in or out of a node is visualized. Nodes are instances of [Point](https://api.highcharts.com/class-reference/Highcharts.Point) and are available from the `series.nodes` array. The width of the nodes can be set with the `nodeWidth` option, and padding between them with `nodePadding`.
+
+In addition to auto-generated properties, custom properties such as `color` or `colorIndex` can be set by adding an array, [nodes](https://api.highcharts.com/highcharts/series.sankey.nodes), to the series options and linking the nodes by id; the following jsfiddle [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-inverted/) illustrates this concept.
+
+Circular dependencies
+---------------------
+
+Links may flow back to an earlier node, forming a cycle. A link that closes a cycle is drawn as a band wrapping around the diagram, and a link where `from` and `to` refer to the same node is drawn as a loop around that node.
+
+When a cycle contains more than one link, the one that closes it is drawn as the wrapping band; for a simple cycle that is the link appearing last in the data. The order of the data therefore decides which flow reads as the "return" flow. The wrapping bands and the loops are laid out first, which leaves the nodes somewhat shorter than the same data without them.
+
+[Live demo](https://www.highcharts.com/samples/embed/highcharts/series-sankey/circular-dependencies)

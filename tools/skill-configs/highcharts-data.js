@@ -14,8 +14,7 @@ module.exports = function (repoRoot) {
             exclude: []
         },
         destinations: [
-            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-data') },
-            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-data') }
+            { path: path.join(repoRoot, 'skills', 'highcharts-data') }
         ],
         skillMd: {
             description: 'Highcharts core data configuration, loading, parsing, tabular mapping, compression, and live updates from the bundled docs.',

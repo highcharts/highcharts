@@ -1,0 +1,35 @@
+---
+description: >-
+  Group Gantt subtasks under a parent with the data point parent ID, collapse
+  groups initially, or place tasks on horizontal tracks by assigning
+  categories to a vertical axis.
+---
+
+Grouping tasks in a hierarchy
+===
+
+Split bigger tasks up in subtasks or group resources together if they belong to the same parent task. Use the [`parent`](https://api.highcharts.com/gantt/series.gantt.data.parent) property of a data point (i.e. the sub task) which value points to the [`id`](https://api.highcharts.com/highcharts/series.area.data.id) of the parent task. The duration of the parent task will then span all sub tasks.
+
+_Example of defining subtasks and grouping them with one parent task._
+
+[Live demo](https://www.highcharts.com/samples/embed/gantt/gantt/grouping-hierarchy)
+
+Gantt charts have a vertical axis of type [`treegrid`](https://api.highcharts.com/gantt/yAxis.type) by default. Notice in the above example how that results automatically in collapsable subtasks. Set the parent task's data point with [`collapsed: true`](https://api.highcharts.com/gantt/series.gantt.data.collapsed) to render the task collapsed from the start.
+
+Group tasks vertically
+----------------------
+
+For grouping tasks in a Gantt chart on horizontal tracks, use a vertical [`category`](https://api.highcharts.com/highcharts/xAxis.categories) axis. This type of Gantt chart is often used to visualize resource allocation or availability schedules.
+
+Code example for setting a category axis
+
+
+```js
+yAxis: {
+    categories: ['Resource 1', 'Resource 2', 'Resource 3']
+}
+```
+
+_See example below for grouping tasks vertically in horizontal tracks_
+
+[Live demo](https://www.highcharts.com/samples/embed/gantt/gantt/grouping-vertically)

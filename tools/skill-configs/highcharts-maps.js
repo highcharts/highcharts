@@ -9,12 +9,7 @@ module.exports = function (repoRoot) {
             exclude: []
         },
         destinations: [
-            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-maps') },
-            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-maps') },
-            {
-                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-maps'),
-                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
-            }
+            { path: path.join(repoRoot, 'skills', 'highcharts-maps') }
         ],
         skillMd: {
             description: 'Highcharts Maps GeoJSON, TopoJSON, mapView, projections, map series, tiledwebmap, tilemap, flowmap, color axis, and map navigation from the bundled docs.',

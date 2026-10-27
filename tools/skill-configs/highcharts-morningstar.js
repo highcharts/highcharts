@@ -9,12 +9,7 @@ module.exports = function (repoRoot) {
             exclude: []
         },
         destinations: [
-            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-morningstar') },
-            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-morningstar') },
-            {
-                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-morningstar'),
-                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
-            }
+            { path: path.join(repoRoot, 'skills', 'highcharts-morningstar') }
         ],
         skillMd: {
             description: 'Highcharts Morningstar standard and DWS connectors, InvestmentsConnector, time series, screeners, risk, goal analysis, x-ray, security compare, and regulatory news from the bundled docs.',
@@ -23,7 +18,7 @@ module.exports = function (repoRoot) {
             workflow: [
                 'Start with `references/docs/index.md` and `references/docs/morningstar/morningstar.md` to choose the standard or DWS connector type.',
                 'Read every selected connector doc before coding; the docs step is complete when the connector variant, constructor options, load call, and table mapping you plan to use are covered by docs or named as an API/declaration lookup.',
-                'If the request mentions DWS, Direct Web Services, or InvestmentsConnector, read `references/docs/morningstar/dws-connector.md` after the overview.',
+                'For DWS, read `references/docs/morningstar/dws/investments-details-connector.md` or `references/docs/morningstar/dws/time-series-connector.md` for the requested connector after the overview.',
                 'Follow the connector constructor → load → table-mapping pattern shown in the docs.'
             ],
             boundaries: [

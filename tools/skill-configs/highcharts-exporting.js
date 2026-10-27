@@ -14,8 +14,7 @@ module.exports = function (repoRoot) {
             exclude: []
         },
         destinations: [
-            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-exporting') },
-            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-exporting') }
+            { path: path.join(repoRoot, 'skills', 'highcharts-exporting') }
         ],
         skillMd: {
             description: '"Highcharts chart exporting: browser-side downloads, printing, data export, fallback behavior, privacy, and optional export-server workflows."',

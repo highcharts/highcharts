@@ -9,12 +9,7 @@ module.exports = function (repoRoot) {
             exclude: []
         },
         destinations: [
-            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-gantt') },
-            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-gantt') },
-            {
-                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-gantt'),
-                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
-            }
+            { path: path.join(repoRoot, 'skills', 'highcharts-gantt') }
         ],
         skillMd: {
             description: 'Highcharts Gantt task configuration, dependencies, axis grid, grouping, milestones, and project schedule charts from the bundled docs.',

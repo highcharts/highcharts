@@ -1,0 +1,96 @@
+---
+description: >-
+  Load risk scores for up to two portfolios with the RiskScoreConnector,
+  provide holdings using supported identifier types and weights or values, and
+  inspect invalid holdings in connector metadata.
+---
+
+# Portfolio Risk Score
+
+This type analyzes the specified portfolios and yields a risk score.
+
+You can analyze up to two portfolios at a time.
+
+## How to use Risk Score Connector
+
+Use the `RiskScoreConnector` to load risk scores.
+
+In dashboards, this connector is called `MorningstarRiskScore`.
+
+Specify the portfolio holdings in the options along with a postman environment
+file for authentication, and other parameters such as `currency`.
+
+### Holdings
+
+Holdings are the securities that make up the portfolio. You can specify a
+holding using different kinds of id’s.
+
+Supported id-types are: `CUSIP`, `FundCode`, `ISIN`, `MSID`, `PerformanceId`,
+`SecurityID`, `TradingSymbol`.
+
+You can specify the quantity of this holding in the portfolio by using either
+`weight` or `value`. If you decide to use `weight`, you need to specify
+the `totalValue` of the portfolio.
+
+> **NOTE:** You cannot mix and match `weight` and `value`.
+Be consistent and stick to one.
+
+If you specify any holdings that are invalid, the connector will still yield
+a result. The invalid holdings are in the connector’s `metadata` after load.
+
+For more details, see [Morningstar’s Portfolio Risk Score API].
+
+### Risk Score with Morningstar standalone for Highcharts
+
+```js
+const riskScoreConnector = new HighchartsConnectors.Morningstar.RiskScoreConnector({
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
+    },
+    portfolios: [
+        {
+            name: 'MyPortfolio',
+            currency: 'USD',
+            totalValue: 100,
+            holdings: [
+                {
+                    id: 'F00000VCTT',
+                    idType: 'SecurityID',
+                    weight: 50
+                },
+                {
+                    id: 'AAPL',
+                    idType: 'TradingSymbol',
+                    weight: 50
+                }
+            ]
+        }
+    ]
+});
+
+await riskScoreConnector.load();
+
+new Grid.grid('container', {
+    dataTable: riskScoreConnector,
+    editable: false,
+    columns: [{
+        id: 'MyPortfolio_EffectiveDate',
+        cells: {
+            formatter: function() {
+                return new Date(this.value)
+                    .toISOString()
+                    .substring(0, 10);
+            }
+        }
+    }]
+});
+```
+
+## Morningstar API Reference
+
+For more details, see [Morningstar’s Portfolio Risk Score API].
+
+<!-- Links -->
+[Morningstar’s Portfolio Risk Score API]: https://developer.morningstar.com/direct-web-services/documentation/direct-web-services/portfolio-risk-score/overview

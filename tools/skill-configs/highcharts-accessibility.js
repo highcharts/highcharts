@@ -15,8 +15,7 @@ module.exports = function (repoRoot) {
             exclude: []
         },
         destinations: [
-            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-accessibility') },
-            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-accessibility') }
+            { path: path.join(repoRoot, 'skills', 'highcharts-accessibility') }
         ],
         skillMd: {
             description: '"Highcharts accessibility and sonification: assistive technology support, keyboard navigation, chart descriptions, audio charts, and React module usage from the bundled docs."',

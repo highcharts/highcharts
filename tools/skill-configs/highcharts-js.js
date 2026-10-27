@@ -27,16 +27,7 @@ module.exports = function (repoRoot) {
             ]
         },
         destinations: [
-            {
-                path: path.join(repoRoot, '.agents', 'skills', 'highcharts-js')
-            },
-            {
-                path: path.join(repoRoot, '.claude', 'skills', 'highcharts-js')
-            },
-            {
-                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-js'),
-                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
-            }
+            { path: path.join(repoRoot, 'skills', 'highcharts-js') }
         ],
         skillMd: {
             description: 'Highcharts JS chart setup, options, axes, series, styling, common chart types, baseline accessibility, and selected advanced features from the bundled docs.',

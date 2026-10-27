@@ -1,64 +1,38 @@
 # Generate documentation skills
 
-`generate-doc-skills.js` creates complete agent skill directories from the
-Highcharts documentation. It writes the generated `SKILL.md`, filtered source
-pages, and `references/docs/index.md`. The reference directories are ignored by
-git, so a tracked `SKILL.md` on its own is not a usable offline skill.
+`generate-doc-skills.js` builds the application skills published in
+[`skills/`](../skills/README.md). Each directory contains a generated
+`SKILL.md`, filtered documentation pages, and `references/docs/index.md`.
+Commit the complete generated directories so application developers can install
+them without running the generator.
 
-## Application workflow
+## Updating skills
 
-Run these commands from a Highcharts checkout. The checkout is the source of
-the generated skills; application developers do not need to edit the generated
-files by hand.
-
-1. Choose a skill for the feature. Use `highcharts-accessibility` for
-   accessibility, sonification, or the React accessibility module;
-   `highcharts-data` for data loading, parsing, mapping, and live updates; and
-   `highcharts-exporting` for chart or data export, printing, and export-server
-   decisions. A task can use more than one skill.
-2. Generate the selected complete directories:
-
-   ```bash
-   npm run generate:skills -- --yes --skill=highcharts-data
-   # Multiple skills are comma-separated:
-   npm run generate:skills -- --yes --skill=highcharts-accessibility,highcharts-exporting
-   ```
-
-   The three feature skills are written to
-   `.agents/skills/<skill>/` and `.claude/skills/<skill>/`. Copy the directory
-   for the agent environment used by the application. For example, from the
-   application checkout:
-
-   ```bash
-   skill=highcharts-data
-   rm -rf ".agents/skills/$skill"
-   cp -R "/path/to/highcharts/.agents/skills/$skill" ".agents/skills/$skill"
-   ```
-
-   For a Claude skill, use `.claude/skills/$skill` as both the source and
-   destination instead. Copy the complete directory, including
-   `references/docs/`; this preserves the local index and every page selected
-   by the configuration.
-
-3. Have the application agent start with the installed skill's
-   `references/docs/index.md`, then read the entries relevant to the task.
-
-### Updating an installed skill
-
-After the Highcharts documentation or skill configuration changes, regenerate
-the skill in the Highcharts checkout and replace the installed directory as a
-whole. Remove the old destination before copying so pages removed from the
-configuration do not remain as stale references:
+Edit the source documentation in `docs/` or the configuration in
+`tools/skill-configs/`, then run from the repository root:
 
 ```bash
-npm run generate:skills -- --yes --skill=highcharts-data
-rm -rf "/path/to/app/.agents/skills/highcharts-data"
-cp -R ".agents/skills/highcharts-data" "/path/to/app/.agents/skills/highcharts-data"
+npm run generate:skills -- --yes
 ```
 
-`--yes` is required whenever generation would replace a generated directory;
-without it, generation stops rather than overwriting. Do not update only
-`SKILL.md`: the generated references and index must be replaced together.
+To regenerate selected skills:
+
+```bash
+npm run generate:skills -- --yes --skill=highcharts-data,highcharts-exporting
+```
+
+Generation replaces each selected directory, including its references and
+index. Review and commit added, modified, and removed files under `skills/`
+alongside the source changes. Generated files should be changed through their
+sources rather than edited directly.
+
+When deleting or renaming a configuration, remove its old directory under
+`skills/` deliberately. Generation replaces configured skills; `--check`
+reports orphan directories left by removed configurations.
+
+The repository's contributor skills remain in `.agents/skills` and are
+mirrored to `.claude/skills` by `npm run sync:skills`. Documentation skill
+generation writes only to `skills/`; it does not update sibling dist repos.
 
 ## CLI options
 
@@ -66,37 +40,55 @@ without it, generation stops rather than overwriting. Do not update only
 |--------|-------------|
 | `--docs=<path>` | Override the docs source path (must be inside the repository root) |
 | `--skill=<a,b>` | Generate only the named skill(s), comma-separated |
-| `--yes`, `-y` | Required: confirms replacement of generated skill directories |
-| `--self-test` | Run the built-in pipeline test without touching real files |
+| `--yes`, `-y` | Required for generation: confirms replacement of generated skill directories |
+| `--check` | Compare all generated skills without replacing files; cannot be combined with `--skill` |
+| `--self-test` | Run the built-in pipeline test using temporary files |
 | `--help`, `-h` | Print usage |
 
-The default source is `docs/`. After cloning, regenerate the references with:
+The default source is `docs/`. Without `--yes`, generation stops before
+replacing output.
+
+## Validation
 
 ```bash
-npm run generate:skills -- --yes
+node tools/generate-doc-skills.js --self-test
+npm run generate:skills -- --check
 ```
 
-Some existing skill configurations also publish to
-`../highcharts-dist/.claude/skills/<skill>/` when that sibling repository has a
-`package.json`. The three feature configurations documented above publish only
-to the two Highcharts checkout destinations; they do not require or create a
-`highcharts-dist` checkout.
+Check mode rebuilds skills in a temporary directory and compares file paths
+and contents with `skills/`. It needs no `--yes`, leaves the checkout unchanged,
+and exits nonzero for missing, extra, changed, or orphan output. CI uses this
+check alongside skill definition validation.
+
+For React documentation changes, also validate the generated skill in a consumer
+with its installed `@highcharts/react` and `highcharts` versions:
+
+- Typecheck and render the mixed-series getting-started example. Confirm that
+  its button updates the column data while the line stays unchanged, and check
+  the axes, shared tooltip, and accessibility controls.
+- Render `Chart` with `title={undefined}` and confirm the default title remains.
+  Then check that `title=""` and a child `<Title text="" />` both hide the title.
+- Try a core chart question with only `highcharts-react` installed. The agent
+  should use the installed declarations or official API docs when a companion
+  skill is unavailable.
+
+Record the consumer package versions and observations in the PR. The generator
+self-test checks reference integrity; it does not validate React rendering.
+
+## Adding a skill
+
+Add a configuration under `tools/skill-configs/`. It declares the skill name,
+documentation include/exclude paths, destination under `skills/`, and
+`SKILL.md` content. Generate the skill and add it to the
+[application skill catalog](../skills/README.md).
 
 ## What generation does
 
-1. Reads markdown files matching each skill configuration's include and exclude
-   patterns.
-2. Removes iframe embeds, markdown/HTML images, and excessive blank lines;
+1. Reads matching Markdown files from `docs/`.
+2. Removes iframe embeds, Markdown/HTML images, and excessive blank lines;
    fenced code blocks are preserved.
-3. Replaces each configured destination as a complete directory.
+3. Writes the skill definition, selected pages, and topic index as a complete
+   directory.
 
-## Adding a new skill
-
-Edit the skill configuration under `tools/skill-configs/`. It declares the
-skill name, documentation paths, destinations, and the `SKILL.md` content
-written alongside the generated references.
-
-## Security guards
-
-- `--docs` is rejected if it resolves outside the repository root.
-- Symlinks in the docs tree are skipped during copy.
+`--docs` must resolve inside the repository root. Symlinks in the docs tree
+are skipped during copying.

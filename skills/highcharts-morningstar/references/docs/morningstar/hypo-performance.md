@@ -1,0 +1,142 @@
+---
+description: >-
+  Build hypothetical return requests for portfolios and benchmarks with the
+  HypoPerformanceConnector, choose a view and calculation settings, and
+  configure currency, date range, taxes, fees, rebalancing, and holdings.
+---
+
+# Hypothetical Performance
+
+Using Morningstar **Historical Performance** data, financial advisors can
+demonstrate how a portfolio personalized to a client’s needs might perform over
+time. The Portfolio X-Ray API’s Hypothetical Performance capability uses
+historical performance data to help you calculate hypothetical performance for
+the portfolios specified in the request body. For standard performance, see the
+Performance Connector.
+
+## How to use Hypothetical Performance Connector
+
+You can use the `HypoPerformanceConnector` to fetch return and hypothetical
+performances for multiple portfolios and benchmarks. The returned data depends
+on the selected view and the various options set in the
+`hypoCalculationsSettings`.
+
+## Available data converters
+
+Currently the following data points are supported in the Hypo Performance
+Connector:
+
+- **GrowthConverter**
+
+Example request:
+
+```js
+    const connector = new HighchartsConnectors.Morningstar.HypoPerformanceConnector({
+        api: {
+            access: {
+                token: 'JWT token'
+            }
+        },
+        viewId: 'Growth',
+        requestSettings: {
+            outputCurrency: 'USD',
+            outputReturnsFrequency: 'Monthly',
+            assetClassGroupConfigs: {
+                assetClassGroupConfig: [
+                    {
+                        Id: 'ACG-USBROAD'
+                    }
+                ]
+            },
+            hypoCalculationSettings: {
+                hypoType: 'Portfolio',
+                filingStatus: 'NoTaxes',
+                taxableIncome: 50000,
+                payTaxes: 'OutOfPocket',
+                federalIncomeTaxRate: 0,
+                capitalGainTaxRate: 0,
+                stateIncomeTaxRate: 0,
+                dividendTaxRate: 0,
+                illustrationTrailingTimePeriod: 'Customized',
+                startDate: '2002-01-01',
+                endDate: '2004-01-01',
+                synchronizePortfolioStartDate: true,
+                investmentDetailReturnsFrequency: 'Monthly',
+                liquidateOnEndDate: true,
+                subsequentInvestmentType: 'Invest',
+                subsequentInvestmentAmount: 0,
+                subsequentInvestmentWithdrawalFrequency: 'Monthly',
+                assetBasedAnnualFee: 0,
+                assetFeeFrequency: 'Annually',
+                assetFeeType: 'Amount',
+                payFees: 'OutOfPocketBeginning',
+                payFeesUseCashFirst: true,
+                frontLoadType: 'Standard',
+                customFeeType: 'Amount',
+                salesFeeAmount: 0,
+                applySalesCharge: true,
+                applyFeeForRebalance: false,
+                entryExitFeeType: 'CustomEntry',
+                rebalanceFrequency: 'None',
+                rebalanceThreshold: 0,
+                reinvestDividends: true,
+                reinvestCapitalGains: true,
+                portfolioAmountFee: 1000
+            }
+        },
+        portfolios: [
+            {
+                name: 'TestPortfolio1',
+                totalValue: 10000,
+                currency: 'USD',
+                holdings: [
+                    {
+                        securityId: 'F00000VCTT',
+                        weight: 20
+                    },
+                    {
+                        securityId: '0P00002NW8',
+                        weight: 10
+                    },
+                    {
+                        tradingSymbol: 'AAPL',
+                        weight: 15
+                    },
+                    {
+                        isin: 'US09251T1034',
+                        weight: 35
+                    },
+                    {
+                        cusip: '256219106',
+                        weight: 20
+                    }
+                ],
+                benchmark: {
+                    type: 'Standard',
+                    holdings: [
+                        {
+                            securityId: 'XIUSA04G92',
+                            type: 'XI',
+                            weight: 100
+                        }
+                    ]
+                }
+            }
+        ]
+    });
+
+    await connector.load();
+```
+
+## Relevant demos
+
+You will find examples of how to use `HypoPerformanceConnector` in our demos.
+
+- [Highcharts Stock + Morningstar Growth Chart Hypothetical](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/growth-chart-hypo/)
+
+## Morningstar API Reference
+
+For more details, see [Morningstar's Hypothetical Performance API].
+
+<!-- Links -->
+[Morningstar's Hypothetical Performance API]: https://developer.morningstar.com/direct-web-services/documentation/direct-web-services/portfolio-hypothetical-performance/overview

@@ -9,12 +9,7 @@ module.exports = function (repoRoot) {
             exclude: []
         },
         destinations: [
-            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-stock') },
-            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-stock') },
-            {
-                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-stock'),
-                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
-            }
+            { path: path.join(repoRoot, 'skills', 'highcharts-stock') }
         ],
         skillMd: {
             description: 'Highcharts Stock navigator, range selector, indicators, OHLC, candlestick, flags, data grouping, compare mode, and stock tools from the bundled docs.',
