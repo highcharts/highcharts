@@ -64,7 +64,7 @@ declare module './GlobalsBase' {
  * @optionparent
  * @internal
  */
-export const defaultOptions: DefaultOptions = {
+const defaultOptions: DefaultOptions = {
 
     palette: PaletteDefaults,
 
@@ -2288,6 +2288,8 @@ export const defaultOptions: DefaultOptions = {
 
     }
 };
+// To do: export directly when highchatrs-documentation-generators is fixed.
+export { defaultOptions };
 
 const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
 
