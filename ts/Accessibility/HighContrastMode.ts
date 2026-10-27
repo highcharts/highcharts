@@ -39,6 +39,8 @@ import {
     pick
 } from '../Shared/Utilities.js';
 
+// The annotation marks the call as side-effect free, so the minifier can drop
+// the set in bundles importing only `isHighContrastModeActive`, like Grid.
 const systemColorKeywords = /* #__PURE__ */ new Set([
     'accentcolor',
     'accentcolortext',
