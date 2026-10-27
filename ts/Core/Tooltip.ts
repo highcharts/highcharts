@@ -53,6 +53,7 @@ import {
     isNumber,
     isObject,
     isString,
+    objectEach,
     merge,
     pushUnique,
     splat,
@@ -1313,6 +1314,12 @@ class Tooltip {
         labels: (string|Array<(boolean|string)>),
         points: Array<Point>
     ): void {
+        interface TooltipPane {
+            boundsTop: number;
+            boundsBottom: number;
+            boxes: BoxObject[]
+        }
+
         const tooltip = this;
         const {
             chart,
@@ -1346,36 +1353,10 @@ class Tooltip {
             chartTop = outside ? chartPosition.top : 0,
             chartLeft = outside ? chartPosition.left : 0,
             hasFixedPosition = positioner || fixed,
+            inPane = position.relativeTo === 'pane',
             boundsLeft = scrollLeft,
-            boundsRight = field.width + scrollLeft;
-
-        let boundsTop = 0,
-            boundsBottom = field.height;
-
-        if (headerTop) {
-            boundsTop = chartTop + plotTop - headerDistance;
-        } else {
-            boundsBottom = chartTop + plotTop + plotHeight + headerDistance;
-        }
-
-        // Uncomment this to visualize field for debugging
-        // let debugBox = H.tooltipFieldDebugBox;
-        // if (!debugBox) {
-        //     debugBox = H.tooltipFieldDebugBox = document
-        //         .createElement('div');
-        //     css(debugBox, {
-        //         position: 'absolute',
-        //         backgroundColor: 'rgba(0, 0, 255, 0.2)',
-        //         pointerEvents: 'none'
-        //     });
-        //     document.body.appendChild(debugBox);
-        // }
-        // css(debugBox, {
-        //     left: (outside ? 0 : chartPosition.left) + 'px',
-        //     top: (boundsTop + (outside ? 0 : chartPosition.top)) + 'px',
-        //     width: boundsRight + 'px',
-        //     height: (boundsBottom - boundsTop) + 'px'
-        // });
+            boundsRight = field.width + scrollLeft,
+            panes: Record<string, TooltipPane> = {};
 
         /**
          * Calculates the anchor position for the partial tooltip
@@ -1549,16 +1530,23 @@ class Tooltip {
         if (isString(labels)) {
             labels = ['', labels];
         }
-        let emptyHeader: true|undefined,
-            hasLeftOverflow: boolean|undefined,
+        let hasLeftOverflow: boolean|undefined,
             tooWide: boolean|undefined;
 
+        let boundsTop = 0,
+            boundsBottom = field.height;
+
+        if (headerTop) {
+            boundsTop = chartTop + plotTop - headerDistance;
+        } else {
+            boundsBottom = chartTop + plotTop + plotHeight + headerDistance;
+        }
+
         // Create the individual labels for header and points, ignore footer
-        const boxes = labels.slice(0, points.length + 1).reduce((
-            boxes: Array<BoxObject>,
+        labels.slice(0, points.length + 1).forEach((
             str: (boolean|string),
             i: number
-        ): Array<BoxObject> => {
+        ): void => {
             if (str !== false && str !== '') {
                 const point: (Point|Tooltip.PositionerPointObject) = (
                         points[i - 1] ||
@@ -1583,9 +1571,18 @@ class Tooltip {
                 // case of overflow
                 const bBox = tt.getBBox(),
                     boxWidth = bBox.width + tt.strokeWidth(),
-                    { anchorX, anchorY } = getAnchor(point);
+                    { anchorX, anchorY } = getAnchor(point),
+                    { xAxis, yAxis } = point.series,
+                    key = isHeader ? 'header' :
+                        xAxis && yAxis && inPane ?
+                            `${xAxis.pos}+${xAxis.len}+${yAxis.pos}+${yAxis.len}` :
+                            '0';
 
                 if (typeof anchorY === 'number') {
+                    if (inPane && yAxis) {
+                        boundsTop = chartTop + yAxis.pos;
+                        boundsBottom = chartTop + yAxis.pos + yAxis.len;
+                    }
                     const size = bBox.height + 1,
                         boxPosition = (positioner || defaultPositioner).call(
                             tooltip,
@@ -1615,70 +1612,92 @@ class Tooltip {
                     }
 
                     hasLeftOverflow ||= boxObject.x < boundsLeft;
-                    tooWide ||= boxWidth + distance >
-                        boundsRight - boundsLeft;
+                    tooWide ||= boxWidth + distance > boundsRight - boundsLeft;
 
-                    boxes.push(boxObject);
+                    panes[key] ||= {
+                        boundsTop,
+                        boundsBottom,
+                        boxes: []
+                    };
+                    panes[key].boxes.push(boxObject);
                 } else {
                     // Hide tooltips which anchorY is outside the visible plot
                     // area
                     tt.isActive = false;
                 }
-            } else if (i === 0) {
-                emptyHeader = true;
             }
-            return boxes;
-        }, []);
-
-        // If overflow left then align all labels to the right. Unless if the
-        // label is too wide to fit in the bounds, then place it at 0.
-        if (
-            !hasFixedPosition &&
-            hasLeftOverflow
-        ) {
-            for (const box of boxes) {
-                const { x, y } = defaultPositioner.call(
-                    this,
-                    box.boxWidth,
-                    box.size,
-                    box.point,
-                    void 0,
-                    [box.anchorX, box.anchorY],
-                    false
-                );
-                box.target = y;
-                box.x = tooWide ? boundsLeft : x;
-            }
-        }
+        });
 
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
 
         // Distribute and put in place
-        distribute(
-            // Headers not included in the algorithm
-            boxes.slice(emptyHeader ? 0 : 1),
-            boundsBottom - boundsTop
-        );
+        objectEach(panes, ({ boundsTop, boundsBottom, boxes }): void => {
 
-        for (const box of boxes) {
-            const {
-                x,
-                anchorX,
-                anchorY,
-                pos
-            } = box;
-            const attributes: SVGAttributes = {
-                visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
-                x,
-                y: (pos || 0) + boundsTop + (fixed && position.y || 0),
-                anchorX,
-                anchorY
-            };
+            // If overflow left then align all labels to the right. Unless if
+            // the label is too wide to fit in the bounds, then place it at 0.
+            if (
+                !hasFixedPosition &&
+                hasLeftOverflow
+            ) {
+                for (const box of boxes) {
+                    const { x, y } = defaultPositioner.call(
+                        this,
+                        box.boxWidth,
+                        box.size,
+                        box.point,
+                        void 0,
+                        [box.anchorX, box.anchorY],
+                        false
+                    );
+                    box.target = y;
+                    box.x = tooWide ? boundsLeft : x;
+                }
+            }
 
-            // Put the label in place
-            box.tt.attr(attributes);
-        }
+            // Uncomment this to visualize field for debugging
+            // let debugBox = H.tooltipFieldDebugBox;
+            // if (!debugBox) {
+            //     debugBox = H.tooltipFieldDebugBox = document
+            //         .createElement('div');
+            //     css(debugBox, {
+            //         position: 'absolute',
+            //         backgroundColor: 'rgba(0, 0, 255, 0.2)',
+            //         pointerEvents: 'none'
+            //     });
+            //     document.body.appendChild(debugBox);
+            // }
+            // css(debugBox, {
+            //     left: (outside ? 0 : chartPosition.left) + 'px',
+            //     top: (pane.top + (outside ? 0 : chartPosition.top)) + 'px',
+            //     width: boundsRight + 'px',
+            //     height: (pane.boundsBottom - pane.boundsTop) + 'px'
+            // });
+
+            distribute(
+                boxes.filter((box): boolean => !box.point.isHeader),
+                boundsBottom - boundsTop
+            );
+
+            for (const box of boxes) {
+                const {
+                    x,
+                    anchorX,
+                    anchorY,
+                    pos
+                } = box;
+                const attributes: SVGAttributes = {
+                    visibility: typeof pos === 'undefined' ?
+                        'hidden' : 'inherit',
+                    x,
+                    y: (pos || 0) + boundsTop + (fixed && position.y || 0),
+                    anchorX,
+                    anchorY
+                };
+                // Put the label in place
+                box.tt.attr(attributes);
+            }
+        });
 
         // If we have a separate tooltip container, then update the necessary
         // container properties. Check that tooltip has its own container and
