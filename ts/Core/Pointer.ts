@@ -2359,6 +2359,11 @@ namespace Pointer {
          */
         resetSelection?: boolean;
 
+        /**
+         * The chart that the selection event belongs to.
+         */
+        target: Chart;
+
         /** @internal */
         trigger?: string;
 
@@ -2518,6 +2523,16 @@ export default Pointer;
  *
  * @name Highcharts.PointerEventObject#chartY
  * @type {number}
+ *//**
+ * Axis positions on the x-axis, when available for a chart click.
+ *
+ * @name Highcharts.PointerEventObject#xAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>|undefined}
+ *//**
+ * Axis positions on the y-axis, when available for a chart click.
+ *
+ * @name Highcharts.PointerEventObject#yAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>|undefined}
  */
 
 /**
@@ -2556,6 +2571,10 @@ export default Pointer;
  * Indicates a reset event to restore default state.
  * @name Highcharts.SelectEventObject#resetSelection
  * @type {boolean|undefined}
+ *//**
+ * The Chart that the selection belongs to.
+ * @name Highcharts.SelectEventObject#target
+ * @type {Highcharts.Chart}
  *//**
  * Arrays containing the axes of each dimension and each axis' min and max
  * values.

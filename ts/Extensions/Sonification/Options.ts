@@ -1153,6 +1153,15 @@ const Options: DeepPartial<OptionsType> = {
              */
 
             /**
+             * The point property to play context for when using
+             * `valueInterval`.
+             *
+             * @type      {string}
+             * @default   "x"
+             * @apioption sonification.defaultInstrumentOptions.activeWhen.valueProp
+             */
+
+            /**
              * Instrument to use for playing.
              *
              * Can either be a string referencing a synth preset, or it can be

@@ -41,6 +41,11 @@ export interface FlagsPointOptions extends ColumnPointOptions {
 
     selected?: boolean;
 
+    /**
+     * The shape of an individual flag.
+     *
+     * @product highstock
+     */
     shape?: FlagsShapeValue;
 
     /**
