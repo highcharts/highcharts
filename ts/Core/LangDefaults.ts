@@ -18,7 +18,7 @@
  *
  * */
 
-import type { LangOptions } from './Options';
+import type { LangOptions } from './LangOptions';
 
 /* *
  *
