@@ -20,14 +20,16 @@
 
 import type { DeepPartial } from '../Shared/Types';
 import type { DefaultOptions, Options } from './Options';
+import type Time from './Time';
 
 import ChartDefaults from './Chart/ChartDefaults.js';
 import H from './Globals.js';
 const {
     isTouchDevice
 } = H;
+import langDefaults from './LangDefaults.js';
 import PaletteDefaults from './Color/PaletteDefaults.js';
-import Time from './Time.js';
+import timeDefaults, { defaultTime } from './TimeDefaults.js';
 import { fireEvent, merge } from '../Shared/Utilities.js';
 
 /* *
@@ -160,225 +162,7 @@ const defaultOptions: DefaultOptions = {
      */
     symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 
-    /**
-     * An object containing language-related strings and settings. A typical
-     * setup uses `Highcharts.setOptions` to make the options apply to all
-     * charts in the same page.
-     *
-     * Some language options, like `months` and `weekdays`, are only used
-     * with non-locale-aware date formats.
-     *
-     * ```js
-     * Highcharts.setOptions({
-     *     lang: {
-     *         locale: 'fr'
-     *     }
-     * });
-     * ```
-     *
-     * @optionparent lang
-     */
-    lang: {
-        weekFrom: 'week from',
-
-        /**
-         * The default chart title.
-         *
-         * @since 12.2.0
-         */
-        chartTitle: 'Chart title',
-
-        /**
-         * The browser locale to use for date and number formatting. The actual
-         * locale used for each chart is determined in three steps:
-         * 1. If this `lang.locale` option is specified, it is used.
-         * 2. Else, look for the closest ancestor HTML element with a `lang`
-         *    attribute, typically the `<html>` element.
-         * 3. If no 'lang' attribute is found, use the default browser locale.
-         *
-         * Use `en-GB`, British English, for approximate consistency with
-         * Highcharts v < 12.
-         *
-         * @sample highcharts/lang/locale/
-         *         Set the locale using the `lang.locale` option
-         * @sample highcharts/lang/locale-attribute/
-         *         Pick up the locale from the HTML `lang` attribute
-         * @sample highcharts/members/highcharts-numberformat
-         *         Arabic locale with digits and dates         *
-         *
-         * @since 12.0.0
-         * @type {string|Array<string>}
-         */
-        locale: void 0,
-
-        /**
-         * The loading text that appears when the chart is set into the loading
-         * state following a call to `chart.showLoading`.
-         */
-        loading: 'Loading...',
-
-        /**
-         * An array containing the months names. Corresponds to the `%B` format
-         * in `Highcharts.dateFormat()`. Defaults to 'undefined',
-         * meaning the default month names are used according to the
-         * `lang.locale` or browser settings.
-         *
-         * @type    {Array<string>}
-         */
-        months: void 0,
-
-        /**
-         * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
-         *
-         * @since 12.2.0
-         */
-        seriesName: 'Series {add index 1}',
-
-        /**
-         * An array containing the months names in abbreviated form. Corresponds
-         * to the `%b` format in `Highcharts.dateFormat()`. Defaults to
-         * 'undefined', meaning the default short month names are used according
-         * to the `lang.locale` or browser settings.
-         *
-         * @type    {Array<string>}
-         */
-        shortMonths: void 0,
-
-        /**
-         * An array containing the weekday names. Corresponds
-         * to the `%A` format in `Highcharts.dateFormat()`. Defaults to
-         * 'undefined', meaning the default weekday names are used according to
-         * the `lang.locale` or browser settings.
-         *
-         * @type    {Array<string>}
-         */
-        weekdays: void 0,
-
-        /**
-         * Short week days, starting Sunday. Corresponds to the `%a` format in
-         * `Highcharts.dateFormat()`. Defaults to 'undefined', meaning
-         * the default short weekday names are used according to the
-         * `lang.locale` or browser settings.
-         *
-         * @sample highcharts/lang/shortweekdays/
-         *         Finnish two-letter abbreviations
-         *
-         * @type      {Array<string>}
-         * @since     4.2.4
-         * @apioption lang.shortWeekdays
-         */
-
-        /**
-         * What to show in a date field for invalid dates. Defaults to an empty
-         * string.
-         *
-         * @type      {string}
-         * @since     4.1.8
-         * @product   highcharts highstock
-         * @apioption lang.invalidDate
-         */
-
-        /**
-         * The title appearing on hovering the zoom in button. The text itself
-         * defaults to "+" and can be changed in the button options.
-         *
-         * @type      {string}
-         * @default   Zoom in
-         * @product   highmaps
-         * @apioption lang.zoomIn
-         */
-
-        /**
-         * The title appearing on hovering the zoom out button. The text itself
-         * defaults to "-" and can be changed in the button options.
-         *
-         * @type      {string}
-         * @default   Zoom out
-         * @product   highmaps
-         * @apioption lang.zoomOut
-         */
-
-        /**
-         * The default decimal point used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments. Defaults
-         * to the locale decimal point as determined by `lang.locale`.
-         *
-         * @type      {string}
-         * @default   undefined
-         * @since     1.2.2
-         * @apioption lang.decimalPoint
-         */
-
-        /**
-         * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
-         * to shorten high numbers in axis labels. Replacing any of the
-         * positions with `null` causes the full number to be written. Setting
-         * `numericSymbols` to `undefined` disables shortening altogether.
-         *
-         * @sample {highcharts} highcharts/lang/numericsymbols/
-         *         Replacing the symbols with text
-         * @sample {highstock} highcharts/lang/numericsymbols/
-         *         Replacing the symbols with text
-         *
-         * @type    {Array<string>}
-         * @default ["k", "M", "G", "T", "P", "E"]
-         * @since   2.3.0
-         */
-        numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'],
-
-        /**
-         * The default name for a pie slice (point).
-         * @since 12.2.0
-         */
-
-        pieSliceName: 'Slice',
-
-        /**
-         * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
-         * Use 10000 for Japanese, Korean and various Chinese locales, which
-         * use symbols for 10^4, 10^8 and 10^12.
-         *
-         * @sample highcharts/lang/numericsymbolmagnitude/
-         *         10000 magnitude for Japanese
-         *
-         * @type      {number}
-         * @default   1000
-         * @since     5.0.3
-         * @apioption lang.numericSymbolMagnitude
-         */
-
-        /**
-         * The default thousands separator used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments. Defaults
-         * to the locale thousands separator as determined by `lang.locale`.
-         *
-         * @type      {string}
-         * @default   undefined
-         * @since     1.2.2
-         * @apioption lang.thousandsSep
-         */
-
-        /**
-         * The text for the label appearing when a chart is zoomed.
-         *
-         * @since 1.2.4
-         */
-        resetZoom: 'Reset zoom',
-
-        /**
-         * The default title of the Y axis
-         *
-         * @since 12.2.0
-         */
-        yAxisTitle: 'Values',
-
-        /**
-         * The tooltip title for the label appearing when a chart is zoomed.
-         *
-         * @since 1.2.4
-         */
-        resetZoomTitle: 'Reset zoom level 1:1'
-    },
+    lang: langDefaults,
 
     /**
      * Global options that don't apply to each chart. These options must be set
@@ -483,137 +267,7 @@ const defaultOptions: DefaultOptions = {
 
     },
 
-    /**
-     * Time options that can apply globally or to individual charts. These
-     * settings affect how `datetime` axes are laid out, how tooltips are
-     * formatted, how series
-     * [pointIntervalUnit](#plotOptions.series.pointIntervalUnit) works and how
-     * the Highcharts Stock range selector handles time.
-     *
-     * The common use case is that all charts in the same Highcharts object
-     * share the same time settings, in which case the global settings are set
-     * using `setOptions`.
-     *
-     * ```js
-     * // Apply time settings globally
-     * Highcharts.setOptions({
-     *     time: {
-     *         timezone: 'Europe/London'
-     *     }
-     * });
-     * // Apply time settings by instance
-     * const chart = Highcharts.chart('container', {
-     *     time: {
-     *         timezone: 'America/New_York'
-     *     },
-     *     series: [{
-     *         data: [1, 4, 3, 5]
-     *     }]
-     * });
-     *
-     * // Use the Time object
-     * console.log(
-     *        'Current time in New York',
-     *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
-     * );
-     * ```
-     *
-     * Since v6.0.5, the time options were moved from the `global` object to the
-     * `time` object, and time options can be set on each individual chart.
-     *
-     * @sample {highcharts|highstock}
-     *         highcharts/time/timezone/
-     *         Set the timezone globally
-     * @sample {highcharts}
-     *         highcharts/time/individual/
-     *         Set the timezone per chart instance
-     * @sample {highstock}
-     *         stock/time/individual/
-     *         Set the timezone per chart instance
-     *
-     * @since     6.0.5
-     * @optionparent time
-     */
-    time: {
-        /**
-         * A custom `Date` class for advanced date handling. For example,
-         * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
-         * handle Jalali dates.
-         *
-         * @type      {*}
-         * @since     4.0.4
-         * @product   highcharts highstock gantt
-         */
-        Date: void 0,
-
-        /**
-         * A named time zone. Supported time zone names rely on the browser
-         * implementations, as described in the [mdn
-         * docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
-         * If the given time zone is not recognized by the browser, Highcharts
-         * provides a warning and falls back to returning a 0 offset,
-         * corresponding to the UTC time zone.
-         *
-         * The time zone affects axis scaling, tickmark placement and
-         * time display in `Highcharts.dateFormat`.
-         *
-         * Setting `timezone` to `undefined` falls back to the default browser
-         * timezone setting.
-         *
-         * Until v11.2.0, this option depended on moment.js.
-         *
-         * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
-         *
-         * @type      {string}
-         * @since     5.0.7
-         * @product   highcharts highstock gantt
-         */
-        timezone: 'UTC',
-
-        /**
-         * The timezone offset in minutes. Positive values are west, negative
-         * values are east of UTC, as in the ECMAScript
-         * [getTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
-         * method. Use this to display UTC based data in a predefined time zone.
-         *
-         * This option is deprecated as of v11.4.1 and will be removed in a
-         * future release. Use the [time.timezone](#time.timezone) option
-         * instead.
-         *
-         * @see [time.getTimezoneOffset](#time.getTimezoneOffset)
-         *
-         * @sample {highcharts|highstock} highcharts/time/timezoneoffset/
-         *         Timezone offset
-         *
-         * @since     3.0.8
-         * @deprecated 11.4.2
-         * @product   highcharts highstock gantt
-         */
-        timezoneOffset: 0,
-
-        /**
-         * Whether to use UTC time for axis scaling, tickmark placement and
-         * time display in `Highcharts.dateFormat`. Advantages of using UTC
-         * is that the time displays equally regardless of the user agent's
-         * time zone settings. Local time can be used when the data is loaded
-         * in real time or when correct Daylight Saving Time transitions are
-         * required.
-         *
-         * Setting `useUTC` to true is equivalent to setting `time.timezone` to
-         * `"UTC"`. Setting `useUTC` to false is equivalent to setting
-         * `time.timezone` to `undefined`.
-         *
-         * @see [timezone](#time.timezone)
-         *
-         * @sample {highcharts} highcharts/time/useutc-true/
-         *         True by default
-         * @sample {highcharts} highcharts/time/useutc-false/
-         *         False
-         *
-         * @deprecated 12.0.0
-         */
-        useUTC: void 0
-    },
+    time: timeDefaults,
 
     chart: ChartDefaults,
 
@@ -2290,8 +1944,6 @@ const defaultOptions: DefaultOptions = {
 };
 // To do: export directly when highcharts-documentation-generators is fixed.
 export { defaultOptions };
-
-const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
 
 // Named as exposed on the namespace, to resolve as an external (`G.time`)
 export { defaultTime as time };
