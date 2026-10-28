@@ -1572,19 +1572,24 @@ class Tooltip {
                 const bBox = tt.getBBox(),
                     boxWidth = bBox.width + tt.strokeWidth(),
                     { anchorX, anchorY } = getAnchor(point),
-                    { xAxis, yAxis } = point.series,
-                    key = isHeader ? 'header' :
-                        xAxis && yAxis && inPane ?
-                            `${xAxis.pos}+${xAxis.len}+${yAxis.pos}+${yAxis.len}` :
-                            '0';
+                    pBox = inPane && !isHeader && chart.getClipBox(
+                        point.series, true
+                    ),
+                    key = pBox ?
+                        `${pBox.x}+${pBox.width}+${pBox.y}+${pBox.height}` :
+                        '0';
 
                 if (typeof anchorY === 'number') {
-                    if (inPane && yAxis) {
-                        boundsTop = chartTop + yAxis.pos;
-                        boundsBottom = chartTop + yAxis.pos + yAxis.len;
+                    if (pBox) {
+                        // Alter the variables before the defaultPositioner
+                        // uses them
+                        boundsTop = chartTop + pBox.y;
+                        boundsBottom = chartTop + pBox.y + pBox.height;
                     }
                     const size = bBox.height + 1,
-                        boxPosition = (positioner || defaultPositioner).call(
+                        boxPosition: PositionObject & { rank?: number } = (
+                            positioner || defaultPositioner
+                        ).call(
                             tooltip,
                             boxWidth,
                             size,
@@ -1592,15 +1597,14 @@ class Tooltip {
                             tooltip,
                             [anchorX, anchorY]
                         ),
-                        boxObject: BoxObject = {
+                        boxObject: BoxObject & { rank?: number } = {
                             // 0-align to the top, 1-align to the bottom
                             align: hasFixedPosition ? 0 : void 0,
                             anchorX,
                             anchorY,
                             boxWidth,
                             point,
-                            rank: (boxPosition as any).rank ??
-                                (isHeader ? 1 : 0),
+                            rank: boxPosition.rank ?? (isHeader ? 1 : 0),
                             size,
                             target: boxPosition.y,
                             tt,
@@ -1636,10 +1640,7 @@ class Tooltip {
 
             // If overflow left then align all labels to the right. Unless if
             // the label is too wide to fit in the bounds, then place it at 0.
-            if (
-                !hasFixedPosition &&
-                hasLeftOverflow
-            ) {
+            if (!hasFixedPosition && hasLeftOverflow) {
                 for (const box of boxes) {
                     const { x, y } = defaultPositioner.call(
                         this,
@@ -1656,22 +1657,24 @@ class Tooltip {
             }
 
             // Uncomment this to visualize field for debugging
-            // let debugBox = H.tooltipFieldDebugBox;
+            // tooltip.debugBoxMap ||= {};
+            // const key = `${boundsTop}+${boundsBottom}`;
+            // let debugBox = tooltip.debugBoxMap[key];
             // if (!debugBox) {
-            //     debugBox = H.tooltipFieldDebugBox = document
-            //         .createElement('div');
+            //     debugBox = document.createElement('div');
             //     css(debugBox, {
             //         position: 'absolute',
-            //         backgroundColor: 'rgba(0, 0, 255, 0.2)',
+            //         backgroundColor: 'rgba(0, 0, 255, 0.1)',
             //         pointerEvents: 'none'
             //     });
             //     document.body.appendChild(debugBox);
+            //     tooltip.debugBoxMap[key] = debugBox;
             // }
             // css(debugBox, {
             //     left: (outside ? 0 : chartPosition.left) + 'px',
-            //     top: (pane.top + (outside ? 0 : chartPosition.top)) + 'px',
+            //     top: (boundsTop + (outside ? 0 : chartPosition.top)) + 'px',
             //     width: boundsRight + 'px',
-            //     height: (pane.boundsBottom - pane.boundsTop) + 'px'
+            //     height: (boundsBottom - boundsTop) + 'px'
             // });
 
             distribute(
