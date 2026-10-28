@@ -122,8 +122,9 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
      * `pointFormat`, `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`.
      *
      * By default, the header displays the point name, category or datetime
-     * value. The body displays the y value, and the point key in case it is
-     * numeric (x value - not name, category or datetime).
+     * value, and is left out for plain numeric x values. The body displays the
+     * x and y values, or only the y value when the x value is already shown in
+     * the header.
      *
      * @product highcharts highstock highmaps
      */
@@ -131,10 +132,23 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
         /**
          * @product highcharts highstock
          */
+        headerFormat: '{#if point.name}' +
+            '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>' +
+            '{else}{#if series.xAxis.categories}' +
+            '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>' +
+            '{else}{#if series.xAxis.dateTime}' +
+            '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>' +
+            '{/if}{/if}{/if}',
+        /**
+         * @product highcharts highstock
+         */
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '{series.name}: ' +
-            '{#eq point.key point.x}[<b>{point.key}</b>, <b>{point.y}</b>]' +
-            '{else}<b>{point.y}</b>{/eq}<br/>'
+            '{series.name}: {#if series.xAxis.categories}<b>{point.y}</b>' +
+            '{else}{#if point.name}' +
+            '[<b>{point.category}</b>, <b>{point.y}</b>]' +
+            '{else}{#if series.xAxis.dateTime}<b>{point.y}</b>' +
+            '{else}[<b>{point.category}</b>, <b>{point.y}</b>]' +
+            '{/if}{/if}{/if}<br/>'
     }
 
 };

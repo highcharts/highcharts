@@ -461,3 +461,73 @@ QUnit.test(
         });
     }
 );
+
+QUnit.test('Scatter tooltip header and named points', function (assert) {
+    const t0 = Date.UTC(2026, 0, 5),
+        getText = (chart, point) => {
+            chart.tooltip.refresh(point);
+            return chart.tooltip.label.text.element.textContent
+                .replace(/\u200B/g, '|')
+                .replace(/\s+/g, ' ');
+        };
+
+    let chart = Highcharts.chart('container', {
+        series: [{
+            type: 'scatter',
+            name: 'S1',
+            data: [[1.5, 2], { x: 3, y: 4, name: 'Alpha' }]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '● S1: [1.5, 2]|',
+        'Linear x values should not be repeated in the header'
+    );
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[1]),
+        'Alpha|● S1: [3, 4]|',
+        'A point name should show in the header, x and y in the body'
+    );
+
+    chart.update({
+        xAxis: {
+            type: 'datetime'
+        },
+        tooltip: {
+            xDateFormat: '%Y-%m-%d'
+        },
+        series: [{
+            data: [[t0, 2], { x: t0 + 864e5, y: 4, name: 'Node' }]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '2026-01-05|● S1: 2|',
+        'Datetime x values should show in the header'
+    );
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[1]),
+        'Node|● S1: [2026-01-06, 4]|',
+        'The date of a named point should show in the body'
+    );
+
+    chart.destroy();
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            type: 'packedbubble',
+            name: 'Europe',
+            data: [{ name: 'Germany', value: 767 }]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '● Europe|Value: 767',
+        'Packed bubble should keep the series name in the header'
+    );
+
+    chart.destroy();
+});

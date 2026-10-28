@@ -575,9 +575,12 @@ class BubbleSeries extends ScatterSeries {
 
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-                '{series.name}: {#eq point.key point.x}' +
-                '[<b>{point.key}</b>, <b>{point.y}</b>]' +
-                '{else}<b>{point.y}</b>{/eq}, Size: <b>{point.z}</b><br/>'
+                '{series.name}: {#if series.xAxis.categories}<b>{point.y}</b>' +
+                '{else}{#if point.name}' +
+                '[<b>{point.category}</b>, <b>{point.y}</b>]' +
+                '{else}{#if series.xAxis.dateTime}<b>{point.y}</b>' +
+                '{else}[<b>{point.category}</b>, <b>{point.y}</b>]' +
+                '{/if}{/if}{/if}, Size: <b>{point.z}</b><br/>'
         },
 
         turboThreshold: 0,

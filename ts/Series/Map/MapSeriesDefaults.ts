@@ -126,6 +126,8 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
     tooltip: {
         followPointer: true,
+        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
         pointFormat: '{point.name}: {point.value}<br/>'
     },
 
