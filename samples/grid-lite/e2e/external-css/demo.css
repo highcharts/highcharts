@@ -3,6 +3,7 @@
 /* Page-wide rules that should not affect the grid */
 table {
     margin-bottom: 40px;
+    padding: 20px;
 }
 
 th,
@@ -19,9 +20,13 @@ input {
     box-shadow: 0 0 10px red;
 }
 
+/* Also matches the render target, which the Grid inherits from */
 div {
     margin: 7px;
     padding: 7px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    white-space: pre;
 }
 
 thead,

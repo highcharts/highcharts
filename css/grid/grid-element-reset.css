@@ -27,6 +27,13 @@
     white-space: revert;
 }
 
+/* Inherited, so revert alone would pass on the render target's values */
+.hcg-themed {
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: normal;
+}
+
 /* Cells have no background of their own in the default theme */
 .hcg-themed :where(thead, tbody, tr) {
     background: revert;
@@ -34,6 +41,6 @@
 
 /* Not cells: revert drops their default padding (a presentational hint) */
 .hcg-themed,
-.hcg-themed :where(div, span, p, label, ul, li) {
+.hcg-themed :where(table, div, span, p, label, ul, li) {
     padding: revert;
 }

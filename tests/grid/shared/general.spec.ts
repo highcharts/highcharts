@@ -113,10 +113,17 @@ test.describe('Page-wide CSS', () => {
         await expect(th).toHaveCSS('border-left-width', '0px');
         await expect(page.locator('#container table'))
             .toHaveCSS('margin-bottom', '0px');
+        await expect(page.locator('#container table'))
+            .toHaveCSS('padding-top', '0px');
 
         const td = page.locator('#container tbody td').first();
         await expect(td).not.toHaveCSS('vertical-align', 'bottom');
         await expect(td).not.toHaveCSS('text-transform', 'uppercase');
+
+        // Inherited from the render target
+        await expect(td).toHaveCSS('text-transform', 'none');
+        await expect(td).toHaveCSS('letter-spacing', 'normal');
+        await expect(td).not.toHaveCSS('white-space', 'pre');
 
         // Controls and the Grid's own wrappers
         for (const selector of ['.hcg-button', 'input', '.hcg-container']) {
