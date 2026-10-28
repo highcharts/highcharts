@@ -1541,5 +1541,63 @@ test.describe('Cell Context Menu', () => {
             }
         );
 
+        test(
+            'A redraw closes an open menu and builds none when there is none',
+            async ({ page }) => {
+                await page.evaluate(async () => {
+                    document.getElementById('cm-redraw')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-redraw';
+                    document.body.appendChild(container);
+
+                    (window as any).cmRedrawGrid = await (window as any).Grid
+                        .grid(container, {
+                            data: {
+                                idColumn: 'id',
+                                columns: {
+                                    id: ['ROW-001'],
+                                    value: [1]
+                                }
+                            },
+                            rendering: {
+                                rows: {
+                                    pinning: { enabled: true }
+                                }
+                            }
+                        }, true);
+                });
+
+                const built = (): Promise<boolean> => page.evaluate(() => (
+                    !!(window as any).cmRedrawGrid.contextMenuInstance
+                ));
+
+                // A redraw of a grid nobody opened a menu in builds none.
+                await page.evaluate(async () => {
+                    await (window as any).cmRedrawGrid.update({
+                        columns: [{ id: 'value', className: 'redrawn' }]
+                    });
+                });
+
+                expect(await built()).toBe(false);
+
+                // One that is open goes away with the table it belongs to.
+                await page.locator(
+                    '#cm-redraw tbody tr[data-row-index="0"] ' +
+                    'td[data-column-id="id"]'
+                ).click({ button: 'right' });
+
+                await expect(page.locator('.hcg-popup')).toHaveCount(1);
+
+                await page.evaluate(async () => {
+                    await (window as any).cmRedrawGrid.update({
+                        columns: [{ id: 'value', className: 'redrawn-again' }]
+                    });
+                });
+
+                await expect(page.locator('.hcg-popup')).toHaveCount(0);
+            }
+        );
+
     });
 });

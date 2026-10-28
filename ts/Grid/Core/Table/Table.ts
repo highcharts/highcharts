@@ -1256,7 +1256,11 @@ class Table {
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
-        this.grid.contextMenu.hide();
+
+        for (const popup of Array.from(this.grid.popups)) {
+            popup.hide();
+        }
+
         this.removeLongPressContextMenu?.();
         delete this.removeLongPressContextMenu;
 
