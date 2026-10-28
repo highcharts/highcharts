@@ -64,7 +64,8 @@ interface DefaultsObject {
 /**
  * Collects the `@default` doclets of an interface by property path. If `paths`
  * is given, it also receives the path of every inline member, with or without
- * a doclet.
+ * a doclet, except members with product-specific defaults such as
+ * `@default {highstock} true`, which are documented but not compared.
  */
 function collectDefaultTags(
     sourceFile: TS.SourceFile,
@@ -115,7 +116,9 @@ function collectMembers(
         const path = getPath(prefix, name);
         const docletDefault = getDocletDefault(member);
 
-        paths?.add(path);
+        if (!hasProductDefault(member)) {
+            paths?.add(path);
+        }
 
         if (docletDefault) {
             defaults.set(path, docletDefault);
@@ -200,7 +203,8 @@ function collectApiOptionDefaults(sourceFile: TS.SourceFile): DefaultMap {
  * Collects the defaults that an Options interface should document, by
  * property path: the values set in the Defaults object, and the `@default` of
  * each `@apioption` block below its `@optionparent`. Object values are
- * skipped, since their members are collected on their own.
+ * skipped, since their members are collected on their own, and so are values
+ * computed at runtime, since they have no literal to document.
  */
 function collectKnownDefaults(
     defaultsObject: DefaultsObject,
@@ -220,7 +224,7 @@ function collectKnownDefaults(
     }
 
     for (const [path, value] of defaults) {
-        if (!value.startsWith('{')) {
+        if (!value.startsWith('{') && !isComputedDefault(value)) {
             known.set(path, value);
         }
     }
@@ -300,6 +304,21 @@ function getDocletDefault(node: TS.Node): (string|undefined) {
     }
 
     return normalizeDocletDefault(stringifyComment(defaultTag.comment));
+}
+
+function hasProductDefault(node: TS.Node): boolean {
+    return TS.getJSDocTags(node).some(tag => (
+        tag.tagName.text === 'default' &&
+        /^\{[a-z|]+\}\s/u.test(stringifyComment(tag.comment))
+    ));
+}
+
+/**
+ * Whether a Defaults value is computed at runtime, such as a function call or
+ * a template literal with expressions, e.g. `merge(...)` or `` `v=${x}` ``.
+ */
+function isComputedDefault(value: string): boolean {
+    return /^(?!function\b)[\w$.]+\(|^`[\s\S]*\$\{/u.test(value);
 }
 
 /**
@@ -872,6 +891,22 @@ describe('Helper: collectDefaultTags with paths', () => {
             'enabled,label,label.text,style'
         );
     });
+
+    it('skips members with product-specific defaults', () => {
+        const src = parseSource(`
+            interface FooOptions {
+                /** @default {highstock} true */
+                enabled?: boolean;
+                /** @default 10 */
+                size?: number;
+            }
+        `);
+
+        const paths = new Set<string>();
+
+        collectDefaultTags(src, 'FooOptions', paths);
+        strictEqual([...paths].join(), 'size');
+    });
 });
 
 describe('Helper: getOptionsTypeName', () => {
@@ -899,7 +934,9 @@ describe('Helper: collectKnownDefaults', () => {
                 defaults: new Map([
                     ['enabled', 'true'],
                     ['label', "{ text: 'hello' }"],
-                    ['label.text', "'hello'"]
+                    ['label.text', "'hello'"],
+                    ['marker', 'merge(base, { radius: null })'],
+                    ['url', '`https://example.com?v=${version}`']
                 ]),
                 optionParent: 'plotOptions.foo'
             },

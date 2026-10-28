@@ -73,6 +73,8 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
      * positive integer.
      *
      * @type {"square-root"|"sturges"|"rice"|number|Function}
+     *
+     * @default 'square-root'
      */
     binsNumber?: (number|string|Function);
 
@@ -80,6 +82,8 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
      * Width of each bin. By default the bin's width is calculated as
      * `(max - min) / number of bins`. This option takes precedence over
      * [binsNumber](#plotOptions.histogram.binsNumber).
+     *
+     * @default undefined
      */
     binWidth?: number;
 
@@ -108,12 +112,16 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
      */
     data?: Array<(HistogramPointOptions|PointShortOptions)>;
 
+    /** @default false */
     grouping?: boolean;
 
+    /** @default 0 */
     groupPadding?: number;
 
+    /** @default 0 */
     pointPadding?: number;
 
+    /** @default 'between' */
     pointPlacement?: string;
 
     states?: SeriesStatesOptions<HistogramSeriesOptions>;

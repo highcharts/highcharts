@@ -392,6 +392,8 @@ export interface NavigatorOptions extends BaseNavigatorOptions {
      *
      * @sample {highstock} stock/navigator/margin/
      *         A margin of 2 draws the navigator closer to the X axis labels
+     *
+     * @default 22
      */
     margin?: number;
 

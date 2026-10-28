@@ -222,6 +222,8 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
      *
      * @type {number|null}
      *
+     * @default 0
+     *
      * @since 2.0
      *
      * @product highcharts highstock

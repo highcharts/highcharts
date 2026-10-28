@@ -93,6 +93,7 @@ export interface PackedBubbleParentNodeOptions {
 export interface PackedBubbleSeriesOptions
     extends BubbleSeriesOptions, NetworkgraphSeriesOptions {
 
+    /** @default false */
     crisp?: boolean;
 
     /**
@@ -145,6 +146,8 @@ export interface PackedBubbleSeriesOptions
      * Flag to determine if nodes are draggable or not. Available for
      * graph with useSimulation set to true only.
      *
+     * @default true
+     *
      * @since 7.1.0
      */
     draggable?: boolean;
@@ -180,6 +183,8 @@ export interface PackedBubbleSeriesOptions
      *
      * @sample highcharts/plotoptions/bubble-size/
      *         Bubble size
+     *
+     * @default '50%'
      */
     maxSize?: (number|string);
 
@@ -192,6 +197,8 @@ export interface PackedBubbleSeriesOptions
      *
      * @sample highcharts/plotoptions/bubble-size/
      *         Bubble size
+     *
+     * @default '10%'
      */
     minSize?: (number|string);
 
@@ -202,10 +209,12 @@ export interface PackedBubbleSeriesOptions
      */
     parentNode?: PackedBubbleParentNodeOptions;
 
+    /** @default 'area' */
     sizeBy?: BubbleSizeByValue;
 
     states?: SeriesStatesOptions<PackedBubbleSeriesOptions>;
 
+    /** @default false */
     stickyTracking: false;
 
     tooltip?: PackedBubbleSeriesTooltipOptions;
@@ -221,10 +230,13 @@ export interface PackedBubbleSeriesOptions
      * @sample highcharts/series-packedbubble/spiral/
      *         useSimulation set to false
      *
+     * @default true
+     *
      * @since 7.1.0
      */
     useSimulation?: boolean;
 
+    /** @default 'y' */
     zoneAxis?: ('x'|'y'|'z'|undefined);
 
 }

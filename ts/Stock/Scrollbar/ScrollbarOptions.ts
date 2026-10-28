@@ -56,11 +56,14 @@ export interface ScrollbarOptions {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
+     * @default 'var(--highcharts-neutral-color-20)'
      */
     barBackgroundColor?: ColorType;
 
     /**
      * The color of the scrollbar's border.
+     *
+     * @default 'var(--highcharts-neutral-color-20)'
      */
     barBorderColor?: ColorType;
 
@@ -69,6 +72,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 5
      */
     barBorderRadius?: number;
 
@@ -77,6 +82,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 0
      */
     barBorderWidth?: number;
 
@@ -85,6 +92,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 'var(--highcharts-neutral-color-80)'
      */
     buttonArrowColor?: ColorType;
 
@@ -93,6 +102,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 'var(--highcharts-neutral-color-10)'
      */
     buttonBackgroundColor?: ColorType;
 
@@ -101,6 +112,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 'var(--highcharts-neutral-color-20)'
      */
     buttonBorderColor?: ColorType;
 
@@ -109,6 +122,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 0
      */
     buttonBorderRadius?: number;
 
@@ -117,11 +132,15 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 1
      */
     buttonBorderWidth?: number;
 
     /**
      * Enable or disable the buttons at the end of the scrollbar.
+     *
+     * @default false
      *
      * @since 11.0.0
      */
@@ -144,6 +163,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Non-default height
+     *
+     * @default 10
      */
     height?: number;
 
@@ -167,11 +188,15 @@ export interface ScrollbarOptions {
      * The margin between the scrollbar and its axis when the scrollbar is
      * applied directly to an axis, or the navigator in case that is enabled.
      * Defaults to 10 for axis, 3 for navigator.
+     *
+     * @default undefined
      */
     margin?: number;
 
     /**
      * The minimum width of the scrollbar.
+     *
+     * @default 6
      *
      * @since 1.2.5
      */
@@ -196,6 +221,8 @@ export interface ScrollbarOptions {
 
     /**
      * The color of the small rifles in the middle of the scrollbar.
+     *
+     * @default 'none'
      */
     rifleColor?: ColorType;
 
@@ -211,13 +238,16 @@ export interface ScrollbarOptions {
      * The width of a vertical scrollbar or height of a horizontal
      * scrollbar. Defaults to 20 on touch devices.
      *
-     * @default   14
      * @since     4.2.6
      * @product   highstock
      */
     size?: number;
 
-    /** @internal */
+    /**
+     * @default 0.2
+     *
+     * @internal
+     */
     step?: number;
 
     /**
@@ -225,6 +255,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 'rgba(255, 255, 255, 0.001)'
      */
     trackBackgroundColor?: ColorType;
 
@@ -233,6 +265,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 'var(--highcharts-neutral-color-20)'
      */
     trackBorderColor?: ColorType;
 
@@ -241,6 +275,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 5
      */
     trackBorderRadius?: number;
 
@@ -249,6 +285,8 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
+     *
+     * @default 1
      */
     trackBorderWidth?: number;
 

@@ -254,6 +254,7 @@ export interface ColorAxisTitleOptions extends AxisTitleOptions {
 export interface ColorAxisOptions extends AxisOptions {
 
     // TODO alignTicks?: undefined;
+    /** @default true */
     allowDecimals?: undefined;
     alternateGridColor?: undefined;
     breaks?: undefined;
@@ -266,6 +267,7 @@ export interface ColorAxisOptions extends AxisOptions {
     maxZoom?: undefined;
     minRange?: undefined;
     minTickInterval?: undefined;
+    /** @default 0 */
     offset?: 0;
     opposite?: undefined;
     pane?: undefined;
@@ -357,6 +359,8 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
+     * @default 'var(--highcharts-highlight-color-100)'
+     *
      * @product highcharts highstock highmaps
      */
     maxColor?: ColorType;
@@ -376,6 +380,8 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
+     * @default 'var(--highcharts-highlight-color-10)'
+     *
      * @product highcharts highstock highmaps
      */
     minColor?: ColorType;
@@ -385,6 +391,8 @@ export interface ColorAxisOptions extends AxisOptions {
      *
      * @sample highcharts/coloraxis/hidden-coloraxis-with-3d-chart/
      *         Hidden color axis with 3d chart
+     *
+     * @default true
      *
      * @see [heatmap.showInLegend](#series.heatmap.showInLegend)
      *

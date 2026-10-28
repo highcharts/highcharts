@@ -159,6 +159,7 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
 
     states?: SeriesStatesOptions<HLCSeriesOptions>;
 
+    /** @default null */
     threshold?: number|null;
 
     tooltip?: HLCSeriesTooltipOptions;

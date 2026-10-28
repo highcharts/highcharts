@@ -82,6 +82,7 @@ interface ItemSeriesEventsOptions extends SeriesEventsOptions {
  */
 export interface ItemSeriesOptions extends PieSeriesOptions {
 
+    /** @default false */
     crisp?: boolean;
 
     /**
@@ -145,6 +146,8 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
      *
      * @sample highcharts/demo/parliament-chart
      *         Parliament chart
+     *
+     * @default undefined
      */
     endAngle?: number;
 
@@ -162,12 +165,16 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
      *
      * @sample highcharts/demo/parliament-chart
      *         Parliament chart
+     *
+     * @default '40%'
      */
     innerSize?: (number|string);
 
     /**
      * The padding between the items, given in relative size where the size
      * of the item is 1.
+     *
+     * @default 0.1
      */
     itemPadding?: number;
 
@@ -179,6 +186,8 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
      *         Horizontal layout
      *
      * @type {string}
+     *
+     * @default 'vertical'
      */
     layout?: 'horizontal'|'vertical';
 
@@ -193,9 +202,12 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
      *
      * @sample highcharts/series-item/rows-columns
      *         Fixed row count
+     *
+     * @default undefined
      */
     rows?: number;
 
+    /** @default true */
     showInLegend?: boolean;
 
     /**
@@ -204,6 +216,8 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
      *
      * @sample highcharts/demo/parliament-chart
      *         Parliament chart
+     *
+     * @default undefined
      */
     startAngle?: number;
 
