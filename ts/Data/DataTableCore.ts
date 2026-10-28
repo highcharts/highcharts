@@ -377,7 +377,11 @@ class DataTableCore {
         this.applyRowCount(rowCount);
 
         if (!eventDetail?.silent) {
-            fireEvent(this, 'afterSetColumns');
+            fireEvent(
+                this,
+                'afterSetColumns',
+                { trigger: eventDetail?.trigger }
+            );
             this.versionTag = uniqueKey();
         }
     }
@@ -464,7 +468,11 @@ class DataTableCore {
         this.applyRowCount(Math.max(indexRowCount, this.rowCount));
 
         if (!eventDetail?.silent) {
-            fireEvent(this, 'afterSetRows', { rowIndex });
+            fireEvent(
+                this,
+                'afterSetRows',
+                { rowIndex, trigger: eventDetail?.trigger }
+            );
             this.versionTag = uniqueKey();
         }
     }

@@ -1357,7 +1357,12 @@ class Point {
 
             if (!series.hasProcessedDataTable) {
                 // Record changes in the data table (#24451)
-                series.dataTable.setRow(pointOptions, index);
+                series.dataTable.setRow(
+                    pointOptions,
+                    index,
+                    false,
+                    { trigger: 'point.update' }
+                );
 
                 // Record the options to options.data. If the old or the new
                 // config is an object, use point options, otherwise use raw
