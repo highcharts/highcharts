@@ -462,7 +462,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('Scatter tooltip header and named points', function (assert) {
+QUnit.test('Scatter tooltip headers and point coordinates', function (assert) {
     const t0 = Date.UTC(2026, 0, 5),
         getText = (chart, point) => {
             chart.tooltip.refresh(point);
@@ -527,6 +527,70 @@ QUnit.test('Scatter tooltip header and named points', function (assert) {
         getText(chart, chart.series[0].points[0]),
         '● Europe|Value: 767',
         'Packed bubble should keep the series name in the header'
+    );
+
+    chart.destroy();
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            options3d: {
+                enabled: true
+            },
+            type: 'scatter3d'
+        },
+        series: [{
+            name: 'S1',
+            data: [
+                [1, 2, 3],
+                { x: 4, y: 5, z: 6, name: 'Alpha' }
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '● S1: [1, 2, 3]|',
+        'Scatter3D should show linear x, y and z values in the body'
+    );
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[1]),
+        'Alpha|● S1: [4, 5, 6]|',
+        'Scatter3D should show the name in the header and coordinates in the ' +
+            'body'
+    );
+
+    chart.update({
+        xAxis: {
+            type: 'datetime'
+        },
+        tooltip: {
+            xDateFormat: '%Y-%m-%d'
+        },
+        series: [{
+            data: [[t0, 2, 3]]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '2026-01-05|● S1: [2, 3]|',
+        'Scatter3D should not repeat a datetime x value in the body'
+    );
+
+    chart.update({
+        xAxis: {
+            categories: ['A'],
+            type: 'category'
+        },
+        series: [{
+            data: [[0, 2, 3]]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        'A|● S1: [2, 3]|',
+        'Scatter3D should not repeat a category in the body'
     );
 
     chart.destroy();
