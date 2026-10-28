@@ -1,72 +1,65 @@
-# Generate documentation skills
+# Build documentation skills
 
-Application skills are published in [`skills/`](../skills/README.md). Each
-directory contains an authored `SKILL.md` and generated documentation under
-`references/docs/`, including a topic index. Commit both the instructions and
-references so application developers can install a complete skill without
-running the generator.
+Highcharts owns the source documentation, authored skill instructions, selection
+configs, and build tools. Complete installable bundles are published to
+[`highcharts/highcharts-skills`](https://github.com/highcharts/highcharts-skills).
 
 ## Updating skills
 
-Edit instructions directly in `skills/<name>/SKILL.md`. Instruction changes do
-not need regeneration.
-
-For reference changes, edit the source documentation in `docs/` or the
-include/exclude configuration in `tools/skill-configs/`, then run from the
+Edit instructions directly in `skills/<name>/SKILL.md`, supporting authored
+resources in the same directory, reference documentation in `docs/`, or the
+include/exclude configuration in `tools/skill-configs/`. Then build from the
 repository root:
 
 ```bash
 npm run generate:skills -- --yes
 ```
 
-To regenerate selected skills:
+The generator builds every configured skill into `build/skills/<name>/`. It
+copies authored instructions and resources, adds filtered documentation under
+`references/docs/`, and creates its topic index. `source.json` records the source
+Highcharts commit and the complete skill list. Build committed sources for
+publication; CI uses the exact run revision.
 
-```bash
-npm run generate:skills -- --yes --skill=highcharts-data,highcharts-exporting
-```
+Review and commit source changes only. Generated bundles belong in the ignored
+build directory and the distribution repository. Rebuilding replaces the entire
+output, removing obsolete files and skills while preserving authored sources.
+For a removed or renamed skill, update both its source directory and config.
 
-Generation replaces only each selected skill's `references/docs/` directory,
-including its index. It preserves `SKILL.md` and other authored resources.
-Review and commit added, modified, and removed references alongside the source
-changes. Change generated references through their sources rather than editing
-them directly.
-
-When deleting or renaming a configuration, remove its old directory under
-`skills/` deliberately. Generation replaces configured references; `--check`
-reports orphan directories left by removed configurations.
-
-The repository's contributor skills remain in `.agents/skills` and are
-mirrored to `.claude/skills` by `npm run sync:skills`. Documentation skill
-generation writes only to `skills/`; it does not update sibling dist repos.
+Contributor skills remain in `.agents/skills` and are mirrored to
+`.claude/skills` by `npm run sync:skills`.
 
 ## CLI options
 
 | Option | Description |
 |--------|-------------|
-| `--docs=<path>` | Override the docs source path (must be inside the repository root) |
-| `--skill=<a,b>` | Generate only the named skill(s), comma-separated |
-| `--yes`, `-y` | Required for generation: confirms replacement of generated reference directories |
-| `--check` | Compare all generated references without replacing files; cannot be combined with `--skill` |
-| `--self-test` | Run the built-in pipeline test using temporary files |
+| `--docs=<path>` | Override the documentation source path inside the repository |
+| `--output=<path>` | Override the output directory; default: `build/skills` |
+| `--yes`, `-y` | Confirm replacement of the output directory |
+| `--self-test` | Run the pipeline self-tests using temporary files |
 | `--help`, `-h` | Print usage |
 
-The default source is `docs/`. Without `--yes`, generation stops before
-replacing output.
+Output must be a subdirectory of this repository's `build/`, with no symlinked
+parents. The build directory itself cannot be the output. Generation requires
+`--yes` before replacing files. Builds always contain all configured skills;
+the former `--skill` and committed-output `--check` modes have been removed.
 
 ## Validation
 
 ```bash
 node tools/generate-doc-skills.js --self-test
-npm run generate:skills -- --check
+npm run generate:skills -- --yes
+node --test tools/publish-doc-skills.test.js
 ```
 
-Check mode rebuilds references in a temporary directory and compares file paths
-and contents with each skill's `references/docs/`. It needs no `--yes`, leaves
-the checkout unchanged, and exits nonzero for missing, extra, changed, or orphan
-output, or a missing `SKILL.md`. CI separately validates the authored skill
-definitions with `skills-ref`.
+PR CI builds and validates complete bundles, their references and indexes, plus
+the contributor skill definitions. It uploads the distribution as an artifact
+for review and local installation. Publishing uses a separate job with its own
+credentials; PR builds have no publishing credentials. See
+[publication setup](../.github/workflows/skills-publish.md) for the first manual
+publish and enabling automatic updates from master.
 
-For React documentation changes, also validate the installed skill in a consumer
+For React documentation changes, also validate the built skill in a consumer
 with its installed `@highcharts/react` and `highcharts` versions:
 
 - Typecheck and render the mixed-series getting-started example. Confirm that
@@ -75,26 +68,23 @@ with its installed `@highcharts/react` and `highcharts` versions:
 - Render `Chart` with `title={undefined}` and confirm the default title remains.
   Then check that `title=""` and a child `<Title text="" />` both hide the title.
 - Try a core chart question with only `highcharts-react` installed. The agent
-  should use the installed declarations or official API docs when a companion
-  skill is unavailable.
+  should use installed declarations or official API docs when a companion skill
+  is unavailable.
 
-Record the consumer package versions and observations in the PR. The generator
-self-test checks reference integrity; it does not validate React rendering.
+Record consumer versions, commands, observations, and any with/without-skill
+evaluation in the PR. Pipeline tests validate packaging and reference integrity;
+they do not validate chart rendering.
 
 ## Adding a skill
 
 Create `skills/<name>/SKILL.md` with its name, description, instructions, and
-pointers to the relevant references. Add a configuration under
-`tools/skill-configs/` declaring the skill name, documentation include/exclude
-paths, and destination under `skills/`. Generate its references and add the
-skill to the [application skill catalog](../skills/README.md).
+pointers to references. Add a configuration under `tools/skill-configs/` with
+the skill name and documentation include/exclude paths. Build the bundle and
+add the skill to the [catalog](../skills/README.md).
 
-## What generation does
+## Documentation filtering
 
-1. Reads matching Markdown files from `docs/`.
-2. Removes iframe embeds, Markdown/HTML images, and excessive blank lines;
-   fenced code blocks are preserved.
-3. Replaces `references/docs/` with the selected pages and topic index.
-
-`--docs` must resolve inside the repository root. Symlinks in the docs tree
-are skipped during copying.
+The generator removes iframe embeds, Markdown/HTML images, and excessive blank
+lines from selected Markdown pages; fenced code blocks are preserved. Symlinks
+in the documentation tree are skipped. Generated references should be changed
+through their original documentation, then rebuilt.

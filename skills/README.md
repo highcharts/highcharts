@@ -1,9 +1,10 @@
 # Highcharts application skills
 
-These skills help coding agents build applications with Highcharts. Each
-directory includes its instructions and the documentation references it needs.
-Application developers can install a complete skill without building Highcharts
-or running its documentation generator.
+These skills help coding agents build applications with Highcharts. This
+directory holds authored instructions and supporting resources. Complete
+installable bundles, including reference documentation and indexes, are
+published to
+[`highcharts/highcharts-skills`](https://github.com/highcharts/highcharts-skills).
 
 | Skill | Use for |
 |-------|---------|
@@ -21,11 +22,11 @@ A task may need several skills, such as React and accessibility.
 
 ## Install
 
-From your application directory, install a selected skill using the
+From your application directory, install a selected published skill using the
 [skills CLI](https://github.com/vercel-labs/skills/blob/main/docs/commands.md):
 
 ```bash
-npx skills add https://github.com/highcharts/highcharts/tree/master/skills/highcharts-react
+npx skills add https://github.com/highcharts/highcharts-skills/tree/master/skills/highcharts-react
 ```
 
 Choose the coding agent when prompted. Installation targets the current
@@ -33,17 +34,27 @@ project by default; add `-g` to install for your user account instead.
 The complete skill directory must be installed, including `references/docs/`.
 The agent can then follow `SKILL.md` to read the relevant documentation.
 
-The command above uses master, whose documentation can describe unreleased
-features. To install a snapshot, replace `master` in the URL with a release tag
-or commit containing the `skills/` directory. Match that snapshot to the
-Highcharts or React version used by your application. Older tags without this
-directory cannot be used to install these skills.
+Master follows the Highcharts documentation and can describe unreleased
+features. For a fixed snapshot, replace `master` in the URL with a commit in
+`highcharts-skills`. Its `source.json` records the source Highcharts revision;
+choose a snapshot matching the Highcharts or React version in your application.
 
-To try an unpublished checkout, pass its skill directory instead:
+## Try local changes
+
+From the Highcharts repository root, build the complete bundles:
 
 ```bash
-npx skills add /absolute/path/to/highcharts/skills/highcharts-react
+npm run generate:skills -- --yes
 ```
+
+Then, from your application directory, install the built skill:
+
+```bash
+npx skills add /absolute/path/to/highcharts/build/skills/highcharts-react
+```
+
+Source directories under `skills/` contain authored material only. Install from
+the build output so the reference pages and index are included.
 
 ## Updates
 
@@ -54,10 +65,8 @@ npx skills update highcharts-react
 ```
 
 To move from a pinned snapshot to another version, install again using the new
-tag or commit URL. Replacing the whole directory keeps instructions, references,
-and the index together and removes stale pages.
+commit URL. Replacing the whole directory keeps instructions, references, and
+the index together and removes stale pages.
 
-Maintainers edit instructions directly in each `SKILL.md`. For reference
-changes, edit the original documentation or skill configurations, then
-regenerate `references/docs/`. Generation preserves the authored instructions
-and other resources. See the [generator guide](../tools/GENERATE-DOC-SKILLS.md).
+Maintainers edit instructions, documentation, and skill configs in the
+Highcharts repository. See the [build guide](../tools/GENERATE-DOC-SKILLS.md).

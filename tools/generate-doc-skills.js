@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Generate skill references from the docs markdown tree.
+ * Build installable documentation skills from authored instructions and docs.
  */
 
 'use strict';
@@ -9,45 +9,46 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { execFileSync } = require('node:child_process');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadSkills(root) {
+function loadSkills() {
     const configDir = path.join(__dirname, 'skill-configs');
     const files = fs.readdirSync(configDir)
         .filter(f => f.endsWith('.js'))
         .sort();
 
     return files.map(f => {
-        const skill = require(path.join(configDir, f))(root);
-        const required = ['name', 'docs', 'destinations'];
-        for (const key of required) {
-            if (!skill[key]) {
-                throw new Error(`${f}: missing required property "${key}"`);
+        const skill = require(path.join(configDir, f));
+        if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(skill.name) || skill.name.length > 64) {
+            throw new Error(`${f}: invalid skill name`);
+        }
+        for (const key of ['include', 'exclude']) {
+            if (!Array.isArray(skill.docs?.[key]) ||
+                !skill.docs[key].every(item => typeof item === 'string')) {
+                throw new Error(`${f}: docs.${key} must be an array of paths`);
             }
         }
         return skill;
     });
 }
 
-const SKILLS = loadSkills(repoRoot);
+const SKILLS = loadSkills();
 
 function printHelp() {
     process.stdout.write([
-        'Generate skill references from docs markdown.',
-        'Output: skills/<name>/references/docs/. Authored SKILL.md files are preserved.',
+        'Build complete, installable documentation skills.',
+        'Sources: skills/<name>/ and docs/. Output: build/skills/<name>/.',
         '',
         'Usage:',
         '  node tools/generate-doc-skills.js --yes',
-        '  node tools/generate-doc-skills.js --yes --skill=highcharts-js',
-        '  node tools/generate-doc-skills.js --docs=docs --yes',
-        '  node tools/generate-doc-skills.js --check',
+        '  node tools/generate-doc-skills.js --yes --output=build/skills-preview',
         '',
         'Options:',
         '  --docs=<path>       Docs markdown source directory. Default: docs',
-        '  --skill=<a,b>       Generate only selected skills. Default: all',
-        '  --check             Check all generated references without rewriting output',
-        '  --yes, -y           Required for generation: confirms reference replacement',
+        '  --output=<path>     Output directory inside build/. Default: build/skills',
+        '  --yes, -y           Required: confirms replacement of the output directory',
         '  --self-test         Run the script self-test',
         '  --help, -h          Print this help text'
     ].join('\n') + '\n');
@@ -56,9 +57,8 @@ function printHelp() {
 function parseArgs(argv) {
     const args = {
         docs: path.join(repoRoot, 'docs'),
+        output: path.join(repoRoot, 'build', 'skills'),
         yes: false,
-        check: false,
-        skills: null,
         selfTest: false,
         help: false
     };
@@ -66,8 +66,6 @@ function parseArgs(argv) {
     for (const arg of argv) {
         if (arg === '--yes' || arg === '-y') {
             args.yes = true;
-        } else if (arg === '--check') {
-            args.check = true;
         } else if (arg === '--self-test') {
             args.selfTest = true;
         } else if (arg === '--help' || arg === '-h') {
@@ -78,18 +76,28 @@ function parseArgs(argv) {
                 throw new Error('--docs path must be inside the repo root: ' + resolved);
             }
             args.docs = resolved;
-        } else if (arg.startsWith('--skill=')) {
-            args.skills = new Set(arg.slice('--skill='.length).split(',').filter(Boolean));
+        } else if (arg.startsWith('--output=')) {
+            args.output = path.resolve(arg.slice('--output='.length));
         } else {
             throw new Error(`Unknown option: ${arg}`);
         }
     }
 
-    if (args.check && (args.yes || args.skills)) {
-        throw new Error('--check validates all skills; omit --yes and --skill.');
-    }
-
     return args;
+}
+
+function validateOutput(output, root = repoRoot) {
+    if (!output.startsWith(path.join(root, 'build') + path.sep)) {
+        throw new Error('--output must be a subdirectory of build/');
+    }
+    let current = root;
+    for (const part of path.relative(root, output).split(path.sep)) {
+        current = path.join(current, part);
+        const stat = fs.lstatSync(current, { throwIfNoEntry: false });
+        if (stat && !stat.isDirectory()) {
+            throw new Error(`Output path must contain only directories, without symlinks: ${current}`);
+        }
+    }
 }
 
 function listMarkdownFiles(root) {
@@ -199,7 +207,7 @@ function buildSkill(skill, docsRoot, tempRoot) {
     fs.writeFileSync(path.join(docsOut, 'index.md'), indexLines.join('\n'));
 
     return {
-        root: docsOut,
+        root: skillRoot,
         files
     };
 }
@@ -213,79 +221,68 @@ function readSkillMd(skillRoot) {
     return fs.readFileSync(file, 'utf8');
 }
 
-function publishSkill(skill, generated, yes) {
-    const published = [];
-
-    for (const destination of skill.destinations) {
-        readSkillMd(destination.path);
-        const references = path.join(destination.path, 'references');
-        if (fs.existsSync(references) && !fs.lstatSync(references).isDirectory()) {
-            throw new Error(`Expected a references directory: ${references}`);
+function copyAuthored(source, destination, relative = '') {
+    fs.mkdirSync(destination, { recursive: true });
+    for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
+        const file = path.join(relative, entry.name);
+        if (file === path.join('references', 'docs')) {
+            continue;
         }
-        const docs = path.join(references, 'docs');
-        if (fs.existsSync(docs) && !yes) {
-            throw new Error(`Refusing to replace ${path.relative(repoRoot, docs)} without --yes`);
+        if (entry.name === '.git' || (!entry.isDirectory() && !entry.isFile())) {
+            throw new Error(`Unsupported authored resource: ${path.join(source, entry.name)}`);
         }
-        fs.rmSync(docs, { force: true, recursive: true });
-        fs.mkdirSync(references, { recursive: true });
-        fs.cpSync(generated.root, docs, { recursive: true });
-        published.push(docs);
+        const src = path.join(source, entry.name);
+        const dest = path.join(destination, entry.name);
+        if (entry.isDirectory()) {
+            copyAuthored(src, dest, file);
+        } else {
+            fs.copyFileSync(src, dest);
+        }
     }
-
-    if (!published.length) {
-        throw new Error(`No publish destination exists for ${skill.name}`);
-    }
-
-    return {
-        published
-    };
 }
 
-function sameDirectory(expected, actual) {
-    if (!fs.existsSync(actual) || !fs.lstatSync(actual).isDirectory()) {
-        return false;
+function validateReferences(root, markdown) {
+    const references = [
+        ...markdown.matchAll(/`(references\/docs\/[^`]+)`/gu),
+        ...markdown.matchAll(/\]\((references\/[^\s)#]+)(?:#[^\s)]*)?\)/gu)
+    ];
+    for (const match of references) {
+        const file = path.resolve(root, decodeURIComponent(match[1]));
+        if (!file.startsWith(root + path.sep) || !fs.existsSync(file)) {
+            throw new Error(`Missing skill reference: ${match[1]}`);
+        }
     }
-    const entries = fs.readdirSync(expected, { withFileTypes: true });
-    if (entries.length !== fs.readdirSync(actual).length) {
-        return false;
-    }
-    return entries.every(entry => {
-        const source = path.join(expected, entry.name);
-        const destination = path.join(actual, entry.name);
-        return entry.isDirectory() ? sameDirectory(source, destination) :
-            fs.existsSync(destination) && fs.lstatSync(destination).isFile() &&
-            fs.readFileSync(source).equals(fs.readFileSync(destination));
-    });
 }
 
-function checkSkills(skills, docsRoot, outputRoot) {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'highcharts-doc-skills-check-'));
-    const stale = [];
+function buildDistribution(skills, docsRoot, authoredRoot, output, revision) {
+    const names = skills.map(skill => skill.name);
+    if (!names.length || new Set(names).size !== names.length) {
+        throw new Error('Expected unique skill configurations.');
+    }
+    for (const entry of fs.readdirSync(authoredRoot, { withFileTypes: true })) {
+        if ((entry.isDirectory() || entry.isSymbolicLink()) && !names.includes(entry.name)) {
+            throw new Error(`No configuration for authored skill: ${entry.name}`);
+        }
+    }
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'highcharts-doc-skills-'));
     try {
-        for (const skill of skills) {
-            const generated = buildSkill(skill, docsRoot, tempRoot);
-            const skillRoot = path.join(outputRoot, skill.name);
-            readSkillMd(skillRoot);
-            const references = path.join(skillRoot, 'references');
-            if (!fs.existsSync(references) || !fs.lstatSync(references).isDirectory() ||
-                !sameDirectory(generated.root, path.join(references, 'docs'))) {
-                stale.push(skill.name);
-            }
-        }
-        const names = new Set(skills.map(skill => skill.name));
-        if (fs.existsSync(outputRoot)) {
-            for (const entry of fs.readdirSync(outputRoot, { withFileTypes: true })) {
-                if ((entry.isDirectory() || entry.isSymbolicLink()) && !names.has(entry.name)) {
-                    stale.push(`${entry.name} (no configuration)`);
-                }
-            }
-        }
-        if (stale.length) {
-            throw new Error(
-                `Generated skill references are out of date: ${stale.sort().join(', ')}.\n` +
-                'Run npm run generate:skills -- --yes and remove outputs for deleted configurations.'
-            );
-        }
+        const results = skills.map(skill => {
+            const source = path.join(authoredRoot, skill.name);
+            const markdown = readSkillMd(source);
+            const built = buildSkill(skill, docsRoot, tempRoot);
+            copyAuthored(source, built.root);
+            validateReferences(built.root, markdown);
+            return { name: skill.name, docs: built.files.length };
+        });
+        fs.writeFileSync(path.join(tempRoot, 'source.json'), JSON.stringify({
+            repository: 'highcharts/highcharts',
+            revision,
+            skills: [...names].sort()
+        }, null, 2) + '\n');
+        fs.rmSync(output, { recursive: true, force: true });
+        fs.mkdirSync(path.dirname(output), { recursive: true });
+        fs.cpSync(tempRoot, output, { recursive: true });
+        return results;
     } finally {
         fs.rmSync(tempRoot, { force: true, recursive: true });
     }
@@ -293,278 +290,127 @@ function checkSkills(skills, docsRoot, outputRoot) {
 
 function generate(args) {
     if (!args.yes) {
-        throw new Error('Pass --yes to replace generated reference directories.');
+        throw new Error('Pass --yes to replace the generated output directory.');
     }
-    if (!fs.existsSync(args.docs) || !fs.statSync(args.docs).isDirectory()) {
-        throw new Error(`Missing docs directory: ${args.docs}`);
-    }
-
-    const selected = SKILLS.filter(skill => !args.skills || args.skills.has(skill.name));
-    const unknown = args.skills ? [...args.skills].filter(name => !SKILLS.some(skill => skill.name === name)) : [];
-    if (unknown.length) {
-        throw new Error(`Unknown skill: ${unknown.join(', ')}`);
-    }
-
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'highcharts-doc-skills-'));
-    try {
-        return selected.map(skill => {
-            const generated = buildSkill(skill, args.docs, tempRoot);
-            const result = publishSkill(skill, generated, args.yes);
-            return {
-                name: skill.name,
-                docs: generated.files.length,
-                ...result
-            };
-        });
-    } finally {
-        fs.rmSync(tempRoot, { force: true, recursive: true });
-    }
+    validateOutput(args.output);
+    const revision = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim();
+    return buildDistribution(SKILLS, args.docs, path.join(repoRoot, 'skills'), args.output, revision);
 }
 
 function selfTest() {
-    assert.equal(parseArgs(['--check']).check, true);
-    assert.throws(() => parseArgs(['--check', '--yes']), /omit --yes and --skill/u);
-    assert.throws(() => parseArgs(['--check', '--skill=highcharts-react']), /omit --yes and --skill/u);
+    assert.throws(() => parseArgs(['--check']), /Unknown option/u);
+    assert.throws(() => parseArgs(['--skill=highcharts-react']), /Unknown option/u);
+    assert.throws(() => generate(parseArgs([])), /Pass --yes/u);
+    assert.throws(() => validateOutput(path.join(repoRoot, 'skills')), /subdirectory of build/u);
+    assert.throws(() => validateOutput(path.join(repoRoot, 'build')), /subdirectory of build/u);
+    assert.throws(() => validateOutput(repoRoot), /subdirectory of build/u);
     const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'highcharts-doc-skills-test-'));
+    const docsRoot = path.join(tempRoot, 'docs');
+    const authoredRoot = path.join(tempRoot, 'skills');
+    const source = path.join(authoredRoot, 'test-skill');
+    const output = path.join(tempRoot, 'build', 'skills');
+    const revision = 'a'.repeat(40);
+    const skill = { name: 'test-skill', docs: { include: ['maps/'], exclude: [] } };
+    function build(skills = [skill]) {
+        return buildDistribution(skills, docsRoot, authoredRoot, output, revision);
+    }
     try {
-        const docsRoot = path.join(tempRoot, 'docs');
-        fs.mkdirSync(path.join(docsRoot, 'react', 'components'), { recursive: true });
-        fs.mkdirSync(path.join(docsRoot, 'getting-started'), { recursive: true });
-        fs.writeFileSync(path.join(docsRoot, 'react', 'getting-started.md'), '# React start\n');
-        fs.writeFileSync(path.join(docsRoot, 'react', 'components', 'chart.md'), '# Chart\n');
-        fs.writeFileSync(path.join(docsRoot, 'getting-started', 'installation.md'), '# Install\n');
-        fs.writeFileSync(path.join(docsRoot, 'getting-started', 'no-heading.md'), 'Just some text without a heading.\n');
-        fs.writeFileSync(path.join(docsRoot, 'getting-started', 'setext-heading.md'), 'Setext Title\n===\n\nSome content.\n');
-
-        // Add a doc with strippable content
-        fs.writeFileSync(path.join(docsRoot, 'getting-started', 'with-noise.md'), [
-            '# Getting Started',
+        fs.mkdirSync(path.join(docsRoot, 'maps'), { recursive: true });
+        fs.mkdirSync(path.join(source, 'references', 'docs'), { recursive: true });
+        fs.mkdirSync(path.join(source, 'scripts'));
+        const markdown = '---\nname: test-skill\ndescription: Test skill.\n---\n\nRead `references/docs/index.md`.\n';
+        fs.writeFileSync(path.join(source, 'SKILL.md'), markdown);
+        fs.writeFileSync(path.join(source, 'references', 'custom.md'), 'Authored reference.\n');
+        fs.writeFileSync(path.join(source, 'scripts', 'example.js'), '// Authored script.\n');
+        fs.writeFileSync(path.join(source, 'references', 'docs', 'stale.md'), 'Old generated output.\n');
+        fs.writeFileSync(path.join(docsRoot, 'maps', 'start.md'), [
+            'Getting started',
+            '===',
             '',
-            'Some intro text.',
-            '',
-            '<iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/line-basic" allow="fullscreen"></iframe>',
-            '',
-            '   <iframe width="320" height="800" src="https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui" allow="fullscreen"></iframe>',
-            '',
-            '![chart screenshot](chart.png)',
-            '',
-            '   ![indented image](indented.png)',
-            '',
-            '<img src="diagram.png" alt="diagram"/>',
-            '',
-            'More useful text.',
-            '',
-            '',
-            '',
-            '',
-            'After many blank lines.',
-            '',
+            'Useful text.',
+            '<iframe src="https://example.com/demo"></iframe>',
+            '![remove](image.png)',
+            '<img src="image.png"/>',
+            '', '', '', '',
             '```html',
-            '<!-- This iframe in a code block should survive -->',
-            '<iframe src="example.html"></iframe>',
-            '![keep this](keep.png)',
-            '```',
-            '',
-            'End of doc.'
+            '<iframe src="keep.html"></iframe>',
+            '![keep](keep.png)',
+            '```'
         ].join('\n') + '\n');
+        fs.writeFileSync(path.join(docsRoot, 'maps', 'no-heading.md'), 'No heading.\n');
+        fs.writeFileSync(path.join(docsRoot, 'maps', 'other.md'), '# Other\n');
+        validateOutput(output, tempRoot);
+        assert.deepEqual(build(), [{ name: 'test-skill', docs: 3 }]);
+        const bundle = path.join(output, 'test-skill');
+        const bundledDocs = path.join(bundle, 'references', 'docs');
+        assert.equal(fs.readFileSync(path.join(bundle, 'SKILL.md'), 'utf8'), markdown);
+        assert.equal(fs.readFileSync(path.join(bundle, 'references', 'custom.md'), 'utf8'), 'Authored reference.\n');
+        assert.equal(fs.readFileSync(path.join(bundle, 'scripts', 'example.js'), 'utf8'), '// Authored script.\n');
+        assert.equal(fs.existsSync(path.join(bundledDocs, 'stale.md')), false);
+        assert.equal(fs.readFileSync(path.join(source, 'SKILL.md'), 'utf8'), markdown);
+        assert.equal(fs.existsSync(path.join(source, 'references', 'docs', 'stale.md')), true);
+        const stripped = fs.readFileSync(path.join(bundledDocs, 'maps', 'start.md'), 'utf8');
+        assert.ok(stripped.includes('Useful text.'));
+        assert.ok(stripped.includes('[Live demo](https://example.com/demo)'));
+        assert.ok(stripped.includes('<iframe src="keep.html"></iframe>'));
+        assert.ok(stripped.includes('![keep](keep.png)'));
+        assert.equal(stripped.includes('![remove]'), false);
+        assert.equal(stripped.includes('<img'), false);
+        assert.equal(stripped.includes('\n\n\n\n'), false);
+        const index = fs.readFileSync(path.join(bundledDocs, 'index.md'), 'utf8');
+        assert.ok(index.includes('[Getting started](maps/start.md)'));
+        assert.ok(index.includes('[no-heading](maps/no-heading.md)'));
+        const metadata = fs.readFileSync(path.join(output, 'source.json'), 'utf8');
+        assert.deepEqual(JSON.parse(metadata), {
+            repository: 'highcharts/highcharts', revision, skills: ['test-skill']
+        });
+        fs.writeFileSync(path.join(output, 'orphan.txt'), 'Stale bundle output.');
+        build();
+        assert.equal(fs.existsSync(path.join(output, 'orphan.txt')), false);
+        assert.equal(fs.readFileSync(path.join(output, 'source.json'), 'utf8'), metadata);
+        assert.equal(fs.readFileSync(path.join(bundledDocs, 'maps', 'start.md'), 'utf8'), stripped);
 
-        const outputRoot = path.join(tempRoot, 'out');
-        const testSkill = {
-            name: 'test-skill',
-            docs: { include: ['getting-started/'], exclude: [] },
-            destinations: [{ path: path.join(outputRoot, 'test-skill') }]
-        };
-        const skillRoot = path.join(outputRoot, 'test-skill');
-        const skillFile = path.join(skillRoot, 'SKILL.md');
-        const authoredMarkdown = '---\nname: test-skill\ndescription: Test skill for self-test.\n---\n\n# Test skill\n';
-        fs.mkdirSync(path.join(skillRoot, 'references'), { recursive: true });
-        fs.writeFileSync(skillFile, authoredMarkdown);
-        const customReference = path.join(skillRoot, 'references', 'custom.md');
-        fs.writeFileSync(customReference, 'Authored reference.\n');
-        fs.mkdirSync(path.join(skillRoot, 'scripts'));
-        const customScript = path.join(skillRoot, 'scripts', 'example.js');
-        fs.writeFileSync(customScript, '// Authored script.\n');
-        const generated = buildSkill(testSkill, docsRoot, path.join(tempRoot, 'build'));
-        const result = publishSkill(testSkill, generated, true);
+        fs.unlinkSync(path.join(docsRoot, 'maps', 'other.md'));
+        fs.writeFileSync(path.join(docsRoot, 'maps', 'new.md'), '# New\n');
+        build();
+        assert.equal(fs.existsSync(path.join(bundledDocs, 'maps', 'other.md')), false);
+        assert.ok(fs.existsSync(path.join(bundledDocs, 'maps', 'new.md')));
+        fs.writeFileSync(path.join(source, 'SKILL.md'), markdown + '\nUpdated instructions.\n');
+        build();
+        assert.equal(readSkillMd(bundle), markdown + '\nUpdated instructions.\n');
 
-        assert.deepEqual(generated.files, [
-            'getting-started/installation.md',
-            'getting-started/no-heading.md',
-            'getting-started/setext-heading.md',
-            'getting-started/with-noise.md'
-        ]);
-        assert.equal(result.published.length, 1);
-        const staleFile = path.join(skillRoot, 'references', 'docs', 'stale.md');
-        fs.writeFileSync(staleFile, 'Removed from source docs.\n');
-        assert.throws(() => publishSkill(testSkill, generated, false), /without --yes/u);
-        assert.ok(fs.existsSync(staleFile), 'refusing replacement must preserve installed files');
-        publishSkill(testSkill, generated, true);
-        assert.equal(fs.existsSync(staleFile), false, 'replacement must remove stale references');
-        const missingOutput = path.join(tempRoot, 'missing-output');
-        assert.throws(() => checkSkills([testSkill], docsRoot, missingOutput), /test-skill/u);
-        assert.equal(fs.existsSync(missingOutput), false, 'checking must not create output');
-        checkSkills([testSkill], docsRoot, outputRoot);
+        fs.unlinkSync(path.join(source, 'SKILL.md'));
+        assert.throws(build, /Missing authored skill file/u);
+        assert.ok(fs.existsSync(path.join(bundledDocs, 'index.md')), 'failed build must preserve previous output');
+        fs.writeFileSync(path.join(source, 'SKILL.md'), markdown + '\nRead [missing](references/missing.md).\n');
+        assert.throws(build, /Missing skill reference/u);
+        fs.writeFileSync(path.join(source, 'SKILL.md'), markdown);
+        assert.throws(() => build([]), /unique skill configurations/u);
+        assert.throws(() => build([skill, skill]), /unique skill configurations/u);
+        fs.renameSync(source, path.join(authoredRoot, 'renamed-skill'));
+        assert.throws(build, /No configuration/u);
+        build([{ ...skill, name: 'renamed-skill' }]);
+        assert.equal(fs.existsSync(bundle), false, 'renaming a skill must remove its old output');
+        const renamedSource = path.join(authoredRoot, 'renamed-skill');
+        const link = path.join(renamedSource, 'linked-resource');
+        fs.symlinkSync(docsRoot, link, process.platform === 'win32' ? 'junction' : 'dir');
+        assert.throws(() => build([{ ...skill, name: 'renamed-skill' }]), /Unsupported authored resource/u);
+        fs.unlinkSync(link);
+        fs.symlinkSync(docsRoot, path.join(tempRoot, 'build', 'linked'), process.platform === 'win32' ? 'junction' : 'dir');
+        assert.throws(() => validateOutput(path.join(tempRoot, 'build', 'linked', 'out'), tempRoot), /symlinks/u);
 
-        const installedDoc = path.join(outputRoot, 'test-skill', 'references', 'docs', 'getting-started', 'installation.md');
-        fs.writeFileSync(installedDoc, 'Stale content.\n');
-        assert.throws(() => checkSkills([testSkill], docsRoot, outputRoot), /test-skill/u);
-        assert.equal(fs.readFileSync(installedDoc, 'utf8'), 'Stale content.\n', 'checking must not rewrite output');
-
-        for (const change of [
-            () => fs.unlinkSync(installedDoc),
-            () => fs.writeFileSync(staleFile, 'Unexpected output.\n'),
-            () => fs.mkdirSync(path.join(skillRoot, 'references', 'docs', 'unexpected-directory'))
-        ]) {
-            publishSkill(testSkill, generated, true);
-            change();
-            assert.throws(() => checkSkills([testSkill], docsRoot, outputRoot), /test-skill/u);
-        }
-        publishSkill(testSkill, generated, true);
-        assert.throws(() => checkSkills([], docsRoot, outputRoot), /test-skill.*no configuration/u);
-        assert.ok(fs.existsSync(installedDoc), 'checking removed configurations must preserve output');
-        assert.throws(
-            () => checkSkills([{ ...testSkill, name: 'renamed-skill' }], docsRoot, outputRoot),
-            /renamed-skill/u
-        );
-        assert.throws(() => checkSkills([{
-            ...testSkill,
-            docs: { ...testSkill.docs, exclude: ['getting-started/installation.md'] }
-        }], docsRoot, outputRoot), /test-skill/u);
-
-        const editedMarkdown = authoredMarkdown + '\nUpdated instructions.\n';
-        fs.writeFileSync(skillFile, editedMarkdown);
-        checkSkills([testSkill], docsRoot, outputRoot);
-        publishSkill(testSkill, generated, true);
-        assert.equal(readSkillMd(skillRoot), editedMarkdown, 'regeneration must preserve edited instructions');
-        assert.equal(fs.readFileSync(customReference, 'utf8'), 'Authored reference.\n');
-        assert.equal(fs.readFileSync(customScript, 'utf8'), '// Authored script.\n');
-        fs.unlinkSync(skillFile);
-        assert.throws(() => checkSkills([testSkill], docsRoot, outputRoot), /Missing authored skill file/u);
-        assert.throws(() => publishSkill(testSkill, generated, true), /Missing authored skill file/u);
-        assert.ok(fs.existsSync(installedDoc), 'a missing entrypoint must not remove references');
-        assert.equal(fs.existsSync(skillFile), false, 'generation must not create the authored entrypoint');
-        fs.writeFileSync(skillFile, editedMarkdown);
-
-        const references = path.join(skillRoot, 'references');
-        const savedReferences = path.join(skillRoot, 'saved-references');
-        fs.renameSync(references, savedReferences);
-        fs.symlinkSync(savedReferences, references, process.platform === 'win32' ? 'junction' : 'dir');
-        assert.throws(() => publishSkill(testSkill, generated, true), /Expected a references directory/u);
-        assert.throws(() => checkSkills([testSkill], docsRoot, outputRoot), /test-skill/u);
-        assert.ok(fs.existsSync(path.join(savedReferences, 'docs', 'index.md')));
-        fs.unlinkSync(references);
-        fs.renameSync(savedReferences, references);
-
-        const newDoc = path.join(docsRoot, 'getting-started', 'new.md');
-        fs.writeFileSync(newDoc, '# New page\n');
-        assert.throws(() => checkSkills([testSkill], docsRoot, outputRoot), /test-skill/u);
-        fs.unlinkSync(newDoc);
-        fs.unlinkSync(path.join(docsRoot, 'getting-started', 'installation.md'));
-        assert.throws(() => checkSkills([testSkill], docsRoot, outputRoot), /test-skill/u);
-        fs.writeFileSync(path.join(docsRoot, 'getting-started', 'installation.md'), '# Install\n');
-        checkSkills([testSkill], docsRoot, outputRoot);
-        assert.equal(readSkillMd(skillRoot), editedMarkdown);
-
-        const stripped = fs.readFileSync(
-            path.join(outputRoot, 'test-skill', 'references', 'docs', 'getting-started', 'with-noise.md'),
-            'utf8'
-        );
-        // Strippable content is gone
-        assert.equal(stripped.includes('<iframe style='), false, 'raw iframe HTML should be stripped');
-        assert.equal(stripped.includes('<iframe width='), false, 'indented raw iframe HTML should be stripped');
-        assert.equal(stripped.includes('[Live demo](https://www.highcharts.com/samples/embed/highcharts/demo/line-basic)'), true, 'iframe src should become a demo link');
-        assert.equal(stripped.includes('[Live demo](https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui)'), true, 'indented iframe src should become a demo link');
-        assert.equal(stripped.includes('![chart screenshot]'), false, 'markdown images should be stripped');
-        assert.equal(stripped.includes('![indented image]'), false, 'indented markdown images should be stripped');
-        assert.equal(stripped.includes('<img'), false, 'HTML images should be stripped');
-        // Non-strippable content survives
-        assert.equal(stripped.includes('# Getting Started'), true, 'headings should survive');
-        assert.equal(stripped.includes('Some intro text.'), true, 'prose should survive');
-        assert.equal(stripped.includes('More useful text.'), true, 'prose should survive');
-        assert.equal(stripped.includes('End of doc.'), true, 'prose should survive');
-        // Code block content preserved
-        assert.equal(stripped.includes('<iframe src="example.html"></iframe>'), true, 'iframe inside code block should survive');
-        assert.equal(stripped.includes('![keep this](keep.png)'), true, 'image inside code block should survive');
-        assert.equal(stripped.includes('```html'), true, 'code fence language tag should survive');
-        // Blank line collapsing
-        assert.equal(stripped.includes('\n\n\n\n'), false, 'should not have 3+ consecutive blank lines');
-        // Clean file is unchanged
-        const clean = fs.readFileSync(
-            path.join(outputRoot, 'test-skill', 'references', 'docs', 'getting-started', 'installation.md'),
-            'utf8'
-        );
-        assert.equal(clean, '# Install\n', 'clean file should be unchanged');
-
-        // Index generation
-        const indexContent = fs.readFileSync(
-            path.join(outputRoot, 'test-skill', 'references', 'docs', 'index.md'),
-            'utf8'
-        );
-        assert.equal(indexContent.includes('# Topic Index'), true, 'index should have Topic Index heading');
-        assert.equal(indexContent.includes('## getting-started'), true, 'index should group by directory');
-        assert.equal(indexContent.includes('[Install](getting-started/installation.md)'), true, 'index should link to docs with H1 title');
-        assert.equal(indexContent.includes('[Getting Started](getting-started/with-noise.md)'), true, 'index should link to docs with H1 title');
-        assert.equal(indexContent.includes('[no-heading](getting-started/no-heading.md)'), true, 'index should fall back to filename when no H1');
-        assert.equal(indexContent.includes('[Setext Title](getting-started/setext-heading.md)'), true, 'index should detect Setext H1 headings');
-
-        const sourceDocs = path.join(repoRoot, 'docs');
-        for (const [topic, directories] of [
-            ['accessibility', ['accessibility', 'sonification']],
-            ['data', ['working-with-data']],
-            ['exporting', ['export-module']],
-            ['js', ['getting-started', 'chart-concepts', 'chart-and-series-types', 'chart-design-and-style']],
-            ['react', ['react']]
-        ]) {
-            const skill = SKILLS.find(item => item.name === `highcharts-${topic}`);
-            assert.ok(skill, `${topic} config should be loaded`);
-            const expectedDocs = [
-                ...directories.flatMap(directory => (
-                    listMarkdownFiles(path.join(sourceDocs, directory))
-                        .map(file => `${directory}/${file}`)
-                )),
-                ...(topic === 'js' ? [
-                    'accessibility/accessibility-module-feature-overview.md',
-                    'advanced-chart-features/boost-module.md',
-                    'advanced-chart-features/data-sorting.md',
-                    'advanced-chart-features/highcharts-typescript-declarations.md',
-                    'advanced-chart-features/internationalization.md',
-                    'advanced-chart-features/stacking-charts.md'
-                ] : topic === 'react' ? [] : [
-                    `react/components/modules/${topic}.md`,
-                    'react/getting-started.md',
-                    'react/bundling-and-tree-shaking.md'
-                ])
-            ].sort();
-            const built = buildSkill(skill, sourceDocs, path.join(tempRoot, 'build-real'));
-            assert.deepEqual(built.files, expectedDocs);
-            assert.equal(built.files.some(file => /^(grid|dashboards|morningstar)\//u.test(file)), false);
-            const index = fs.readFileSync(
-                path.join(built.root, 'index.md'), 'utf8'
-            );
-            assert.equal(
-                index.split('\n').filter(line => line.startsWith('- [')).length,
-                expectedDocs.length
-            );
-            for (const file of expectedDocs) {
-                assert.ok(index.includes(`](${file})`), file);
+        for (const configured of SKILLS) {
+            const built = buildSkill(configured, path.join(repoRoot, 'docs'), path.join(tempRoot, 'real'));
+            const authored = path.join(repoRoot, 'skills', configured.name);
+            copyAuthored(authored, built.root);
+            validateReferences(built.root, readSkillMd(authored));
+            const docs = path.join(built.root, 'references', 'docs');
+            const indexText = fs.readFileSync(path.join(docs, 'index.md'), 'utf8');
+            assert.equal(indexText.split('\n').filter(line => line.startsWith('- [')).length, built.files.length);
+            for (const file of built.files) {
                 assert.equal(
-                    fs.readFileSync(path.join(built.root, file), 'utf8'),
-                    stripContent(fs.readFileSync(path.join(sourceDocs, file), 'utf8')),
-                    file
-                );
-            }
-        }
-
-        for (const skill of SKILLS) {
-            assert.deepEqual(skill.destinations, [
-                { path: path.join(repoRoot, 'skills', skill.name) }
-            ]);
-            const built = buildSkill(skill, sourceDocs, path.join(tempRoot, 'build-portable'));
-            const markdown = readSkillMd(path.join(repoRoot, 'skills', skill.name));
-            for (const match of markdown.matchAll(/`(references\/docs\/[^`]+)`/gu)) {
-                assert.ok(
-                    fs.existsSync(path.join(built.root, match[1].slice('references/docs/'.length))),
-                    `${skill.name}: missing ${match[1]}`
+                    fs.readFileSync(path.join(docs, file), 'utf8'),
+                    stripContent(fs.readFileSync(path.join(repoRoot, 'docs', file), 'utf8'))
                 );
             }
         }
@@ -587,18 +433,10 @@ function main() {
         return;
     }
 
-    if (args.check) {
-        checkSkills(SKILLS, args.docs, path.join(repoRoot, 'skills'));
-        process.stdout.write(`All ${SKILLS.length} generated skill references are up to date.\n`);
-        return;
-    }
-
     const results = generate(args);
+    process.stdout.write(`Built complete skills in ${path.relative(repoRoot, args.output)}\n`);
     for (const result of results) {
         process.stdout.write(`${result.name}: copied ${result.docs} docs\n`);
-        for (const destination of result.published) {
-            process.stdout.write(`  published ${path.relative(repoRoot, destination)}\n`);
-        }
     }
 }
 
