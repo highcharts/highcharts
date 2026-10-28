@@ -42,6 +42,110 @@ function pieLabels() {
     ${this.point.y}%</span>`;
 }
 
+// Seed real Orbit layers using the built-in tools' analysis operations.
+const orbitLayerSeeds = new WeakSet();
+Highcharts.orbit.registerTool({
+    id: 'homepage-analysis',
+    name: 'Homepage analysis',
+    description: 'Initialize the homepage chart analysis',
+    group: 'analyze',
+    behavior: 'action',
+    contentTypes: ['chart'],
+    create: () => ({
+        canActivate: ctx => (
+            ctx.originalOptions.orbit?.initialTool === 'homepage-analysis' &&
+            !orbitLayerSeeds.has(ctx.content)
+        ),
+        activate(ctx) {
+            orbitLayerSeeds.add(ctx.content);
+            const params = { series: ['Target', 'Walmart'] };
+            const tools = Highcharts.orbit.getRegisteredTools();
+            [
+                ['anomaly', 'Anomaly Detection'],
+                ['trendline', 'Trend Line']
+            ].forEach(([id, description]) => {
+                const tool = tools.find(definition => definition.id === id)
+                    .create();
+                const ops = tool.apply(params, ctx);
+                if (ops.length) {
+                    ctx.ledger.upsertOps(
+                        `tool:${id}:set`,
+                        `tool:${id}`,
+                        description,
+                        ops,
+                        params
+                    );
+                }
+            });
+        },
+        deactivate() {}
+    })
+});
+
+// Target and Walmart stock comparison with Orbit
+const orbitChart = {
+    chart: {
+        styledMode: false,
+        type: 'spline',
+        events: {
+            render() {
+                // Shared styled-mode CSS overrides SVG presentation attributes.
+                // Preserve Orbit's per-point anomaly colors with inline styles.
+                this.series.forEach(series => {
+                    series.points.forEach(point => {
+                        const marker = point.options.marker;
+                        if (marker && marker.fillColor && point.graphic) {
+                            point.graphic.css({
+                                fill: marker.fillColor,
+                                stroke: marker.lineColor,
+                                strokeWidth: marker.lineWidth
+                            });
+                        }
+                    });
+                });
+            }
+        }
+    },
+    orbit: {
+        enabled: true,
+        initialTool: 'homepage-analysis'
+    },
+    data: {
+        csv: document.getElementById('csv').innerText
+    },
+    title: {
+        text: 'Target vs Walmart Weekly Stock Prices'
+    },
+    subtitle: {
+        text: 'Split adjusted, from Jan 2021 to Apr 2026.'
+    },
+    xAxis: {
+        type: 'datetime',
+        crosshair: true,
+        labels: { format: '{value:%Y}' }
+    },
+    yAxis: {
+        min: 0,
+        title: { text: 'Close Price (USD)' },
+        labels: { format: '${value:,.0f}' }
+    },
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    series: [{}, {
+        dashStyle: 'shortdash'
+    }],
+    tooltip: {
+        shared: true,
+        valuePrefix: '$',
+        valueDecimals: 2
+    }
+};
+
 // Core pie chart
 const coreChart = {
     accessibility: {
@@ -251,7 +355,17 @@ function cs() {
         },
 
         yAxis: {
-            visible: false,
+            // Keep the axis active so the last-price label can be positioned.
+            visible: true,
+            labels: {
+                enabled: false
+            },
+            title: {
+                text: null
+            },
+            gridLineWidth: 0,
+            lineWidth: 0,
+            tickLength: 0,
             height: '80%'
         },
         credits: {
@@ -2759,6 +2873,20 @@ function grid() {
 // product info for demo viewer
 const products = [
     {
+        name: 'Highcharts Orbit',
+        tagline: 'Analyze data inside the chart',
+        id: 'orbitTitle',
+        icon: 'icon-core.svg',
+        chart: orbitChart,
+        stopLink: null,
+        demoTitle: 'Target vs Walmart Weekly Stock Prices',
+        demoDesc: 'Compare weekly stock prices and explore data with Orbit.',
+        description: `<p>Target vs Walmart Weekly Stock Prices</p>
+        <div>A spline chart comparing split-adjusted weekly closing prices
+        for Target and Walmart from January 2021 to April 2026.
+        Walmart is shown with a dashed line.</div>`
+    },
+    {
         name: 'Highcharts Stock',
         tagline: 'Financial visualization and analysis tools',
         id: 'stockTitle',
@@ -2910,7 +3038,7 @@ products.forEach((p, index) => {
     titleInner.appendChild(item);
 });
 const clone = titleInner.firstElementChild.cloneNode(true);
-clone.id = 'title-6';
+clone.id = 'title-' + products.length;
 titleInner.appendChild(clone);
 
 // --- Footer + pagination setup ---
@@ -2964,7 +3092,7 @@ function updateView() {
     if (currentIndex === products.length) {
         currentIndex = 0;
         isResetting = true;
-        titleInner.style.transform = 'translateY(-240px)';
+        titleInner.style.transform = `translateY(-${products.length * 40}px)`;
         titleInner.style.opacity = 1;
 
         updateFooter(currentIndex);
@@ -3166,7 +3294,7 @@ function ensureCorrectAnimationState() {
     Object.keys(chartAnimationState).forEach(key => {
         const isActive = chartAnimationState[key];
         // stock chart
-        if (key === 'stock' && currentIndex === 0) { // stock index is 0
+        if (key === 'stock' && products[currentIndex].chart === cs) {
             if (isActive) {
                 startStockChartAnimation();
                 logAnim('Stock animation resumed');
@@ -3176,7 +3304,7 @@ function ensureCorrectAnimationState() {
             }
         }
         // map chart
-        if (key === 'maps' && currentIndex === 4) { // maps index is 4
+        if (key === 'maps' && products[currentIndex].chart === animatedMap) {
             if (isActive) {
                 startMapAnimation();
                 logAnim('Map animation resumed');
@@ -3187,7 +3315,7 @@ function ensureCorrectAnimationState() {
         }
         // grid
         // eslint-disable-next-line max-len
-        if (key === 'grid' && gridControls && currentIndex === 1) { // grid index is 1
+        if (key === 'grid' && gridControls && products[currentIndex].chart === grid) {
             if (isActive) {
                 if (typeof gridControls.resumeGridUpdates === 'function') {
                     gridControls.resumeGridUpdates();

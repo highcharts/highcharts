@@ -932,7 +932,7 @@ button.dot {
     text-align: left;
 }
 
-.highcharts-markers .highcharts-point {
+.highcharts-mappoint-series.highcharts-markers .highcharts-point {
     fill: var(--map-point-color);
     stroke: var(--background);
     stroke-width: 1px;
@@ -1258,9 +1258,9 @@ button.dot {
     color: #fff;
 }
 
-.hcg-container,
-.hcg-scrollable-content {
-    min-width: 600px;
+#grid-container .hcg-container,
+#grid-container .hcg-scrollable-content {
+    min-width: 0;
 }
 
 .hcg-table {
