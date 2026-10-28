@@ -84,7 +84,8 @@ Highcharts.chart('container', {
 You will find examples of how to use `EquitySectorsBreakdown` converter in our
 demos.
 
-- **Highcharts Core + Morningstar Equity Sectors Breakdown**
+- [Highcharts Core + Morningstar Equity Sectors Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-sector-breakdown-bar-chart/)
+- [Highcharts Core + Morningstar Equity Sectors Breakdown (Spider)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-sector-breakdown-spider/)
 
 ## Morningstar API Reference
 

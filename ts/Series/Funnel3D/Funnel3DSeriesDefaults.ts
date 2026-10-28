@@ -37,7 +37,14 @@ const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
 
     animation: false,
 
-    /** @ignore-option */
+    /**
+     * The center of the series. By default, it is centered in the middle
+     * of the plot area, so it fills the plot area height.
+     *
+     * @type    {Array<number|string>}
+     * @default ["50%", "50%"]
+     * @since   7.1.0
+     */
     center: ['50%', '50%'],
 
     colorByPoint: true,

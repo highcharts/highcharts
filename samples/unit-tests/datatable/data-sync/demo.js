@@ -77,6 +77,21 @@ QUnit.test('Sync between data table and series', async assert => {
         'should be removed from the series'
     );
 
+    dataTable.columns.Cost[1] = 6;
+    Highcharts.fireEvent(dataTable, 'afterSetCell', {
+        cellValue: 6,
+        columnId: 'Cost',
+        rowIndex: 1
+    });
+
+    await delay(1);
+    assert.strictEqual(
+        chart.series[0].points[1].y,
+        6,
+        'After setting a cell in the DataTable, the corresponding point ' +
+        'should be updated in the series'
+    );
+
     // Update a column in the DataTable and check if Series/Points are updated
     dataTable.setColumn('Cost', [10, 11, 12, 13]);
 
@@ -86,5 +101,31 @@ QUnit.test('Sync between data table and series', async assert => {
         10,
         'After updating a column in the DataTable, the corresponding points ' +
         'should be updated in the series'
+    );
+
+    // Series.update should not break the sync (#25441)
+    chart.series[0].update({ color: 'red' });
+    dataTable.setColumn('Cost', [20, 21, 22, 23]);
+
+    await delay(1);
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        20,
+        'After updating a column in the DataTable, the corresponding points ' +
+        'should be updated in the series even after Series.update'
+    );
+
+    dataTable.setColumns({
+        Year: [2020, 2021, 2022, 2023],
+        Cost: [0, 1, 2, 3],
+        Revenue: [10, 11, 12, 13]
+    });
+    dataTable.deleteRows(0);
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        3,
+        'After deleting a row in the DataTable, only one point ' +
+        'should be removed from the series'
     );
 });

@@ -24,10 +24,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import EMAIndicator from '../EMA/EMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    ema: EMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -67,8 +65,8 @@ class DEMAIndicator extends EMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/dema
+     * @requires     indicators/indicators
+     * @requires     indicators/dema
      * @optionparent plotOptions.dema
      * @internal
      */
@@ -259,8 +257,8 @@ export default DEMAIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/dema
+ * @requires  indicators/indicators
+ * @requires  indicators/dema
  * @apioption series.dema
  */
 

@@ -28,10 +28,8 @@ import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import DataTableCore from '../../../Data/DataTableCore.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
 import {
     addEvent,
     extend,
@@ -117,7 +115,7 @@ class SMAIndicator extends LineSeries {
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking, useOhlcData
      * @product      highstock
-     * @requires     stock/indicators/indicators
+     * @requires     indicators/indicators
      * @optionparent plotOptions.sma
      * @internal
      */
@@ -628,7 +626,7 @@ export default SMAIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding useOhlcData
- * @requires  stock/indicators/indicators
+ * @requires  indicators/indicators
  * @apioption series.sma
  */
 
