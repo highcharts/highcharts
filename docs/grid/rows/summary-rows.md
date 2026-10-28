@@ -8,7 +8,7 @@ description: >-
 
 # Summary rows
 
-Summary rows are a Highcharts Grid Pro feature that adds total rows, such as a
+Summary rows is a Highcharts Grid Pro feature that adds total rows, such as a
 sum or an average of each column, above or below the table body. The rows stay
 in place while the body scrolls, and they are recomputed whenever the data is
 sorted, filtered or edited.
