@@ -6,7 +6,7 @@ function logAnim(msg) {
 }
 
 // Set up the image path
-const imagePath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@8967ac2dfa99c53005e2aa6221a03f3f6445e376/samples/graphics/homepage/';
+const imagePath = 'https://raw.githubusercontent.com/highcharts/highcharts/e9aa64ce242d425c3d2ef93a18e5a84cd7313101/samples/graphics/homepage/';
 
 // reduced motion
 // eslint-disable-next-line max-len
@@ -2876,7 +2876,7 @@ const products = [
         name: 'Highcharts Orbit',
         tagline: 'Analyze data inside the chart',
         id: 'orbitTitle',
-        icon: 'icon-core.svg',
+        icon: 'icon-orbit.svg',
         chart: orbitChart,
         stopLink: null,
         demoTitle: 'Target vs Walmart Weekly Stock Prices',
