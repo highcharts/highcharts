@@ -97,7 +97,6 @@ test.describe('Rendering size', () => {
     });
 });
 
-
 test.describe('Page-wide CSS', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/grid-lite/e2e/external-css');
