@@ -24,14 +24,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    }
-} = SeriesRegistry;
+import Point from '../../Core/Series/Point.js';
 
 /* *
  *
@@ -65,7 +58,7 @@ class GaugePoint extends Point {
 
     /**
      * Don't do any hover colors or anything
-     * @private
+     * @internal
      */
     public setState(state?: StatesOptionsKey): void {
         this.state = state;

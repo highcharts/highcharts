@@ -7,7 +7,7 @@ import type { JSHandle, Page } from '@playwright/test';
 
 import { join, extname, normalize } from 'node:path';
 import { globSync } from 'glob';
-import { load as yamlLoad } from 'js-yaml';
+import { JSON_SCHEMA, load as yamlLoad } from 'js-yaml';
 import { existsSync, readFileSync } from 'node:fs';
 import * as ts from 'typescript';
 
@@ -98,7 +98,9 @@ export function transpileTS(script: string) {
     return ts.transpileModule(script, {
         compilerOptions: {
             target: ts.ScriptTarget.ES2018,
-            module: ts.ModuleKind.None
+            module: ts.ModuleKind.CommonJS,
+            // Samples run as sloppy-mode scripts (TS 6 defaults to strict)
+            alwaysStrict: false
         }
     }).outputText;
 }
@@ -298,7 +300,7 @@ export function getSample(
             const content = readFileSync(globPath, { encoding: 'utf8'});
 
             if (type === 'details') {
-                obj[type] = yamlLoad(content) as object;
+                obj[type] = yamlLoad(content, { schema: JSON_SCHEMA });
             } else {
                 obj[type] = content;
             }

@@ -4,6 +4,8 @@
  * @module highcharts/indicators/keltner-channels
  * @requires highcharts
  * @requires highcharts/modules/stock
+ * @requires highcharts/indicators/indicators
+ * @requires highcharts/indicators/atr
  *
  * Indicator series type for Highcharts Stock
  *

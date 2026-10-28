@@ -4,6 +4,7 @@
  * @module highcharts/indicators/mfi
  * @requires highcharts
  * @requires highcharts/modules/stock
+ * @requires highcharts/indicators/indicators
  *
  * Money Flow Index indicator for Highcharts Stock
  *

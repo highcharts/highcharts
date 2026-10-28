@@ -268,7 +268,9 @@ class MathModifier extends DataModifier {
         rowEnd: number = table.getRowCount()
     ): DataTableColumn {
         rowStart = rowStart >= 0 ? rowStart : 0;
-        rowEnd = rowEnd >= 0 ? rowEnd : table.getRowCount() + rowEnd;
+        rowEnd = rowEnd >= 0 ?
+            Math.min(rowEnd, table.getRowCount()) :
+            table.getRowCount() + rowEnd;
 
         const column = [],
             modified = table.getModified();

@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Pagination"
+description: >-
+  Enable pagination and configure page size, placement, alignment, navigation
+  controls, and responsive behavior; understand local versus remote paging and
+  use Grid Pro page lifecycle events.
 ---
 
 # Row pagination
