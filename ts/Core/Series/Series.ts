@@ -401,6 +401,9 @@ class Series {
     public condemnedPoints!: Array<Point>;
 
     /** @internal */
+    public continuesAnimation?: boolean;
+
+    /** @internal */
     public cropped?: boolean;
 
     /**
@@ -3040,6 +3043,14 @@ class Series {
         let animationClipRect = chart.sharedClips[animationClipKey],
             markerAnimationClipRect = chart.sharedClips[animationClipKey + 'm'];
 
+        // An update during the initial animation reuses the running clip
+        // animation, so its pending afterAnimate still applies (#25439)
+        if (!init) {
+            this.continuesAnimation = !!animationClipRect?.hasClass(
+                'highcharts-animating'
+            );
+        }
+
         // Initialize the animation. Set up the clipping rectangle.
         if (init && group) {
             const clipBox = chart.getClipBox(this);
@@ -3983,7 +3994,15 @@ class Series {
         // overwrite the animation.complete option which should be available
         // to the user).
         // An update during the initial animation keeps the pending timeout
-        if (!hasRendered && series.animationTimeout === void 0) {
+        // if it continues the same animation, otherwise it reschedules it
+        if (
+            !hasRendered &&
+            !(
+                series.animationTimeout !== void 0 &&
+                series.continuesAnimation
+            )
+        ) {
+            internalClearTimeout(series.animationTimeout);
             // Additional time if defer is defined before afterAnimate
             // will be triggered
             if (animDuration && animOptions.defer) {
