@@ -6,7 +6,7 @@ function logAnim(msg) {
 }
 
 // Set up the image path
-const imagePath = 'https://raw.githubusercontent.com/highcharts/highcharts/e9aa64ce242d425c3d2ef93a18e5a84cd7313101/samples/graphics/homepage/';
+const imagePath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@e9aa64ce242d425c3d2ef93a18e5a84cd7313101/samples/graphics/homepage/';
 
 // reduced motion
 // eslint-disable-next-line max-len
