@@ -44,7 +44,8 @@ function pieLabels() {
 
 // Seed real Orbit layers using the built-in tools' analysis operations.
 const orbitLayerSeeds = new WeakSet();
-Highcharts.orbit.registerTool({
+// Offline visual tests do not load the external Orbit module.
+Highcharts.orbit?.registerTool({
     id: 'homepage-analysis',
     name: 'Homepage analysis',
     description: 'Initialize the homepage chart analysis',

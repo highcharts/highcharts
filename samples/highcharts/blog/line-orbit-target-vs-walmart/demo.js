@@ -1,6 +1,7 @@
 // Seed real Orbit layers using the built-in tools' analysis operations.
 const orbitLayerSeeds = new WeakSet();
-Highcharts.orbit.registerTool({
+// Offline visual tests do not load the external Orbit module.
+Highcharts.orbit?.registerTool({
     id: 'stock-comparison-analysis',
     name: 'Stock comparison analysis',
     description: 'Initialize the stock comparison analysis',
