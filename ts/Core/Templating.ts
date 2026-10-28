@@ -21,11 +21,7 @@
 import type TimeBase from '../Shared/TimeBase';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
-import D from './Defaults.js';
-const {
-    defaultOptions,
-    defaultTime
-} = D;
+import { defaultOptions, time as defaultTime } from './Defaults.js';
 import G from './Globals.js';
 const {
     pageLang
