@@ -24,6 +24,19 @@ div {
     padding: 7px;
 }
 
+thead,
+tbody,
+tr {
+    background: yellow;
+}
+
+/* Element and attribute or pseudo-class, more specific than one class */
+input:not([type="checkbox"]) {
+    border: 3px solid red;
+    padding: 20px;
+    background: pink;
+}
+
 /* Rules targeting grid cells on purpose should still apply */
 .my-cell {
     border-top: 3px solid green;

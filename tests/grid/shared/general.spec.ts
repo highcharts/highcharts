@@ -131,6 +131,21 @@ test.describe('Page-wide CSS', () => {
         await expect(page.locator('#container .hcg-container'))
             .toHaveCSS('padding-top', '0px');
 
+        // Rows, with cells that have no background of their own
+        for (const selector of ['thead', 'tbody', 'tbody tr']) {
+            await expect(page.locator(`#container ${selector}`).first())
+                .toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+        }
+
+        // Inputs, from a rule more specific than the reset
+        const input = page.locator('#container input').first();
+        await expect(input).toHaveCSS('border-top-width', '1px');
+        await expect(input).toHaveCSS('padding-top', '5px');
+        await expect(input).not.toHaveCSS(
+            'background-color',
+            'rgb(255, 192, 203)'
+        );
+
         // Theme borders still apply
         await expect(page.locator('#container tbody td').first())
             .toHaveCSS('border-right-width', '1px');
