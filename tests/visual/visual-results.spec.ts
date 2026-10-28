@@ -1,22 +1,29 @@
 import {
+    aggregateCandidateResults,
     appendError,
     readReference,
+    readReferenceFailures,
     recordCandidateResult,
     resetVisualRun,
     writeCandidateCompletion,
     writeReference,
+    writeReferenceFailures,
+    writeUncomparedCandidate,
     validateVisualRun
 } from './visual-results.ts';
 import { test, expect } from '@playwright/test';
+import { spawn } from 'node:child_process';
 import {
     existsSync,
     mkdtempSync,
     mkdirSync,
+    readdirSync,
     readFileSync,
     rmSync,
     writeFileSync
 } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { tmpdir } from 'node:os';
 
 const samplePath = 'highcharts/demo/area-missing';
@@ -59,12 +66,20 @@ function resultsPath(root: string): string {
     return join(root, 'test', 'visual-test-results.json');
 }
 
+function resultRecordsPath(root: string): string {
+    return join(root, 'test', 'visual-test-results');
+}
+
 function errorsPath(root: string): string {
     return join(root, 'test', 'visual-test-errors.log');
 }
 
 function completionPath(root: string): string {
     return join(root, 'test', 'visual-test-complete');
+}
+
+function timingPath(root: string): string {
+    return join(root, 'test', 'visual-test-timing.json');
 }
 
 test('reference writes canonical SVG without completion', () => {
@@ -77,6 +92,55 @@ test('reference writes canonical SVG without completion', () => {
     });
 });
 
+test('reference failures default to empty and round-trip sorted first-line errors', () => {
+    withTemporaryRoot(root => {
+        expect(readReferenceFailures(root)).toEqual([]);
+
+        writeReferenceFailures(root, [
+            { sample: secondSamplePath, error: 'Line failed\nStack trace' },
+            { sample: samplePath, error: 'Area failed\r\nStack trace' }
+        ]);
+
+        expect(readReferenceFailures(root)).toEqual([
+            { sample: samplePath, error: 'Area failed' },
+            { sample: secondSamplePath, error: 'Line failed' }
+        ]);
+        expect(() => readReference(root, secondSamplePath)).toThrow(
+            `Missing visual reference for ${secondSamplePath}`
+        );
+    });
+});
+
+test('reference failures reject malformed records', () => {
+    withTemporaryRoot(root => {
+        mkdirSync(join(root, 'test'), { recursive: true });
+        const failurePath = join(root, 'test', 'visual-reference-failures.json');
+        for (const contents of [
+            '{', '{}', '[null]', '[{"sample":"","error":"failed"}]',
+            '[{"sample":"highcharts/demo/line-basic","error":7}]'
+        ]) {
+            writeFileSync(failurePath, contents);
+            expect(() => readReferenceFailures(root)).toThrow();
+        }
+    });
+});
+
+test('only reference reset clears previous reference failures', () => {
+    withTemporaryRoot(root => {
+        const failures = [{ sample: samplePath, error: 'Reference failed' }];
+        writeReferenceFailures(root, failures);
+
+        resetVisualRun(root, [samplePath]);
+        expect(readReferenceFailures(root)).toEqual(failures);
+
+        resetVisualRun(root, [samplePath], true);
+        expect(readReferenceFailures(root)).toEqual([]);
+
+        writeReferenceFailures(root, []);
+        expect(readReferenceFailures(root)).toEqual([]);
+    });
+});
+
 test('zero candidate result records zero and removes stale artifacts', () => {
     withTemporaryRoot(root => {
         writeReference(root, samplePath, referenceSVG);
@@ -85,6 +149,7 @@ test('zero candidate result records zero and removes stale artifacts', () => {
         writeFileSync(diffPath(root), Buffer.from('stale diff'));
 
         recordCandidateResult(root, samplePath, 0);
+        aggregateCandidateResults(root);
 
         expect(readFileSync(resultsPath(root), 'utf8')).toBe(
             `{
@@ -97,11 +162,59 @@ test('zero candidate result records zero and removes stale artifacts', () => {
     });
 });
 
+test('failed references still require rendered candidates and no pixel result', () => {
+    withTemporaryRoot(root => {
+        resetVisualRun(root, [samplePath, secondSamplePath]);
+        writeReference(root, samplePath, referenceSVG);
+        recordCandidateResult(root, samplePath, 0);
+        writeReferenceFailures(root, [{
+            sample: secondSamplePath, error: 'Reference failed'
+        }]);
+        const validate = () => validateVisualRun(
+            root, [samplePath, secondSamplePath]
+        );
+        aggregateCandidateResults(root);
+        expect(validate).toThrow('Missing rendered candidate');
+        writeUncomparedCandidate(root, secondSamplePath, candidateSVG);
+        expect(validate).not.toThrow();
+        expect(JSON.parse(readFileSync(resultsPath(root), 'utf8'))).toEqual({
+            [samplePath]: 0
+        });
+        writeReference(root, secondSamplePath, referenceSVG);
+        recordCandidateResult(root, secondSamplePath, 0);
+        aggregateCandidateResults(root);
+        expect(validate).toThrow();
+    });
+});
+
+test('all failed references require fresh candidate artifacts', () => {
+    withTemporaryRoot(root => {
+        writeReferenceFailures(root, [{ sample: samplePath, error: 'Failed' }]);
+        writeUncomparedCandidate(root, samplePath, 'stale');
+        resetVisualRun(root, [samplePath]);
+        expect(() => validateVisualRun(root, [samplePath])).toThrow();
+        writeUncomparedCandidate(root, samplePath, candidateSVG);
+        aggregateCandidateResults(root);
+        expect(() => validateVisualRun(root, [samplePath])).not.toThrow();
+        expect(JSON.parse(readFileSync(resultsPath(root), 'utf8'))).toEqual({});
+        for (const failures of [
+            [{ sample: secondSamplePath, error: 'Not selected' }],
+            Array.from({ length: 2 }, () => ({ sample: samplePath, error: 'Duplicate' }))
+        ]) {
+            writeReferenceFailures(root, failures);
+            expect(() => validateVisualRun(root, [samplePath])).toThrow(
+                'Reference failures must be unique selected sample IDs.'
+            );
+        }
+    });
+});
+
 test('positive candidate result writes artifacts without an error', () => {
     withTemporaryRoot(root => {
         writeReference(root, samplePath, referenceSVG);
 
         recordCandidateResult(root, samplePath, 7, candidateSVG, diffGif);
+        aggregateCandidateResults(root);
 
         expect(readFileSync(resultsPath(root), 'utf8')).toBe(
             `{
@@ -156,6 +269,7 @@ test('validates complete multi-sample candidate results', () => {
 
         recordCandidateResult(root, samplePath, 0);
         recordCandidateResult(root, secondSamplePath, 7, candidateSVG, diffGif);
+        aggregateCandidateResults(root);
 
         expect(() => validateVisualRun(root, [samplePath, secondSamplePath]))
             .not.toThrow();
@@ -168,18 +282,23 @@ test('resets shared outputs and selected stale candidate artifacts', () => {
         mkdirSync(join(root, 'test'), { recursive: true });
         mkdirSync(join(root, 'samples', samplePath), { recursive: true });
         writeFileSync(resultsPath(root), `{ "${samplePath}": 0 }`);
+        writeFileSync(timingPath(root), '{"old":1}');
         writeFileSync(errorsPath(root), 'stale error\n');
         writeFileSync(completionPath(root), '');
         writeFileSync(candidatePath(root), 'stale candidate');
         writeFileSync(diffPath(root), Buffer.from('stale diff'));
+        mkdirSync(resultRecordsPath(root), { recursive: true });
+        writeFileSync(join(resultRecordsPath(root), 'stale.json'), '{}');
 
         resetVisualRun(root, [samplePath]);
 
-        expect(existsSync(resultsPath(root))).toBe(false);
+        expect(JSON.parse(readFileSync(resultsPath(root), 'utf8'))).toEqual({});
+        expect(existsSync(timingPath(root))).toBe(false);
         expect(existsSync(errorsPath(root))).toBe(false);
         expect(existsSync(completionPath(root))).toBe(false);
         expect(existsSync(candidatePath(root))).toBe(false);
         expect(existsSync(diffPath(root))).toBe(false);
+        expect(existsSync(resultRecordsPath(root))).toBe(false);
         expect(existsSync(referencePath(root))).toBe(true);
     });
 });
@@ -203,16 +322,16 @@ test('reference reset removes selected references as well as candidate artifacts
 test('candidate validation rejects missing or unexpected results', () => {
     withTemporaryRoot(root => {
         writeReference(root, samplePath, referenceSVG);
+        writeReference(root, secondSamplePath, referenceSVG);
 
+        aggregateCandidateResults(root);
         expect(() => validateVisualRun(root, [samplePath])).toThrow(
             'exactly one result for each expected sample'
         );
 
-        mkdirSync(join(root, 'test'), { recursive: true });
-        writeFileSync(
-            resultsPath(root),
-            JSON.stringify({ [samplePath]: 0, [secondSamplePath]: 0 })
-        );
+        recordCandidateResult(root, samplePath, 0);
+        recordCandidateResult(root, secondSamplePath, 0);
+        aggregateCandidateResults(root);
         expect(() => validateVisualRun(root, [samplePath])).toThrow(
             'exactly one result for each expected sample'
         );
@@ -263,9 +382,10 @@ test('reference validation rejects omissions', () => {
 test('positive candidate results require both visual artifacts', () => {
     withTemporaryRoot(root => {
         writeReference(root, samplePath, referenceSVG);
-        mkdirSync(join(root, 'test'), { recursive: true });
-        writeFileSync(resultsPath(root), `{ "${samplePath}": 1 }`);
+        recordCandidateResult(root, samplePath, 1, candidateSVG, diffGif);
+        aggregateCandidateResults(root);
         writeFileSync(candidatePath(root), candidateSVG);
+        rmSync(diffPath(root));
 
         expect(() => validateVisualRun(root, [samplePath])).toThrow(
             'requires candidate SVG and GIF artifacts'
@@ -280,10 +400,139 @@ test('validation rejects a non-empty error log', () => {
     withTemporaryRoot(root => {
         writeReference(root, samplePath, referenceSVG);
         recordCandidateResult(root, samplePath, 0);
+        aggregateCandidateResults(root);
         appendError(root, 'Visual test failed');
 
         expect(() => validateVisualRun(root, [samplePath])).toThrow(
             'errors log is non-empty'
         );
     });
+});
+
+test('aggregate validates malformed, duplicate, and unexpected result records', () => {
+    withTemporaryRoot(root => {
+        writeReference(root, samplePath, referenceSVG);
+        recordCandidateResult(root, samplePath, 0);
+
+        const [resultFilename] = readdirSync(resultRecordsPath(root));
+        writeFileSync(join(resultRecordsPath(root), resultFilename), '{');
+        expect(() => aggregateCandidateResults(root)).toThrow(
+            'Invalid visual test result'
+        );
+
+        writeFileSync(
+            join(resultRecordsPath(root), resultFilename),
+            JSON.stringify({ sample: samplePath, pixels: -1 })
+        );
+        expect(() => aggregateCandidateResults(root)).toThrow(
+            'non-negative integer'
+        );
+
+        writeFileSync(
+            join(resultRecordsPath(root), resultFilename),
+            JSON.stringify({ sample: samplePath, pixels: 0 })
+        );
+        writeFileSync(
+            join(resultRecordsPath(root), 'duplicate.json'),
+            JSON.stringify({ sample: samplePath, pixels: 0 })
+        );
+        expect(() => aggregateCandidateResults(root)).toThrow(
+            `Duplicate visual test result for ${samplePath}`
+        );
+
+        rmSync(join(resultRecordsPath(root), 'duplicate.json'));
+        writeFileSync(
+            join(resultRecordsPath(root), 'unexpected.json'),
+            JSON.stringify({ sample: secondSamplePath, pixels: 0 })
+        );
+        expect(() => aggregateCandidateResults(root)).toThrow(
+            `filename does not match ${secondSamplePath}`
+        );
+    });
+});
+
+test('concurrent candidate result writers preserve every sample', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'highcharts-visual-results-'));
+    const samples = Array.from({ length: 12 }, (_, index) =>
+        `highcharts/demo/concurrent-${index}`
+    );
+    const testDirectory = join(root, 'test');
+    const startPath = join(testDirectory, 'writers-start');
+    const moduleUrl = pathToFileURL(join(
+        process.cwd(), 'tests/visual/visual-results.ts'
+    )).href;
+    const children: ReturnType<typeof spawn>[] = [];
+
+    try {
+        mkdirSync(testDirectory, { recursive: true });
+        for (const sample of samples) {
+            writeReference(root, sample, referenceSVG);
+        }
+
+        const writerPromises = samples.map((sample, index) => {
+            const readyPath = join(testDirectory, `writer-${index}-ready`);
+            const source = [
+                'import { existsSync, writeFileSync } from \'node:fs\';',
+                `import { recordCandidateResult } from ${JSON.stringify(moduleUrl)};`,
+                `const root = ${JSON.stringify(root)};`,
+                `const sample = ${JSON.stringify(sample)};`,
+                `const readyPath = ${JSON.stringify(readyPath)};`,
+                `const startPath = ${JSON.stringify(startPath)};`,
+                'writeFileSync(readyPath, \'\');',
+                'while (!existsSync(startPath)) {',
+                '    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 10);',
+                '}',
+                'recordCandidateResult(root, sample, 0);'
+            ].join('\n');
+            const child = spawn(process.execPath, [
+                '--import', 'tsx', '--input-type=module', '--eval', source
+            ], { cwd: process.cwd(), stdio: 'pipe' });
+            children.push(child);
+
+            let stderr = '';
+            child.stderr?.setEncoding('utf8');
+            child.stderr?.on('data', chunk => stderr += chunk);
+            return new Promise<void>((resolve, reject) => {
+                child.once('error', reject);
+                child.once('close', code => {
+                    if (code === 0) {
+                        resolve();
+                    } else {
+                        reject(new Error(
+                            `Concurrent writer exited with ${code}: ${stderr}`
+                        ));
+                    }
+                });
+            });
+        });
+
+        const readyPaths = samples.map((_, index) =>
+            join(testDirectory, `writer-${index}-ready`)
+        );
+        let ready = false;
+        for (let attempt = 0; attempt < 1000; attempt++) {
+            ready = readyPaths.every(path => existsSync(path));
+            // eslint-disable-next-line playwright/no-conditional-in-test
+            if (ready) {
+                break;
+            }
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
+        // eslint-disable-next-line playwright/no-conditional-in-test
+        if (!ready) {
+            children.forEach(child => child.kill());
+            await Promise.allSettled(writerPromises);
+        }
+        expect(ready).toBe(true);
+
+        writeFileSync(startPath, '');
+        await Promise.all(writerPromises);
+
+        expect({ ...aggregateCandidateResults(root) }).toEqual(
+            Object.fromEntries(samples.map(sample => [sample, 0]))
+        );
+    } finally {
+        children.forEach(child => child.kill());
+        rmSync(root, { recursive: true, force: true });
+    }
 });

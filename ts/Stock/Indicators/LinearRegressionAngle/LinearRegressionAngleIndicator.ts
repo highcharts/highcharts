@@ -24,10 +24,8 @@ import type {
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';
 
+import LinearRegressionIndicator from '../LinearRegression/LinearRegressionIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    linearregression: LinearRegressionIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -62,8 +60,8 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     indicators/indicators
+     * @requires     indicators/regressions
      * @optionparent plotOptions.linearregressionangle
      * @internal
      */
@@ -170,8 +168,8 @@ export default LinearRegressionAngleIndicator;
  * @extends   series,plotOptions.linearregressionangle
  * @since     7.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  indicators/indicators
+ * @requires  indicators/regressions
  * @apioption series.linearregressionangle
  */
 

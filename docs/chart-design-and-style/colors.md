@@ -59,10 +59,12 @@ The linear gradients can be applied to both fills (backgrounds) and strokes (lin
 Note that linear gradients can be differently defined (as an array or an object). Also, start/end positions might be calculated differently depending on the `gradientUnits` property (this property can only be set in linear gradient declared as object).
 
 `gradientUnits` values:
-*   **`userSpaceOnUse`** Default when gradient declared as an array. Start and end positions have to be declared as pixels on the chart.
+*   **`userSpaceOnUse`** Start and end positions are defined as percentage strings.
 *   **`objectBoundingBox`** Default when gradient declared as an object. Start and end positions are in the range of 0 to 1 as described above. Using this might sometimes result in the disappearance of the coloured element.
 
-See the online example of a [linear gradient chart background](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/backgroundcolor-gradient).
+See the online example of a [linear gradient chart
+background](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/backgroundcolor-gradient)
+and a [column series with different gradient units](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/column-color-gradient).
 
 Radial gradients
 ----------------
