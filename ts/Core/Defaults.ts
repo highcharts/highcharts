@@ -2288,7 +2288,7 @@ const defaultOptions: DefaultOptions = {
 
     }
 };
-// To do: export directly when highchatrs-documentation-generators is fixed.
+// To do: export directly when highcharts-documentation-generators is fixed.
 export { defaultOptions };
 
 const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
