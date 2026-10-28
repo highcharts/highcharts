@@ -157,6 +157,7 @@ const timeDefaults: TimeBase.TimeOptions = {
      *         False
      *
      * @deprecated 12.0.0
+     * @type     {boolean}
      */
     useUTC: void 0
 };

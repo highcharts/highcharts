@@ -349,9 +349,8 @@ class Point {
      * The attributes of the rendered SVG shape like in `column` or `pie`
      * series.
      *
-     * @readonly
      * @name Highcharts.Point#shapeArgs
-     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     * @type {Highcharts.SVGAttributes|undefined}
      */
     public shapeArgs?: SVGAttributes;
 
@@ -538,9 +537,8 @@ class Point {
      * The attributes of the rendered SVG shape like in `column` or `pie`
      * series.
      *
-     * @readonly
      * @name Highcharts.Point#shapeArgs
-     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     * @type {Highcharts.SVGAttributes|undefined}
      */
     /**
      * Defines the tooltip's position for a data point in a chart. It is an

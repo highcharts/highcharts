@@ -25,6 +25,16 @@ import { debugLog } from '../utilities.mjs';
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+
+const SPDX_LINE = '// SPDX-License-Identifier: LicenseRef-Highcharts';
+
+
+/* *
+ *
  *  Functions
  *
  * */
@@ -121,7 +131,7 @@ function decorateImports(content, masterImports) {
  * Extracted requirements.
  */
 function extractMasterImports(content, contentFolder, requirePrefix='') {
-    const masterDoclet = content.match(/^\/\*(.*?)\*\//su)?.[1] || '';
+    const masterDoclet = content.match(/\n\/\*(.*?)\*\//su)?.[1] || '';
     const requireMatches =
         masterDoclet.matchAll(/@requires?[ \t]+([\/\w\.-]+)/gsu);
 
@@ -215,6 +225,14 @@ function mastersLoader(content, map, meta) {
 
         // The product path as found on code.highcharts.com.
         const requirePrefix = options.requirePrefix
+
+        // The master doclet is expected after the license line.
+        if (!content.startsWith(SPDX_LINE)) {
+            callback(new Error(
+                `${context.resourcePath}: First line must be "${SPDX_LINE}".`
+            ));
+            return;
+        }
 
         const masterImports =
             extractMasterImports(content, contentFolder, requirePrefix);

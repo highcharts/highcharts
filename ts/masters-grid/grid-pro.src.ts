@@ -90,9 +90,16 @@ import '../Grid/Core/Responsive/ResponsiveComposition.js';
 import '../Grid/Pro/RowPinning/RowPinningComposition.js';
 import '../Grid/Pro/GridEvents.js';
 import '../Grid/Pro/CellEditing/CellEditingComposition.js';
+import '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
 import '../Grid/Pro/Export/ExportingComposition.js';
+import '../Grid/Pro/License/LicenseValidationComposition.js';
+import '../Grid/Pro/Pagination/PaginationComposition.js';
+import '../Grid/Pro/SummaryColumns/SummaryColumnsComposition.js';
+import '../Grid/Pro/SummaryRows/SummaryRowsComposition.js';
 import '../Grid/Pro/TableEditing/TableEditingComposition.js';
+import '../Grid/Pro/TreeView/TreeViewComposition.js';
+import '../Grid/Pro/TreeView/TreeViewValidation.js';
 
 // Cell Renderers
 import '../Grid/Pro/CellRendering/CellRenderer.js';

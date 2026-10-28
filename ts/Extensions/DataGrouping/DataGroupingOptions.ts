@@ -373,7 +373,7 @@ export interface DataGroupingOptions {
      * @type      {Array<Array<string,(Array<number>|null)>>}
      * @apioption plotOptions.series.dataGrouping.units
      */
-    units?: Array<[string, (Array<number>|null)]>;
+    units?: Array<[Time.TimeUnit, (Array<number>|null)]>;
 }
 
 /* *
