@@ -27,9 +27,9 @@ import H from './Globals.js';
 const {
     isTouchDevice
 } = H;
-import LangDefaults from './LangDefaults.js';
+import langDefaults from './LangDefaults.js';
 import PaletteDefaults from './Color/PaletteDefaults.js';
-import TimeDefaults, { defaultTime } from './TimeDefaults.js';
+import timeDefaults, { defaultTime } from './TimeDefaults.js';
 import { fireEvent, merge } from '../Shared/Utilities.js';
 
 /* *
@@ -162,7 +162,7 @@ const defaultOptions: DefaultOptions = {
      */
     symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 
-    lang: LangDefaults,
+    lang: langDefaults,
 
     /**
      * Global options that don't apply to each chart. These options must be set
@@ -267,7 +267,7 @@ const defaultOptions: DefaultOptions = {
 
     },
 
-    time: TimeDefaults,
+    time: timeDefaults,
 
     chart: ChartDefaults,
 

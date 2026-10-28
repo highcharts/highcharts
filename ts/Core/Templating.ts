@@ -21,7 +21,7 @@
 import type TimeBase from '../Shared/TimeBase';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
-import LangDefaults from './LangDefaults.js';
+import langDefaults from './LangDefaults.js';
 import { defaultTime } from './TimeDefaults.js';
 import G from './Globals.js';
 const {
@@ -194,7 +194,7 @@ function format(
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
-        lang = owner?.options?.lang || LangDefaults,
+        lang = owner?.options?.lang || langDefaults,
         time = owner?.time || defaultTime,
         numberFormatter = owner?.numberFormatter || numberFormat.bind(owner);
 
@@ -448,7 +448,7 @@ function numberFormat(
         fractionDigits: number,
         [mantissa, exp] = number.toString().split('e').map(Number);
 
-    const lang = this?.options?.lang || LangDefaults,
+    const lang = this?.options?.lang || langDefaults,
         origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
         firstDecimals = decimals,
         options: Intl.NumberFormatOptions = {};

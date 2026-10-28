@@ -44,7 +44,7 @@ import type { LangOptions } from './LangOptions';
  *
  * @optionparent lang
  */
-const LangDefaults: LangOptions = {
+const langDefaults: LangOptions = {
     weekFrom: 'week from',
 
     /**
@@ -252,4 +252,4 @@ const LangDefaults: LangOptions = {
  *
  * */
 
-export default LangDefaults;
+export default langDefaults;

@@ -21,7 +21,7 @@
 import type TimeBase from '../Shared/TimeBase';
 
 import Time from './Time.js';
-import LangDefaults from './LangDefaults.js';
+import langDefaults from './LangDefaults.js';
 
 /* *
  *
@@ -80,7 +80,7 @@ import LangDefaults from './LangDefaults.js';
  * @since     6.0.5
  * @optionparent time
  */
-const TimeDefaults: TimeBase.TimeOptions = {
+const timeDefaults: TimeBase.TimeOptions = {
     /**
      * A custom `Date` class for advanced date handling. For example,
      * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
@@ -161,7 +161,7 @@ const TimeDefaults: TimeBase.TimeOptions = {
     useUTC: void 0
 };
 
-export const defaultTime = new Time(TimeDefaults, LangDefaults);
+export const defaultTime = new Time(timeDefaults, langDefaults);
 
 /* *
  *
@@ -169,4 +169,4 @@ export const defaultTime = new Time(TimeDefaults, LangDefaults);
  *
  * */
 
-export default TimeDefaults;
+export default timeDefaults;
