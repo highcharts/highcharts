@@ -215,7 +215,10 @@ class ContextMenu extends Menu {
 
         // Safari fires no `contextmenu` event on long-press, so the press is
         // turned into one and handled by the listener above like any other.
-        const removeLongPress = addLongPressContextMenu(element);
+        const removeLongPress = addLongPressContextMenu(
+            element,
+            (): boolean => resolveContextMenu(context, options).length > 0
+        );
 
         return (): void => {
             element.removeEventListener('contextmenu', onContextMenu);

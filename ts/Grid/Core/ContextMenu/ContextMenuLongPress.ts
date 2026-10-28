@@ -70,10 +70,17 @@ interface LongPressState {
  * The element to watch. The event is dispatched on whatever inside it the
  * touch landed on.
  *
+ * @param shouldArm
+ * Whether a press on this part of the element is worth watching. Left out to
+ * watch every press, at the cost of the browser's own text selection.
+ *
  * @return
  * Callback that stops watching.
  */
-export function addLongPressContextMenu(element: HTMLElement): () => void {
+export function addLongPressContextMenu(
+    element: HTMLElement,
+    shouldArm?: (target: HTMLElement) => boolean
+): () => void {
     if (!Globals.isIos) {
         return (): void => void 0;
     }
@@ -111,6 +118,10 @@ export function addLongPressContextMenu(element: HTMLElement): () => void {
         // A native control is the user's to press, unless it is the very
         // element being watched.
         if (control && control !== element) {
+            return;
+        }
+
+        if (shouldArm && !shouldArm(target)) {
             return;
         }
 

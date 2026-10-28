@@ -43,6 +43,7 @@ import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
 import { addLongPressContextMenu } from '../ContextMenu/ContextMenuLongPress.js';
 import { getCellMenuContext } from '../ContextMenu/ContextMenuTarget.js';
+import { resolveContextMenu } from '../ContextMenu/ContextMenuResolver.js';
 
 const { makeHTMLElement, applyUserClassNames } = GridUtils;
 
@@ -249,8 +250,15 @@ class Table {
             passive: false
         });
         this.addBodyEventListeners(this.tbodyElement);
-        this.removeLongPressContextMenu =
-            addLongPressContextMenu(this.tableElement);
+        this.removeLongPressContextMenu = addLongPressContextMenu(
+            this.tableElement,
+            (target): boolean => {
+                const cell = this.getTableCellFromTarget(target);
+                return !!cell && resolveContextMenu(
+                    getCellMenuContext(cell)
+                ).length > 0;
+            }
+        );
         document.addEventListener('focusin', this.onDocumentFocusIn, true);
         document.addEventListener(
             'pointerdown',
