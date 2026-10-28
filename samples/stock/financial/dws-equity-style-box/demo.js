@@ -114,7 +114,12 @@ async function renderChart() {
             custom: {
                 ...dataTable.metadata
             },
-            data: dataTable.getRows(),
+            dataTable,
+            dataMapping: {
+                x: 'Style',
+                y: 'Size',
+                value: 'Value'
+            },
             dataLabels: {
                 enabled: true,
                 format: '{value:.0f}%',

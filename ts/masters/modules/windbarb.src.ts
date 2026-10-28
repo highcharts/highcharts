@@ -3,6 +3,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/windbarb
  * @requires highcharts
+ * @requires highcharts/modules/datagrouping
  *
  * Wind barb series module
  *

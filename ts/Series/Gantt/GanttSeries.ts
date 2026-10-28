@@ -29,13 +29,9 @@ import type Tick from '../../Core/Axis/Tick';
 import GanttPoint from './GanttPoint.js';
 import GanttSeriesDefaults from './GanttSeriesDefaults.js';
 import Pathfinder from '../../Gantt/Pathfinder.js';
+import Series from '../../Core/Series/Series.js';
+import XRangeSeries from '../XRange/XRangeSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        xrange: XRangeSeries
-    }
-} = SeriesRegistry;
 import { composeStaticScale } from '../../Extensions/StaticScale.js';
 import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 import { extend, isNumber, merge } from '../../Shared/Utilities.js';

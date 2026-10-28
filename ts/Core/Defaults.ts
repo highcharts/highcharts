@@ -612,6 +612,7 @@ const defaultOptions: DefaultOptions = {
          *         False
          *
          * @deprecated 12.0.0
+         * @type     {boolean}
          */
         useUTC: void 0
     },
@@ -2866,6 +2867,21 @@ const defaultOptions: DefaultOptions = {
         headerFormat: '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>',
 
         /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in a network-type data series,
+         * like sankey, organization, and dependency wheel. This is relevant
+         * when nodes and links require different formatting, where the links
+         * are formatted by `tooltip.pointFormat`.
+         *
+         * @sample highcharts/plotoptions/sankey-link-datalabels/
+         *         Node and link data labels
+         *
+         * @type      {string}
+         * @apioption tooltip.nodeFormat
+         */
+
+        /**
          * The HTML of the null point's line in the tooltip. Works analogously
          * to [pointFormat](#tooltip.pointFormat).
          *
@@ -3133,6 +3149,8 @@ const defaultOptions: DefaultOptions = {
         /**
          * Position configuration for the credits label.
          *
+         * @sample highcharts/credits/position/
+         *         Credits position
          * @sample {highcharts} highcharts/credits/position-left/
          *         Left aligned
          * @sample {highmaps} maps/credits/customized/
@@ -3143,9 +3161,10 @@ const defaultOptions: DefaultOptions = {
          */
         position: {
             align: 'right',
+            relativeTo: 'spacingBox',
             verticalAlign: 'bottom',
-            x: -10,
-            y: -5
+            x: 0,
+            y: 10
         },
 
         /**

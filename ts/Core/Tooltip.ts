@@ -568,6 +568,8 @@ class Tooltip {
                 css(container, {
                     position: 'absolute',
                     top: '1px',
+                    width: 'auto',
+                    height: 'auto',
                     pointerEvents: 'none',
                     zIndex: Math.max(
                         options.style.zIndex || 0,
