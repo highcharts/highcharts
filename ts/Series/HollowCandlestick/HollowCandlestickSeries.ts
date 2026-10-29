@@ -20,6 +20,7 @@
 
 import HollowCandlestickPoint from './HollowCandlestickPoint.js';
 import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOptions';
+import CandlestickSeries from '../Candlestick/CandlestickSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -27,22 +28,18 @@ import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
 import { addEvent, merge } from '../../Shared/Utilities.js';
 
-const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
-} = SeriesRegistry;
-
-interface HollowcandleInfo {
-    isBullish: boolean;
-    trendDirection: 'down'|'up';
-}
-
 /* *
  *
  *  Declarations
  *
  * */
+
+/** @internal */
+interface HollowcandleInfo {
+    isBullish: boolean;
+    trendDirection: 'down'|'up';
+}
+
 type OHLCObject = {
     open: number | null | undefined;
     high: number | null | undefined;
@@ -59,11 +56,8 @@ type OHLCObject = {
 /**
  * The hollowcandlestick series.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.hollowcandlestick
- *
- * @augments Highcharts.seriesTypes.candlestick
  */
 class HollowCandlestickSeries extends CandlestickSeries {
 
@@ -171,7 +165,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /**
      * Iterate through all points and get their type.
-     * @private
+     * @internal
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getPriceMovement
      *
@@ -204,7 +198,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /**
      * Return line color based on candle type.
-     * @private
+     * @internal
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getLineColor
      *
@@ -225,7 +219,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /**
      * Return fill color based on candle type.
-     * @private
+     * @internal
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getPointFill
      *
@@ -247,10 +241,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
             series.options.color || 'var(--highcharts-negative-color)';
     }
 
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.hollowcandlestick#init
-     */
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
@@ -261,13 +252,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Check if the candle is bearish or bullish. For bullish one, return true.
      * For bearish, return string depending on the previous point.
      *
-     * @function Highcharts.seriesTypes.hollowcandlestick#isBullish
-     *
      * @param {Object} dataPoint
      * Current point which we calculate.
      *
      * @param {Object} previousDataPoint
      * Previous point.
+     *
+     * @internal
      */
     public isBullish(
         dataPoint: OHLCObject,
@@ -287,7 +278,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * The legend's bullish candle is hollow, and colored by trend (#24567).
      *
      * @internal
-     * @function Highcharts.seriesTypes.hollowcandlestick#legendSymbolAttribs
      */
     public legendSymbolAttribs(): SVGAttributes {
         return {
@@ -303,15 +293,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
     /**
      * Add color and fill attribute for each point.
      *
-     * @private
-     *
-     * @function Highcharts.seriesTypes.hollowcandlestick#pointAttribs
-     *
      * @param {HollowCandlestickPoint} point
      * Point to which we are adding attributes.
      *
      * @param {StatesOptionsKey} state
      * Current point state.
+     *
+     * @internal
      */
     public pointAttribs(
         point?: HollowCandlestickPoint,
@@ -377,7 +365,7 @@ HollowCandlestickSeries.prototype.pointClass = HollowCandlestickPoint;
  *
  * */
 
-declare module '../../Core/Series/SeriesType'{
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         hollowcandlestick: typeof HollowCandlestickSeries;
     }
@@ -390,6 +378,7 @@ SeriesRegistry.registerSeriesType('hollowcandlestick', HollowCandlestickSeries);
  * Default Export
  *
  * */
+
 export default HollowCandlestickSeries;
 
 /* *

@@ -1,0 +1,15 @@
+---
+name: Shared DataTable
+authors:
+  - Andrzej Bułeczka
+js_wrap: b
+alt_text: >-
+  Data grid and line chart sharing one DataTable, synced on cell edit
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 115
+use_png_thumbnail: true
+is_pro: true
+...
