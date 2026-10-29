@@ -488,9 +488,10 @@ class SMAIndicator extends LineSeries {
                 overlapLast >= 0 &&
                 oldX[overlapLast] === newX[overlapLast];
 
-            // Length +1/-1 with matching edge x is not enough.
-            // Overlapping y values may still have changed
-            // (setData), so verify the shared range.
+            // If x only grew/shrank by one point, also check that y
+            // (and other value columns) are unchanged in the overlap.
+            // Otherwise setData that rewrites values is mistaken for an
+            // incremental add/remove (#22081).
             if (isIncrementalUpdate) {
                 for (const key of pointArrayMap) {
                     const oldColumn = indicator.getColumn(key),
