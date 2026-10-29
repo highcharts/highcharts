@@ -1721,6 +1721,9 @@ export class Grid {
             return;
         }
 
+        // Getter can return a new instance, so using field ref instead.
+        this.contextMenuInstance?.detachAll();
+
         // Clear all properties
         Object.keys(this).forEach((key): void => {
             delete this[key as keyof this];

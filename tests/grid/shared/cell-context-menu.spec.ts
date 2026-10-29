@@ -1273,6 +1273,108 @@ test.describe('Cell Context Menu', () => {
         );
 
         test(
+            'Destroying the grid takes its menu back from user custom elements',
+            async ({ page }) => {
+                // The element is not the grid's own, so emptying its container
+                // leaves it listening. A destroyed grid opens nothing anyway,
+                // so what the leak costs is memory: the listeners hold the
+                // element and the grid. Hence counting them rather than
+                // right-clicking.
+                const listeners = await page.evaluate(async () => {
+                    document.getElementById('cm-detach')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-detach';
+                    document.body.appendChild(container);
+
+                    // Counts what each element was given and what it got back.
+                    const watch = (): {
+                        element: HTMLElement,
+                        added: string[],
+                        removed: string[]
+                    } => {
+                        const element = document.createElement('button');
+                        const added: string[] = [];
+                        const removed: string[] = [];
+                        const add = element.addEventListener.bind(element);
+                        const remove =
+                            element.removeEventListener.bind(element);
+
+                        document.body.appendChild(element);
+
+                        element.addEventListener = (
+                            type: string,
+                            listener: EventListenerOrEventListenerObject,
+                            options?: boolean | AddEventListenerOptions
+                        ): void => {
+                            added.push(type);
+                            add(type, listener, options);
+                        };
+
+                        element.removeEventListener = (
+                            type: string,
+                            listener: EventListenerOrEventListenerObject,
+                            options?: boolean | EventListenerOptions
+                        ): void => {
+                            removed.push(type);
+                            remove(type, listener, options);
+                        };
+
+                        return { element, added, removed };
+                    };
+
+                    const first = watch();
+                    const second = watch();
+                    const detached = watch();
+
+                    const grid = await (window as any).Grid.grid(container, {
+                        data: { columns: { id: ['ROW-001'] } }
+                    }, true);
+
+                    const items = [{ label: 'Attached action' }];
+
+                    grid.contextMenu.attach(first.element, { items });
+                    // Left open on purpose: tearing the Grid down has to
+                    // close it, or the menu outlives the Grid on screen.
+                    first.element.dispatchEvent(
+                        new MouseEvent('contextmenu', { bubbles: true })
+                    );
+                    const wasOpen = !!document.querySelector('.hcg-popup');
+                    // The same element given a second menu, and one the user
+                    // detaches before the Grid goes away.
+                    grid.contextMenu.attach(second.element, { items });
+                    grid.contextMenu.attach(second.element, { items });
+                    grid.contextMenu.attach(detached.element, { items })();
+
+                    grid.destroy();
+
+                    return {
+                        wasOpen,
+                        elements: [first, second, detached].map((w): {
+                            added: string[], removed: string[]
+                        } => ({ added: w.added, removed: w.removed }))
+                    };
+                });
+
+                // A vacuous check otherwise: the menu has to have opened.
+                expect(listeners.wasOpen).toBe(true);
+
+                for (const element of listeners.elements) {
+                    expect(element.added).toEqual(
+                        expect.arrayContaining(['contextmenu', 'keydown'])
+                    );
+                    expect(element.removed).toEqual(element.added);
+                }
+
+                // Two menus on one element are two sets of listeners.
+                expect(listeners.elements[1].added).toHaveLength(4);
+
+                // The menu left open above went with the Grid.
+                await expect(page.locator('.hcg-popup')).toHaveCount(0);
+            }
+        );
+
+        test(
             'A menu outgrows the grid by default, and not when kept inside',
             async ({ page }) => {
                 const open = async (inside: boolean | undefined) => {

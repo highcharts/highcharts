@@ -68,6 +68,11 @@ class ContextMenu extends Menu {
     private cursorAnchorElement?: HTMLElement;
 
     /**
+     * Detachers of the elements `attach` gave the menu to.
+     */
+    private detachers = new Set<() => void>();
+
+    /**
      * Entries rendered on the next `renderContent` call.
      */
     private items: ResolvedMenuItem[] = [];
@@ -220,11 +225,26 @@ class ContextMenu extends Menu {
             (): boolean => resolveContextMenu(context, options).length > 0
         );
 
-        return (): void => {
+        const detach = (): void => {
             element.removeEventListener('contextmenu', onContextMenu);
             element.removeEventListener('keydown', onKeyDown);
             removeLongPress();
+            this.detachers.delete(detach);
         };
+
+        this.detachers.add(detach);
+
+        return detach;
+    }
+
+    /**
+     * Takes the menu back from every element `attach` gave it to.
+     */
+    public detachAll(): void {
+        // Copied to an array, because detaching mutates the set.
+        for (const detach of Array.from(this.detachers)) {
+            detach();
+        }
     }
 
     protected override get prefersPopover(): boolean {
