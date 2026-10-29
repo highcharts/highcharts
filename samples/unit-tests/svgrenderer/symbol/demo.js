@@ -55,7 +55,7 @@ QUnit.test('Arc', assert => {
     );
 });
 
-// Tests for #20585, #21701
+// Tests for #20585, #21701, #23601
 QUnit.test('Arc proximity', assert => {
     const ren = new Highcharts.Renderer(
         document.getElementById('container'),
@@ -63,7 +63,7 @@ QUnit.test('Arc proximity', assert => {
         400
     );
 
-    [0, 5000, 10000].forEach(x => {
+    [0, 5000, 10000, 32768, 65536, 401e3].forEach(x => {
 
         const circle = ren
             .symbol('circle', x, 100, 6, 6)
@@ -72,11 +72,24 @@ QUnit.test('Arc proximity', assert => {
             })
             .add();
 
+        const circleBig = ren
+            .symbol('circle', x, 100, 60, 60)
+            .attr({
+                fill: 'green'
+            })
+            .add();
+
         assert.close(
             circle.getBBox().width,
             6,
-            0.001,
-            `Circle should be rendered with correct width, x=${x}`
+            0.00001,
+            `Small circle should be rendered with correct width, x=${x}`
+        );
+        assert.close(
+            circleBig.getBBox().width,
+            60,
+            0.00001,
+            `Large circle should be rendered with correct width, x=${x}`
         );
     });
 });

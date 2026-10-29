@@ -325,12 +325,19 @@ function circle(
     w: number,
     h: number
 ): SVGPath {
-    // Return a full arc
-    return arc(x + w / 2, y + h / 2, w / 2, h / 2, {
-        start: Math.PI * 0.5,
-        end: Math.PI * 2.5,
-        open: false
-    });
+    const cx = x + w / 2,
+        rx = w / 2,
+        ry = h / 2;
+
+    // Draw two half arcs. A full arc needs its end point offset from the
+    // start point, and browsers lose that offset on large coordinates due
+    // to floating point errors (#21701, #23601).
+    return [
+        ['M', cx, y + h],
+        ['A', rx, ry, 0, 0, 1, cx, y],
+        ['A', rx, ry, 0, 0, 1, cx, y + h],
+        ['Z']
+    ];
 }
 
 /**
