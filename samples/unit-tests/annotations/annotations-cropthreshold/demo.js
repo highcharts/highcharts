@@ -155,10 +155,13 @@ QUnit.test(
         assert.strictEqual(
             annotationLabel.attr('y'),
             -9999,
-            'Label is placed outside of the chart'
+            'Series with marker - label should be placed outside of the chart'
         );
 
-        assert.notOk(annotationLabel.placed, 'Label.placed is set to false');
+        assert.notOk(
+            annotationLabel.placed,
+            'Series with marker - label.placed should be false'
+        );
 
         annotationLabel = chart.annotations[1].labels[0].graphic;
 
@@ -171,6 +174,54 @@ QUnit.test(
         assert.notOk(
             annotationLabel.placed,
             'For series without markers - label.placed is set to false'
+        );
+    }
+);
+
+QUnit.test(
+    'Series with cropThreshold, label initially outside',
+    assert => {
+        const chart = Highcharts.chart('container', {
+            series: [
+                {
+                    keys: ['y', 'id'],
+                    data: [
+                        1,
+                        [12, 'anno'],
+                        0,
+                        7,
+                        0,
+                        10,
+                        1,
+                        2,
+                        14,
+                        5,
+                        11
+                    ],
+                    cropThreshold: 1
+                }
+            ],
+
+            xAxis: {
+                min: 5
+            },
+
+            annotations: [
+                {
+                    labels: [
+                        {
+                            point: 'anno'
+                        }
+                    ]
+                }
+            ]
+        });
+        chart.xAxis[0].setExtremes(0);
+
+        assert.strictEqual(
+            typeof chart.annotations[0].labels[0].graphic,
+            'object',
+            'Label should be created when point is inside the plot area'
         );
     }
 );

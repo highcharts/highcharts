@@ -693,10 +693,9 @@ QUnit.test('Select and unselect', function (assert) {
     // scroll back
     axis.setExtremes(0, 10);
 
-    assert.strictEqual(
+    assert.notOk(
         series.points[0].selected,
-        false,
-        'Unselected point out of range (#6445)'
+        'Point out of range should be unselected (#6445)'
     );
 });
 

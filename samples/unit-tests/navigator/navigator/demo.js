@@ -263,6 +263,12 @@ QUnit.test('General Navigator tests', function (assert) {
     const before = eventCount(chart.series[0]);
     const beforeAxis = eventCount(chart.xAxis[0]);
 
+    assert.strictEqual(
+        chart.pointCount(),
+        3,
+        '#10296: Navigator should not count towards pointCount'
+    );
+
     chart.series[0].update();
 
     assert.strictEqual(

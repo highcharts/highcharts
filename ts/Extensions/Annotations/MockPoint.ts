@@ -370,7 +370,7 @@ class MockPoint {
             e = {
                 x: plotX,
                 y: plotY,
-                isInsidePlot: true,
+                isInsidePlot: defined(plotX) && defined(plotY),
                 options: {}
             };
 
