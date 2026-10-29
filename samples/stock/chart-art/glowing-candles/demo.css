@@ -1,0 +1,118 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+#container {
+    height: 600px;
+    min-width: 310px;
+    background:
+        radial-gradient(circle at 27.8% 52.6%, rgba(26, 5, 56, 0.31) 0%, transparent 54%),
+        radial-gradient(ellipse at 70.8% 56.6%, rgba(20, 44, 107, 0.24) 0%, transparent 53%),
+        radial-gradient(circle at 52.3% 57.5%, rgba(65, 26, 127, 0.49) 0%, transparent 58%),
+        radial-gradient(ellipse at 92% 58.1%, rgba(6, 15, 20, 0.14) 0%, transparent 66%),
+        #020617;
+}
+
+/* Let the container gradient show through the chart */
+.highcharts-background {
+    fill: transparent;
+}
+
+/* Dashed grid lines on both axes, fading out from the centre */
+.highcharts-xaxis-grid .highcharts-grid-line,
+.highcharts-yaxis-grid .highcharts-grid-line {
+    stroke: url(#grid);
+    stroke-width: 1px;
+    stroke-dasharray: 4 4;
+}
+
+.highcharts-markers.highcharts-sma-series {
+    filter: url(#neon);
+}
+
+.highcharts-sma-series .highcharts-graph {
+    stroke-width: 0.5px;
+    stroke: #d3ffbf;
+}
+
+.highcharts-markers.highcharts-sma-series .highcharts-point {
+    fill: #ebffe2;
+    stroke: #ebffe2;
+}
+
+.highcharts-candlestick-series .highcharts-point {
+    fill: none;
+    stroke: url(#candle-up);
+}
+
+.hifghcharts-candlestick-series {
+    filter: url(#candle-up-glow);
+}
+
+/*
+ * Sparkles
+ */
+.highcharts-sparkles {
+    pointer-events: none;
+}
+
+.highcharts-sma-sparkles {
+    filter: url(#neon);
+}
+
+.highcharts-candle-sparkles {
+    filter: url(#candle-up-glow);
+}
+
+.highcharts-sparkles.highcharts-candle-sparkles circle {
+    fill: #fed4ff;
+}
+
+.highcharts-sparkles circle {
+    fill: #ebffe2;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: sparkle var(--duration, 1s) ease-out forwards;
+}
+
+@keyframes sparkle {
+    from {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translate(var(--drift-x), var(--drift-y)) scale(0.3);
+    }
+}
+
+/*
+ * Controls
+*/
+#controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em 2em;
+    padding: 1em;
+}
+
+#controls fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    border: 1px solid var(--highcharts-neutral-color-20);
+}
+
+#controls label {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+#controls output {
+    min-width: 2em;
+}
