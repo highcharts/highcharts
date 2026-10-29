@@ -184,22 +184,15 @@ class TableEditingController {
     }
 
     /**
-     * Adds an empty row at the end of the table.
+     * Adds an empty row at the end of the table, which is the row the menu of
+     * a table holding none offers.
      */
     public async appendRow(): Promise<void> {
         const table = this.getDataTable();
 
-        if (!table) {
-            return;
+        if (table) {
+            await this.insertRow(table.getRowCount());
         }
-
-        table.setRows(
-            [this.getEmptyRow(table)],
-            table.getRowCount(),
-            true,
-            { fromGrid: true }
-        );
-        await this.updateRowsFromTable(table);
     }
 
     /**
@@ -294,16 +287,23 @@ class TableEditingController {
         context: TableEditingContext,
         offset: 0 | 1
     ): Promise<void> {
-        const table = this.getDataTable();
         const rowIndex = await this.getOriginalRowIndex(context.rowId);
 
-        if (!table || rowIndex === void 0) {
+        if (rowIndex !== void 0) {
+            await this.insertRow(rowIndex + offset);
+        }
+    }
+
+    private async insertRow(index: number): Promise<void> {
+        const table = this.getDataTable();
+
+        if (!table) {
             return;
         }
 
         table.setRows(
             [this.getEmptyRow(table)],
-            rowIndex + offset,
+            index,
             true,
             { fromGrid: true }
         );
