@@ -91,6 +91,35 @@ QUnit.test('Arc proximity', assert => {
             0.00001,
             `Large circle should be rendered with correct width, x=${x}`
         );
+
+        // Full ring, like a donut with one point or a pane background
+        [false, true].forEach(open => {
+            const ring = ren
+                    .symbol('arc', x + 30, 100, 30, 30, {
+                        start: -Math.PI / 2,
+                        end: Math.PI * 1.5,
+                        innerR: 15,
+                        open
+                    })
+                    .attr({
+                        fill: 'red'
+                    })
+                    .add(),
+                point = ren.box.createSVGPoint();
+
+            point.x = x + 30;
+            point.y = 100;
+            assert.notOk(
+                ring.element.isPointInFill(point),
+                `Full ring should keep its hole, x=${x}, open=${open}`
+            );
+
+            point.y = 78;
+            assert.ok(
+                ring.element.isPointInFill(point),
+                `Full ring should be filled, x=${x}, open=${open}`
+            );
+        });
     });
 });
 
