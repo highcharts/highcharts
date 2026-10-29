@@ -59,7 +59,7 @@
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
     "prepare": "husky install && npm run clean",
-    "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap",
+    "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap && npx playwright install",
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "tsx test/ts-node-unit-tests/bench.ts",
     "benchmark-compare": "tsx test/ts-node-unit-tests/benchmark-compare.ts",
