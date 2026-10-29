@@ -103,6 +103,35 @@ test.describe('Context menu long-press', () => {
     );
 
     test(
+        'A long press opens the menu of a table without rows',
+        async ({ page }) => {
+            await page.evaluate(async () => {
+                const container = document.createElement('div');
+                container.id = 'lp-empty';
+                document.body.appendChild(container);
+
+                await (window as any).Grid.grid(container, {
+                    data: { columns: { product: [] } },
+                    rendering: {
+                        table: {
+                            contextMenu: {
+                                items: [{ label: 'Body action' }]
+                            }
+                        }
+                    }
+                }, true);
+            });
+
+            await pressAndHold(page, '#lp-empty tbody');
+
+            await expect(page.locator('.hcg-popup')).toBeVisible();
+            await expect(page.locator('.hcg-menu-item')).toHaveText([
+                'Body action'
+            ]);
+        }
+    );
+
+    test(
         'A long press where no menu would open is left to the browser',
         async ({ page }) => {
             await page.evaluate(async () => {

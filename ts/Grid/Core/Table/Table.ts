@@ -257,10 +257,9 @@ class Table {
         this.removeLongPressContextMenu = addLongPressContextMenu(
             this.tableElement,
             (target): boolean => {
-                const cell = this.getTableCellFromTarget(target);
-                return !!cell && resolveContextMenu(
-                    getCellMenuContext(cell)
-                ).length > 0;
+                const context = this.getMenuContext(target);
+                return !!context &&
+                    resolveContextMenu(context).length > 0;
             }
         );
         document.addEventListener('focusin', this.onDocumentFocusIn, true);
@@ -371,6 +370,28 @@ class Table {
         }
 
         return cell as TableCell;
+    }
+
+    /**
+     * Returns the context of the menu the given part of the table belongs to,
+     * which is the menu of the cell under it, or the menu of the body itself
+     * where no cell is. Undefined outside the body, which keeps its own menus.
+     *
+     * @param target
+     * The element the press or the key landed on.
+     */
+    private getMenuContext(
+        target: EventTarget | null
+    ): MenuContext | undefined {
+        const cell = this.getTableCellFromTarget(target);
+
+        if (cell) {
+            return getCellMenuContext(cell);
+        }
+
+        const body = (target as HTMLElement)?.closest?.('tbody');
+
+        return body ? getTableMenuContext(this.grid, body) : void 0;
     }
 
     /**
@@ -781,17 +802,12 @@ class Table {
      * @param e Mouse event
      */
     private onCellContextMenu = (e: MouseEvent): void => {
-        const tableCell = this.getTableCellFromTarget(e.target);
-        const context: MenuContext = tableCell ?
-            getCellMenuContext(tableCell) :
-            getTableMenuContext(this);
-        const opened = this.grid.contextMenu.open(
-            context,
-            e.clientX,
-            e.clientY
-        );
+        const context = this.getMenuContext(e.target);
 
-        if (opened) {
+        if (
+            context &&
+            this.grid.contextMenu.open(context, e.clientX, e.clientY)
+        ) {
             e.preventDefault();
         }
     };
@@ -830,48 +846,40 @@ class Table {
     };
 
     /**
-     * Delegated keydown handler for cells.
+     * Delegated keydown handler for cells, and for the table body itself while
+     * it holds the tab stop.
+     *
      * @param e Keyboard event
      */
     private onCellKeyDown = (e: KeyboardEvent): void => {
         const cell = this.getCellFromElement(e.target);
-        const isContextMenuKey = (
-            e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
-        );
 
-        if (!cell) {
-            // The body holds the tab stop while it has no cell to focus, so
-            // that its menu is reachable without a pointer.
-            if (isContextMenuKey && e.target === this.tbodyElement) {
-                const rect = this.tbodyElement.getBoundingClientRect();
+        if (e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)) {
+            const context = this.getMenuContext(e.target);
+            const target = context?.target;
 
+            if (target) {
+                const isCell = target.type === 'cell';
+                const rect = (
+                    isCell ? target.cell.htmlElement : target.element
+                ).getBoundingClientRect();
+
+                // A cell's menu hangs under the cell, while the body's own
+                // menu has nothing to hang under and opens at its top.
                 if (this.grid.contextMenu.open(
-                    getTableMenuContext(this),
+                    context,
                     rect.left + 4,
-                    rect.top + 4
+                    isCell ? rect.bottom - 2 : rect.top + 4
                 )) {
                     e.preventDefault();
+                    e.stopPropagation();
+                    return;
                 }
             }
-            return;
         }
 
-        if (isContextMenuKey && 'column' in cell && 'row' in cell) {
-            const tableCell = cell as TableCell;
-            const rect = tableCell.htmlElement.getBoundingClientRect();
-            const opened = this.grid.contextMenu.open(
-                getCellMenuContext(tableCell),
-                rect.left + 4,
-                rect.bottom - 2
-            );
-            if (opened) {
-                e.preventDefault();
-                e.stopPropagation();
-                return;
-            }
-        }
-
-        (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
+        (cell as { onKeyDown(e: KeyboardEvent): void } | undefined)
+            ?.onKeyDown(e);
     };
 
     /**

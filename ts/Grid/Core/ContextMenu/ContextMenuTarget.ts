@@ -23,7 +23,6 @@
 
 import type Column from '../Table/Column';
 import type Grid from '../Grid';
-import type Table from '../Table/Table';
 import type TableCell from '../Table/Body/TableCell';
 import type TableRow from '../Table/Body/TableRow';
 
@@ -194,19 +193,23 @@ export function getCellMenuContext(
  * Builds the context of a menu opened on the table body rather than on one of
  * its cells.
  *
- * @param table
- * The table the menu opens on.
+ * @param grid
+ * The Grid the menu opens in.
+ *
+ * @param element
+ * The body element the menu opens on.
  *
  * @return
  * The menu context.
  */
 export function getTableMenuContext(
-    table: Table
+    grid: Grid,
+    element: HTMLElement
 ): MenuContext<TableMenuTarget> {
     return {
-        grid: table.grid,
+        grid,
         target: {
-            element: table.tbodyElement,
+            element,
             type: 'table'
         }
     };
