@@ -616,6 +616,47 @@ test.describe('Cell Context Menu', () => {
             await expect(page.locator('.hcg-popup')).toHaveCount(0);
         });
 
+        test('Empty table menu can be turned off and replaced', async ({ page }) => {
+            await page.evaluate(() => {
+                for (const id of ['cm-empty-off', 'cm-empty-own']) {
+                    document.getElementById(id)?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = id;
+                    document.body.appendChild(container);
+
+                    (window as any).Grid.grid(container, {
+                        data: {
+                            columns: {
+                                product: []
+                            }
+                        },
+                        rendering: {
+                            table: {
+                                contextMenu: id === 'cm-empty-off' ?
+                                    { enabled: false } :
+                                    { items: [{ label: 'Own action' }] }
+                            }
+                        },
+                        tableEditing: {
+                            enabled: true
+                        }
+                    });
+                }
+            });
+
+            await page.locator('#cm-empty-off tbody:not(.hcg-tbody-sticky)')
+                .click({ button: 'right' });
+
+            await expect(page.locator('.hcg-popup')).toHaveCount(0);
+
+            await page.locator('#cm-empty-own tbody:not(.hcg-tbody-sticky)')
+                .click({ button: 'right' });
+
+            await expect(page.locator('.hcg-popup').last())
+                .toHaveText('Own action');
+        });
+
         test('Table editing context menu actions add and delete columns', async ({ page }) => {
             await page.evaluate(() => {
                 const existing = document.getElementById('cm-edit-columns');

@@ -347,16 +347,17 @@ export function resolveContextMenu<T extends MenuTarget>(
     // callbacks for whoever wrote them; resolving treats all surfaces alike.
     const ctx = context as MenuContext;
 
-    // Only the cell menu keeps its options in the Grid options. A feature
-    // adding a surface of its own reads them wherever it put them and hands
-    // them in.
-    const options = (
-        surfaceOptions || (
-            ctx.target.type === 'cell' ?
-                ctx.target.column.options.cells?.contextMenu :
-                void 0
-        )
-    ) as ContextMenuOptions | undefined;
+    // The cell and the table menu keep their options in the Grid options, each
+    // next to the rest of what it belongs to. A feature adding a surface of its
+    // own reads them wherever it put them and hands them in.
+    const ownOptions = ctx.target.type === 'cell' ?
+        ctx.target.column.options.cells?.contextMenu :
+        ctx.target.type === 'table' ?
+            ctx.grid.options?.rendering?.table?.contextMenu :
+            void 0;
+
+    const options = (surfaceOptions || ownOptions) as
+        ContextMenuOptions | undefined;
 
     if (options?.enabled === false) {
         return [];

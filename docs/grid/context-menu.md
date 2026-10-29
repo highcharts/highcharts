@@ -17,7 +17,7 @@ button of your own acts on whatever you wrote it to.
 | Target | Opened on | Configured with |
 |---|---|---|
 | `cell` | A table body cell | `columnDefaults.cells.contextMenu`, or `columns[].cells.contextMenu` per column |
-| `table` | The table body next to its cells, which is all of it while the table holds no row | The [registered items](#registering-your-own-items) that apply to it |
+| `table` | The table body next to its cells, which is all of it while the table holds no row | `rendering.table.contextMenu` |
 | `element` | Any element you give a menu to | The options passed to [`grid.contextMenu.attach()`](#a-menu-on-an-element-of-your-own) |
 
 They all use the same items, the same registry and the same rendering. Only the
@@ -65,6 +65,11 @@ native menu explicitly.
 
 Use `contextMenu: { enabled: false }` to disable the Grid menu for a column,
 or globally via `columnDefaults`.
+
+The table body menu follows the same rules under `rendering.table.contextMenu`.
+Left alone, it holds the items features register for it, which in Grid Pro is
+table editing's `'addRow'`; `enabled: false` keeps the native menu over the
+body instead.
 
 ## Menu items
 
