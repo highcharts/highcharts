@@ -1340,15 +1340,23 @@ class Table {
     }
 
     /**
-     * Sets the focus anchor cell.
+     * Sets the focus anchor cell, which is the tab stop of the table body.
      *
      * @param cell
-     * The cell to set as the focus anchor cell.
+     * The cell to set as the focus anchor cell. Left out while the table holds
+     * no cell to take the tab stop, which hands it to the body element itself,
+     * so that the body's own context menu stays reachable by keyboard.
      */
-    public setFocusAnchorCell(cell: Cell): void {
+    public setFocusAnchorCell(cell?: Cell): void {
         this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
         this.focusAnchorCell = cell;
-        this.focusAnchorCell.htmlElement.setAttribute('tabindex', '0');
+
+        if (cell) {
+            cell.htmlElement.setAttribute('tabindex', '0');
+            this.tbodyElement.removeAttribute('tabindex');
+        } else {
+            this.tbodyElement.setAttribute('tabindex', '0');
+        }
     }
 
     /**

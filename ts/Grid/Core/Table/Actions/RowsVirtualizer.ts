@@ -525,15 +525,6 @@ class RowsVirtualizer {
 
             const rowCount = this.rowCount;
 
-            // A table without rows has no cell to focus, so the body itself
-            // takes the tab stop, which is what reaching its context menu by
-            // keyboard needs.
-            if (rowCount > 0) {
-                vp.tbodyElement.removeAttribute('tabindex');
-            } else {
-                vp.tbodyElement.setAttribute('tabindex', '0');
-            }
-
             if (rowCount === 0) {
                 if (vp.rows.length) {
                     for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
@@ -543,6 +534,9 @@ class RowsVirtualizer {
                 }
                 vp.tbodyElement.innerHTML = '';
                 this.rowCursor = 0;
+
+                // No cell left to anchor the focus on, so the body takes over.
+                vp.setFocusAnchorCell();
                 return;
             }
 
