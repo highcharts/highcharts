@@ -540,23 +540,16 @@ export class Exporting {
 
         try {
             for (const rule of Array.from(sheet.cssRules)) {
-                if (rule instanceof CSSImportRule) {
-                    try {
-                        const importedSheet =
-                            await Exporting.fetchCSS(rule.href);
-
-                        if (importedSheet) {
-                            await Exporting.handleStyleSheet(
-                                importedSheet,
-                                fontFaceRules,
-                                usedFontFamilies,
-                                svg,
-                                visited
-                            );
-                        }
-                    } catch {
-                        // Silently ignore CORS errors on imported stylesheets
-                    }
+                // Use the sheet loaded by the browser, as `rule.href` is
+                // relative to the importing sheet, not the page (#25422)
+                if (rule instanceof CSSImportRule && rule.styleSheet) {
+                    await Exporting.handleStyleSheet(
+                        rule.styleSheet,
+                        fontFaceRules,
+                        usedFontFamilies,
+                        svg,
+                        visited
+                    );
                 }
 
                 if (
