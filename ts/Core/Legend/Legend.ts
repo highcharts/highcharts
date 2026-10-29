@@ -49,7 +49,7 @@ const {
     composed,
     marginNames
 } = H;
-import LegendDefaults from './LegendDefaults.js';
+import legendDefaults from './LegendDefaults.js';
 import Series from '../Series/Series.js';
 import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
@@ -1967,7 +1967,7 @@ namespace Legend {
             });
 
             // Register defaults in a way that produces smaller bundle.
-            defaultOptions.legend = LegendDefaults;
+            defaultOptions.legend = legendDefaults;
         }
 
     }

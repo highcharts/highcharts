@@ -42,7 +42,7 @@ import type LegendOptions from './LegendOptions';
  *
  * @optionparent legend
  */
-const LegendDefaults: LegendOptions = {
+const legendDefaults: LegendOptions = {
 
     /**
      * The background color of the legend.
@@ -931,4 +931,4 @@ const LegendDefaults: LegendOptions = {
  *
  * */
 
-export default LegendDefaults;
+export default legendDefaults;
