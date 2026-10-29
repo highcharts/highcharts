@@ -181,6 +181,7 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      *
      * */
 
+    depth?: undefined;
     edgeColor?: undefined;
     edgeWidth?: undefined;
     groupZPadding?: undefined;
