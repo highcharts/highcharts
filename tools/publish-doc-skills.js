@@ -101,12 +101,12 @@ function sameSource(metadata, source) {
 
 function syncArtifact(artifact, destination, revision, yes) {
     const source = validateArtifact(artifact, revision);
-    const root = path.resolve(destination);
-    const input = path.resolve(artifact);
+    directory(path.resolve(destination));
+    const root = fs.realpathSync(path.resolve(destination));
+    const input = fs.realpathSync(path.resolve(artifact));
     if (root === input || root.startsWith(input + path.sep) || input.startsWith(root + path.sep)) {
         throw new Error('Artifact and destination must be separate directories.');
     }
-    directory(root);
     const skills = path.join(root, 'skills');
     if (fs.lstatSync(skills, { throwIfNoEntry: false })) {
         directory(skills);

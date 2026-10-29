@@ -150,8 +150,41 @@ test('invalid input leaves the existing distribution intact', t => {
     assert.throws(() => syncArtifact(artifact, path.dirname(artifact), revision, true), /separate directories/u);
 });
 
+test('rejects overlap through symlinked parents without changing the artifact', t => {
+    for (const [input, output] of [
+        ['destination/skills', 'alias/destination'],
+        ['alias/destination/skills', 'destination'],
+        ['destination/skills', 'alias/destination/skills'],
+        ['destination/skills', 'alias/destination/skills/highcharts-test']
+    ]) {
+        const { root, artifact, destination } = fixture(t);
+        const nested = path.join(destination, 'skills');
+        fs.renameSync(artifact, nested);
+        fs.symlinkSync(root, path.join(root, 'alias'), process.platform === 'win32' ? 'junction' : 'dir');
+        assert.throws(() => syncArtifact(path.join(root, input), path.join(root, output), revision, true),
+            /separate directories/u, `${input} -> ${output}`);
+        assert.deepEqual(validateArtifact(nested, revision).skills, ['highcharts-test']);
+        assert.equal(fs.readFileSync(path.join(nested, 'highcharts-test', 'references', 'docs', 'guide.md'), 'utf8'),
+            '# Guide\n');
+    }
+});
+
+test('synchronizes separate directories through symlinked parents', t => {
+    const { root, artifact, destination } = fixture(t);
+    const alias = path.join(root, 'alias');
+    fs.symlinkSync(root, alias, process.platform === 'win32' ? 'junction' : 'dir');
+    assert.equal(syncArtifact(path.join(alias, 'artifact'), path.join(alias, 'destination'), revision, true), true);
+    assert.deepEqual(validateArtifact(artifact, revision).skills, ['highcharts-test']);
+    assert.equal(fs.readFileSync(path.join(destination, 'skills', 'highcharts-test', 'references', 'docs', 'guide.md'), 'utf8'),
+        '# Guide\n');
+    assert.equal(syncArtifact(artifact, destination, revision, true), false);
+});
+
 test('rejects destination directory and metadata symlinks', t => {
     const { root, artifact, destination } = fixture(t);
+    const alias = path.join(root, 'alias');
+    fs.symlinkSync(destination, alias, process.platform === 'win32' ? 'junction' : 'dir');
+    assert.throws(() => syncArtifact(artifact, alias, revision, true), /directory/u);
     const outside = path.join(root, 'outside');
     fs.mkdirSync(outside);
     const managed = path.join(destination, 'skills');
