@@ -64,11 +64,11 @@ import {
 declare module './Chart/ChartBase'{
     interface ChartBase {
         cancelClick?: boolean;
-        dragStartX?: number;
-        dragStartY?: number;
         hoverPoint?: Point;
         hoverPoints?: Array<Point>;
         hoverSeries?: Series;
+        lastPanX?: number;
+        lastPanY?: number;
         mouseDownX?: number;
         mouseDownY?: number;
         mouseIsDown?: (boolean|string);
@@ -438,8 +438,8 @@ class Pointer {
     public drag(e: PointerEvent): void {
         const { chart } = this,
             {
-                mouseDownX = 0,
-                mouseDownY = 0
+                lastPanX = 0,
+                lastPanY = 0
             } = chart,
             chartOptions = chart.options,
             {
@@ -482,16 +482,16 @@ class Pointer {
             chartY = plotTop + plotHeight;
         }
 
-        // Determine if the mouse has moved more than 10px
+        // Determine if the mouse has moved more than 10px since the last pan
         this.hasDragged = Math.sqrt(
-            Math.pow(mouseDownX - chartX, 2) +
-            Math.pow(mouseDownY - chartY, 2)
+            Math.pow(lastPanX - chartX, 2) +
+            Math.pow(lastPanY - chartY, 2)
         );
 
         if (this.hasDragged > 10) {
             clickedInside = chart.isInsidePlot(
-                mouseDownX - plotLeft,
-                mouseDownY - plotTop,
+                lastPanX - plotLeft,
+                lastPanY - plotTop,
                 {
                     visiblePlotOnly: true
                 }
@@ -552,8 +552,8 @@ class Pointer {
         // Record the start position
         chart.mouseIsDown = e.type;
         chart.cancelClick = false;
-        chart.mouseDownX = chart.dragStartX = e.chartX;
-        chart.mouseDownY = chart.dragStartY = e.chartY;
+        chart.mouseDownX = chart.lastPanX = e.chartX;
+        chart.mouseDownY = chart.lastPanY = e.chartY;
     }
 
     /**
@@ -1401,7 +1401,7 @@ class Pointer {
         if (e.type === 'touchstart') {
             pointer.pinchDown = touches;
             pointer.res = true; // Reset on next move
-            chart.mouseDownX = e.chartX;
+            chart.mouseDownX = chart.lastPanX = e.chartX;
 
         // Optionally move the tooltip on touchmove
         } else if (followTouchMove) {

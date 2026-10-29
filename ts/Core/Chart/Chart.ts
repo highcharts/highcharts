@@ -4213,17 +4213,17 @@ class Chart {
 
         fireEvent(this, 'pan', { originalEvent: event }, (): void => {
             const {
-                dragStartX = 0, dragStartY = 0, mouseDownX = 0, mouseDownY = 0
+                lastPanX = 0, lastPanY = 0, mouseDownX = 0, mouseDownY = 0
             } = chart;
 
             chart.transform({
                 axes,
                 event,
                 // Zero-size boxes, like a one-finger touch pan
-                from: { x: dragStartX, y: dragStartY, width: 0, height: 0 },
+                from: { x: mouseDownX, y: mouseDownY, width: 0, height: 0 },
                 to: {
-                    x: dragStartX + event.chartX - mouseDownX,
-                    y: dragStartY + event.chartY - mouseDownY,
+                    x: mouseDownX + event.chartX - lastPanX,
+                    y: mouseDownY + event.chartY - lastPanY,
                     width: 0,
                     height: 0
                 },
@@ -4496,7 +4496,7 @@ class Chart {
                 }
 
                 if (event) {
-                    this[horiz ? 'mouseDownX' : 'mouseDownY'] =
+                    this[horiz ? 'lastPanX' : 'lastPanY'] =
                         event[horiz ? 'chartX' : 'chartY'];
                 }
             }

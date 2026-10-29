@@ -1019,5 +1019,13 @@ QUnit.test('Panning y-axes in multiple panes (#21809)', function (assert) {
         'Dragging into the pane gap and back should restore the extremes'
     );
 
+    controller.moveTo(x, y + 20);
+
+    assert.deepEqual(
+        [chart.mouseDownX, chart.mouseDownY],
+        [x, y].map(Math.round),
+        'The mouse down position should not change while panning'
+    );
+
     controller.mouseUp();
 });
