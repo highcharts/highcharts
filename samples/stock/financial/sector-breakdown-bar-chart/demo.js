@@ -1,3 +1,51 @@
+// Category names can be retrieved from the Morningstar Security Details API
+// dictionary, under "Data Points" section
+const globalStockSectorBreakdown = {
+    101: 'Basic Materials',
+    102: 'Consumer Cyclical',
+    103: 'Financial Services',
+    104: 'Real Estate',
+    205: 'Consumer Defensive',
+    206: 'Healthcare',
+    207: 'Utilities',
+    308: 'Communication Services',
+    309: 'Energy',
+    310: 'Industrials',
+    311: 'Technology'
+};
+
+// Parse data from a connector and return a chart-ready DataTable
+function buildDataTable(source) {
+    const valuesByType = (typeColumn, valueColumn) => source
+        .getRows(0, source.getRowCount(), [typeColumn, valueColumn])
+        .reduce((map, row) => {
+            if (row[0] !== undefined) {
+                map[row[0]] = row[1];
+            }
+            return map;
+        }, {});
+
+    const categoryByType = valuesByType('Type_EUCA000550', 'L_EUCA000550'),
+        targetByType = valuesByType('Type_F0GBR052QA', 'L_F0GBR052QA'),
+        name = [],
+        category = [],
+        target = [];
+
+    for (const [type, sector] of Object.entries(globalStockSectorBreakdown)) {
+        name.push(sector);
+        category.push(categoryByType[type] ?? '-');
+        target.push(targetByType[type] ?? '-');
+    }
+
+    return new Highcharts.DataTable({
+        columns: {
+            name,
+            category,
+            target
+        }
+    });
+}
+
 async function renderChart() {
 
     // Configure the connector
@@ -20,75 +68,7 @@ async function renderChart() {
         });
 
     await connector.load();
-
-    // Category names can be retrieved from the Morningstar Security Details API
-    // dictionary, under "Data Points" section
-    const globalStockSectorBreakdown = {
-        101: 'Basic Materials',
-        102: 'Consumer Cyclical',
-        103: 'Financial Services',
-        104: 'Real Estate',
-        205: 'Consumer Defensive',
-        206: 'Healthcare',
-        207: 'Utilities',
-        308: 'Communication Services',
-        309: 'Energy',
-        310: 'Industrials',
-        311: 'Technology'
-    };
-
-    // Parse data from two securities and return a Highcharts compatible array
-    const parseData = table => {
-        // Reduce callback for getting the right values in the right order
-        const reduceCallback = (obj, row) => {
-            if (row[0] !== undefined) {
-                obj[row[0]] = row[1];
-            }
-            return obj;
-        };
-
-        const category = [],
-            categoryData = table
-                .getRows(0, table.getRowCount(), [
-                    'Type_EUCA000550',
-                    'L_EUCA000550'
-                ])
-                .reduce(reduceCallback, {});
-
-        const target = [],
-            targetData = table
-                .getRows(0, table.getRowCount(), [
-                    'Type_F0GBR052QA',
-                    'L_F0GBR052QA'
-                ])
-                .reduce(reduceCallback, {});
-
-        let index = 0;
-        for (const [key, sector] of Object.entries(
-            globalStockSectorBreakdown
-        )) {
-            category.push({
-                name: sector,
-                x: index,
-                y: categoryData[key]
-            });
-
-            target.push({
-                name: sector,
-                x: index,
-                y: targetData[key]
-            });
-
-            index++;
-        }
-
-        return {
-            category,
-            target
-        };
-    };
-
-    const dataset = parseData(connector.getTable());
+    const dataTable = buildDataTable(connector.getTable());
 
     Highcharts.chart('container', {
         chart: {
@@ -99,24 +79,22 @@ async function renderChart() {
             margin: 30,
             align: 'left'
         },
+        dataTable,
         xAxis: [{
             grid: {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: dataset.target,
-            labels: {
-                format: '{value.name}'
-            }
+            categories: dataTable.getColumn('name')
         }, {
             grid: {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: dataset.target,
+            categories: dataTable.getColumn('target'),
             labels: {
                 format:
-                    '{#if (eq value.y undefined)}N/A{else}{value.y:.2f}%{/if}',
+                    '{#if (eq value "-")}N/A{else}{value:.2f}%{/if}',
                 align: 'right',
                 x: -5
             },
@@ -126,10 +104,10 @@ async function renderChart() {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: dataset.category,
+            categories: dataTable.getColumn('category'),
             labels: {
                 format:
-                    '{#if (eq value.y undefined)}N/A{else}{value.y:.2f}%{/if}',
+                    '{#if (eq value "-")}N/A{else}{value:.2f}%{/if}',
                 align: 'right',
                 x: -5
             },
@@ -163,12 +141,16 @@ async function renderChart() {
         },
         series: [{
             name: 'Category',
-            data: dataset.category,
-            color: '#E1E1E6'
+            color: '#E1E1E6',
+            dataMapping: {
+                y: 'category'
+            }
         }, {
             name: 'BlackRock Income and Growth Ord',
-            data: dataset.target,
-            color: '#274FE0'
+            color: '#274FE0',
+            dataMapping: {
+                y: 'target'
+            }
         }],
         responsive: {
             rules: [{

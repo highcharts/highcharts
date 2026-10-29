@@ -3,5 +3,7 @@
  authors:
    - Nancy Dillon
  requiresManualTesting: true
+ # CSP is disabled because this demo loads third-party assets (orbit.highsoftlabs.com, jsdelivr) that are blocked by the sample runner CSP.
+ applyCSP: false
  js_wrap: b
 ...

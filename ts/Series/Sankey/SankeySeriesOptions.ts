@@ -39,7 +39,7 @@ import type {
 } from '../../Core/Series/SeriesOptions';
 import type Templating from '../../Core/Templating';
 import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
-import type { DeepPartial } from '../../Shared/Types';
+import type { AnyRecord, DeepPartial } from '../../Shared/Types';
 import type { StateGenericOptions } from '../../Core/Series/StatesOptions';
 
 /* *
@@ -100,6 +100,17 @@ export interface SankeySeriesLevelOptions {
 }
 
 export interface SankeySeriesNodeOptions {
+
+    /**
+     * A reserved subspace to store options and values for customized
+     * functionality. Here you can add additional data for your own event
+     * callbacks and formatter callbacks.
+     *
+     * @since next
+     *
+     * @product highcharts
+     */
+    custom?: AnyRecord;
 
     /**
      * The color of the auto generated node.

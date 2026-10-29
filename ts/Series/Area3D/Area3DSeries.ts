@@ -145,3 +145,22 @@ const Area3DSeries = {
 
 /** @internal */
 export default Area3DSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * The z-axis offset of a 3D area series.
+ *
+ * @type      {number}
+ * @default   0
+ * @since     4.0
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @apioption plotOptions.area.depth
+ */
+
+''; // Keeps doclets above after transpilation

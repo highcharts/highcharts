@@ -95,6 +95,7 @@
     "@types/yargs": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "8.70.0",
     "@typescript-eslint/parser": "8.70.0",
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^5.1.1",
     "cloudflare": "^3.2.0",
