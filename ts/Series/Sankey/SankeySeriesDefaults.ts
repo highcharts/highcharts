@@ -471,10 +471,11 @@ const SankeySeriesDefaults: SankeySeriesOptions = {
  * A reserved subspace to store options and values for customized
  * functionality. Here you can add additional data for your own event
  * callbacks and formatter callbacks.
- * @apioption series.sankey.nodes.custom
+ *
  * @type      {Highcharts.Dictionary<*>}
- * @product   highcharts
  * @since     next
+ * @product   highcharts
+ * @apioption series.sankey.nodes.custom
  */
 
 /**
