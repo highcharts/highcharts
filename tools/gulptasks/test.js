@@ -21,7 +21,7 @@ const CONFIGURATION_FILE = path.join(
     BASE, 'node_modules', '_gulptasks_test.json'
 );
 
-const JS_DIRECTORY = path.join(BASE, 'js');
+const TS_DIRECTORY = path.join(BASE, 'ts');
 
 const KARMA_CONFIG_FILE = path.join(BASE, 'test', 'karma-conf.js');
 
@@ -343,7 +343,7 @@ specified by config.imageCapture.resultsOutputPath.
     const runConfig = {
         configFile,
         codeDirectory: CODE_DIRECTORY,
-        jsDirectory: JS_DIRECTORY,
+        tsDirectory: TS_DIRECTORY,
         testsDirectory: TESTS_DIRECTORY,
         project: projectParam
     };
