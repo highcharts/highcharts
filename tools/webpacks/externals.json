@@ -141,6 +141,22 @@
     },
     {
         "files": [
+            "Data/DataTableCore"
+        ],
+        "included": [],
+        "namespacePath": ".{name}"
+    },
+    {
+        "files": [
+            "Data/DataTable"
+        ],
+        "included": [
+            "modules/data-tools"
+        ],
+        "namespacePath": ".{name}"
+    },
+    {
+        "files": [
             "Series/Area/AreaSeries"
         ],
         "included": [],
