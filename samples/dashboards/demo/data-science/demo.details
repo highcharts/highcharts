@@ -1,0 +1,11 @@
+---
+name: Data-science dashboard
+authors:
+  - Tord Vikestad
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - Advanced:
+        priority: 15
+...
