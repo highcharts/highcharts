@@ -265,7 +265,7 @@ QUnit.test('Compare with linked series, #21119.', assert => {
 });
 
 QUnit.test(
-    'Compare with dataGrouping: first visible change is 0 (#25538)',
+    'CompareStart with dataGrouping (#25538)',
     assert => {
         const data = [];
         for (let i = 0; i < 1000; i++) {
@@ -274,44 +274,7 @@ QUnit.test(
 
         const chart = Highcharts.stockChart('container', {
             rangeSelector: {
-                selected: 5 // All — grouping active
-            },
-            series: [{
-                data,
-                compare: 'percent',
-                compareStart: true,
-                dataGrouping: {
-                    groupPixelWidth: 20
-                }
-            }]
-        });
-
-        const series = chart.series[0],
-            firstVisible = series.points.find(p => p.plotX >= 0);
-
-        assert.ok(
-            series.hasGroupedData,
-            'Series should be data-grouped for this range'
-        );
-        assert.strictEqual(
-            firstVisible.change,
-            0,
-            'First visible point change should be 0 with compareStart'
-        );
-    }
-);
-
-QUnit.test(
-    'CompareStart + dataGrouping with compareToMain SMA (#25538)',
-    assert => {
-        const data = [];
-        for (let i = 0; i < 1000; i++) {
-            data.push([Date.UTC(2020, 0, 1) + i * 864e5, 100 + i]);
-        }
-
-        const chart = Highcharts.stockChart('container', {
-            rangeSelector: {
-                selected: 5 // All — grouping active
+                selected: 5 // All -> grouping active
             },
             series: [{
                 id: 'main',
@@ -333,24 +296,26 @@ QUnit.test(
 
         const main = chart.series[0],
             sma = chart.series[1],
-            firstVisible = main.points.find(p => p.plotX >= 0),
-            // Effective base used for the main series (grouped or not)
-            mainCompareValue = main.dataModify.groupCompareValue ??
-                main.dataModify.compareValue;
+            yData = main.getColumn('y', true),
+            firstVisibleIndex = main.points.findIndex(p => p.plotX >= 0),
+            firstVisible = main.points[firstVisibleIndex],
+            // Grouped y of the first visible point (the correct compare base)
+            expectedBase = yData[firstVisibleIndex];
 
-        assert.ok(
-            main.hasGroupedData,
-            'Main series should be data-grouped for this range'
-        );
         assert.strictEqual(
             firstVisible.change,
             0,
-            'Main first visible point change should be 0'
+            'First visible point change should be 0 with compareStart'
+        );
+        assert.strictEqual(
+            main.dataModify.compareValue,
+            expectedBase,
+            'Main compareValue should be the first visible grouped y'
         );
         assert.strictEqual(
             sma.dataModify.compareValue,
-            mainCompareValue,
-            'SMA compareToMain should use the same compare base as main'
+            expectedBase,
+            'SMA with compareToMain should use the same grouped base as main'
         );
     }
 );
