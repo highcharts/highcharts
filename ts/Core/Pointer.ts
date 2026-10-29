@@ -722,6 +722,8 @@ class Pointer {
 
             if (// Check that we actually found a point on the series.
                 isObject(point, true) && point.series &&
+                // Skip points that are condemned for removal (#25063)
+                !point.condemned &&
                 // Use the new point if it is closer.
                 (!isObject(closest, true) ||
                 (sort(closest as any, point as any) > 0))
@@ -876,92 +878,83 @@ class Pointer {
         e?: PointerEvent
     ): Pointer.HoverDataObject {
         const hoverPoints = [] as Array<Point>,
-            useExisting = !!(isDirectTouch && existingHoverPoint),
-            filter = function (s: Series): boolean {
-                return (
-                    s.visible &&
-                    !(!shared && s.directTouch) && // #3821
-                    (s.options.enableMouseTracking ?? true)
-                );
-            };
-
-        let hoverSeries: Series = existingHoverSeries as any,
-            // Which series to look in for the hover point
-            searchSeries,
+            filter = (s: Series): boolean => (
+                s.visible &&
+                !(!shared && s.directTouch) && // #3821
+                (s.options.enableMouseTracking ?? true)
+            ),
             // Parameters needed for beforeGetHoverData event.
             eventArgs: Pointer.EventArgsObject = {
-                chartX: e ? e.chartX : void 0,
-                chartY: e ? e.chartY : void 0,
-                shared: shared
+                chartX: e?.chartX,
+                chartY: e?.chartY,
+                shared
             };
 
         // Find chart.hoverPane and update filter method in polar.
         fireEvent(this, 'beforeGetHoverData', eventArgs);
 
-        const notSticky = hoverSeries && !hoverSeries.stickyTracking;
-
-        searchSeries = notSticky ?
-            // Only search on hovered series if it has stickyTracking false
-            [hoverSeries as any] :
-            // Filter what series to look in.
-            series.filter(
-                (s): boolean => s.stickyTracking &&
-                (eventArgs.filter || filter)(s)
-            );
-
-        // Use existing hovered point or find the one closest to coordinates.
-        const hoverPoint = useExisting || !e ?
+        // Use the existing point, unless it has been removed (#25063)
+        let hoverPoint = existingHoverPoint?.series &&
+            !existingHoverPoint.condemned ?
             existingHoverPoint :
-            this.findNearestKDPoint(searchSeries, shared, e) as any;
+            void 0;
 
-        // Assign hover series
-        hoverSeries = hoverPoint?.series;
+        // Find the closest point, unless the pointer touches the existing one
+        if (e && !(isDirectTouch && hoverPoint)) {
+            hoverPoint = this.findNearestKDPoint(
+                // Only search the hovered series if it has stickyTracking false
+                existingHoverSeries && !existingHoverSeries.stickyTracking ?
+                    [existingHoverSeries] :
+                    series.filter((s): boolean => (
+                        s.stickyTracking && (eventArgs.filter || filter)(s)
+                    )),
+                shared,
+                e
+            );
+        }
 
-        // If we have a hoverPoint, assign hoverPoints.
         if (hoverPoint) {
             // When tooltip is shared, it displays more than one point
-            if (shared && !hoverSeries.noSharedTooltip) {
-                searchSeries = series.filter(function (s): boolean {
-                    return eventArgs.filter ?
-                        eventArgs.filter(s) : filter(s) && !s.noSharedTooltip;
-                });
+            if (shared && !hoverPoint.series.noSharedTooltip) {
+                const { x } = hoverPoint;
 
                 // Get all points with the same x value as the hoverPoint
-                searchSeries.forEach(function (s): any {
-                    const nullInteraction = s.options?.nullInteraction;
-                    let point = find(s.points, function (p: Point): boolean {
-                        return (
-                            p.x === hoverPoint.x && (
-                                !p.isNull ||
-                                !!nullInteraction
-                            )
-                        );
-                    });
+                for (const s of series) {
+                    if (
+                        eventArgs.filter ?
+                            eventArgs.filter(s) :
+                            filter(s) && !s.noSharedTooltip
+                    ) {
+                        const nullInteraction = s.options?.nullInteraction;
+                        let point = find(s.points, (p): boolean => (
+                            p.x === x &&
+                            !p.condemned && // #25063
+                            (!p.isNull || !!nullInteraction)
+                        ));
 
-                    if (isObject(point)) {
-                        /*
-                        * Boost returns a minimal point. Convert it to a usable
-                        * point for tooltip and states.
-                        */
-                        if (s.boosted && s.boost) {
-                            point = s.boost.getPoint(point);
+                        if (isObject(point)) {
+                            // Boost returns a minimal point. Convert it to a
+                            // usable point for tooltip and states.
+                            if (s.boosted && s.boost) {
+                                point = s.boost.getPoint(point);
+                            }
+                            hoverPoints.push(point);
                         }
-                        hoverPoints.push(point);
                     }
-                });
+                }
             } else {
                 hoverPoints.push(hoverPoint);
             }
         }
 
         // Check whether the hoverPoint is inside pane we are hovering over.
-        eventArgs = { hoverPoint: hoverPoint };
-        fireEvent(this, 'afterGetHoverData', eventArgs);
+        const afterArgs: Pointer.EventArgsObject = { hoverPoint };
+        fireEvent(this, 'afterGetHoverData', afterArgs);
 
         return {
-            hoverPoint: eventArgs.hoverPoint,
-            hoverSeries: hoverSeries,
-            hoverPoints: hoverPoints
+            hoverPoint: afterArgs.hoverPoint,
+            hoverSeries: hoverPoint?.series as Series,
+            hoverPoints
         };
     }
 
@@ -1793,8 +1786,9 @@ class Pointer {
                 chart.hoverPoint.firePointEvent('mouseOut');
             }
 
-            // Hover point may have been destroyed in the event handlers (#7127)
-            if (!hoverPoint.series) {
+            // Hover point may have been destroyed (#7127) or condemned (#25063)
+            // in the event handlers.
+            if (!hoverPoint.series || hoverPoint.condemned) {
                 return;
             }
 
