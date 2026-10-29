@@ -33,15 +33,9 @@ async function testCypress() {
     if (product.toLowerCase() === 'dashboards') {
         await processLib.exec('npx gulp scripts --product Dashboards');
         await processLib.exec('npx gulp scripts --product Grid');
-    } else if (product.toLowerCase() === 'dashboards-grid') {
-        // Build both Dashboards and Grid, since these tests require both
-        await processLib.exec('npx gulp scripts --product Dashboards');
-        await processLib.exec('npx gulp scripts --product Grid');
     }
 
-    const configFile = argv.demos ?
-        path.join('test', 'cypress', product, 'demos.config.mjs') :
-        path.join('test', 'cypress', product, 'config.mjs');
+    const configFile = path.join('test', 'cypress', product, 'config.mjs');
 
     await processLib.exec(
         'npx cypress run --config-file ' + configFile

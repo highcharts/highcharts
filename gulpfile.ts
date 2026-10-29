@@ -53,7 +53,6 @@ Gulp.registry(new GulpForwardReference());
     'generate-samples',
     'grid/api-docs',
     'grid/deprecated-options',
-    'grid/cypress',
     'jsdoc',
     'jsdoc-classes',
     'jsdoc-clean',

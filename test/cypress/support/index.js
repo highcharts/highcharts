@@ -194,21 +194,3 @@ Cypress.Commands.add('dropComponent', (elementName) => {
     cy.get(elementName).first().trigger('mousemove', 'right', {force: true});
     cy.get(elementName).first().trigger('mouseup', 'right', {force: true});
 });
-
-Cypress.Commands.add('grid', () =>
-    cy.window().its('Grid.grids').should('have.length.gte', 1).then(grids => {
-        const [grid] = grids;
-        return grid;
-    })
-);
-
-Cypress.Commands.add('editGridCell', (rowIndex, columnId, newValue) => {
-    cy.get(
-        `tr[data-row-index="${rowIndex}"] ` +
-        `.hcg-cell[data-column-id="${columnId}"]`
-    )
-        .dblclick()
-        .find('input')
-        .clear()
-        .type(`${newValue}{enter}`);
-});

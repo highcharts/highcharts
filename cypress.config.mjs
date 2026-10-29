@@ -9,7 +9,7 @@ for (const product of getProducts()) {
             products.add('dashboards');
             continue;
         case 'Grid':
-            products.add('grid');
+            // Grid tests run in Playwright
             continue;
         default:
             products.add('highcharts');

@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Grid Pro - grid events', () => {
@@ -131,6 +132,32 @@ test.describe('Grid Pro - cell and column events', () => {
         const weightCell = page.locator('.hcg-row[data-row-index="1"] > td[data-column-id="weight"]');
         await weightCell.dblclick({ force: true });
         await expect(page.locator('#cellDblClick')).toHaveValue('cellDblClickColumnOption');
+    });
+
+    test('Cell events should fire from nested elements', async ({ page }) => {
+        const weightCell = page.locator('.hcg-row[data-row-index="0"] > td[data-column-id="weight"]');
+        await weightCell.dblclick();
+        const weightEditor = weightCell.locator('input');
+        await expect(weightEditor).toBeVisible();
+
+        const resetValue = (selector: string) => page.locator(selector)
+            .evaluate((el: HTMLInputElement) => {
+                el.value = 'reset';
+            });
+
+        await resetValue('#cellClick');
+        await weightEditor.click();
+        await expect(page.locator('#cellClick')).toHaveValue('cellClickColumnOption');
+
+        await resetValue('#cellMouseOver');
+        await weightEditor.dispatchEvent('mouseover');
+        await expect(page.locator('#cellMouseOver')).toHaveValue('cellMouseOverColumnOption');
+
+        await resetValue('#cellMouseOut');
+        await weightEditor.dispatchEvent('mouseout');
+        await expect(page.locator('#cellMouseOut')).toHaveValue('cellMouseOutColumnOption');
+
+        await weightEditor.press('Enter');
     });
 
     test('AfterRender event', async ({ page }) => {
@@ -268,5 +295,71 @@ test.describe('Grid Pro - cell and column events', () => {
         await expect(weightInput).toHaveValue('100');
         await expect(page.locator('#beforeColumnFiltering')).toHaveValue('beforeFilterColumnOption');
         await expect(page.locator('#afterColumnFiltering')).toHaveValue('afterFilterColumnOption');
+    });
+});
+
+async function scrollToRow(page: Page, rowIndex: number) {
+    await page.evaluate(rowIndex => {
+        const { viewport } = (window as any).grid;
+        viewport.tbodyElement.scrollTo(
+            0,
+            rowIndex * viewport.rowsVirtualizer.defaultRowHeight
+        );
+    }, rowIndex);
+    await expect(page.locator(`.hcg-row[data-row-index="${rowIndex}"]`)).toBeAttached();
+}
+
+async function resetTrackers(page: Page) {
+    for (const selector of ['#cellClick', '#lastClickedRow']) {
+        await page.locator(selector).evaluate((el: HTMLInputElement) => {
+            el.value = '';
+        });
+    }
+}
+
+test.describe('Grid Pro - virtualization and delegated events', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('grid-pro/e2e/virtualization-events');
+    });
+
+    test('Events work on initially visible rows', async ({ page }) => {
+        // Click a cell in the first visible row
+        await page.locator('.hcg-row[data-row-index="0"] > td[data-column-id="product"]')
+            .click();
+        await expect(page.locator('#cellClick')).toHaveValue('clicked');
+        await expect(page.locator('#lastClickedRow')).toHaveValue('0');
+
+        // Mouseover should work
+        await page.locator('.hcg-row[data-row-index="2"] > td[data-column-id="product"]')
+            .hover();
+        await expect(page.locator('#cellMouseOver')).toHaveValue('row-2');
+    });
+
+    test('Events work after scrolling to new rows', async ({ page }) => {
+        await scrollToRow(page, 80);
+        await resetTrackers(page);
+
+        // Click a cell that was scrolled into view
+        await page.locator('.hcg-row[data-row-index="80"] > td[data-column-id="product"]')
+            .click();
+        await expect(page.locator('#cellClick')).toHaveValue('clicked');
+        await expect(page.locator('#lastClickedRow')).toHaveValue('80');
+
+        // Mouseover should work on scrolled rows
+        await page.locator('.hcg-row[data-row-index="82"] > td[data-column-id="product"]')
+            .hover();
+        await expect(page.locator('#cellMouseOver')).toHaveValue('row-82');
+    });
+
+    test('Events work after scrolling back to top', async ({ page }) => {
+        await scrollToRow(page, 80);
+        await scrollToRow(page, 0);
+        await resetTrackers(page);
+
+        // Events should still work on re-rendered rows
+        await page.locator('.hcg-row[data-row-index="1"] > td[data-column-id="product"]')
+            .click();
+        await expect(page.locator('#cellClick')).toHaveValue('clicked');
+        await expect(page.locator('#lastClickedRow')).toHaveValue('1');
     });
 });

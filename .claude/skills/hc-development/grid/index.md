@@ -41,7 +41,7 @@ If a Pro feature needs Core to behave differently, fire an event in Core and han
 - One file: `npx playwright test tests/grid/shared/<file>.spec.ts --project=grid-shared` (or `grid-lite`, `grid-pro`). The setup projects rebuild Grid when sources changed; the Grid Pro setup also builds Highcharts, for sparklines.
 - All: `npm run gtest`. Node unit tests: `test/ts-node-unit-tests/tests/Grid/`, run by `npm run test-node`.
 - The Dashboards Grid component uses Grid APIs at runtime ([list](../shared.md#apis-used-across-products-at-runtime)). After changing one, also run `npm run dtest`.
-- `test/cypress/grid/` is legacy; CI runs only its Lighthouse tests. Add tests to Playwright.
+- `test/cypress/grid/` holds only the Lighthouse test. All other Grid tests are in Playwright.
 
 ### Samples and docs
 
