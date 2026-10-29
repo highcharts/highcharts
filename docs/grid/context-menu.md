@@ -252,9 +252,10 @@ The target is what the menu was opened on: the `TableCell` for a cell menu,
 and the element itself for a menu on the table body or on an attached element.
 For Highcharts-style callbacks it is also bound to `this`.
 
-The context carries `grid` and `target`. On a cell menu the target holds
-`cell`, `column` and `row`; on a table or an attached one it holds `element`,
-which is the `tbody` for the table menu. Its `type` says which.
+The context carries `grid`, `target` and the `options` the menu was configured
+with. On a cell menu the target holds `cell`, `column` and `row`; on a table or
+an attached one it holds `element`, which is the `tbody` for the table menu. Its
+`type` says which.
 
 ## Menus and the Grid's edges
 

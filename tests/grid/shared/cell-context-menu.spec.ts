@@ -1644,8 +1644,8 @@ test.describe('Cell Context Menu', () => {
             'A feature can open a menu on a surface of its own',
             async ({ page }) => {
                 // What a composition would do: listen where the element is
-                // built, then hand `open` a target of its own. No Core
-                // change, and no registered item involved.
+                // built, then hand `open` a context of its own, options and
+                // all. No Core change, and no registered item involved.
                 await page.evaluate(async () => {
                     document.getElementById('cm-surface')?.remove();
 
@@ -1663,6 +1663,16 @@ test.describe('Cell Context Menu', () => {
                         const opened = grid.contextMenu.open(
                             {
                                 grid,
+                                options: {
+                                    items: [{
+                                        label: 'Sort this column',
+                                        onClick: target => {
+                                            target.htmlElement.setAttribute(
+                                                'data-acted', 'yes'
+                                            );
+                                        }
+                                    }]
+                                },
                                 target: {
                                     type: 'header',
                                     cell: { htmlElement: header },
@@ -1670,17 +1680,7 @@ test.describe('Cell Context Menu', () => {
                                 }
                             },
                             e.clientX,
-                            e.clientY,
-                            {
-                                items: [{
-                                    label: 'Sort this column',
-                                    onClick: target => {
-                                        target.htmlElement.setAttribute(
-                                            'data-acted', 'yes'
-                                        );
-                                    }
-                                }]
-                            }
+                            e.clientY
                         );
 
                         if (opened) {

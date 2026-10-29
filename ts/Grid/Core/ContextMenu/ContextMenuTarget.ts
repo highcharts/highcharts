@@ -22,6 +22,7 @@
  * */
 
 import type Column from '../Table/Column';
+import type { ContextMenuOptions } from './ContextMenuOptions';
 import type Grid from '../Grid';
 import type TableCell from '../Table/Body/TableCell';
 import type TableRow from '../Table/Body/TableRow';
@@ -155,6 +156,17 @@ export interface MenuContext<T extends MenuTarget = MenuTarget> {
     grid: Grid;
 
     /**
+     * The menu as it was configured, read where the surface keeps it. Left out
+     * by a surface that configures nothing, which leaves the registered items
+     * to make the menu.
+     *
+     * Kept widened, because a context narrowed to one surface has to stay
+     * assignable to a context of any, and the options carry callbacks that
+     * take the context itself.
+     */
+    options?: ContextMenuOptions;
+
+    /**
      * What the menu was opened on.
      */
     target: T;
@@ -180,6 +192,7 @@ export function getCellMenuContext(
 ): MenuContext<CellMenuTarget> {
     return {
         grid: cell.row.viewport.grid,
+        options: cell.column.options.cells?.contextMenu as ContextMenuOptions,
         target: {
             cell,
             column: cell.column,
@@ -208,6 +221,8 @@ export function getTableMenuContext(
 ): MenuContext<TableMenuTarget> {
     return {
         grid,
+        options: grid.options?.rendering?.table?.contextMenu as
+            ContextMenuOptions,
         target: {
             element,
             type: 'table'
