@@ -492,6 +492,171 @@ test.describe('Cell Context Menu', () => {
             });
         });
 
+        test('Table editing adds the first row from the empty table menu', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-empty-table');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-empty-table';
+                document.body.appendChild(container);
+
+                (window as any).cmEmptyTableGrid = (window as any).Grid.grid(
+                    container,
+                    {
+                        data: {
+                            idColumn: 'id',
+                            columns: {
+                                id: [],
+                                product: []
+                            }
+                        },
+                        tableEditing: {
+                            enabled: true
+                        }
+                    }
+                );
+            });
+
+            const body = page.locator(
+                '#cm-empty-table tbody:not(.hcg-tbody-sticky)'
+            );
+            await expect(body).toBeVisible();
+            await expect(page.locator('#cm-empty-table tbody tr'))
+                .toHaveCount(0);
+
+            await body.click({ button: 'right' });
+
+            const popup = page.locator('.hcg-popup').last();
+            await expect(popup).toContainText('Add row');
+
+            await page.locator('.hcg-menu-item', { hasText: 'Add row' })
+                .last()
+                .click();
+
+            await expect(body.locator('tr')).toHaveCount(1);
+
+            const state = await page.evaluate(() => {
+                const table = (window as any).cmEmptyTableGrid
+                    .dataProvider
+                    .getDataTable();
+
+                return {
+                    rowCount: table.getRowCount(),
+                    row: table.getRow(0, ['id', 'product'])
+                };
+            });
+
+            expect(state).toEqual({
+                rowCount: 1,
+                row: ['row1', null]
+            });
+
+            // The body gives up its tab stop once it holds a cell to focus.
+            await expect(body).not.toHaveAttribute('tabindex', '0');
+        });
+
+        test('Empty table menu opens with the context menu key', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-empty-keyboard');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-empty-keyboard';
+                document.body.appendChild(container);
+
+                (window as any).Grid.grid(container, {
+                    data: {
+                        columns: {
+                            product: []
+                        }
+                    },
+                    tableEditing: {
+                        enabled: true
+                    }
+                });
+            });
+
+            const body = page.locator(
+                '#cm-empty-keyboard tbody:not(.hcg-tbody-sticky)'
+            );
+            await expect(body).toHaveAttribute('tabindex', '0');
+
+            await body.focus();
+            await body.press('Shift+F10');
+
+            await expect(page.locator('.hcg-popup').last())
+                .toContainText('Add row');
+        });
+
+        test('Empty table keeps the native menu without table editing', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-empty-plain');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-empty-plain';
+                document.body.appendChild(container);
+
+                (window as any).Grid.grid(container, {
+                    data: {
+                        columns: {
+                            product: []
+                        }
+                    }
+                });
+            });
+
+            const body = page.locator(
+                '#cm-empty-plain tbody:not(.hcg-tbody-sticky)'
+            );
+            await expect(body).toBeVisible();
+            await body.click({ button: 'right' });
+
+            await expect(page.locator('.hcg-popup')).toHaveCount(0);
+        });
+
+        test('Empty table menu can be turned off and replaced', async ({ page }) => {
+            await page.evaluate(() => {
+                for (const id of ['cm-empty-off', 'cm-empty-own']) {
+                    document.getElementById(id)?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = id;
+                    document.body.appendChild(container);
+
+                    (window as any).Grid.grid(container, {
+                        data: {
+                            columns: {
+                                product: []
+                            }
+                        },
+                        rendering: {
+                            table: {
+                                contextMenu: id === 'cm-empty-off' ?
+                                    { enabled: false } :
+                                    { items: [{ label: 'Own action' }] }
+                            }
+                        },
+                        tableEditing: {
+                            enabled: true
+                        }
+                    });
+                }
+            });
+
+            await page.locator('#cm-empty-off tbody:not(.hcg-tbody-sticky)')
+                .click({ button: 'right' });
+
+            await expect(page.locator('.hcg-popup')).toHaveCount(0);
+
+            await page.locator('#cm-empty-own tbody:not(.hcg-tbody-sticky)')
+                .click({ button: 'right' });
+
+            await expect(page.locator('.hcg-popup').last())
+                .toHaveText('Own action');
+        });
+
         test('Table editing context menu actions add and delete columns', async ({ page }) => {
             await page.evaluate(() => {
                 const existing = document.getElementById('cm-edit-columns');
@@ -1479,8 +1644,8 @@ test.describe('Cell Context Menu', () => {
             'A feature can open a menu on a surface of its own',
             async ({ page }) => {
                 // What a composition would do: listen where the element is
-                // built, then hand `open` a target of its own. No Core
-                // change, and no registered item involved.
+                // built, then hand `open` a context of its own, options and
+                // all. No Core change, and no registered item involved.
                 await page.evaluate(async () => {
                     document.getElementById('cm-surface')?.remove();
 
@@ -1498,6 +1663,16 @@ test.describe('Cell Context Menu', () => {
                         const opened = grid.contextMenu.open(
                             {
                                 grid,
+                                options: {
+                                    items: [{
+                                        label: 'Sort this column',
+                                        onClick: target => {
+                                            target.htmlElement.setAttribute(
+                                                'data-acted', 'yes'
+                                            );
+                                        }
+                                    }]
+                                },
                                 target: {
                                     type: 'header',
                                     cell: { htmlElement: header },
@@ -1505,17 +1680,7 @@ test.describe('Cell Context Menu', () => {
                                 }
                             },
                             e.clientX,
-                            e.clientY,
-                            {
-                                items: [{
-                                    label: 'Sort this column',
-                                    onClick: target => {
-                                        target.htmlElement.setAttribute(
-                                            'data-acted', 'yes'
-                                        );
-                                    }
-                                }]
-                            }
+                            e.clientY
                         );
 
                         if (opened) {

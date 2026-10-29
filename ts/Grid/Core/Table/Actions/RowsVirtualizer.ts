@@ -524,6 +524,7 @@ class RowsVirtualizer {
             await this.updateGridMetrics();
 
             const rowCount = this.rowCount;
+
             if (rowCount === 0) {
                 if (vp.rows.length) {
                     for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
@@ -533,6 +534,9 @@ class RowsVirtualizer {
                 }
                 vp.tbodyElement.innerHTML = '';
                 this.rowCursor = 0;
+
+                // No cell left to anchor the focus on, so the body takes over.
+                vp.setFocusAnchorCell();
                 return;
             }
 

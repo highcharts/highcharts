@@ -22,7 +22,6 @@
  * */
 
 import type {
-    ContextMenuOptions,
     MenuItemId,
     MenuItemOptions,
     MenuItemResolvable
@@ -330,33 +329,20 @@ function resolveItems(
  * Resolves the items of one context menu.
  *
  * @param context
- * Context the menu was opened in.
- *
- * @param surfaceOptions
- * Options to use. Left out for a surface that keeps them in the Grid options.
+ * Context the menu was opened in, which carries the options of the surface it
+ * was opened on.
  *
  * @return
  * The resolved entries, empty when no menu should open and the native browser
  * menu should be left alone.
  */
 export function resolveContextMenu<T extends MenuTarget>(
-    context: MenuContext<T>,
-    surfaceOptions?: ContextMenuOptions<T>
+    context: MenuContext<T>
 ): ResolvedMenuItem[] {
-    // Widened here and nowhere else. The target type only ever narrowed the
-    // callbacks for whoever wrote them; resolving treats all surfaces alike.
+    // The target type only ever narrowed the callbacks for whoever wrote them;
+    // resolving treats all surfaces alike.
     const ctx = context as MenuContext;
-
-    // Only the cell menu keeps its options in the Grid options. A feature
-    // adding a surface of its own reads them wherever it put them and hands
-    // them in.
-    const options = (
-        surfaceOptions || (
-            ctx.target.type === 'cell' ?
-                ctx.target.column.options.cells?.contextMenu :
-                void 0
-        )
-    ) as ContextMenuOptions | undefined;
+    const { options } = ctx;
 
     if (options?.enabled === false) {
         return [];
