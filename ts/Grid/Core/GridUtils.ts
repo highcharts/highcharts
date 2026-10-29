@@ -20,6 +20,7 @@ import type { AnyRecord } from '../../Shared/Types';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Globals from './Globals.js';
 import { defined, isObject } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 AST.allowedAttributes.push(
     'srcset',
@@ -104,6 +105,11 @@ const allowedInputAttributes: string[] = [
     'size',
     'step'
 ];
+
+/**
+ * Keys already warned about through `warnOnce`.
+ */
+const warnedKeys = new Set<string>();
 
 
 /* *
@@ -598,6 +604,28 @@ export function waitForAnimationFrame(): Promise<void> {
     return new Promise((resolve): void => {
         requestAnimationFrame((): void => resolve());
     });
+}
+
+/**
+ * Logs a warning once per key, for anything produced on every render, which
+ * would otherwise repeat the same line until the console is useless.
+ *
+ * @param key
+ * What the warning is about. Prefix it with its subject, since the keys of
+ * every caller share one set.
+ *
+ * @param message
+ * Warning text.
+ *
+ * @internal
+ */
+export function warnOnce(key: string, message: string): void {
+    if (warnedKeys.has(key)) {
+        return;
+    }
+    warnedKeys.add(key);
+
+    error(message, false);
 }
 
 

@@ -39,9 +39,8 @@ import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type TableCell from './Table/Body/TableCell';
-import type {
-    CellContextMenuOptions
-} from './Table/CellContextMenu/CellContextMenuOptions';
+import type { CellMenuTarget } from './ContextMenu/ContextMenuTarget';
+import type { ContextMenuOptions } from './ContextMenu/ContextMenuOptions';
 import type { IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
@@ -230,6 +229,11 @@ export interface RenderingSettings {
      * Options to control the header rendering.
      */
     header?: HeaderSettings;
+
+    /**
+     * Options to control how popups are rendered.
+     */
+    popups?: PopupsSettings;
 
     /**
      * Options to control the table rendering.
@@ -443,6 +447,22 @@ export interface HeaderSettings {
 /**
  * Options to control the table rendering.
  */
+export interface PopupsSettings {
+
+    /**
+     * Whether popups, such as context menus and the column filter, are laid
+     * out inside the Grid container, which hides its overflow and so cuts
+     * them off at its edges.
+     *
+     * Defaults to whether the browser lacks the Popover API: where popovers
+     * are available, popups are laid out against the window instead, where
+     * nothing clips them, and close when their anchor scrolls off screen.
+     *
+     * @internal
+     */
+    insideContainer?: boolean;
+}
+
 export interface TableSettings {
     /**
      * The custom CSS class name for the table.
@@ -602,7 +622,7 @@ export interface ColumnCellOptions {
      * @sample grid-lite/demo/cell-context-menu Cell context menu
      * @sample grid-pro/basic/cell-context-menu Cell context menu with built-ins
      */
-    contextMenu?: CellContextMenuOptions;
+    contextMenu?: ContextMenuOptions<CellMenuTarget>;
 
     /**
      * CSS styles for table body cells in the column.
