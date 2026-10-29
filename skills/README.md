@@ -26,7 +26,7 @@ From your application directory, install a selected published skill using the
 [skills CLI](https://github.com/vercel-labs/skills/blob/main/docs/commands.md):
 
 ```bash
-npx skills add https://github.com/highcharts/highcharts-skills/tree/master/skills/highcharts-react
+npx skills add https://github.com/highcharts/highcharts-skills/tree/main/skills/highcharts-react
 ```
 
 Choose the coding agent when prompted. Installation targets the current
@@ -34,8 +34,8 @@ project by default; add `-g` to install for your user account instead.
 The complete skill directory must be installed, including `references/docs/`.
 The agent can then follow `SKILL.md` to read the relevant documentation.
 
-Master follows the Highcharts documentation and can describe unreleased
-features. For a fixed snapshot, replace `master` in the URL with a commit in
+Main follows the Highcharts master documentation and can describe unreleased
+features. For a fixed snapshot, replace `main` in the URL with a commit in
 `highcharts-skills`. Its `source.json` records the source Highcharts revision;
 choose a snapshot matching the Highcharts or React version in your application.
 

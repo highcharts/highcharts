@@ -15,21 +15,22 @@ scripts or package lifecycle hooks.
 
 ## Initial setup
 
-1. Create `highcharts/highcharts-skills` with a `master` branch and a bootstrap
+1. Create `highcharts/highcharts-skills` with a `main` branch and a bootstrap
    commit containing its installation README and approved license. Configure
    the local checkout's remote if using it for this setup. An empty repository
    cannot be checked out by the publishing job.
-2. Configure a `skills-publish` GitHub environment in Highcharts. Allow only the
+2. Reuse the `nightly-dist` GitHub environment in Highcharts. Allow only the
    `master` **branch** in its deployment policy, excluding tags and other
    branches. Put publication secrets in this environment, rather than repository
    or organization secrets available to other refs.
-3. Set `SKILLS_PUBLISH_TOKEN` to a dedicated bot token with contents-write access
-   only to `highcharts/highcharts-skills`. Its branch rules must permit the bot's
-   normal fast-forward push. Do not reuse the nightly distribution credential.
-4. If signed commits are required, set `SKILLS_SSH_SIGNING_KEY_BASE64` to the
-   base64-encoded, passphrase-free SSH signing key registered on the publishing
-   bot. The job validates and uses this key when present. No hook or branch-rule
-   bypass is configured.
+3. Extend the existing `NIGHTLY_DIST_TOKEN` repository selection to include
+   `highcharts/highcharts-skills` alongside `highcharts/highcharts-dist`, with
+   contents-write access. The destination's `main` branch rules must permit the
+   bot's normal fast-forward push.
+4. Reuse `DIST_SSH_SIGNING_KEY_BASE64`, the base64-encoded, passphrase-free SSH
+   signing key registered on the publishing bot. Changed bundles require signed
+   commits, as in nightly publication. No new skills-specific secrets or
+   environment are needed, and no hook or branch-rule bypass is configured.
 5. Dispatch **Build and publish agent skills** from Highcharts master with
    `publish: true`. Inspect the resulting destination commit and install a
    complete skill from it in a consumer project.
@@ -39,8 +40,8 @@ scripts or package lifecycle hooks.
    to manual-only publication.
 
 Manual runs default to `publish: false`. Publication is always restricted to
-Highcharts master, even when the input is true. Release-tag publishing is not
-part of this workflow.
+Highcharts master, even when the input is true, and targets `highcharts-skills`
+main. Release-tag publishing is not part of this workflow.
 
 ## Ordering and provenance
 

@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: 'Publish the validated bundle to highcharts-skills (master only)'
+        description: 'Publish to highcharts-skills/main (from Highcharts master only)'
         type: boolean
         default: false
 
@@ -112,8 +112,8 @@ jobs:
        (github.event_name == 'push' && vars.SKILLS_PUBLISH_ON_PUSH == 'true'))
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Configure master-only access and secrets before publishing. See skills-publish.md.
-    environment: skills-publish
+    # Reuse the master-restricted nightly credentials. See skills-publish.md.
+    environment: nightly-dist
     concurrency:
       group: skills-publish
       cancel-in-progress: false
@@ -156,9 +156,9 @@ jobs:
         uses: actions/checkout@v7.0.0
         with:
           repository: highcharts/highcharts-skills
-          token: ${{ secrets.SKILLS_PUBLISH_TOKEN }}
+          token: ${{ secrets.NIGHTLY_DIST_TOKEN }}
           path: highcharts-skills
-          ref: master
+          ref: main
           fetch-depth: 0
 
       - name: Update managed distribution files
@@ -171,7 +171,7 @@ jobs:
       - name: Commit and push changed skills
         if: steps.source.outputs.current == 'true'
         env:
-          SIGNING_KEY: ${{ secrets.SKILLS_SSH_SIGNING_KEY_BASE64 }}
+          SIGNING_KEY: ${{ secrets.DIST_SSH_SIGNING_KEY_BASE64 }}
         run: |
           git -C highcharts-skills add --all -- skills source.json
           if git -C highcharts-skills diff --cached --quiet; then
@@ -187,15 +187,14 @@ jobs:
 
           git -C highcharts-skills config user.name "highsoft-bot"
           git -C highcharts-skills config user.email "technical+circleci_mu@highsoft.com"
-          if [ -n "${SIGNING_KEY}" ]; then
-            signing_key=$(mktemp "${RUNNER_TEMP}/skills-signing-key.XXXXXX")
-            trap 'rm -f "${signing_key}"' EXIT
-            printf '%s' "${SIGNING_KEY}" | base64 --decode > "${signing_key}"
-            chmod 600 "${signing_key}"
-            ssh-keygen -y -P '' -f "${signing_key}" > /dev/null
-            git -C highcharts-skills config gpg.format ssh
-            git -C highcharts-skills config user.signingkey "${signing_key}"
-            git -C highcharts-skills config commit.gpgsign true
-          fi
+          : "${SIGNING_KEY:?Set DIST_SSH_SIGNING_KEY_BASE64 in the nightly-dist environment}"
+          signing_key=$(mktemp "${RUNNER_TEMP}/skills-signing-key.XXXXXX")
+          trap 'rm -f "${signing_key}"' EXIT
+          printf '%s' "${SIGNING_KEY}" | base64 --decode > "${signing_key}"
+          chmod 600 "${signing_key}"
+          ssh-keygen -y -P '' -f "${signing_key}" > /dev/null
+          git -C highcharts-skills config gpg.format ssh
+          git -C highcharts-skills config user.signingkey "${signing_key}"
+          git -C highcharts-skills config commit.gpgsign true
           git -C highcharts-skills commit -m "Update skills from Highcharts ${GITHUB_SHA}"
-          git -C highcharts-skills push origin HEAD:refs/heads/master
+          git -C highcharts-skills push origin HEAD:refs/heads/main
