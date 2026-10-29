@@ -128,7 +128,42 @@ class ContextMenu extends Menu {
             this.hide();
         }
 
-        this.showAt(context, items, clientX, clientY);
+        this.context = context;
+        this.items = items;
+
+        const { target } = context;
+
+        if (target.type === 'cell') {
+            // The menu takes the focus, so the cell needs its own marker to
+            // keep showing what the actions apply to.
+            target.cell.htmlElement.classList.add(
+                Globals.getClassName('contextMenuCell')
+            );
+
+            this.removeOutdateListener?.();
+            this.removeOutdateListener = addEvent(
+                target.cell,
+                'outdate',
+                (): void => {
+                    this.hide();
+                    delete this.context;
+                }
+            );
+        }
+
+        // A zero sized element at the cursor, for the popup to anchor to.
+        const rect = this.grid.contentWrapper.getBoundingClientRect();
+        const anchor = this.cursorAnchorElement = document.createElement('div');
+
+        anchor.style.position = 'absolute';
+        anchor.style.left = (clientX - rect.left) + 'px';
+        anchor.style.top = (clientY - rect.top) + 'px';
+        anchor.style.width = '0px';
+        anchor.style.height = '0px';
+        anchor.style.pointerEvents = 'none';
+        this.grid.contentWrapper.appendChild(anchor);
+
+        super.show(anchor);
 
         return true;
     }
@@ -180,77 +215,16 @@ class ContextMenu extends Menu {
 
         // Safari fires no `contextmenu` event on long-press, so the press is
         // turned into one and handled by the listener above like any other.
-        const removeLongPress = addLongPressContextMenu(element);
+        const removeLongPress = addLongPressContextMenu(
+            element,
+            (): boolean => resolveContextMenu(context, options).length > 0
+        );
 
         return (): void => {
             element.removeEventListener('contextmenu', onContextMenu);
             element.removeEventListener('keydown', onKeyDown);
             removeLongPress();
         };
-    }
-
-    /**
-     * Opens the menu at the cursor.
-     *
-     * @param context
-     * Context the menu was opened in.
-     *
-     * @param items
-     * Resolved entries to render.
-     *
-     * @param clientX
-     * Viewport X coordinate to anchor at.
-     *
-     * @param clientY
-     * Viewport Y coordinate to anchor at.
-     */
-    private showAt(
-        context: MenuContext,
-        items: ResolvedMenuItem[],
-        clientX: number,
-        clientY: number
-    ): void {
-        const wrapper = this.grid.contentWrapper;
-
-        if (!wrapper) {
-            return;
-        }
-
-        this.context = context;
-        this.items = items;
-
-        const { target } = context;
-
-        if (target.type === 'cell') {
-            // The menu takes the focus, so the cell needs its own marker to
-            // keep showing what the actions apply to.
-            target.cell.htmlElement.classList.add(
-                Globals.getClassName('contextMenuCell')
-            );
-
-            this.removeOutdateListener?.();
-            this.removeOutdateListener = addEvent(
-                target.cell,
-                'outdate',
-                (): void => {
-                    this.hide();
-                    delete this.context;
-                }
-            );
-        }
-
-        const rect = wrapper.getBoundingClientRect();
-        const anchor = this.cursorAnchorElement = document.createElement('div');
-
-        anchor.style.position = 'absolute';
-        anchor.style.left = (clientX - rect.left) + 'px';
-        anchor.style.top = (clientY - rect.top) + 'px';
-        anchor.style.width = '0px';
-        anchor.style.height = '0px';
-        anchor.style.pointerEvents = 'none';
-        wrapper.appendChild(anchor);
-
-        super.show(anchor);
     }
 
     protected override get prefersPopover(): boolean {

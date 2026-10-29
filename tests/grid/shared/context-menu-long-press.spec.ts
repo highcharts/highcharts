@@ -101,4 +101,36 @@ test.describe('Context menu long-press', () => {
             await expect(page.locator('.hcg-popup')).toHaveCount(0);
         }
     );
+
+    test(
+        'A long press where no menu would open is left to the browser',
+        async ({ page }) => {
+            await page.evaluate(async () => {
+                const container = document.createElement('div');
+                container.id = 'lp-plain';
+                document.body.appendChild(container);
+
+                await (window as any).Grid.grid(container, {
+                    data: { columns: { product: ['Apples'] } }
+                }, true);
+            });
+
+            const cell = '#lp-plain tbody td';
+
+            await pressAndHold(page, cell);
+
+            expect(
+                await page.evaluate((sel: string) => (
+                    getComputedStyle(document.querySelector(sel)).userSelect
+                ), cell)
+            ).not.toBe('none');
+
+            // Long enough for the press to have opened a menu if it were
+            // going to.
+            // eslint-disable-next-line playwright/no-wait-for-timeout
+            await page.waitForTimeout(700);
+
+            await expect(page.locator('.hcg-popup')).toHaveCount(0);
+        }
+    );
 });

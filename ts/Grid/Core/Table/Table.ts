@@ -47,6 +47,7 @@ import {
     getCellMenuContext,
     getTableMenuContext
 } from '../ContextMenu/ContextMenuTarget.js';
+import { resolveContextMenu } from '../ContextMenu/ContextMenuResolver.js';
 
 const { makeHTMLElement, applyUserClassNames } = GridUtils;
 
@@ -253,8 +254,15 @@ class Table {
             passive: false
         });
         this.addBodyEventListeners(this.tbodyElement);
-        this.removeLongPressContextMenu =
-            addLongPressContextMenu(this.tableElement);
+        this.removeLongPressContextMenu = addLongPressContextMenu(
+            this.tableElement,
+            (target): boolean => {
+                const cell = this.getTableCellFromTarget(target);
+                return !!cell && resolveContextMenu(
+                    getCellMenuContext(cell)
+                ).length > 0;
+            }
+        );
         document.addEventListener('focusin', this.onDocumentFocusIn, true);
         document.addEventListener(
             'pointerdown',
@@ -1275,7 +1283,11 @@ class Table {
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
-        this.grid.contextMenu.hide();
+
+        for (const popup of Array.from(this.grid.popups)) {
+            popup.hide();
+        }
+
         this.removeLongPressContextMenu?.();
         delete this.removeLongPressContextMenu;
 

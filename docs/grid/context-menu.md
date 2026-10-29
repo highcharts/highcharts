@@ -72,7 +72,8 @@ Each item supports:
 
 - `label`: Text shown in the menu
 - `icon`: Optional built-in or custom Grid icon name (see [Custom icons](https://www.highcharts.com/docs/grid/theming/custom-icons))
-- `separator: true`: Renders a divider instead of a clickable item
+- `separator: true`: Renders a divider instead of a clickable item, which
+  carries no label or icon of its own
 - `disabled: true`: Shows the item, but does not let it run
 - `visible: false`: Leaves the item out entirely
 - `items`: Makes the item a branch with a [submenu](#nested-submenus)

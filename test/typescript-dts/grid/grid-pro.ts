@@ -9,6 +9,7 @@
 import * as Grid from '@highcharts/grid/es-modules/masters/grid-pro.src';
 
 test_grid();
+test_composedModuleAugmentations();
 
 /**
  * Tests grid options.
@@ -238,4 +239,61 @@ function test_grid() {
     });
 
     detach();
+}
+
+/**
+ * Every module composed in `grid-pro.src.ts` has to be side-effect imported
+ * there as well. Without the bare import, TypeScript elides the module from
+ * the emitted master `.d.ts` and its `declare module` augmentations never
+ * reach the user, even though the feature works at runtime.
+ */
+function test_composedModuleAugmentations() {
+
+    const grid = Grid.grid('container', {
+        // LicenseValidationComposition
+        gridKey: 'XXXX-XXXX-XXXX-AYYY-ZZZZ-WWWW',
+        // TreeViewComposition
+        treeView: {
+            enabled: true,
+            treeColumn: 'x'
+        },
+        // SummaryRowsComposition
+        summaryRows: [{
+            id: 'total',
+            aggregator: 'SUM'
+        }],
+        // PaginationComposition
+        pagination: {
+            enabled: true,
+            events: {
+                afterPageChange: function (e): void {
+                    e.currentPage;
+                }
+            }
+        },
+        lang: {
+            // ValidatorComposition
+            validationNotifications: {
+                notEmpty: 'Value cannot be empty'
+            }
+        },
+        columnDefaults: {
+            cells: {
+                editMode: {
+                    // ValidatorComposition and TreeViewValidation
+                    validationRules: ['notEmpty', 'treeViewPathSyntax']
+                }
+            }
+        },
+        columns: [{
+            id: 'total',
+            // SummaryColumnsComposition
+            columnAggregator: 'SUM',
+            aggregatedColumns: ['x', 'y']
+        }]
+    });
+
+    grid.treeView?.expandAll();
+    grid.summaryRows?.getRows();
+    grid.viewport?.validator?.errorCell;
 }

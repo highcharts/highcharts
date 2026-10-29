@@ -32,8 +32,8 @@ import type { MenuContext, MenuTarget } from './ContextMenuTarget';
 import { warnOnce } from '../GridUtils.js';
 
 import {
-    getDefaultMenuItemIds,
-    getMenuItemFor
+    defaultMenuItemIds,
+    menuItemDefinitions
 } from './ContextMenuRegistry.js';
 
 /* *
@@ -129,9 +129,24 @@ function dereference(
     context: MenuContext,
     override: MenuItemOptions
 ): MenuItemOptions | undefined {
-    const definition = getMenuItemFor(id, context.target.type);
+    const definition = menuItemDefinitions[id];
+    const targetType = context.target.type;
 
     if (!definition) {
+        warnOnce(
+            'menuItem:' + id,
+            `Grid context menu: Unknown menu item id "${id}".`
+        );
+        return;
+    }
+
+    // An item applies to the cell menu unless it names its surfaces.
+    if (!(definition.targets || ['cell']).includes(targetType)) {
+        warnOnce(
+            'menuItem:' + id,
+            `Grid context menu: Menu item "${id}" does not apply to a ` +
+            `"${targetType}" context menu.`
+        );
         return;
     }
 
@@ -260,39 +275,6 @@ function resolveItem(
 }
 
 /**
- * Drops the dividers that ended up with nothing to divide, which is what a
- * list filtered by visibility tends to leave behind.
- *
- * @param items
- * Resolved entries.
- *
- * @return
- * The entries without leading, trailing and repeated dividers.
- */
-function withoutOrphanDividers(
-    items: ResolvedMenuItem[]
-): ResolvedMenuItem[] {
-    const result: ResolvedMenuItem[] = [];
-
-    for (const item of items) {
-        if (
-            item.separator &&
-            (!result.length || result[result.length - 1].separator)
-        ) {
-            continue;
-        }
-
-        result.push(item);
-    }
-
-    while (result.length && result[result.length - 1].separator) {
-        result.pop();
-    }
-
-    return result;
-}
-
-/**
  * Resolves a list of item declarations.
  *
  * @param items
@@ -305,7 +287,8 @@ function withoutOrphanDividers(
  * Ids already being resolved further up, used to stop a cycle.
  *
  * @return
- * The resolved entries.
+ * The resolved entries, without the dividers that ended up with nothing to
+ * divide, which is what a list filtered by visibility tends to leave behind.
  */
 function resolveItems(
     items: Array<MenuItemOptions | MenuItemId>,
@@ -316,45 +299,28 @@ function resolveItems(
 
     for (const item of items) {
         const result = resolveItem(item, context, seen);
+        const entries = Array.isArray(result) ?
+            result :
+            (result ? [result] : []);
 
-        if (Array.isArray(result)) {
-            resolved.push(...result);
-        } else if (result) {
-            resolved.push(result);
+        for (const entry of entries) {
+            // Leading and repeated dividers divide nothing.
+            if (
+                entry.separator &&
+                (
+                    !resolved.length ||
+                    resolved[resolved.length - 1].separator
+                )
+            ) {
+                continue;
+            }
+
+            resolved.push(entry);
         }
     }
 
-    return withoutOrphanDividers(resolved);
-}
-
-/**
- * Resolves the menu of a surface that has nothing configured. A single branch
- * is shown in place, so that the only feature contributing to the menu does
- * not hide its actions behind one more click.
- *
- * @param context
- * Context the menu was opened in.
- *
- * @return
- * The resolved entries.
- */
-function resolveDefaultItems(context: MenuContext): ResolvedMenuItem[] {
-    const resolved: ResolvedMenuItem[] = [];
-
-    for (const id of getDefaultMenuItemIds(context.target.type)) {
-        // Dereferencing here rather than resolving the id keeps a registered
-        // branch a branch, so that the rule below gets to choose.
-        const referenced = dereference(id, context, {});
-        const result = referenced &&
-            resolveItem(referenced, context, new Set([id]));
-
-        if (result && !Array.isArray(result)) {
-            resolved.push({ ...result, label: result.label || id });
-        }
-    }
-
-    if (resolved.length === 1 && resolved[0].items) {
-        return resolved[0].items;
+    while (resolved.length && resolved[resolved.length - 1].separator) {
+        resolved.pop();
     }
 
     return resolved;
@@ -396,9 +362,34 @@ export function resolveContextMenu<T extends MenuTarget>(
         return [];
     }
 
-    const items = options?.items ?
-        resolveItems(options.items, ctx) :
-        resolveDefaultItems(ctx);
+    let items: ResolvedMenuItem[];
+
+    if (options?.items) {
+        items = resolveItems(options.items, ctx);
+    } else {
+        // Nothing configured: the items registered as default for this
+        // surface make the menu.
+        items = [];
+
+        for (const id of defaultMenuItemIds[ctx.target.type] || []) {
+            // Dereferencing rather than resolving the id keeps a registered
+            // branch a branch, so that the rule below gets to choose.
+            const referenced = dereference(id, ctx, {});
+            const result = referenced &&
+                resolveItem(referenced, ctx, new Set([id]));
+
+            if (result && !Array.isArray(result)) {
+                items.push({ ...result, label: result.label || id });
+            }
+        }
+
+        // A single branch is shown in place, so that the only feature
+        // contributing to the menu does not hide its actions behind one
+        // more click.
+        if (items.length === 1 && items[0].items) {
+            items = items[0].items;
+        }
+    }
 
     if (
         !items.length ||

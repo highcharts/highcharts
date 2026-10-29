@@ -35,6 +35,90 @@ interface DeprecatedOptionMetadata {
 
 const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
     {
+        'docsPath': 'columnDefaults.cells.contextMenu.items.actionId',
+        'runtimePath': 'columnDefaults.cells.contextMenu.items.actionId',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columnDefaults'
+            },
+            {
+                'kind': 'property',
+                'name': 'cells'
+            },
+            {
+                'kind': 'property',
+                'name': 'contextMenu'
+            },
+            {
+                'kind': 'property',
+                'name': 'items'
+            },
+            {
+                'kind': 'property',
+                'name': 'actionId'
+            }
+        ],
+        'text': 'Use `id` instead.',
+        'version': '3.3.0'
+    },
+    {
+        'docsPath': 'columnDefaults.cells.contextMenu.items.groupId',
+        'runtimePath': 'columnDefaults.cells.contextMenu.items.groupId',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columnDefaults'
+            },
+            {
+                'kind': 'property',
+                'name': 'cells'
+            },
+            {
+                'kind': 'property',
+                'name': 'contextMenu'
+            },
+            {
+                'kind': 'property',
+                'name': 'items'
+            },
+            {
+                'kind': 'property',
+                'name': 'groupId'
+            }
+        ],
+        'text': 'Use `id` instead.',
+        'version': '3.3.0'
+    },
+    {
+        'docsPath': 'columnDefaults.cells.contextMenu.items.type',
+        'runtimePath': 'columnDefaults.cells.contextMenu.items.type',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columnDefaults'
+            },
+            {
+                'kind': 'property',
+                'name': 'cells'
+            },
+            {
+                'kind': 'property',
+                'name': 'contextMenu'
+            },
+            {
+                'kind': 'property',
+                'name': 'items'
+            },
+            {
+                'kind': 'property',
+                'name': 'type'
+            }
+        ],
+        'text': 'Leave it out. `items` makes an item a branch and `separator`\nmakes it a divider.',
+        'version': '3.3.0'
+    },
+    {
         'docsPath': 'columnDefaults.filtering.condition',
         'runtimePath': 'columnDefaults.filtering.condition',
         'segments': [
@@ -109,6 +193,90 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
         ],
         'text': 'Use the column level `rowAggregator` option instead.',
         'version': '3.1.0'
+    },
+    {
+        'docsPath': 'columns.cells.contextMenu.items.actionId',
+        'runtimePath': 'columns.cells.contextMenu.items.actionId',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columns'
+            },
+            {
+                'kind': 'property',
+                'name': 'cells'
+            },
+            {
+                'kind': 'property',
+                'name': 'contextMenu'
+            },
+            {
+                'kind': 'property',
+                'name': 'items'
+            },
+            {
+                'kind': 'property',
+                'name': 'actionId'
+            }
+        ],
+        'text': 'Use `id` instead.',
+        'version': '3.3.0'
+    },
+    {
+        'docsPath': 'columns.cells.contextMenu.items.groupId',
+        'runtimePath': 'columns.cells.contextMenu.items.groupId',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columns'
+            },
+            {
+                'kind': 'property',
+                'name': 'cells'
+            },
+            {
+                'kind': 'property',
+                'name': 'contextMenu'
+            },
+            {
+                'kind': 'property',
+                'name': 'items'
+            },
+            {
+                'kind': 'property',
+                'name': 'groupId'
+            }
+        ],
+        'text': 'Use `id` instead.',
+        'version': '3.3.0'
+    },
+    {
+        'docsPath': 'columns.cells.contextMenu.items.type',
+        'runtimePath': 'columns.cells.contextMenu.items.type',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columns'
+            },
+            {
+                'kind': 'property',
+                'name': 'cells'
+            },
+            {
+                'kind': 'property',
+                'name': 'contextMenu'
+            },
+            {
+                'kind': 'property',
+                'name': 'items'
+            },
+            {
+                'kind': 'property',
+                'name': 'type'
+            }
+        ],
+        'text': 'Leave it out. `items` makes an item a branch and `separator`\nmakes it a divider.',
+        'version': '3.3.0'
     },
     {
         'docsPath': 'columns.filtering.condition',

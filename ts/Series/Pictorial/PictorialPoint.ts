@@ -21,11 +21,11 @@ import type PictorialPointOptions from './PictorialPointOptions';
 import type PictorialSeries from './PictorialSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import PictorialUtilities from './PictorialUtilities.js';
 
 const ColumnPoint: typeof ColumnPointType =
-    SeriesRegistry.seriesTypes.column.prototype.pointClass;
+    ColumnSeries.prototype.pointClass;
 
 const {
     rescalePatternFill,
