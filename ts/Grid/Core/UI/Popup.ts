@@ -237,8 +237,17 @@ export abstract class Popup {
 
         const next = this.options.nextToAnchor || false;
         const edgePadding = 8;
-        const popupRect = this.container.getBoundingClientRect();
         const parentRect = wrapper.getBoundingClientRect();
+
+        // The popup is positioned inside the grid, which clips it, so it can
+        // never usefully be taller than the grid. Capping it here is what
+        // lets its `overflow` scroll; without the cap the bottom alignment
+        // below only moves the clipping to the top edge. Applied before the
+        // popup is measured, so the measurement reflects the cap.
+        this.container.style.maxHeight =
+            `${Math.max(parentRect.height - 2 * edgePadding, 0)}px`;
+
+        const popupRect = this.container.getBoundingClientRect();
         const anchorRect = anchorElement?.getBoundingClientRect() ?? parentRect;
 
         const top = next ? anchorRect.top : anchorRect.bottom + 4;

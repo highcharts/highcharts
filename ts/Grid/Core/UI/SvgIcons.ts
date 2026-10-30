@@ -43,15 +43,15 @@ import { defined, isString } from '../../../Shared/Utilities.js';
  * - `filter`, `menu`, `checkmark`
  * - `arrowUpDown`, `arrowUp`, `arrowDown`
  * - `chevronLeft`, `chevronRight`, `doubleChevronLeft`, `doubleChevronRight`
- * - `copy`, `clipboard`, `plus`, `trash`
+ * - `copy`, `clipboard`, `plus`, `trash`, `pencil`, `key`
  * - `addRowAbove`, `addRowBelow`, `addColumnLeft`, `addColumnRight`
  */
 export type GridIconName = (
     'filter' | 'menu' | 'checkmark' | 'arrowUpDown' | 'arrowUp' |
     'arrowDown' | 'chevronLeft' | 'chevronRight' | 'doubleChevronLeft' |
     'doubleChevronRight' | 'copy' | 'clipboard' | 'plus' | 'trash' |
-    'addRowAbove' | 'addRowBelow' | 'addColumnLeft' | 'addColumnRight' |
-    'pin' | 'unpin'
+    'pencil' | 'key' | 'addRowAbove' | 'addRowBelow' | 'addColumnLeft' |
+    'addColumnRight' | 'pin' | 'unpin'
 );
 
 /**
@@ -178,6 +178,26 @@ export const icons: Record<GridIconName, SVGDefinition> = {
         viewBox: '0 0 24 24',
         children: [{
             d: 'M16 6V5.2C16 4.0799 16 3.51984 15.782 3.09202C15.5903 2.71569 15.2843 2.40973 14.908 2.21799C14.4802 2 13.9201 2 12.8 2H11.2C10.0799 2 9.51984 2 9.09202 2.21799C8.71569 2.40973 8.40973 2.71569 8.21799 3.09202C8 3.51984 8 4.0799 8 5.2V6M10 11.5V16.5M14 11.5V16.5M3 6H21M19 6V17.2C19 18.8802 19 19.7202 18.673 20.362C18.3854 20.9265 17.9265 21.3854 17.362 21.673C16.7202 22 15.8802 22 14.2 22H9.8C8.11984 22 7.27976 22 6.63803 21.673C6.07354 21.3854 5.6146 20.9265 5.32698 20.362C5 19.7202 5 18.8802 5 17.2V6',
+            'stroke-width': 2
+        }]
+    },
+    pencil: {
+        width: 16,
+        height: 16,
+        viewBox: '0 0 24 24',
+        children: [{
+            d: 'M4 20H8L18.5 9.5C19.6046 8.39543 19.6046 6.60457 18.5 5.5C17.3954 4.39543 15.6046 4.39543 14.5 5.5L4 16V20Z M13.5 6.5L17.5 10.5',
+            'stroke-width': 2
+        }]
+    },
+    key: {
+        width: 16,
+        height: 16,
+        viewBox: '0 0 24 24',
+        children: [{
+            // The ring is a closed subpath, so it needs the fill turned off.
+            d: 'M13 15.5A5.5 5.5 0 1 1 2 15.5A5.5 5.5 0 1 1 13 15.5 M21 2 L11.4 11.6 M15.5 7.5 L18.5 10.5 L22 7 L19 4',
+            fill: 'none',
             'stroke-width': 2
         }]
     },

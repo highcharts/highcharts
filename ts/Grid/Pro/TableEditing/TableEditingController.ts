@@ -19,10 +19,9 @@
  * */
 
 import type Grid from '../../Core/Grid';
+import type Column from '../../Core/Table/Column';
 import type DataTable from '../../../Data/DataTable';
-import type {
-    CellContextMenuContext
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions';
+import type HeaderCell from '../../Core/Table/Header/HeaderCell';
 import type {
     Column as DataTableColumn,
     RowObject as DataTableRowObject
@@ -32,18 +31,31 @@ import type {
     RowId
 } from '../../Core/Data/DataProvider';
 import type { DataTableValue } from '../../../Data/DataTableOptions';
-import type { IndividualColumnOptions } from '../../Core/Options';
+import type {
+    GroupedHeaderOptions,
+    IndividualColumnOptions
+} from '../../Core/Options';
 
 import Globals from '../../Core/Globals.js';
+import GridUtils from '../../Core/GridUtils.js';
 import {
     hasDataTableProvider
 } from '../../Core/Data/DataProvider.js';
+
+const { makeHTMLElement, setHTMLContent } = GridUtils;
 
 /**
  * Class name of the button offered when the table has no columns or no rows.
  */
 export const emptyStateButtonClassName =
     Globals.classNamePrefix + 'empty-state-button';
+
+/**
+ * Class name marking a name that cannot be used. Shared with cell editing, so
+ * that a rejected header reads the same as a rejected cell.
+ */
+export const renamingErrorClassName =
+    Globals.classNamePrefix + 'edited-cell-error';
 
 /* *
  *
@@ -61,6 +73,40 @@ interface DataProviderWithRowIndexMapping extends DataTableProvider {
 }
 
 /**
+ * What an open header input writes when submitted.
+ */
+export type RenamingTarget = ('name'|'id');
+
+/**
+ * What a structural edit needs to know about where it was invoked. Kept to
+ * the fields both context menus carry, so the cell menu and the header menu
+ * can drive the same actions.
+ */
+export interface ColumnEditingContext {
+
+    /**
+     * Grid column id the action applies to.
+     */
+    columnId: string;
+
+    /**
+     * The Grid instance.
+     */
+    grid: Grid;
+
+    /**
+     * Row the action was invoked from. Absent in the header, where the edit
+     * returns the focus to the header instead of a body cell.
+     */
+    rowId?: RowId;
+
+    /**
+     * Source column id the Grid column reads its data from.
+     */
+    sourceColumnId?: string;
+}
+
+/**
  * Options for structural table editing.
  */
 export interface TableEditingOptions {
@@ -69,6 +115,50 @@ export interface TableEditingOptions {
      *
      * When enabled, Grid Pro adds built-in context menu actions for adding and
      * deleting rows and columns.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+
+    /**
+     * Options for the header context menu action that renames a column.
+     */
+    columnRenaming?: ColumnRenamingOptions;
+
+    /**
+     * Options for the header context menu action that changes a column id.
+     */
+    columnIdEditing?: ColumnIdEditingOptions;
+}
+
+/**
+ * Options for the *Rename column* header context menu action, which sets
+ * [`columns[].header.format`](https://api.highcharts.com/grid/columns.header.format).
+ * Only the displayed name changes, so the data keeps its column ids and
+ * nothing configured against them can break.
+ */
+export interface ColumnRenamingOptions {
+    /**
+     * Whether a column can be renamed. Needs `tableEditing.enabled` as well.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+}
+
+/**
+ * Options for the *Change column id* header context menu action, which
+ * renames the column in the data.
+ *
+ * Everything Grid holds the old id in moves along with it: the column
+ * options, the `header` layout, `data.idColumn` and the current sorting. A
+ * column Grid cannot move safely offers the action greyed out. The displayed
+ * name is left alone, since renaming is its own action.
+ */
+export interface ColumnIdEditingOptions {
+    /**
+     * Whether a column id can be changed. Needs `tableEditing.enabled` as
+     * well.
      *
      * @default false
      */
@@ -93,6 +183,26 @@ class TableEditingController {
      * */
 
     private readonly grid: Grid;
+
+    /**
+     * Header cell whose label is currently being edited.
+     */
+    private renamedCell?: HeaderCell;
+
+    /**
+     * The open header input, if any.
+     */
+    private renameInput?: HTMLInputElement;
+
+    /**
+     * What the open header input writes.
+     */
+    private renamingTarget: RenamingTarget = 'name';
+
+    /**
+     * Whether the name currently in the header input was refused.
+     */
+    private renamingRejected = false;
 
     /* *
      *
@@ -123,7 +233,7 @@ class TableEditingController {
      * @param context
      * Context menu runtime context.
      */
-    public canEditRows(context: CellContextMenuContext): boolean {
+    public canEditRows(context: ColumnEditingContext): boolean {
         return (
             this.isEnabled() &&
             context.rowId !== void 0 &&
@@ -137,7 +247,7 @@ class TableEditingController {
      * @param context
      * Context menu runtime context.
      */
-    public canEditColumns(context: CellContextMenuContext): boolean {
+    public canEditColumns(context: ColumnEditingContext): boolean {
         return (
             this.isEnabled() &&
             !!context.sourceColumnId &&
@@ -153,7 +263,7 @@ class TableEditingController {
      * @param context
      * Context menu runtime context.
      */
-    public canDeleteColumn(context: CellContextMenuContext): boolean {
+    public canDeleteColumn(context: ColumnEditingContext): boolean {
         const table = this.getDataTable();
         const sourceColumnId = context.sourceColumnId;
 
@@ -223,7 +333,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addRowAbove(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         await this.addRow(context, 0);
     }
@@ -235,7 +345,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addRowBelow(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         await this.addRow(context, 1);
     }
@@ -247,7 +357,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async deleteRow(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         const table = this.getDataTable();
         const rowIndexes = await this.getRowIndexes(context.rowId);
@@ -270,7 +380,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addColumnBefore(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         await this.addColumn(context, 0);
     }
@@ -282,7 +392,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addColumnAfter(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         await this.addColumn(context, 1);
     }
@@ -294,7 +404,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async deleteColumn(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         const table = this.getDataTable();
         const sourceColumnId = context.sourceColumnId;
@@ -313,12 +423,430 @@ class TableEditingController {
         // The column that took the deleted one's place, or its predecessor.
         this.focusResult(
             rowIndexes?.local || 0,
-            columnIds[deletedIndex + 1] || columnIds[deletedIndex - 1]
+            columnIds[deletedIndex + 1] || columnIds[deletedIndex - 1],
+            context.rowId === void 0
         );
     }
 
+    /**
+     * Returns whether the *Rename column* action belongs in the menu of a
+     * column.
+     *
+     * @param column
+     * Column behind the header cell. Undefined for grouped headers, which
+     * are described by the `header` option instead of by a column.
+     */
+    public canRenameColumn(column?: Column): column is Column {
+        return (
+            !!column &&
+            this.isEnabled() &&
+            this.grid.options?.tableEditing?.columnRenaming?.enabled !==
+                false &&
+            // A formatter would overwrite whatever the user types.
+            !column.options.header?.formatter
+        );
+    }
+
+    /**
+     * Returns whether the *Change column id* action belongs in the menu of a
+     * column. Unlike renaming, it is off unless asked for.
+     *
+     * @param column
+     * Column behind the header cell. Undefined for grouped headers, which
+     * are described by the `header` option instead of by a column.
+     */
+    public canEditColumnId(column?: Column): column is Column {
+        return (
+            !!column &&
+            this.isEnabled() &&
+            this.grid.options?.tableEditing?.columnIdEditing?.enabled === true
+        );
+    }
+
+    /**
+     * Returns what keeps a column id from being changed, or undefined when
+     * nothing does. Renaming has no blockers, since it touches nothing
+     * outside the column's own options.
+     *
+     * @param column
+     * Column whose id would change.
+     *
+     * @return
+     * The option holding the column id that the change cannot move.
+     */
+    public getColumnIdBlocker(column: Column): string | undefined {
+        const { grid } = this;
+        const options = grid.options;
+
+        // Renaming the source id of a column that reads from somewhere else
+        // would silently repoint it.
+        if (grid.columnPolicy.getColumnSourceId(column.id) !== column.id) {
+            return 'columns.dataId';
+        }
+
+        // Features that store a column id of their own. The rename moves the
+        // ones it owns; anything listed here it refuses rather than breaks.
+        const foreignReferences: Array<[string, unknown]> = [
+            ['treeView.treeColumn', (options as {
+                treeView?: { treeColumn?: string };
+            })?.treeView?.treeColumn],
+            ['data.treeView.parentIdColumn', (options?.data as {
+                treeView?: { parentIdColumn?: string, pathColumn?: string };
+            })?.treeView?.parentIdColumn],
+            ['data.treeView.pathColumn', (options?.data as {
+                treeView?: { pathColumn?: string };
+            })?.treeView?.pathColumn]
+        ];
+
+        for (const [optionPath, referencedId] of foreignReferences) {
+            if (referencedId === column.id) {
+                return optionPath;
+            }
+        }
+
+        const aggregated = (options as {
+            summaryColumns?: { aggregatedColumns?: string[] };
+        })?.summaryColumns?.aggregatedColumns;
+
+        if (aggregated?.includes(column.id)) {
+            return 'summaryColumns.aggregatedColumns';
+        }
+    }
+
+    /**
+     * Opens a text input over the header, seeded with whatever the chosen
+     * target currently holds.
+     *
+     * @param cell
+     * Header cell to edit.
+     *
+     * @param target
+     * `name` edits the displayed name, `id` the column id in the data.
+     */
+    public startRenamingColumn(
+        cell: HeaderCell,
+        target: RenamingTarget = 'name'
+    ): void {
+        const column = cell.column;
+        const allowed = target === 'id' ?
+            this.canEditColumnId(column) && !this.getColumnIdBlocker(column) :
+            this.canRenameColumn(column);
+
+        if (!allowed || !column) {
+            return;
+        }
+
+        this.stopRenamingColumn(true);
+        this.renamingTarget = target;
+
+        // The same overlay cell editing uses, so that an edited header reads
+        // like an edited cell: it covers the label and the toolbar icons, and
+        // brings its own frame.
+        const container = makeHTMLElement('div', {
+            className: Globals.getClassName('cellEditingContainer')
+        }, cell.htmlElement);
+        const input = makeHTMLElement<HTMLInputElement>('input', {
+            className: Globals.getClassName('input')
+        }, container);
+
+        const lang = this.grid.options?.lang?.tableEditing;
+
+        input.type = 'text';
+        input.value = this.getRenamingSeed(cell);
+        input.setAttribute(
+            'aria-label',
+            (target === 'id' ? lang?.changeColumnId : lang?.renameColumn) || ''
+        );
+
+        cell.htmlElement.classList.add(Globals.getClassName('editedCell'));
+        this.renamedCell = cell;
+        this.renameInput = input;
+        this.renamingRejected = false;
+        input.focus();
+        input.select();
+
+        input.addEventListener('blur', (): void => {
+            // A rejected name must not survive the user clicking away.
+            this.stopRenamingColumn(!this.renamingRejected);
+        });
+        input.addEventListener('input', (): void => {
+            this.renamingRejected = false;
+            input.removeAttribute('aria-invalid');
+            container.classList.remove(renamingErrorClassName);
+        });
+        input.addEventListener('keydown', (e): void => {
+            if (e.key !== 'Enter' && e.key !== 'Escape') {
+                return;
+            }
+
+            // The header cell handles both keys itself, so keep them here.
+            e.preventDefault();
+            e.stopPropagation();
+            this.stopRenamingColumn(e.key === 'Enter');
+
+            // The input stays open when the typed id is taken, so leave the
+            // focus in it for the correction.
+            if (!this.renamedCell) {
+                cell.htmlElement.focus();
+            }
+        });
+    }
+
+    /**
+     * Closes the header input, optionally writing the typed name. An
+     * unchanged name is discarded, and so is an empty id. An empty name is
+     * kept: it clears the format, which is a value of its own. A taken column
+     * id keeps the input open instead, marked as rejected.
+     *
+     * @param submit
+     * Whether to save the typed name.
+     */
+    public stopRenamingColumn(submit: boolean): void {
+        const cell = this.renamedCell;
+        const input = this.renameInput;
+        const column = cell?.column;
+
+        if (!cell || !column || !input) {
+            return;
+        }
+
+        const raw = input.value;
+        const name = raw.trim();
+
+        if (this.renamingTarget === 'id') {
+            if (!submit || !name || name === this.getRenamingSeed(cell)) {
+                this.closeRenamingInput();
+                return;
+            }
+
+            if (!this.isFreeColumnId(name)) {
+                this.renamingRejected = true;
+                input.setAttribute('aria-invalid', 'true');
+                input.parentElement?.classList.add(renamingErrorClassName);
+                input.focus();
+                return;
+            }
+
+            this.closeRenamingInput();
+            void this.renameColumnId(column, name);
+            return;
+        }
+
+        const current = this.getColumnFormat(cell);
+
+        // A blank input removes the format, so the header falls back to the
+        // column id. Whitespace keeps a format that is deliberately blank.
+        const next = raw === '' ? void 0 : name;
+
+        // Typing the id back into a column that has no format leaves it as
+        // it was, so there is nothing to write.
+        const same = next === current ||
+            (current === void 0 && next === column.id);
+
+        if (submit && !same) {
+            this.setColumnFormat(cell, next);
+
+            const effective = this.getColumnFormat(cell);
+
+            cell.value = effective === void 0 ?
+                column.id :
+                column.format(effective);
+
+            // The cell labels itself with the column id, which renaming does
+            // not touch, so it would keep announcing the old name. A blank
+            // label leaves nothing to announce, so the id stands in.
+            cell.htmlElement.setAttribute(
+                'aria-label',
+                cell.value || column.id
+            );
+
+            if (cell.headerContent) {
+                setHTMLContent(cell.headerContent, cell.value);
+            }
+        }
+
+        this.closeRenamingInput();
+    }
+
+    /**
+     * Removes the editing overlay and the marker it put on the header cell.
+     */
+    private closeRenamingInput(): void {
+        const cell = this.renamedCell;
+        const input = this.renameInput;
+
+        // Cleared before the DOM is touched: removing a focused input fires
+        // blur, which would otherwise re-enter and commit what was just
+        // discarded.
+        delete this.renamedCell;
+        delete this.renameInput;
+
+        input?.parentElement?.remove();
+        cell?.htmlElement.classList.remove(Globals.getClassName('editedCell'));
+    }
+
+    /**
+     * Returns the name the input starts from, which is also the name an
+     * unchanged submit compares against.
+     *
+     * @param cell
+     * Header cell being renamed.
+     */
+    /**
+     * Writes a new format where the current one lives. A `header` option
+     * entry outranks the column options, so writing to the column would look
+     * right until the next full render undid it.
+     *
+     * @param cell
+     * Header cell being renamed.
+     *
+     * @param format
+     * The typed format.
+     */
+    private setColumnFormat(
+        cell: HeaderCell,
+        format: string | undefined
+    ): void {
+        const column = cell.column;
+        const superHeader = cell.superColumnOptions.header;
+
+        if (!column) {
+            return;
+        }
+
+        if (superHeader?.format !== void 0) {
+            const { grid } = this;
+
+            for (const options of [grid.options, grid.userOptions]) {
+                setHeaderColumnFormat(options?.header, column.id, format);
+            }
+
+            // The cell holds its own copy until the header rebuilds it.
+            if (format === void 0) {
+                delete superHeader.format;
+            } else {
+                superHeader.format = format;
+            }
+            return;
+        }
+
+        if (format !== void 0) {
+            column.setOptions({ header: { format } });
+            return;
+        }
+
+        // Merging cannot express a removal, but the column policy holds the
+        // user options by reference, so dropping the key here is enough.
+        delete this.grid.columnPolicy
+            .getIndividualColumnOptions(column.id)?.header?.format;
+    }
+
+    /**
+     * Returns the raw format behind a header cell, resolved the way the cell
+     * resolves it, or undefined when the column has none.
+     *
+     * @param cell
+     * Header cell to read.
+     */
+    private getColumnFormat(cell: HeaderCell): string | undefined {
+        return cell.superColumnOptions.header?.format ??
+            cell.column?.options.header?.format;
+    }
+
+    private getRenamingSeed(cell: HeaderCell): string {
+        const column = cell.column;
+
+        // The id action edits the id, so a displayed name coming from a
+        // format would be a misleading thing to put in the input.
+        if (this.renamingTarget === 'id') {
+            return column?.id || '';
+        }
+
+        // The raw format, not the text it rendered to: the input edits the
+        // template, so `{id}` has to stay `{id}`.
+        return this.getColumnFormat(cell) ?? column?.id ?? '';
+    }
+
+    private isFreeColumnId(columnId: string): boolean {
+        return (
+            !this.getDataTable()?.getColumnIds().includes(columnId) &&
+            !this.grid.columnPolicy.getColumnIds().includes(columnId)
+        );
+    }
+
+    /**
+     * Renames a column in the data, moving along everything Grid holds the
+     * old id in.
+     *
+     * @param column
+     * Column to rename.
+     *
+     * @param newId
+     * The new column id, already checked to be free.
+     */
+    private async renameColumnId(
+        column: Column,
+        newId: string
+    ): Promise<void> {
+        const table = this.getDataTable();
+
+        if (!table) {
+            return;
+        }
+
+        const oldId = column.id;
+        const columnIds = table.getColumnIds();
+        const columns = table.getColumns(void 0, true);
+        const nextColumns: Record<string, DataTableColumn> = {};
+
+        // Rebuilt rather than reassigned, since the key order is the column
+        // order.
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            const columnId = columnIds[i];
+            nextColumns[columnId === oldId ? newId : columnId] =
+                columns[columnId];
+        }
+
+        table.deleteColumns(void 0, { fromGrid: true });
+        table.setColumns(nextColumns, void 0, { fromGrid: true });
+
+        this.repointColumnId(oldId, newId);
+        await this.updateColumnsFromTable(table, { [newId]: oldId });
+
+        this.grid.viewport?.getColumn(newId)?.header?.htmlElement.focus();
+    }
+
+    /**
+     * Moves the references Grid keeps to a column id over to the new one.
+     * What it cannot move is refused up front by `getColumnRenamingBlocker`.
+     *
+     * @param oldId
+     * The id being replaced.
+     *
+     * @param newId
+     * The id replacing it.
+     */
+    private repointColumnId(oldId: string, newId: string): void {
+        const { grid } = this;
+
+        for (const options of [grid.options, grid.userOptions]) {
+            repointHeaderColumnId(options?.header, oldId, newId);
+
+            const data = options?.data as { idColumn?: string } | undefined;
+
+            if (data?.idColumn === oldId) {
+                data.idColumn = newId;
+            }
+        }
+
+        // Sorting is deliberately left alone. It reloads from the column
+        // options, which the rename carries over, and repointing the state
+        // here would make that reload see no change and keep a modifier
+        // pointing at the old column.
+    }
+
     private async addRow(
-        context: CellContextMenuContext,
+        context: ColumnEditingContext,
         offset: 0 | 1
     ): Promise<void> {
         const table = this.getDataTable();
@@ -351,7 +879,7 @@ class TableEditingController {
     }
 
     private async addColumn(
-        context: CellContextMenuContext,
+        context: ColumnEditingContext,
         offset: 0 | 1
     ): Promise<void> {
         const table = this.getDataTable();
@@ -389,7 +917,11 @@ class TableEditingController {
         table.deleteColumns(void 0, { fromGrid: true });
         table.setColumns(nextColumns, void 0, { fromGrid: true });
         await this.updateColumnsFromTable(table);
-        this.focusResult(rowIndexes?.local || 0, nextColumnId);
+        this.focusResult(
+            rowIndexes?.local || 0,
+            nextColumnId,
+            context.rowId === void 0
+        );
     }
 
     private getDataTable(): DataTable | undefined {
@@ -446,12 +978,29 @@ class TableEditingController {
      *
      * @param columnId
      * Column to focus, or the first one when it no longer exists.
+     *
+     * @param inHeader
+     * Whether the edit came from the header, which is then where the focus
+     * belongs rather than in a body cell the user never pointed at.
      */
-    private focusResult(rowIndex: number | undefined, columnId?: string): void {
+    private focusResult(
+        rowIndex: number | undefined,
+        columnId?: string,
+        inHeader?: boolean
+    ): void {
         const viewport = this.grid.viewport;
 
         if (!viewport) {
             return;
+        }
+
+        if (inHeader && columnId) {
+            const headerCell = viewport.getColumn(columnId)?.header;
+
+            if (headerCell) {
+                headerCell.htmlElement.focus();
+                return;
+            }
         }
 
         const lastRowIndex = viewport.rowsVirtualizer.rowCount - 1;
@@ -524,13 +1073,19 @@ class TableEditingController {
         return rowId;
     }
 
-    private async updateColumnsFromTable(table: DataTable): Promise<void> {
+    private async updateColumnsFromTable(
+        table: DataTable,
+        renamedFrom?: Record<string, string>
+    ): Promise<void> {
         const { grid } = this;
         const columns = table.getColumns(void 0, false, true) as Record<
             string,
             Array<DataTableValue>
         >;
-        const columnOptions = this.getColumnOptions(table.getColumnIds());
+        const columnOptions = this.getColumnOptions(
+            table.getColumnIds(),
+            renamedFrom
+        );
 
         grid.update({
             data: {
@@ -562,13 +1117,18 @@ class TableEditingController {
     }
 
     private getColumnOptions(
-        columnIds: string[]
+        columnIds: string[],
+        renamedFrom?: Record<string, string>
     ): IndividualColumnOptions[] {
         const { grid } = this;
         const sourceColumnIds = new Set(columnIds);
         const includedColumnIds = new Set(columnIds);
         const options = columnIds.map((columnId): IndividualColumnOptions => ({
-            ...(grid.columnPolicy.getIndividualColumnOptions(columnId) || {}),
+            // A renamed column keeps its own options, the displayed name
+            // among them: renaming is a separate action from this one.
+            ...(grid.columnPolicy.getIndividualColumnOptions(
+                renamedFrom?.[columnId] ?? columnId
+            ) || {}),
             id: columnId
         }));
 
@@ -610,6 +1170,93 @@ class TableEditingController {
  *  Functions
  *
  * */
+
+/**
+ * Sets the format of a column's entry in a `header` option tree, in place.
+ * Only object entries are visited: a plain string entry carries no format,
+ * so such a column reads its format from the column options instead.
+ *
+ * @param header
+ * Header option tree, or a branch of one.
+ *
+ * @param columnId
+ * Column whose entry to write.
+ *
+ * @param format
+ * The new format, or undefined to remove it.
+ *
+ * @return
+ * Whether the entry was found.
+ */
+function setHeaderColumnFormat(
+    header: Array<GroupedHeaderOptions|string> | undefined,
+    columnId: string,
+    format: string | undefined
+): boolean {
+    if (!header) {
+        return false;
+    }
+
+    for (const entry of header) {
+        if (typeof entry === 'string') {
+            continue;
+        }
+
+        if (entry.columnId === columnId) {
+            if (format === void 0) {
+                delete entry.format;
+            } else {
+                entry.format = format;
+            }
+            return true;
+        }
+
+        if (setHeaderColumnFormat(entry.columns, columnId, format)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Repoints a column id inside a `header` option tree, in place.
+ *
+ * @param header
+ * Header option tree, or a branch of one.
+ *
+ * @param oldId
+ * The id being replaced.
+ *
+ * @param newId
+ * The id replacing it.
+ */
+function repointHeaderColumnId(
+    header: Array<GroupedHeaderOptions|string> | undefined,
+    oldId: string,
+    newId: string
+): void {
+    if (!header) {
+        return;
+    }
+
+    for (let i = 0, iEnd = header.length; i < iEnd; ++i) {
+        const entry = header[i];
+
+        if (typeof entry === 'string') {
+            if (entry === oldId) {
+                header[i] = newId;
+            }
+            continue;
+        }
+
+        if (entry.columnId === oldId) {
+            entry.columnId = newId;
+        }
+
+        repointHeaderColumnId(entry.columns, oldId, newId);
+    }
+}
 
 /**
  * Returns whether a provider can map presentation rows to source rows.

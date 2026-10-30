@@ -10,6 +10,12 @@ Grid.grid('container', {
         }
     },
     tableEditing: {
-        enabled: true
+        enabled: true,
+        columnRenaming: {
+            enabled: true
+        },
+        columnIdEditing: {
+            enabled: true
+        }
     }
 });
