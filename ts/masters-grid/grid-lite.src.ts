@@ -32,7 +32,9 @@ import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import CellContextMenuBuiltInActions
     from '../Grid/Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
-import whcm from '../Accessibility/HighContrastMode.js';
+import {
+    isHighContrastModeActive
+} from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
@@ -77,7 +79,7 @@ const G = {
     Grid: _Grid,
     grid: _Grid.grid,
     grids: _Grid.grids,
-    isHighContrastModeActive: whcm.isHighContrastModeActive,
+    isHighContrastModeActive,
     merge: merge,
     Pagination,
     product: 'Grid Lite',
@@ -111,6 +113,7 @@ export {
     DataProviderRegistry,
     DataTable,
     _Grid as Grid,
+    isHighContrastModeActive,
     _Options as Options,
     Pagination,
     SvgIcons,
@@ -122,7 +125,6 @@ export const {
     defaultOptions,
     grid,
     grids,
-    isHighContrastModeActive,
     product,
     setOptions,
     version,

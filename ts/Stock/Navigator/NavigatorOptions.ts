@@ -80,7 +80,7 @@ declare module '../../Core/Series/SeriesOptions' {
          * @see [navigator.series](#navigator.series)
          *
          * @since     5.0.0
-         * @product   highstock
+         * @product   highstock gantt
          */
         navigatorOptions?: NavigatorSeriesOptions;
 
@@ -89,7 +89,7 @@ declare module '../../Core/Series/SeriesOptions' {
          * over [navigator.baseSeries](#navigator.baseSeries) if defined.
          *
          * @since     5.0.0
-         * @product   highstock
+         * @product   highstock gantt
          */
         showInNavigator?: boolean;
     }
