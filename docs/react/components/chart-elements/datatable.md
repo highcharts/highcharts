@@ -1,3 +1,10 @@
+---
+description: >-
+  Provide column-oriented chart data through a shared DataTable, map table
+  columns to series point properties with dataMapping, and optionally name the
+  table so multiple series can reference it.
+---
+
 # DataTable
 
 You can supply chart data in a tabular, column-oriented format using the `DataTable` component. Instead of passing data directly to each series, you store it in a shared table and map columns to series properties with [`dataMapping`](https://api.highcharts.com/highcharts/series.line.dataMapping):

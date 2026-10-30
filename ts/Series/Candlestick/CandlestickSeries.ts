@@ -25,11 +25,9 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import OHLCSeries from '../OHLC/OHLCSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    ohlc: OHLCSeries
-} = SeriesRegistry.seriesTypes;
 import { crisp, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -41,7 +39,6 @@ import { crisp, merge } from '../../Shared/Utilities.js';
 /**
  * The candlestick series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.candlestick
  *
@@ -103,7 +100,7 @@ class CandlestickSeries extends OHLCSeries {
     /**
      * Postprocess mapping between options and SVG attributes
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
      */
     public pointAttribs(
@@ -141,7 +138,7 @@ class CandlestickSeries extends OHLCSeries {
 
     /**
      * Create the SVGPath of the point based on the plot positions
-     * @private
+     * @internal
      */
     protected getPointPath(point: CandlestickPoint): SVGPath {
         // Crisp vector coordinates
@@ -208,7 +205,7 @@ class CandlestickSeries extends OHLCSeries {
 
 }
 
-interface CandlestickSeries{
+interface CandlestickSeries {
     pointClass: typeof CandlestickPoint;
 }
 
@@ -218,7 +215,7 @@ interface CandlestickSeries{
  *
  * */
 
-declare module '../../Core/Series/SeriesType'{
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         candlestick: typeof CandlestickSeries;
     }

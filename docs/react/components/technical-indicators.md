@@ -1,3 +1,10 @@
+---
+description: >-
+  Add technical indicator series to a StockChart, link indicators to a price
+  series, configure indicator parameters, and consult the available component
+  list and shared series props.
+---
+
 # Technical indicators
 
 You can add technical indicators to your stock chart using dedicated indicator components:

@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable chart downloads and printing, customize the export menu, and control
+  exported image dimensions and fonts. Learn how client exports, server
+  exports, and the optional export-data module fit together.
+---
+
 Export module
 =============
 

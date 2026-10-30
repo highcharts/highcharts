@@ -34,6 +34,19 @@ import { defined, merge } from '../../../../Shared/Utilities.js';
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+/**
+ * Columns that have already reported an unparsable value, so that a column
+ * of them does not log once per rendered cell.
+ */
+const warnedColumns = new WeakSet<object>();
+
+
+/* *
+ *
  *  Class
  *
  * */
@@ -226,9 +239,26 @@ class SparklineContent extends CellContentPro {
         }
 
         if (!options.series) {
-            options.series = [{
-                data: JSON.parse(trimmedValue)
-            }];
+            let data: unknown = [];
+
+            try {
+                data = JSON.parse(trimmedValue);
+            } catch {
+                const { column } = this.cell;
+
+                if (!warnedColumns.has(column)) {
+                    warnedColumns.add(column);
+
+                    // eslint-disable-next-line no-console
+                    console.warn(
+                        `Sparkline renderer: the column "${column.id}" has ` +
+                        'a value that is not a valid list of points. Such ' +
+                        'cells render an empty chart.'
+                    );
+                }
+            }
+
+            options.series = [{ data }];
         }
 
         return options;

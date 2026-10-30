@@ -27,7 +27,10 @@ Important behavior:
   - `grid-lite` -> `samples/grid-lite/demo`
   - `grid-pro` -> `samples/grid-pro/demo`
 - `demo.details` is parsed as YAML with `js-yaml`'s `safeLoad` API for
-  compatibility with the version used by this repo.
+  compatibility with the version used by this repo. Every other
+  `demo.details` reader must use a safe schema too, since the full schema
+  compiles `!!js/function` tags from fork PRs. TypeScript typed against
+  js-yaml 4 uses `load` with `JSON_SCHEMA`.
 - Missing `demo.details`, missing `name`, missing `tags`, or missing
   `categories` means that demo is skipped for the index.
 - Malformed YAML or malformed category/config metadata should fail the build.

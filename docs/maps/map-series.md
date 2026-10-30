@@ -1,3 +1,10 @@
+---
+description: >-
+  Initialize the base map series, load TopoJSON or GeoJSON, and join values
+  to map shapes through series.data, joinBy, or point geometry. The article
+  links to the full series options.
+---
+
 Map series
 ==========
 

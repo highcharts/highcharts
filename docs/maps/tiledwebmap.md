@@ -1,3 +1,10 @@
+---
+description: >-
+  Load a tiled-web-map series as a basemap from a supported provider or
+  custom URL, then position it through the map view. The article covers
+  provider settings, layer order, CSS filters, and export behavior.
+---
+
 TiledWebMap
 ==========
 
@@ -48,7 +55,7 @@ Providers properties
 ------------
 Highcharts by default supports the following tile providers: `OpenStreetMap`, `Thunderforest`, `Esri`, `Stamen`, `USGS` and `LimaLabs`. Each provider has their own themes and possible subdomains. Tiles are provided in a specific map projection, usually it is a WebMercator projection.
 
-Providers supported natively by Highcharts force map chart configuration to set an appropriate map projection. If the user sets their own projection, which is not supported, there will be a warning in the console and tiles might not load properly. Other providers can be added by using a custom URL in the `provider.url` property or another provider can be [custom built and plugged in](https://highcharts.com/samples/maps/series-tiledwebmaps/human-anatomy).
+Providers supported natively by Highcharts force map chart configuration to set an appropriate map projection. If the user sets their own projection, which is not supported, there will be a warning in the console and tiles might not load properly. Other providers can be added by using a custom URL in the `provider.url` property or another provider can be [custom built and plugged in](https://highcharts.com/samples/maps/series-tiledwebmap/human-anatomy).
 
 Available providers
 ------------

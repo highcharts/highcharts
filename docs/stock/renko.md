@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a Renko series that plots price changes in fixed-size bricks without
+  using time to determine each point, set boxSize, configure a navigator
+  series, and compare its behavior with other price charts.
+---
+
 # Highcharts: Understanding Renko Series
 
 Highcharts offers a variety of charting methods for visualizing price data, and one of these is the `Renko` series.
@@ -54,7 +61,7 @@ The Heikin-Ashi technique differs from Candlestick and Renko methods by using th
 Even though Renko charts simplify the representation, they can simplify trend identification as compared with the other two types.
 
 
-<iframe src="https://www.highcharts.com/samples/stock/series-renko/renko-vs-heikinashi-vs-candlestick/" width="100%" height="100%" title="Renko Chart"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/stock/series-renko/renko-vs-heikinashi-vs-candlestick" width="100%" height="100%" title="Renko Chart"></iframe>
 
 ## Data Grouping and Tooltip Customization
 

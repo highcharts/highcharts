@@ -25,11 +25,16 @@ import type OrganizationSeries from './OrganizationSeries';
 import type { OrganizationSeriesNodeOptions } from './OrganizationSeriesOptions';
 import type SankeyPoint from './../Sankey/SankeyPoint';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    sankey: { prototype: { pointClass: SankeyPointClass } }
-} = SeriesRegistry.seriesTypes;
+import SankeySeries from '../Sankey/SankeySeries.js';
 import { defined, find } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const SankeyPointClass = SankeySeries.prototype.pointClass;
 
 /* *
  *

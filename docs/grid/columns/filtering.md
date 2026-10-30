@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Filtering"
+description: >-
+  Enable popup or inline column filters, select operators by data type, set
+  initial rules, limit available choices, combine filters across columns, and
+  control filtering through the API.
 ---
 
 # Column filtering
@@ -117,7 +121,7 @@ columns: [{
 }]
 ```
 
-See also: [Inline filtering with hidden operator select](https://www.highcharts.com/samples/grid-lite/options/inline-filtering-hide-select).
+See also: [Inline filtering with hidden operator select](https://www.highcharts.com/samples/grid/options/inline-filtering-hide-select).
 
 ## Filter operators by data type
 
