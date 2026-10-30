@@ -1249,6 +1249,8 @@ class Point {
                 valueSuffix = ''
             } = tooltipOptions;
 
+        pointFormat = chart.tooltip?.keyReplace(pointFormat, this) || pointFormat;
+
         // Replace default point style with class name
         if (chart.styledMode) {
             pointFormat = chart.tooltip?.styledModeFormat(pointFormat) ||

@@ -187,7 +187,7 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
 export interface BubbleSeriesTooltipOptions
     extends ScatterSeriesTooltipOptions {
     /**
-     * @default '({point.x}, {point.y}), Size: {point.z}'
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: {#if series.xAxis.categories}<b>{point.y}</b>{else}{#if point.name}[<b>{point.category}</b>, <b>{point.y}</b>]{else}{#if series.xAxis.dateTime}<b>{point.y}</b>{else}[<b>{point.category}</b>, <b>{point.y}</b>]{/if}{/if}{/if}, Size: <b>{point.z}</b><br/>'
      */
     pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }

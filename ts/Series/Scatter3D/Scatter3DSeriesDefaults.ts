@@ -48,7 +48,16 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
 
     tooltip: {
 
-        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '{series.name}: {#if series.xAxis.categories}' +
+            '[<b>{point.y}</b>, <b>{point.z}</b>]' +
+            '{else}{#if point.name}' +
+            '[<b>{point.category}</b>, <b>{point.y}</b>, ' +
+            '<b>{point.z}</b>]' +
+            '{else}{#if series.xAxis.dateTime}' +
+            '[<b>{point.y}</b>, <b>{point.z}</b>]' +
+            '{else}[<b>{point.category}</b>, <b>{point.y}</b>, ' +
+            '<b>{point.z}</b>]{/if}{/if}{/if}<br/>'
 
     }
 

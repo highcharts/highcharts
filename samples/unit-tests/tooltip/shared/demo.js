@@ -377,3 +377,221 @@ QUnit.test('Shared tooltip with multiple axes', assert => {
         'Tooltip should NOT have anchorY for multiple points'
     );
 });
+
+QUnit.test(
+    'Scatter and bubble use shared tooltips with default formats',
+    function (assert) {
+        [
+            {
+                type: 'scatter',
+                data: [[1, 12]],
+                expected: '[<b>1</b>, <b>12</b>]<br/>'
+            },
+            {
+                type: 'bubble',
+                data: [[1, 12, 2]],
+                expected: '[<b>1</b>, <b>12</b>], Size: <b>2</b><br/>'
+            },
+            {
+                type: 'scatter',
+                data: [[1, 12]],
+                expected: '<b>12</b><br/>',
+                xAxisType: 'datetime'
+            },
+            {
+                type: 'bubble',
+                data: [[1, 12, 2]],
+                expected: '<b>12</b>, Size: <b>2</b><br/>',
+                xAxisType: 'datetime'
+            },
+            {
+                type: 'scatter',
+                data: [[1, 12]],
+                expected: '<b>12</b><br/>',
+                categories: ['A', 'B', 'C'],
+                xAxisType: 'category'
+            },
+            {
+                type: 'bubble',
+                data: [[1, 12, 2]],
+                expected: '<b>12</b>, Size: <b>2</b><br/>',
+                categories: ['A', 'B', 'C'],
+                xAxisType: 'category'
+            }
+        ].forEach(function (testCase) {
+            const chart = Highcharts.chart('container', {
+                    chart: {
+                        type: testCase.type
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    series: [{
+                        name: 'Temperature',
+                        data: testCase.data
+                    }, {
+                        name: 'Humidity',
+                        data: testCase.data
+                    }],
+                    xAxis: {
+                        type: testCase.xAxisType || 'linear',
+                        categories: testCase.categories
+                    }
+                }),
+                points = chart.series.map(series => series.points[0]);
+
+            points[0].onMouseOver();
+
+            assert.strictEqual(
+                chart.hoverPoints.length,
+                2,
+                `Both ${testCase.type} series should be in the shared tooltip`
+            );
+            assert.deepEqual(
+                chart.tooltip.bodyFormatter(points),
+                points.map(point =>
+                    '<span style="color:' + point.color + '">●</span> ' +
+                    point.series.name + ': ' +
+                    testCase.expected
+                ),
+                `${testCase.type} should use the default point format`
+            );
+
+            chart.destroy();
+        });
+    }
+);
+
+QUnit.test('Scatter tooltip headers and point coordinates', function (assert) {
+    const t0 = Date.UTC(2026, 0, 5),
+        getText = (chart, point) => {
+            chart.tooltip.refresh(point);
+            return chart.tooltip.label.text.element.textContent
+                .replace(/\u200B/g, '|')
+                .replace(/\s+/g, ' ');
+        };
+
+    let chart = Highcharts.chart('container', {
+        series: [{
+            type: 'scatter',
+            name: 'S1',
+            data: [[1.5, 2], { x: 3, y: 4, name: 'Alpha' }]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '● S1: [1.5, 2]|',
+        'Linear x values should not be repeated in the header'
+    );
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[1]),
+        'Alpha|● S1: [3, 4]|',
+        'A point name should show in the header, x and y in the body'
+    );
+
+    chart.update({
+        xAxis: {
+            type: 'datetime'
+        },
+        tooltip: {
+            xDateFormat: '%Y-%m-%d'
+        },
+        series: [{
+            data: [[t0, 2], { x: t0 + 864e5, y: 4, name: 'Node' }]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '2026-01-05|● S1: 2|',
+        'Datetime x values should show in the header'
+    );
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[1]),
+        'Node|● S1: [2026-01-06, 4]|',
+        'The date of a named point should show in the body'
+    );
+
+    chart.destroy();
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            type: 'packedbubble',
+            name: 'Europe',
+            data: [{ name: 'Germany', value: 767 }]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '● Europe|Value: 767',
+        'Packed bubble should keep the series name in the header'
+    );
+
+    chart.destroy();
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            options3d: {
+                enabled: true
+            },
+            type: 'scatter3d'
+        },
+        series: [{
+            name: 'S1',
+            data: [
+                [1, 2, 3],
+                { x: 4, y: 5, z: 6, name: 'Alpha' }
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '● S1: [1, 2, 3]|',
+        'Scatter3D should show linear x, y and z values in the body'
+    );
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[1]),
+        'Alpha|● S1: [4, 5, 6]|',
+        'Scatter3D should show the name in the header and coordinates in the ' +
+            'body'
+    );
+
+    chart.update({
+        xAxis: {
+            type: 'datetime'
+        },
+        tooltip: {
+            xDateFormat: '%Y-%m-%d'
+        },
+        series: [{
+            data: [[t0, 2, 3]]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        '2026-01-05|● S1: [2, 3]|',
+        'Scatter3D should not repeat a datetime x value in the body'
+    );
+
+    chart.update({
+        xAxis: {
+            categories: ['A'],
+            type: 'category'
+        },
+        series: [{
+            data: [[0, 2, 3]]
+        }]
+    });
+
+    assert.strictEqual(
+        getText(chart, chart.series[0].points[0]),
+        'A|● S1: [2, 3]|',
+        'Scatter3D should not repeat a category in the body'
+    );
+
+    chart.destroy();
+});

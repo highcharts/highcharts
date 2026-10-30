@@ -128,7 +128,7 @@ export interface Scatter3DSeriesOptions extends ScatterSeriesOptions {
 export interface Scatter3DSeriesTooltipOptions
     extends ScatterSeriesTooltipOptions {
     /**
-     * @default 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: {#if series.xAxis.categories}[<b>{point.y}</b>, <b>{point.z}</b>]{else}{#if point.name}[<b>{point.category}</b>, <b>{point.y}</b>, <b>{point.z}</b>]{else}{#if series.xAxis.dateTime}[<b>{point.y}</b>, <b>{point.z}</b>]{else}[<b>{point.category}</b>, <b>{point.y}</b>, <b>{point.z}</b>]{/if}{/if}{/if}<br/>'
      */
     pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
