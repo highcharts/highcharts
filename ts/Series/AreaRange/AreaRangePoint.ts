@@ -24,18 +24,16 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    area: {
-        prototype: {
-            pointClass: AreaPoint,
-            pointClass: {
-                prototype: areaProto
-            }
-        }
-    }
-} = SeriesRegistry.seriesTypes;
+import AreaSeries from '../Area/AreaSeries.js';
 import { defined, isNumber } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const AreaPoint = AreaSeries.prototype.pointClass;
 
 /* *
  *
@@ -158,7 +156,7 @@ class AreaRangePoint extends AreaPoint {
         }
 
         // Top state:
-        areaProto.setState.apply(this, arguments as any);
+        super.setState.apply(this, arguments as any);
 
         this.state = prevState;
 
@@ -179,7 +177,7 @@ class AreaRangePoint extends AreaPoint {
         const originalSettings = series.modifyMarkerSettings();
 
         // Bottom state
-        areaProto.setState.apply(this, arguments as any);
+        super.setState.apply(this, arguments as any);
 
         // Restore previous state
         series.restoreMarkerSettings(originalSettings);
@@ -198,7 +196,7 @@ class AreaRangePoint extends AreaPoint {
         }
 
         if (this.isInside) {
-            path = areaProto.haloPath.apply(this, arguments);
+            path = super.haloPath.apply(this, arguments);
         }
 
         // Top halo
@@ -208,7 +206,7 @@ class AreaRangePoint extends AreaPoint {
         }
         if (this.isTopInside) {
             path = path.concat(
-                areaProto.haloPath.apply(this, arguments)
+                super.haloPath.apply(this, arguments)
             );
         }
 

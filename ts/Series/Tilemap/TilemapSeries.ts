@@ -28,12 +28,10 @@ const {
     composed,
     noop
 } = H;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import HeatmapSeries from '../Heatmap/HeatmapSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    heatmap: HeatmapSeries,
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
 import TilemapPoint from './TilemapPoint.js';
 import TilemapSeriesDefaults from './TilemapSeriesDefaults.js';
 import TilemapShapes from './TilemapShapes.js';

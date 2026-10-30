@@ -28,21 +28,21 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import NodesComposition from '../NodesComposition.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: seriesProto,
-        prototype: {
-            pointClass: Point
-        }
-    }
-} = SeriesRegistry;
+import Series from '../../Core/Series/Series.js';
 import {
     addEvent,
     css,
     defined,
     extend
 } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const Point = Series.prototype.pointClass;
 
 /* *
  *
@@ -327,7 +327,7 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
                         }
 
                         // Remove link from data/points collections
-                        seriesProto.removePoint.call(
+                        Series.prototype.removePoint.call(
                             series,
                             series.data.indexOf(linkFromTo),
                             false,

@@ -3,6 +3,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/geoheatmap
  * @requires highcharts
+ * @requires highcharts/modules/map
  *
  * (c) 2009-2026
  *

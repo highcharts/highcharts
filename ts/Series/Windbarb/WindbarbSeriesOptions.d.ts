@@ -58,6 +58,7 @@ import type WindbarbPointOptions from './WindbarbPointOptions';
  *
  * @product highcharts highstock
  *
+ * @requires modules/datagrouping
  * @requires modules/windbarb
  */
 export interface WindbarbSeriesOptions extends ColumnSeriesOptions {

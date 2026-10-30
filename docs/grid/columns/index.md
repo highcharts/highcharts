@@ -208,7 +208,7 @@ columns: [{
 ```
 
 See the
-[summary columns demo](https://www.highcharts.com/samples/grid-pro/options/summary-columns).
+[summary columns demo](https://www.highcharts.com/samples/grid/options/summary-columns).
 
 Aggregating *down* a column instead — one value per column over many rows — is
 what [`rowAggregator`](https://www.highcharts.com/docs/grid/rows/grouping) and
