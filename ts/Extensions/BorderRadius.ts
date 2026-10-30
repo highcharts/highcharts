@@ -26,8 +26,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 
-import D from '../Core/Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Core/Defaults.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
 import Series from '../Core/Series/Series.js';

@@ -20,6 +20,8 @@
 import DataTableCore from '../../Data/DataTableCore.js';
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import CrossSymbol from '../CrossSymbol.js';
 
@@ -29,7 +31,7 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
-import Series from '../../Core/Series/Series.js';
+import type Series from '../../Core/Series/Series.js';
 import {
     extend,
     isNumber,
@@ -38,12 +40,6 @@ import {
     relativeLength
 } from '../../Shared/Utilities.js';
 const { composed } = H;
-const {
-    scatter: ScatterSeries,
-    column: {
-        prototype: columnProto
-    }
-} = SeriesRegistry.seriesTypes;
 
 
 /* *
@@ -69,7 +65,6 @@ const {
 /**
  * The series type
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.pointandfigure
  *
@@ -120,6 +115,7 @@ class PointAndFigureSeries extends ScatterSeries {
     /** @internal */
     public yData!: Array<number>;
 
+    /** @internal */
     public allowDG = false;
 
     /* *
@@ -166,7 +162,7 @@ class PointAndFigureSeries extends ScatterSeries {
 
         /**
          * Get the Y value of last data point, from the last PNF group.
-         * @private
+         * @internal
          * @function Highcharts.seriesTypes.pointandfigure#getLastPoint
          */
         function getLastPoint(pnfDataGroups: Array<PointAndFigureGroup>): number {
@@ -176,7 +172,7 @@ class PointAndFigureSeries extends ScatterSeries {
 
         /**
          * Push new data point to the last PNF group.
-         * @private
+         * @internal
          * @function Highcharts.seriesTypes.pointandfigure#pushNewPoint
          */
         function pushNewPoint(
@@ -331,6 +327,7 @@ class PointAndFigureSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface PointAndFigureGroup {
     /** @internal */
     x: number;
@@ -340,13 +337,14 @@ interface PointAndFigureGroup {
     upTrend: boolean;
 }
 
+/** @internal */
 interface PointAndFigureSeries {
     /** @internal */
     takeOrdinalPosition: boolean;
     /** @internal */
     pnfDataGroups: Array<PointAndFigureGroup>;
     /** @internal */
-    getColumnMetrics: typeof columnProto.getColumnMetrics;
+    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
     /** @internal */
     markerWidth: number;
     /** @internal */
@@ -358,7 +356,7 @@ interface PointAndFigureSeries {
 extend(PointAndFigureSeries.prototype, {
     takeOrdinalPosition: true,
     pnfDataGroups: [],
-    getColumnMetrics: columnProto.getColumnMetrics,
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
     pointClass: PointAndFigurePoint,
     sorted: true
 });

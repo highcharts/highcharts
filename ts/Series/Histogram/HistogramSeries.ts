@@ -24,10 +24,8 @@ import type HistogramSeriesOptions from './HistogramSeriesOptions';
 
 import DerivedComposition from '../DerivedComposition.js';
 import HistogramSeriesDefaults from './HistogramSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import AnimationOptions from '../../Core/Animation/AnimationOptions';
 import {
     arrayMax,

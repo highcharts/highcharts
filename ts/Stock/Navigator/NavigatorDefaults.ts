@@ -141,6 +141,7 @@ const NavigatorDefaults: NavigatorOptions = {
          * @sample {highstock} stock/navigator/handles-border-radius/
          *      Border radius on the navigator handles.
          *
+         * @type {number|string}
          * @since 11.4.2
          */
         borderRadius: 0,

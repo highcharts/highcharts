@@ -858,17 +858,7 @@ namespace DataLabel {
                             !!(
                                 dataLabel.div ||
                                 dataLabel.text?.foreignObject
-                            ) !== !!labelOptions.useHTML ||
-                            (
-                                // Change from no rotation to rotation and
-                                // vice versa. Don't use defined() because
-                                // rotation = 0 means also rotation = undefined
-                                (
-                                    !dataLabel.rotation ||
-                                    !labelOptions.rotation
-                                ) &&
-                                dataLabel.rotation !== labelOptions.rotation
-                            )
+                            ) !== !!labelOptions.useHTML
                         )
                     ) {
                         dataLabel = void 0;
