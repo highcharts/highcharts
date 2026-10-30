@@ -85,9 +85,12 @@
     }
 }
 
-/* Surface application only when themed — utilities win with theme: ''. */
+/*
+ * Surface application only when themed — utilities win with theme: ''.
+ * Two classes, to beat page rules such as `input[type="text"]`.
+ */
 .hcg-themed {
-    :where(.hcg-input) {
+    .hcg-input {
         font-weight: var(--ig-input-font-weight);
         font-size: var(--ig-input-font-size);
         font-family: var(--ig-input-font-family);
