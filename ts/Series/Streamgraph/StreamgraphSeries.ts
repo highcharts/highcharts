@@ -102,7 +102,9 @@ addEvent(StreamgraphSeries, 'afterGetExtremes', (e): void => {
  * */
 
 interface StreamgraphSeries {
+    /** @internal */
     negStacks: boolean;
+    /** @internal */
     pointClass: typeof StreamgraphPoint;
 }
 

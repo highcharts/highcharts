@@ -18,8 +18,7 @@
  *
  * */
 
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
-import type ScatterSeries from './ScatterSeries';
+import type ScatterSeriesOptions from './ScatterSeriesOptions';
 
 /* *
  *
@@ -40,7 +39,7 @@ import type ScatterSeries from './ScatterSeries';
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
-const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
+const ScatterSeriesDefaults: ScatterSeriesOptions = {
 
     /**
      * The width of the line connecting the data points.
