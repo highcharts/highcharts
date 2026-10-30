@@ -1,0 +1,200 @@
+name: Build and publish agent skills
+
+on:
+  pull_request:
+    branches: [ 'master', 'dash/**', 'grid/**' ]
+    paths:
+      - '.agents/skills/**'
+      - '.claude/skills/**'
+      - 'docs/**'
+      - 'skills/**'
+      - 'package.json'
+      - 'tools/generate-doc-skills.js'
+      - 'tools/publish-doc-skills*'
+      - 'tools/skill-configs/**'
+      - '.github/workflows/validate-skills.yml'
+  push:
+    # Build every master revision so stale-run skips always have a newer artifact.
+    branches: [ 'master' ]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish to highcharts-skills/main (from Highcharts master only)'
+        type: boolean
+        default: false
+
+permissions:
+   contents: read # to fetch code (actions/checkout)
+
+jobs:
+  validate_skills:
+    timeout-minutes: 10
+    runs-on: ubuntu-slim
+    concurrency:
+      # Only superseded PR builds cancel; manual validation must not cancel publication.
+      group: skills-build-${{ github.event.pull_request.number || github.run_id }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Build and validate complete skills
+        run: |
+          node tools/generate-doc-skills.js --self-test
+          node --test tools/publish-doc-skills.test.js
+          node tools/generate-doc-skills.js --yes
+          node tools/publish-doc-skills.js --artifact=build/skills --revision="${GITHUB_SHA}"
+
+      - name: Use Python
+        uses: actions/setup-python@v6.3.0
+        with:
+          python-version: '3.13'
+
+      - name: Install skills-ref
+        run: python -m pip install skills-ref==0.1.1
+
+      - name: Validate skills
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from skills_ref import validate
+
+          roots = [Path('build/skills'), Path('.agents/skills'), Path('.claude/skills')]
+          skill_dirs = sorted({
+              skill_file.parent
+              for root in roots
+              if root.is_dir()
+              for skill_file in root.rglob('SKILL.md')
+          })
+
+          if not skill_dirs:
+              raise SystemExit('No SKILL.md files found.')
+
+          failed = False
+          for skill_dir in skill_dirs:
+              print(f'Validating {skill_dir}')
+              problems = validate(skill_dir)
+              if problems:
+                  failed = True
+                  print(f'::error title={skill_dir}::Validation failed')
+                  for problem in problems:
+                      print(f'  - {problem}')
+
+          if failed:
+              raise SystemExit(1)
+
+          print(f'Validated {len(skill_dirs)} skills.')
+          PY
+
+      - name: Upload installable skills
+        uses: actions/upload-artifact@v6
+        with:
+          name: skills-${{ github.sha }}
+          path: build/skills/
+          include-hidden-files: true
+          if-no-files-found: error
+          overwrite: true
+
+  publish_skills:
+    needs: validate_skills
+    if: >-
+      github.repository == 'highcharts/highcharts' &&
+      github.ref == 'refs/heads/master' &&
+      ((github.event_name == 'workflow_dispatch' && inputs.publish) ||
+       (github.event_name == 'push' && vars.SKILLS_PUBLISH_ON_PUSH == 'true'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Reuse the master-restricted nightly credentials. See skills-publish.md.
+    environment: nightly-dist
+    concurrency:
+      group: skills-publish
+      cancel-in-progress: false
+      queue: max
+    steps:
+      - name: Checkout trusted publication tools
+        uses: actions/checkout@v7.0.0
+        with:
+          ref: ${{ github.sha }}
+          path: source
+          persist-credentials: false
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Download validated skills
+        uses: actions/download-artifact@v7
+        with:
+          name: skills-${{ github.sha }}
+          path: skills-artifact
+
+      - name: Validate artifact before using publication credentials
+        run: node source/tools/publish-doc-skills.js --artifact=skills-artifact --revision="${GITHUB_SHA}"
+
+      - name: Skip stale source revisions
+        id: source
+        run: |
+          latest=$(git -C source ls-remote origin refs/heads/master | cut -f1)
+          if [ "${latest}" != "${GITHUB_SHA}" ]; then
+            echo "A newer Highcharts master revision exists; skipping this publication."
+            echo "current=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "current=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Checkout highcharts-skills
+        if: steps.source.outputs.current == 'true'
+        uses: actions/checkout@v7.0.0
+        with:
+          repository: highcharts/highcharts-skills
+          token: ${{ secrets.NIGHTLY_DIST_TOKEN }}
+          path: highcharts-skills
+          ref: main
+          fetch-depth: 0
+
+      - name: Update managed distribution files
+        if: steps.source.outputs.current == 'true'
+        run: >-
+          node source/tools/publish-doc-skills.js
+          --artifact=skills-artifact --revision="${GITHUB_SHA}"
+          --destination=highcharts-skills --yes
+
+      - name: Commit and push changed skills
+        if: steps.source.outputs.current == 'true'
+        env:
+          SIGNING_KEY: ${{ secrets.DIST_SSH_SIGNING_KEY_BASE64 }}
+        run: |
+          git -C highcharts-skills add --all -- skills source.json
+          if git -C highcharts-skills diff --cached --quiet; then
+            echo "The skills distribution is already current."
+            exit 0
+          fi
+
+          latest=$(git -C source ls-remote origin refs/heads/master | cut -f1)
+          if [ "${latest}" != "${GITHUB_SHA}" ]; then
+            echo "Highcharts master advanced during publication; skipping this run."
+            exit 0
+          fi
+
+          git -C highcharts-skills config user.name "highsoft-bot"
+          git -C highcharts-skills config user.email "technical+circleci_mu@highsoft.com"
+          : "${SIGNING_KEY:?Set DIST_SSH_SIGNING_KEY_BASE64 in the nightly-dist environment}"
+          signing_key=$(mktemp "${RUNNER_TEMP}/skills-signing-key.XXXXXX")
+          trap 'rm -f "${signing_key}"' EXIT
+          printf '%s' "${SIGNING_KEY}" | base64 --decode > "${signing_key}"
+          chmod 600 "${signing_key}"
+          ssh-keygen -y -P '' -f "${signing_key}" > /dev/null
+          git -C highcharts-skills config gpg.format ssh
+          git -C highcharts-skills config user.signingkey "${signing_key}"
+          git -C highcharts-skills config commit.gpgsign true
+          git -C highcharts-skills commit -m "Update skills from Highcharts ${GITHUB_SHA}"
+          git -C highcharts-skills push origin HEAD:refs/heads/main

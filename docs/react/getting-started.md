@@ -50,19 +50,37 @@ Highcharts React provides dedicated React components for chart elements and modu
 
 ### Chart elements
 
-You can use element components to shape your chart structure:
+Combine series and chart elements, then update the data through React state:
 
 ```tsx
-import { Chart, Title, Legend } from "@highcharts/react";
+import { useState } from "react";
+import { Chart, Title, Tooltip, XAxis, YAxis } from "@highcharts/react";
 import { ColumnSeries } from "@highcharts/react/series/Column";
+import { LineSeries } from "@highcharts/react/series/Line";
+import { Accessibility } from "@highcharts/react/modules/Accessibility";
 
-export default function ColumnChart() {
+export default function SalesChart() {
+  const [sales, setSales] = useState([3, 4, 1]);
+
+  const increaseSales = () => {
+    setSales((values) => values.map((value) => value + 1));
+  };
+
   return (
-    <Chart options={{ chart: { className: "column-chart" } }}>
-      <Title>Column chart</Title>
-      <Legend>{"{index}: {name}"}</Legend>
-      <ColumnSeries data={[3, 4, 1, 5, 2]} name="Column series" color="red" />
-    </Chart>
+    <>
+      <Chart>
+        <Title>Monthly sales and target</Title>
+        <XAxis categories={["January", "February", "March"]}>Month</XAxis>
+        <YAxis min={0}>Sales (units)</YAxis>
+        <Tooltip shared valueSuffix=" units" />
+        <Accessibility />
+        <ColumnSeries name="Sales" data={sales} />
+        <LineSeries name="Target" data={[4, 4, 4]} />
+      </Chart>
+      <button type="button" onClick={increaseSales}>
+        Increase sales
+      </button>
+    </>
   );
 }
 ```
@@ -71,9 +89,9 @@ Learn more about the concepts used:
 
 - See the [Chart](https://www.highcharts.com/docs/react/components/chart) documentation to configure your chart.
 - See the [Series types](https://www.highcharts.com/docs/react/components/series-types) documentation to work with different series types.
-- See the [Legend](https://www.highcharts.com/docs/react/components/chart-elements/legend) documentation as an example of working with chart elements.
+- See the [Tooltip](https://www.highcharts.com/docs/react/components/chart-elements/tooltip) documentation to customize displayed values.
 
-The result should look like this:
+For another example of chart elements:
 
 <iframe src="https://www.highcharts.com/samples/embed/highcharts/react/basic" title="Basic Highcharts React chart example"></iframe>
 
