@@ -712,6 +712,7 @@ declare module '../../Core/Series/SeriesOptions' {
 
 const Options: DeepPartial<OptionsType> = {
     /**
+     * @requires     modules/sonification
      * @optionparent sonification
      */
     sonification: {
