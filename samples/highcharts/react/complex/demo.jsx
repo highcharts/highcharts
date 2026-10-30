@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Chart, Series, Title, getHighcharts } from '@highcharts/react/index';
 import {
+    Chart,
+    Series,
+    Title,
+    getHighcharts,
     Tooltip,
     PlotOptions,
     Legend,
@@ -9,17 +12,17 @@ import {
     Credits,
     YAxis,
     XAxis
-} from '@highcharts/react/options';
+} from '@highcharts/react';
 
 import {
     Data
-} from '@highcharts/react/options/Data';
+} from '@highcharts/react/modules/Data';
 import {
     Exporting
-} from '@highcharts/react/options/Exporting';
+} from '@highcharts/react/modules/Exporting';
 import {
     Accessibility
-} from '@highcharts/react/options/Accessibility';
+} from '@highcharts/react/modules/Accessibility';
 
 export default function ChartComponent() {
     return (
