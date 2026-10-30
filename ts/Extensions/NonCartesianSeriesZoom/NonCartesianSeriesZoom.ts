@@ -118,8 +118,10 @@ function onTransform(
                 } = chart;
 
                 if (trigger === 'pan' && series.zooming) {
-                    series.zooming.panX -= (to.x || 0) / plotWidth;
-                    series.zooming.panY -= (to.y || 0) / plotHeight;
+                    series.zooming.panX -=
+                        ((to.x || 0) - (from.x || 0)) / plotWidth;
+                    series.zooming.panY -=
+                        ((to.y || 0) - (from.y || 0)) / plotHeight;
                 } else {
                     if (Object.keys(from).length) {
                         const {
