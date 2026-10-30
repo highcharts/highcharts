@@ -178,11 +178,15 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * In styled mode, the line stroke width can be set with the
      * `.highcharts-candlestick-series .highcharts-point` rule.
      *
+     * @default 1
+     *
      * @product highstock
      */
     lineWidth?: number;
 
     /**
+     * @default null
+     *
      * @product highstock
      */
     threshold?: (number|null);
