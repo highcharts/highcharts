@@ -96,6 +96,8 @@ export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions {
      *
      * @sample highcharts/plotoptions/bellcurve-intervals-pointsininterval
      *          Intervals and points in interval
+     *
+     * @default 3
      */
     intervals: number;
 
@@ -105,6 +107,8 @@ export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions {
      *
      * @sample highcharts/plotoptions/bellcurve-intervals-pointsininterval
      *         Intervals and points in interval
+     *
+     * @default 3
      */
     pointsInInterval: number;
     states?: SeriesStatesOptions<BellcurveSeriesOptions>;

@@ -79,6 +79,8 @@ const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
      */
     height: '100%',
 
+    ignoreHiddenPoint: false,
+
     /**
      * The height of the neck, the lower part of the funnel. A number
      * defines pixel width, a percentage string defines a percentage

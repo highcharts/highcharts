@@ -131,6 +131,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample highcharts/plotoptions/series-border-radius
      *         Column and pie with rounded border
      *
+     * @default 3
+     *
      * @product highcharts highstock gantt
      */
     borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
@@ -146,6 +148,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-borderwidth/
      *         2px black border
      *
+     * @default undefined
+     *
      * @product highcharts highstock gantt
      */
     borderWidth?: number;
@@ -157,6 +161,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @sample {highcharts} highcharts/series-column/centerincategory/
      *         Center in category
+     *
+     * @default false
      *
      * @since 8.0.1
      *
@@ -173,6 +179,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * the crop threshold, the series data is cropped to only contain points
      * that fall within the plot area. The advantage of cropping away
      * invisible points is to increase performance on large series.
+     *
+     * @default 50
      *
      * @product highcharts highstock gantt
      */
@@ -282,10 +290,13 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-grouppadding-none/
      *         No group padding - all columns are evenly spaced
      *
+     * @default 0.2
+     *
      * @product highcharts highstock gantt
      */
     groupPadding?: number;
 
+    /** @default null */
     marker?: PointMarkerOptions;
 
     /**
@@ -325,6 +336,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength-stacked/
      *         Stack-aware minimum length
      *
+     * @default 0
+     *
      * @product highcharts highstock gantt
      */
     minPointLength?: number;
@@ -343,6 +356,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/pie-pointpadding/
      *         Pie point padding plugin
+     *
+     * @default 0.1
      *
      * @product highcharts highstock gantt
      */
@@ -363,6 +378,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-pointrange/
      *         Set the point range to one day on a data set with one week
      *         between the points
+     *
+     * @default null
      *
      * @since 2.3
      *
@@ -389,8 +406,10 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      */
     pointWidth?: number;
 
+    /** @default false */
     stickyTracking?: boolean;
 
+    /** @default true */
     startFromThreshold?: boolean;
 
     states?: SeriesStatesOptions<ColumnSeriesOptions>;
@@ -399,6 +418,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * The Y axis value to serve as the base for the columns, for
      * distinguishing between values above and below a threshold. If `null`,
      * the columns extend from the padding Y axis minimum.
+     *
+     * @default 0
      *
      * @since 2.0
      *

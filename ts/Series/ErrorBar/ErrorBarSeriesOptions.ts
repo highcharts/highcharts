@@ -145,11 +145,14 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      */
     data?: Array<(ErrorBarPointOptions|PointShortOptions)>;
 
+    /** @default false */
     grouping?: boolean;
 
     /**
      * The parent series of the error bar. The default value links it to
      * the previous series. Otherwise, use the id of the parent series.
+     *
+     * @default ':previous'
      *
      * @since 3.0
      *
@@ -168,6 +171,8 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
+     *
+     * @default null
      *
      * @since 3.0
      *

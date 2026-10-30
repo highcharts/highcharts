@@ -76,8 +76,10 @@ import type TimelinePointOptions from './TimelinePointOptions';
  */
 export interface TimelineSeriesOptions extends LineSeriesOptions {
 
+    /** @default true */
     colorByPoint?: boolean;
 
+    /** @default 'x' */
     colorKey?: string;
 
     /**
@@ -121,14 +123,19 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
      */
     dataLabels?: TimelineDataLabelOptions;
 
+    /** @default true */
     ignoreHiddenPoint?: boolean;
 
+    /** @default 'rectangle' */
     legendSymbol?: LineSeriesOptions['legendSymbol'];
 
+    /** @default 'point' */
     legendType?: ('point'|'series');
 
     /**
      * Pixel width of the graph line.
+     *
+     * @default 4
      */
     lineWidth?: number;
 
@@ -138,10 +145,12 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
 
     radiusPlus?: number;
 
+    /** @default false */
     showInLegend?: boolean;
 
     states?: SeriesStatesOptions<TimelineSeriesOptions>;
 
+    /** @default false */
     stickyTracking?: boolean;
 
     tooltip?: TimelineSeriesTooltipOptions;

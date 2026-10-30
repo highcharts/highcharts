@@ -160,6 +160,8 @@ export interface ExportingOptions {
     /**
      * Allows the end user to sort the data table by clicking on column headers.
      *
+     * @default true
+     *
      * @since 10.3.3
      */
     allowTableSorting?: boolean;
@@ -393,6 +395,8 @@ export interface ExportingOptions {
      * fit into typical paper format. Note that this does not affect the
      * chart when printing the web page as a whole.
      *
+     * @default 780
+     *
      * @since 4.2.5
      */
     printMaxWidth?: number;
@@ -402,6 +406,8 @@ export interface ExportingOptions {
      * to the on-screen display. While for instance a 600px wide chart
      * may look good on a website, it will look bad in print. The default
      * scale of 2 makes this chart export to a 1200px PNG or JPG.
+     *
+     * @default 2
      *
      * @see [chart.width](#chart.width)
      * @see [exporting.sourceWidth](#exporting.sourceWidth)
@@ -445,6 +451,8 @@ export interface ExportingOptions {
      * Default MIME type for exporting if `chart.exportChart()` is called
      * without specifying a `type` option. Possible values are `image/png`,
      *  `image/jpeg`, `application/pdf` and `image/svg+xml`.
+     *
+     * @default 'image/png'
      *
      * @since 2.0
      */
