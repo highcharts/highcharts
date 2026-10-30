@@ -48,7 +48,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
  * be called anywhere (not necessarily in the translate function), but must
  * happen after the data grouping module is loaded and before the
  * wind barb series uses it.
- * @private
+ * @internal
  */
 function registerApproximation(): void {
     if (!ApproximationRegistry.windbarb) {
@@ -90,7 +90,6 @@ function registerApproximation(): void {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.windbarb
  *
