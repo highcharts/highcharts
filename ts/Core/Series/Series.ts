@@ -1091,6 +1091,42 @@ class Series {
     }
 
     /**
+     * Whether markers are enabled for the series as a whole, from
+     * `marker.enabled` or, when that is undefined, from the point density.
+     * Only meaningful after `translate` has run.
+     *
+     * @internal
+     * @function Highcharts.Series#hasEnabledMarkers
+     */
+    public hasEnabledMarkers(): boolean {
+        const markerOptions = this.options.marker || {},
+            xAxis = this.xAxis;
+
+        return markerOptions.enabled ??
+            (!xAxis || xAxis.isRadial ? true : null) ??
+            // Use larger or equal as radius is null in bubbles (#6321)
+            ((this.closestPointRangePx ?? -Infinity) >= (
+                (markerOptions.enabledThreshold ?? 2) *
+                (markerOptions as any).radius
+            ));
+    }
+
+    /**
+     * Whether any individual point enables its own marker. The
+     * `_hasPointMarkers` flag is checked first, so the point loop is
+     * skipped for series without point level marker options.
+     *
+     * @internal
+     * @function Highcharts.Series#hasEnabledPointMarkers
+     */
+    public hasEnabledPointMarkers(): boolean {
+        return !!(
+            this._hasPointMarkers &&
+            this.points?.some((point): boolean => !!point.marker?.enabled)
+        );
+    }
+
+    /**
      * Return an auto incremented x value based on the pointStart and
      * pointInterval options. This is only used if an x value is not given
      * for the point that calls autoIncrement.
@@ -3161,14 +3197,7 @@ class Series {
             seriesMarkerOptions = options.marker || {},
             nullInteraction = options.nullInteraction,
             markerGroup = series[series.specialGroup || 'markerGroup'],
-            xAxis = series.xAxis,
-            globallyEnabled = seriesMarkerOptions.enabled ??
-                (!xAxis || xAxis.isRadial ? true : null) ??
-                // Use larger or equal as radius is null in bubbles (#6321)
-                ((series.closestPointRangePx ?? -Infinity) >= (
-                    (seriesMarkerOptions.enabledThreshold ?? 2) *
-                    (seriesMarkerOptions as any).radius
-                ));
+            globallyEnabled = series.hasEnabledMarkers();
         let i,
             point,
             graphic,
@@ -3959,6 +3988,18 @@ class Series {
         // Draw the points
         if (series.visible) {
             series.drawPoints();
+        }
+
+        // Mirror the plot area markers in the legend symbol (#24307). Outside
+        // the `visible` check, as a hidden series still has a legend item.
+        const markerSymbol = series.legendItem?.symbol;
+
+        if (markerSymbol?.isMarker) {
+            markerSymbol[
+                series.hasEnabledMarkers() || series.hasEnabledPointMarkers() ?
+                    'show' :
+                    'hide'
+            ]();
         }
 
         // Draw the data labels
