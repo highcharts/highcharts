@@ -34,6 +34,11 @@ export interface DataEvent {
      */
     type: string;
 
+    /**
+     * The event trigger, if any. Allows identifying the source of the event.
+     */
+    trigger?: string;
+
 }
 
 /* *

@@ -1921,7 +1921,8 @@ class Series {
         // performance.
         let runTurbo = turboThreshold && dataLength > turboThreshold,
             indexOfX = 0,
-            indexOfY = 1;
+            indexOfY = 1,
+            columnsToSet: ColumnCollection|undefined;
 
         if (runTurbo) {
 
@@ -1934,10 +1935,9 @@ class Series {
 
             // Assume all points are numbers
             if (isNumber(firstPoint) && isNumber(lastPoint)) {
-                table.setColumn(
-                    pointValKey,
-                    data as Array<number|null>
-                );
+                columnsToSet = {
+                    [pointValKey]: data as Array<number|null>
+                };
 
             // Assume all points are arrays when first point is
             } else if (
@@ -1958,14 +1958,14 @@ class Series {
                         }
                     }
 
-                    table.setColumns((
+                    columnsToSet = (
                         autoX ? pointArrayMap : dataColumnKeys
                     ).reduce(
                         (columns, columnId, i):
                         ColumnCollection => {
                             columns[columnId] = colArray[i];
                             return columns;
-                        }, {} as ColumnCollection));
+                        }, {} as ColumnCollection);
 
                 } else { // [x, y]
                     if (keys) {
@@ -1987,17 +1987,17 @@ class Series {
                         for (const pt of data) {
                             valueData.push((pt as any)[indexOfY]);
                         }
-                        table.setColumn(pointValKey, valueData);
+                        columnsToSet = { [pointValKey]: valueData };
 
                     } else {
                         for (const pt of data) {
                             xData.push((pt as any)[indexOfX]);
                             valueData.push((pt as any)[indexOfY]);
                         }
-                        table.setColumns({
+                        columnsToSet = {
                             x: xData,
                             [pointValKey]: valueData
-                        });
+                        };
                     }
                 }
             } else {
@@ -2035,10 +2035,17 @@ class Series {
 
             // Empty data, clear table
             if (dataLength) {
-                table.setColumns(columns);
+                columnsToSet = columns;
             } else {
                 table.deleteRows(0, table.rowCount);
             }
+        }
+        if (columnsToSet) {
+            table.setColumns(
+                columnsToSet,
+                void 0,
+                { trigger: 'series.setData' }
+            );
         }
     }
 
@@ -2075,39 +2082,47 @@ class Series {
         }
 
         dataTables.forEach((dataTable, dtIndex): void => {
+            let columns: ColumnCollection|undefined;
+            if (table !== options.dataTable) {
+                // Resolve the data mapping
+                columns = keys
+                    .reduce((targetColumns, key): ColumnCollection => {
+                        const mappingItem = mapping?.[key],
+                            srcColumns = dataTable.columns || {},
+                            dtId = dataTable.id,
+                            column = isString(mappingItem) ?
+                                // String definition points directly to a column
+                                // id on the first data table
+                                (dtIndex === 0 && srcColumns[mappingItem]) :
+                                // Object definition, check for matching data
+                                // table and column id/index
+                                (
+                                    (mappingItem?.dataTable || 0) === dtIndex ||
+                                    (dtId && mappingItem?.dataTable === dtId)
+                                ) &&
+                                (isNumber(mappingItem?.column) ?
+                                    Object.values(srcColumns)[
+                                        mappingItem.column
+                                    ] :
+                                    srcColumns[mappingItem?.column || key]
+                                );
 
-            // Resolve the data mapping
-            const columns = keys
-                .reduce((targetColumns, key): ColumnCollection => {
-                    const mappingItem = mapping?.[key],
-                        srcColumns = dataTable.columns || {},
-                        dtId = dataTable.id,
-                        column = isString(mappingItem) ?
-                            // String definition points directly to a column id
-                            // on the first data table
-                            (dtIndex === 0 && srcColumns[mappingItem]) :
-                            // Object definition, check for matching data table
-                            // and column id/index
-                            (
-                                (mappingItem?.dataTable || 0) === dtIndex ||
-                                (dtId && mappingItem?.dataTable === dtId)
-                            ) &&
-                            (isNumber(mappingItem?.column) ?
-                                Object.values(srcColumns)[mappingItem.column] :
-                                srcColumns[mappingItem?.column || key]
-                            );
+                        if (column) {
+                            targetColumns[key] = column;
+                        }
+                        return targetColumns;
+                    }, {} as ColumnCollection);
 
-                    if (column) {
-                        targetColumns[key] = column;
-                    }
-                    return targetColumns;
-                }, {} as ColumnCollection);
-
-            // If a DataTable is passed and no column assignment is set, use it
-            // directly
-            if (mapping || dataTable) {
-                // Set the columns
-                table.setColumns(columns);
+                // If a DataTable is passed and no column assignment is set, use
+                // it directly
+                if ((mapping || dataTable)) {
+                    // Set the columns
+                    table.setColumns(
+                        columns,
+                        void 0,
+                        { trigger: 'series.setData' }
+                    );
+                }
             }
 
             // If a DataTable is passed directly by reference, bind events to
@@ -2126,13 +2141,14 @@ class Series {
      */
     public bindDataTableEvents(
         dataTable: DataTableCore,
-        columns: ColumnCollection
+        columns?: ColumnCollection
     ): void {
         if (this.hasBoundDataTableEvents) {
             return;
         }
 
         const { chart } = this,
+            hasOwnDataTable = dataTable === this.options.dataTable,
             queueRedraw = (): void => {
                 clearTimeout(chart.redrawTimeout);
                 chart.redrawTimeout = setTimeout(
@@ -2140,12 +2156,13 @@ class Series {
                     0
                 );
             },
-            onSetRow = (e: CellEvent|RowEvent): void => {
-                const rowIndex = e.rowIndex;
-
-                if (isNumber(rowIndex)) {
+            onSetRow = ({ rowIndex, trigger }: CellEvent|RowEvent): void => {
+                if (
+                    isNumber(rowIndex) &&
+                    (!hasOwnDataTable || trigger !== 'point.update')
+                ) {
                     const row = DataTableCore.prototype.getRowObject.call(
-                            { columns },
+                            { columns: columns || dataTable.columns },
                             rowIndex
                         ),
                         point = this.data[rowIndex];
@@ -2173,9 +2190,7 @@ class Series {
         addEvent(
             dataTable,
             'afterDeleteRows',
-            (e: RowEvent): void => {
-                const { rowCount, rowIndex } = e;
-
+            ({ rowCount, rowIndex }: RowEvent): void => {
                 if (isNumber(rowIndex)) {
                     for (
                         let i = rowIndex + rowCount - 1;
@@ -2194,7 +2209,9 @@ class Series {
             dataTable,
             'afterSetColumns',
             (e: ColumnEvent): void => {
-                this.setData(e.target);
+                if (!hasOwnDataTable || e.trigger !== 'series.setData') {
+                    this.setData(e.target);
+                }
             }
         );
 
