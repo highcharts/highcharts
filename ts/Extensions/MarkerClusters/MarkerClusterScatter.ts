@@ -1560,7 +1560,11 @@ function seriesIsValidGroupedDataObject(
         }
 
         for (let i = 0; i < elem.length; i++) {
-            if (!isObject(elem[i]) || (!elem[i].x || !elem[i].y)) {
+            if (
+                !isObject(elem[i]) ||
+                !isNumber(elem[i].x) ||
+                !isNumber(elem[i].y)
+            ) {
                 result = false;
                 return;
             }
