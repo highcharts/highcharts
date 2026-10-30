@@ -68,6 +68,7 @@ class LollipopPoint extends Point {
  *
  * */
 
+/** @internal */
 interface LollipopPoint {
     destroy: typeof DumbbellPoint.prototype['destroy'],
     pointSetState: typeof ScatterPoint.prototype['setState'],
