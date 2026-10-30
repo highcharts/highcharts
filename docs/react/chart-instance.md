@@ -15,18 +15,18 @@ chart container element.
 import { useEffect, useRef } from "react";
 import { Chart, type HighchartsReactRefObject } from "@highcharts/react";
 
-function RefExample() {
+export default function RefExample() {
   const chartRef = useRef<HighchartsReactRefObject>(null);
 
   useEffect(() => {
-    if (ref.current?.chart) {
+    if (chartRef.current?.chart) {
       // Access the chart instance.
     }
-    if (ref.current?.container) {
+    if (chartRef.current?.container) {
       // Access the chart container element.
     }
   }, []);
 
-  return <Chart ref={ref} />;
+  return <Chart ref={chartRef} />;
 }
 ```
