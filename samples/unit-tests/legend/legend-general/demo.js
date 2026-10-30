@@ -180,3 +180,88 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Legend symbol follows auto disabled markers (#24307)',
+    function (assert) {
+        const denseData = Array.from({ length: 200 }, (value, i) => i % 50);
+
+        const symbolVisibility = series => series.legendItem.symbol.element
+            .getAttribute('visibility');
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 600
+            },
+            series: [
+                {
+                    data: denseData
+                },
+                {
+                    data: denseData,
+                    visible: false
+                }
+            ]
+        });
+
+        assert.strictEqual(
+            symbolVisibility(chart.series[0]),
+            'hidden',
+            'Markers hidden by enabledThreshold should be hidden in the ' +
+                'legend too'
+        );
+
+        assert.strictEqual(
+            symbolVisibility(chart.series[1]),
+            'hidden',
+            'A series hidden from the start should not show a legend marker'
+        );
+
+        chart.xAxis[0].setExtremes(0, 10);
+
+        assert.notStrictEqual(
+            symbolVisibility(chart.series[0]),
+            'hidden',
+            'Zooming in until the markers reappear should restore the ' +
+                'legend marker'
+        );
+
+        chart.xAxis[0].setExtremes();
+
+        // A single point marker should be reflected in the legend, even
+        // though the series level markers are auto-disabled
+        chart.series[0].points[10].update({
+            marker: {
+                enabled: true
+            }
+        });
+
+        assert.notStrictEqual(
+            symbolVisibility(chart.series[0]),
+            'hidden',
+            'An individual point marker should keep the legend marker'
+        );
+
+        chart.series[0].points[10].update({
+            marker: {
+                enabled: false
+            }
+        });
+
+        assert.strictEqual(
+            symbolVisibility(chart.series[0]),
+            'hidden',
+            'Turning the last point marker off should hide the legend marker'
+        );
+
+        chart.series[0].update({
+            type: 'column'
+        });
+
+        assert.strictEqual(
+            symbolVisibility(chart.series[0]),
+            null,
+            'The rectangle symbol of a column series should never be hidden'
+        );
+    }
+);
