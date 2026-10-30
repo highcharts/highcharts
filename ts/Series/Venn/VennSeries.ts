@@ -55,10 +55,8 @@ const {
 import DPU from '../DrawPointUtilities.js';
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getCenterOfPoints } = GU;
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
 import VennPoint from './VennPoint.js';
 import VennSeriesDefaults from './VennSeriesDefaults.js';
 import VennUtils from './VennUtils.js';

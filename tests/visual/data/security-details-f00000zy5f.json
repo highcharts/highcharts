@@ -1,0 +1,6800 @@
+[
+  {
+    "dbgtime": "181",
+    "Id": "F00000ZY5F",
+    "InceptionDate": "2018-01-16T00:00:00",
+    "PerformanceInceptionDate": "2013-11-07T00:00:00",
+    "TrackRecordExtension": true,
+    "Isin": "LU1582984818",
+    "LegalName": "M&G (Lux) Income Allocation Fund EUR A Acc",
+    "FundAttributes": {
+      "UCITS": "true"
+    },
+    "FundNetAssetValues": [
+      {
+        "CurrencyId": "EUR",
+        "DayEndDate": "2026-05-18T00:00:00",
+        "DayEndValue": 649365431,
+        "MonthEndDate": "2026-04-30T00:00:00",
+        "MonthEndValue": 626910084
+      }
+    ],
+    "Domicile": "LUX",
+    "OngoingCharge": "1.78",
+    "CollectedSRRI": {
+      "Date": "2026-03-31T00:00:00",
+      "Rank": 4
+    },
+    "InheritedFrom": {
+      "SecId": "F00000QOJ9",
+      "Name": "M&G Income Allocation Euro A Acc",
+      "LegalName": "M&G Income Allocation Fund Euro A Acc",
+      "ISIN": "GB00BBCR3283"
+    },
+    "Currency": {
+      "Id": "EUR"
+    },
+    "CategoryBroadAssetClass": {
+      "Id": "$BCG$ALLOC",
+      "Name": "Allocation"
+    },
+    "RiskAndRating": [
+      {
+        "Date": "2026-04-30T00:00:00",
+        "TimePeriod": "M36",
+        "RatingValue": 2,
+        "RiskAdjustedReturn": 1.6,
+        "RiskRatingValue": 3,
+        "RiskScore": 0.51,
+        "CategoryRank": 87.49,
+        "PerformanceRatingValue": 2
+      },
+      {
+        "Date": "2026-04-30T00:00:00",
+        "TimePeriod": "M60",
+        "RatingValue": 2,
+        "RiskAdjustedReturn": -0.21,
+        "RiskRatingValue": 3,
+        "RiskScore": 0.58,
+        "CategoryRank": 70.03,
+        "PerformanceRatingValue": 2
+      },
+      {
+        "Date": "2026-04-30T00:00:00",
+        "TimePeriod": "M120",
+        "RatingValue": 3,
+        "RiskAdjustedReturn": 1.9,
+        "RiskRatingValue": 4,
+        "RiskScore": 0.77,
+        "CategoryRank": 66.2,
+        "PerformanceRatingValue": 3
+      },
+      {
+        "Date": "2026-04-30T00:00:00",
+        "TimePeriod": "M255",
+        "RatingValue": 3,
+        "RiskAdjustedReturn": 1.21,
+        "RiskRatingValue": 4,
+        "RiskScore": 0.66,
+        "PerformanceRatingValue": 3
+      }
+    ],
+    "PurchaseDetails": [
+      {
+        "Currency": {
+          "Id": "EUR"
+        },
+        "InitialInvestment": {
+          "Unit": 1,
+          "Value": 1000
+        },
+        "SubsequentInvestment": {
+          "Unit": 1,
+          "Value": 75
+        },
+        "FrontLoad": {
+          "Unit": 2,
+          "Value": 4
+        },
+        "RedemptionFee": {
+          "Unit": 2,
+          "Value": 0
+        }
+      }
+    ],
+    "LastPrice": {
+      "Date": "2026-05-18T00:00:00",
+      "Value": 11.746,
+      "Currency": {
+        "Id": "EUR"
+      }
+    },
+    "InvestmentStrategy": "The Fund aims to generate a growing level of income over any three-year period through investment in a range of global assets. The Fund also aims to provide capital growth of 2-4% p.a. over any three-year period while applying ESG Criteria.",
+    "ActualManagementFee": 1.5,
+    "ProviderCompany": {
+      "Name": "M&G Luxembourg S.A.",
+      "AddressLine1": "16, boulevard Royal,",
+      "City": "Luxembourg",
+      "Country": "Luxembourg",
+      "PostalCode": "L-2449",
+      "Homepage": "http://www.mandg.com"
+    },
+    "ManagerList": [
+      {
+        "ManagerId": 164019,
+        "DisplayPreference": 2,
+        "GivenName": "Steven",
+        "FamilyName": "Andrew",
+        "StartDate": "2018-01-16T00:00:00",
+        "ManagerProvidedBiography": "Steven Andrew joined M&G in 2005 as a member of the portfolio strategy & risk team, before moving to the Multi Asset team, where he helped to formulate asset allocation strategies for M&G's multi-asset fund range. In November 2010, Steven was appointed to the management teams of various multi-asset funds. He began his career at the Bank of England in 1987 and subsequently worked at F&C Asset Management and Merrill Lynch before joining M&G. Steven holds a BSc (Hons) degree in financial economics from the University of London."
+      },
+      {
+        "ManagerId": 192259,
+        "DisplayPreference": 2,
+        "GivenName": "Stefano",
+        "FamilyName": "Amato",
+        "StartDate": "2022-12-19T00:00:00",
+        "ManagerProvidedBiography": "Stefano Amato joined M&G in November 2022, bringing a 15-year track record across asset management and financial markets. Before joining M&G, he was Head of Multi Asset Solutions at Santander Asset Management. Prior to that, Stefano held portfolio management roles for JP Morgan and Centurion Group, and worked in various positions for Societe Generale, Nomura and Lehman Brothers. Stefano has a MSc in Finance from the London Business School, a Masters in Behavioural Economics and a BA in Communication Sciences and Technologies from IULM University in Milan."
+      }
+    ],
+    "Documents": [
+      {
+        "DocumentId": "657783291",
+        "EncodedDocumentId": "969b1ccdb9d578bd0e7f6667aab58dc2",
+        "EffectiveDate": "2026-04-24T00:00:00",
+        "FilingDate": "2026-04-27T00:00:00",
+        "Format": "PDF",
+        "DocumentTypes": [
+          "1"
+        ],
+        "Languages": [
+          "0L00000122"
+        ],
+        "DocumentTypeAttributes": [
+          "16"
+        ],
+        "Markets": [
+          "SGP"
+        ]
+      },
+      {
+        "DocumentId": "642929284",
+        "EncodedDocumentId": "6b28fac039b3abbaae60730fad0cd6e7",
+        "EffectiveDate": "2025-03-31T00:00:00",
+        "FilingDate": "2026-01-29T00:00:00",
+        "Format": "PDF",
+        "DocumentTypes": [
+          "4"
+        ],
+        "Languages": [
+          "0L00000122"
+        ],
+        "DocumentTypeAttributes": [
+          "19"
+        ],
+        "Markets": [
+          "CHE"
+        ]
+      },
+      {
+        "DocumentId": "641492507",
+        "EncodedDocumentId": "ee03ab04030b094b8660b7185eb181be",
+        "EffectiveDate": "2025-09-30T00:00:00",
+        "FilingDate": "2026-01-20T00:00:00",
+        "Format": "PDF",
+        "DocumentTypes": [
+          "5"
+        ],
+        "Languages": [
+          "0L00000482",
+          "0L00000122"
+        ],
+        "DocumentTypeAttributes": [
+          "20"
+        ],
+        "Markets": [
+          "TWN"
+        ]
+      },
+      {
+        "DocumentId": "657395799",
+        "EncodedDocumentId": "f76d19d7775cd80dea9780015f09caa0",
+        "EffectiveDate": "2026-02-16T00:00:00",
+        "FilingDate": "2026-04-24T00:00:00",
+        "Format": "PDF",
+        "DocumentTypes": [
+          "299"
+        ],
+        "Languages": [
+          "0L00000122"
+        ],
+        "DocumentTypeAttributes": [
+          "1646"
+        ],
+        "Markets": [
+          "CHE"
+        ]
+      },
+      {
+        "DocumentId": "661085151",
+        "EncodedDocumentId": "1fd565070e182a78adaf45edf0f690d3",
+        "EffectiveDate": "2026-04-30T00:00:00",
+        "FilingDate": "2026-04-30T00:00:00",
+        "Format": "PDF",
+        "DocumentTypes": [
+          "52"
+        ],
+        "Languages": [
+          "0L00000122"
+        ],
+        "DocumentTypeAttributes": [
+          "46"
+        ],
+        "Markets": [
+          "WWE"
+        ]
+      }
+    ],
+    "TrailingPerformance": [
+      {
+        "CurrencyId": "EUR",
+        "Date": "2026-05-18T00:00:00",
+        "Type": "DayEnd",
+        "ReturnType": "Nav",
+        "Return": [
+          {
+            "Value": 11.746,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "ClosePrice"
+          },
+          {
+            "Value": 1.549262,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M0"
+          },
+          {
+            "Value": -0.736071,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M1"
+          },
+          {
+            "Value": -1.936066,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M3"
+          },
+          {
+            "Value": 3.585728,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M6"
+          },
+          {
+            "Value": 8.399934,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 5.402637,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M36"
+          },
+          {
+            "Value": 2.227813,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M60"
+          },
+          {
+            "Value": 3.533743,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M120"
+          },
+          {
+            "Value": 3.730174,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M255"
+          }
+        ]
+      },
+      {
+        "CurrencyId": "EUR",
+        "Date": "2026-05-18T00:00:00",
+        "Type": "DayEnd",
+        "ReturnType": "GbPostTax",
+        "Return": [
+          {
+            "Value": 11.746,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "ClosePrice"
+          },
+          {
+            "Value": 1.549262,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M0"
+          },
+          {
+            "Value": -0.736071,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M1"
+          },
+          {
+            "Value": -1.936066,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M3"
+          },
+          {
+            "Value": 3.585728,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M6"
+          },
+          {
+            "Value": 8.399934,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 5.402637,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M36"
+          },
+          {
+            "Value": 2.227813,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M60"
+          },
+          {
+            "Value": 3.533743,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M120"
+          },
+          {
+            "Value": 3.730174,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M255"
+          }
+        ]
+      },
+      {
+        "CurrencyId": "EUR",
+        "Date": "2026-05-18T00:00:00",
+        "Type": "DayEnd",
+        "ReturnType": "ItPostTax",
+        "Return": [
+          {
+            "Value": 11.746,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "ClosePrice"
+          },
+          {
+            "Value": 1.549262,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M0"
+          },
+          {
+            "Value": -0.736071,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M1"
+          },
+          {
+            "Value": -1.936066,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M3"
+          },
+          {
+            "Value": 3.585728,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M6"
+          },
+          {
+            "Value": 8.399934,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 5.402637,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M36"
+          },
+          {
+            "Value": 2.227813,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M60"
+          },
+          {
+            "Value": 3.533743,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M120"
+          },
+          {
+            "Value": 3.730174,
+            "Annualized": true,
+            "Date": "2026-05-18T00:00:00",
+            "TimePeriod": "M255"
+          }
+        ]
+      }
+    ],
+    "RiskStatistics": [
+      {
+        "CurrencyId": "BAS",
+        "CurrencyOption": "DISPLAYCURRENCY",
+        "Date": "2026-04-30T00:00:00",
+        "Type": "MonthEnd",
+        "ReturnType": "Nav",
+        "benchmarkType": "PrimaryBenchmarkId",
+        "StandardDeviations": [
+          {
+            "Value": 7.98,
+            "Frequency": "M",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 7.1,
+            "Frequency": "M",
+            "TimePeriod": "M36"
+          },
+          {
+            "Value": 7.66,
+            "Frequency": "M",
+            "TimePeriod": "M60"
+          }
+        ],
+        "SharpeRatios": [
+          {
+            "Frequency": "M",
+            "TimePeriod": "M12",
+            "Value": 0.96649
+          },
+          {
+            "Frequency": "M",
+            "TimePeriod": "M36",
+            "Value": 0.31921
+          },
+          {
+            "Frequency": "M",
+            "TimePeriod": "M60",
+            "Value": 0.08227
+          }
+        ]
+      },
+      {
+        "CurrencyId": "BAS",
+        "CurrencyOption": "DISPLAYCURRENCY",
+        "Date": "2026-04-30T00:00:00",
+        "Type": "MonthEnd",
+        "ReturnType": "GbPostTax",
+        "benchmarkType": "PrimaryBenchmarkId",
+        "StandardDeviations": [
+          {
+            "Value": 7.98,
+            "Frequency": "M",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 7.1,
+            "Frequency": "M",
+            "TimePeriod": "M36"
+          },
+          {
+            "Value": 7.66,
+            "Frequency": "M",
+            "TimePeriod": "M60"
+          }
+        ],
+        "SharpeRatios": [
+          {
+            "Frequency": "M",
+            "TimePeriod": "M12",
+            "Value": 0.96649
+          },
+          {
+            "Frequency": "M",
+            "TimePeriod": "M36",
+            "Value": 0.31921
+          },
+          {
+            "Frequency": "M",
+            "TimePeriod": "M60",
+            "Value": 0.08227
+          }
+        ]
+      },
+      {
+        "CurrencyId": "BAS",
+        "CurrencyOption": "DISPLAYCURRENCY",
+        "Date": "2026-04-30T00:00:00",
+        "Type": "MonthEnd",
+        "ReturnType": "ItPostTax",
+        "benchmarkType": "PrimaryBenchmarkId",
+        "StandardDeviations": [
+          {
+            "Value": 7.98,
+            "Frequency": "M",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 7.1,
+            "Frequency": "M",
+            "TimePeriod": "M36"
+          },
+          {
+            "Value": 7.66,
+            "Frequency": "M",
+            "TimePeriod": "M60"
+          }
+        ],
+        "SharpeRatios": [
+          {
+            "Frequency": "M",
+            "TimePeriod": "M12",
+            "Value": 0.96649
+          },
+          {
+            "Frequency": "M",
+            "TimePeriod": "M36",
+            "Value": 0.31921
+          },
+          {
+            "Frequency": "M",
+            "TimePeriod": "M60",
+            "Value": 0.08227
+          }
+        ]
+      }
+    ],
+    "HistoricalPerformanceSeries": [
+      {
+        "CurrencyId": "EUR",
+        "StartDate": "2016-01-01T00:00:00",
+        "Frequency": "Q",
+        "TimePeriod": "M12",
+        "ReturnType": "Nav",
+        "Return": [
+          {
+            "Value": 4.695,
+            "Date": "2026-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 1.57028,
+            "Date": "2025-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 5.86264,
+            "Date": "2024-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -8.0848,
+            "Date": "2023-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 5.3446,
+            "Date": "2022-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 19.26953,
+            "Date": "2021-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -7.84836,
+            "Date": "2020-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -2.00267,
+            "Date": "2019-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 3.57982,
+            "Date": "2018-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 12.65404,
+            "Date": "2017-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -8.8936,
+            "Date": "2016-03-31T00:00:00",
+            "TimePeriod": "M12"
+          }
+        ]
+      },
+      {
+        "CurrencyId": "EUR",
+        "StartDate": "2016-01-01T00:00:00",
+        "Frequency": "Y",
+        "TimePeriod": "M12",
+        "ReturnType": "Nav",
+        "Return": [
+          {
+            "Value": 6.2627,
+            "Date": "2025-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 3.19684,
+            "Date": "2024-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 7.00381,
+            "Date": "2023-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -12.83182,
+            "Date": "2022-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 10.85884,
+            "Date": "2021-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -2.41362,
+            "Date": "2020-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 16.316,
+            "Date": "2019-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -8.69521,
+            "Date": "2018-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 7.88304,
+            "Date": "2017-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 9.576,
+            "Date": "2016-12-31T00:00:00",
+            "TimePeriod": "M12"
+          }
+        ]
+      },
+      {
+        "CurrencyId": "EUR",
+        "StartDate": "2016-01-01T00:00:00",
+        "Frequency": "Q",
+        "TimePeriod": "M12",
+        "ReturnType": "GbPostTax",
+        "Return": [
+          {
+            "Value": 4.695,
+            "Date": "2026-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 1.57028,
+            "Date": "2025-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 5.86264,
+            "Date": "2024-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -8.0848,
+            "Date": "2023-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 5.3446,
+            "Date": "2022-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 19.26953,
+            "Date": "2021-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -7.84836,
+            "Date": "2020-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -2.00267,
+            "Date": "2019-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 3.57982,
+            "Date": "2018-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 12.65404,
+            "Date": "2017-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -8.8936,
+            "Date": "2016-03-31T00:00:00",
+            "TimePeriod": "M12"
+          }
+        ]
+      },
+      {
+        "CurrencyId": "EUR",
+        "StartDate": "2016-01-01T00:00:00",
+        "Frequency": "Y",
+        "TimePeriod": "M12",
+        "ReturnType": "GbPostTax",
+        "Return": [
+          {
+            "Value": 6.2627,
+            "Date": "2025-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 3.19684,
+            "Date": "2024-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 7.00381,
+            "Date": "2023-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -12.83182,
+            "Date": "2022-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 10.85884,
+            "Date": "2021-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -2.41362,
+            "Date": "2020-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 16.316,
+            "Date": "2019-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -8.69521,
+            "Date": "2018-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 7.88304,
+            "Date": "2017-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 9.576,
+            "Date": "2016-12-31T00:00:00",
+            "TimePeriod": "M12"
+          }
+        ]
+      },
+      {
+        "CurrencyId": "EUR",
+        "StartDate": "2016-01-01T00:00:00",
+        "Frequency": "Q",
+        "TimePeriod": "M12",
+        "ReturnType": "ItPostTax",
+        "Return": [
+          {
+            "Value": 4.695,
+            "Date": "2026-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 1.57028,
+            "Date": "2025-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 5.86264,
+            "Date": "2024-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -8.0848,
+            "Date": "2023-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 5.3446,
+            "Date": "2022-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 19.26953,
+            "Date": "2021-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -7.84836,
+            "Date": "2020-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -2.00267,
+            "Date": "2019-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 3.57982,
+            "Date": "2018-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 12.65404,
+            "Date": "2017-03-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -8.8936,
+            "Date": "2016-03-31T00:00:00",
+            "TimePeriod": "M12"
+          }
+        ]
+      },
+      {
+        "CurrencyId": "EUR",
+        "StartDate": "2016-01-01T00:00:00",
+        "Frequency": "Y",
+        "TimePeriod": "M12",
+        "ReturnType": "ItPostTax",
+        "Return": [
+          {
+            "Value": 6.2627,
+            "Date": "2025-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 3.19684,
+            "Date": "2024-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 7.00381,
+            "Date": "2023-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -12.83182,
+            "Date": "2022-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 10.85884,
+            "Date": "2021-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -2.41362,
+            "Date": "2020-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 16.316,
+            "Date": "2019-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": -8.69521,
+            "Date": "2018-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 7.88304,
+            "Date": "2017-12-31T00:00:00",
+            "TimePeriod": "M12"
+          },
+          {
+            "Value": 9.576,
+            "Date": "2016-12-31T00:00:00",
+            "TimePeriod": "M12"
+          }
+        ]
+      }
+    ],
+    "Benchmark": [
+      {
+        "Id": "EUCA000565",
+        "GlobalAssetClassId": "$BCG$ALLOC",
+        "Type": "Category",
+        "Name": "EUR Moderate Allocation - Global",
+        "TrailingPerformance": [
+          {
+            "CurrencyId": "EUR",
+            "Date": "2026-05-18T00:00:00",
+            "Type": "DayEnd",
+            "ReturnType": "Nav",
+            "Return": [
+              {
+                "Value": 3.52285,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M0"
+              },
+              {
+                "Value": 1.22953,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M1"
+              },
+              {
+                "Value": 1.38524,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M3"
+              },
+              {
+                "Value": 5.06885,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M6"
+              },
+              {
+                "Value": 10.06617,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 8.08007,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M36"
+              },
+              {
+                "Value": 3.33109,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M60"
+              },
+              {
+                "Value": 3.9842,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M120"
+              },
+              {
+                "Value": 3.453679,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M255"
+              }
+            ]
+          },
+          {
+            "CurrencyId": "EUR",
+            "Date": "2026-05-18T00:00:00",
+            "Type": "DayEnd",
+            "ReturnType": "GbPostTax",
+            "Return": [
+              {
+                "Value": 3.52285,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M0"
+              },
+              {
+                "Value": 1.22953,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M1"
+              },
+              {
+                "Value": 1.38524,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M3"
+              },
+              {
+                "Value": 5.06885,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M6"
+              },
+              {
+                "Value": 10.06617,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 8.08007,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M36"
+              },
+              {
+                "Value": 3.33109,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M60"
+              },
+              {
+                "Value": 3.9842,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M120"
+              },
+              {
+                "Value": 3.453679,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M255"
+              }
+            ]
+          },
+          {
+            "CurrencyId": "EUR",
+            "Date": "2026-05-18T00:00:00",
+            "Type": "DayEnd",
+            "ReturnType": "ItPostTax",
+            "Return": [
+              {
+                "Value": 3.52285,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M0"
+              },
+              {
+                "Value": 1.22953,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M1"
+              },
+              {
+                "Value": 1.38524,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M3"
+              },
+              {
+                "Value": 5.06885,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M6"
+              },
+              {
+                "Value": 10.06617,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 8.08007,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M36"
+              },
+              {
+                "Value": 3.33109,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M60"
+              },
+              {
+                "Value": 3.9842,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M120"
+              },
+              {
+                "Value": 3.453679,
+                "Annualized": true,
+                "Date": "2026-05-18T00:00:00",
+                "TimePeriod": "M255"
+              }
+            ]
+          }
+        ],
+        "HistoricalPerformanceSeries": [
+          {
+            "CurrencyId": "EUR",
+            "StartDate": "2016-01-01T00:00:00",
+            "Frequency": "Q",
+            "TimePeriod": "M12",
+            "ReturnType": "Nav",
+            "Return": [
+              {
+                "Value": 5.52006,
+                "Date": "2026-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 2.60896,
+                "Date": "2025-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 9.71706,
+                "Date": "2024-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -6.58324,
+                "Date": "2023-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 1.18921,
+                "Date": "2022-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 20.06366,
+                "Date": "2021-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -7.27328,
+                "Date": "2020-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 1.28094,
+                "Date": "2019-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -0.20128,
+                "Date": "2018-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 7.21172,
+                "Date": "2017-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -6.42766,
+                "Date": "2016-03-31T00:00:00",
+                "TimePeriod": "M12"
+              }
+            ]
+          },
+          {
+            "CurrencyId": "EUR",
+            "StartDate": "2016-01-01T00:00:00",
+            "Frequency": "Y",
+            "TimePeriod": "M12",
+            "ReturnType": "Nav",
+            "Return": [
+              {
+                "Value": 6.16409,
+                "Date": "2025-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 8.5261,
+                "Date": "2024-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 8.33631,
+                "Date": "2023-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -12.94453,
+                "Date": "2022-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 9.41067,
+                "Date": "2021-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 2.37296,
+                "Date": "2020-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 12.53216,
+                "Date": "2019-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -6.88463,
+                "Date": "2018-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 4.44537,
+                "Date": "2017-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 3.03336,
+                "Date": "2016-12-31T00:00:00",
+                "TimePeriod": "M12"
+              }
+            ]
+          },
+          {
+            "CurrencyId": "EUR",
+            "StartDate": "2016-01-01T00:00:00",
+            "Frequency": "Q",
+            "TimePeriod": "M12",
+            "ReturnType": "GbPostTax",
+            "Return": [
+              {
+                "Value": 5.52006,
+                "Date": "2026-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 2.60896,
+                "Date": "2025-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 9.71706,
+                "Date": "2024-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -6.58324,
+                "Date": "2023-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 1.18921,
+                "Date": "2022-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 20.06366,
+                "Date": "2021-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -7.27328,
+                "Date": "2020-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 1.28094,
+                "Date": "2019-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -0.20128,
+                "Date": "2018-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 7.21172,
+                "Date": "2017-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -6.42766,
+                "Date": "2016-03-31T00:00:00",
+                "TimePeriod": "M12"
+              }
+            ]
+          },
+          {
+            "CurrencyId": "EUR",
+            "StartDate": "2016-01-01T00:00:00",
+            "Frequency": "Y",
+            "TimePeriod": "M12",
+            "ReturnType": "GbPostTax",
+            "Return": [
+              {
+                "Value": 6.16409,
+                "Date": "2025-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 8.5261,
+                "Date": "2024-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 8.33631,
+                "Date": "2023-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -12.94453,
+                "Date": "2022-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 9.41067,
+                "Date": "2021-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 2.37296,
+                "Date": "2020-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 12.53216,
+                "Date": "2019-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -6.88463,
+                "Date": "2018-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 4.44537,
+                "Date": "2017-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 3.03336,
+                "Date": "2016-12-31T00:00:00",
+                "TimePeriod": "M12"
+              }
+            ]
+          },
+          {
+            "CurrencyId": "EUR",
+            "StartDate": "2016-01-01T00:00:00",
+            "Frequency": "Q",
+            "TimePeriod": "M12",
+            "ReturnType": "ItPostTax",
+            "Return": [
+              {
+                "Value": 5.52006,
+                "Date": "2026-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 2.60896,
+                "Date": "2025-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 9.71706,
+                "Date": "2024-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -6.58324,
+                "Date": "2023-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 1.18921,
+                "Date": "2022-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 20.06366,
+                "Date": "2021-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -7.27328,
+                "Date": "2020-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 1.28094,
+                "Date": "2019-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -0.20128,
+                "Date": "2018-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 7.21172,
+                "Date": "2017-03-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -6.42766,
+                "Date": "2016-03-31T00:00:00",
+                "TimePeriod": "M12"
+              }
+            ]
+          },
+          {
+            "CurrencyId": "EUR",
+            "StartDate": "2016-01-01T00:00:00",
+            "Frequency": "Y",
+            "TimePeriod": "M12",
+            "ReturnType": "ItPostTax",
+            "Return": [
+              {
+                "Value": 6.16409,
+                "Date": "2025-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 8.5261,
+                "Date": "2024-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 8.33631,
+                "Date": "2023-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -12.94453,
+                "Date": "2022-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 9.41067,
+                "Date": "2021-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 2.37296,
+                "Date": "2020-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 12.53216,
+                "Date": "2019-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": -6.88463,
+                "Date": "2018-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 4.44537,
+                "Date": "2017-12-31T00:00:00",
+                "TimePeriod": "M12"
+              },
+              {
+                "Value": 3.03336,
+                "Date": "2016-12-31T00:00:00",
+                "TimePeriod": "M12"
+              }
+            ]
+          }
+        ],
+        "Portfolios": [
+          {
+            "Date": "2026-03-31T00:00:00",
+            "SuppressionExpiration": "2026-03-31T00:00:00",
+            "ReleaseStatisticsDate": "2026-03-31T00:00:00",
+            "ReleaseTopHoldingDate": "2026-03-31T00:00:00",
+            "TopNcount": 0,
+            "CurrencyId": "EUR",
+            "Id": 205030,
+            "AssetAllocations": [
+              {
+                "Type": "MorningstarEUR3",
+                "SalePosition": "L",
+                "BreakdownValues": [
+                  {
+                    "Value": 45.18269,
+                    "Type": "1"
+                  },
+                  {
+                    "Value": 43.49112,
+                    "Type": "2"
+                  },
+                  {
+                    "Value": 16.99035,
+                    "Type": "3"
+                  },
+                  {
+                    "Value": 13.66723,
+                    "Type": "4"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "99"
+                  }
+                ]
+              },
+              {
+                "Type": "MorningstarEUR3",
+                "SalePosition": "S",
+                "BreakdownValues": [
+                  {
+                    "Value": 1.26069,
+                    "Type": "1"
+                  },
+                  {
+                    "Value": 1.19617,
+                    "Type": "2"
+                  },
+                  {
+                    "Value": 16.6712,
+                    "Type": "3"
+                  },
+                  {
+                    "Value": 0.20332,
+                    "Type": "4"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "99"
+                  }
+                ]
+              },
+              {
+                "Type": "MorningstarEUR3",
+                "SalePosition": "N",
+                "BreakdownValues": [
+                  {
+                    "Value": 43.922,
+                    "Type": "1"
+                  },
+                  {
+                    "Value": 42.29495,
+                    "Type": "2"
+                  },
+                  {
+                    "Value": 0.31915,
+                    "Type": "3"
+                  },
+                  {
+                    "Value": 13.46391,
+                    "Type": "4"
+                  },
+                  {
+                    "Value": -0.00001,
+                    "Type": "99"
+                  }
+                ]
+              }
+            ],
+            "RegionalExposure": [
+              {
+                "NotClassified": 56.2597,
+                "SalePosition": "L",
+                "BreakdownValues": [
+                  {
+                    "Value": 56.966047,
+                    "Type": "1"
+                  },
+                  {
+                    "Value": 1.948775,
+                    "Type": "2"
+                  },
+                  {
+                    "Value": 0.831453,
+                    "Type": "3"
+                  },
+                  {
+                    "Value": 4.772167,
+                    "Type": "4"
+                  },
+                  {
+                    "Value": 17.239777,
+                    "Type": "5"
+                  },
+                  {
+                    "Value": 5.649527,
+                    "Type": "6"
+                  },
+                  {
+                    "Value": 0.139459,
+                    "Type": "7"
+                  },
+                  {
+                    "Value": 0.244374,
+                    "Type": "8"
+                  },
+                  {
+                    "Value": 0.242568,
+                    "Type": "9"
+                  },
+                  {
+                    "Value": 4.279349,
+                    "Type": "10"
+                  },
+                  {
+                    "Value": 0.251187,
+                    "Type": "11"
+                  },
+                  {
+                    "Value": 4.545854,
+                    "Type": "12"
+                  },
+                  {
+                    "Value": 2.889463,
+                    "Type": "13"
+                  },
+                  {
+                    "Value": 4.210899,
+                    "Type": "14"
+                  },
+                  {
+                    "Value": 95.789101,
+                    "Type": "15"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "16"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 100,
+                "SalePosition": "S",
+                "BreakdownValues": [
+                  {
+                    "Value": 0,
+                    "Type": "1"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "2"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "3"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "4"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "5"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "6"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "7"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "8"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "9"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "10"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "11"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "12"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "13"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "14"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "15"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "16"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 56.2597,
+                "SalePosition": "N",
+                "BreakdownValues": [
+                  {
+                    "Value": 56.966047,
+                    "Type": "1"
+                  },
+                  {
+                    "Value": 1.948775,
+                    "Type": "2"
+                  },
+                  {
+                    "Value": 0.831453,
+                    "Type": "3"
+                  },
+                  {
+                    "Value": 4.772167,
+                    "Type": "4"
+                  },
+                  {
+                    "Value": 17.239777,
+                    "Type": "5"
+                  },
+                  {
+                    "Value": 5.649527,
+                    "Type": "6"
+                  },
+                  {
+                    "Value": 0.139459,
+                    "Type": "7"
+                  },
+                  {
+                    "Value": 0.244374,
+                    "Type": "8"
+                  },
+                  {
+                    "Value": 0.242568,
+                    "Type": "9"
+                  },
+                  {
+                    "Value": 4.279349,
+                    "Type": "10"
+                  },
+                  {
+                    "Value": 0.251187,
+                    "Type": "11"
+                  },
+                  {
+                    "Value": 4.545854,
+                    "Type": "12"
+                  },
+                  {
+                    "Value": 2.889463,
+                    "Type": "13"
+                  },
+                  {
+                    "Value": 4.210899,
+                    "Type": "14"
+                  },
+                  {
+                    "Value": 95.789101,
+                    "Type": "15"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "16"
+                  }
+                ]
+              }
+            ],
+            "GlobalStockSectorBreakdown": [
+              {
+                "NotClassified": 56.40468,
+                "SalePosition": "L",
+                "BreakdownValues": [
+                  {
+                    "Value": 4.004031,
+                    "Type": "101"
+                  },
+                  {
+                    "Value": 9.058358,
+                    "Type": "102"
+                  },
+                  {
+                    "Value": 17.292131,
+                    "Type": "103"
+                  },
+                  {
+                    "Value": 2.276483,
+                    "Type": "104"
+                  },
+                  {
+                    "Value": 5.040633,
+                    "Type": "205"
+                  },
+                  {
+                    "Value": 10.787029,
+                    "Type": "206"
+                  },
+                  {
+                    "Value": 2.63659,
+                    "Type": "207"
+                  },
+                  {
+                    "Value": 7.706859,
+                    "Type": "308"
+                  },
+                  {
+                    "Value": 2.388353,
+                    "Type": "309"
+                  },
+                  {
+                    "Value": 12.359194,
+                    "Type": "310"
+                  },
+                  {
+                    "Value": 26.450339,
+                    "Type": "311"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 100,
+                "SalePosition": "S",
+                "BreakdownValues": [
+                  {
+                    "Value": 0,
+                    "Type": "101"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "102"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "103"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "104"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "205"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "206"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "207"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "308"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "309"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "310"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "311"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 56.40468,
+                "SalePosition": "N",
+                "BreakdownValues": [
+                  {
+                    "Value": 4.004031,
+                    "Type": "101"
+                  },
+                  {
+                    "Value": 9.058358,
+                    "Type": "102"
+                  },
+                  {
+                    "Value": 17.292131,
+                    "Type": "103"
+                  },
+                  {
+                    "Value": 2.276483,
+                    "Type": "104"
+                  },
+                  {
+                    "Value": 5.040633,
+                    "Type": "205"
+                  },
+                  {
+                    "Value": 10.787029,
+                    "Type": "206"
+                  },
+                  {
+                    "Value": 2.63659,
+                    "Type": "207"
+                  },
+                  {
+                    "Value": 7.706859,
+                    "Type": "308"
+                  },
+                  {
+                    "Value": 2.388353,
+                    "Type": "309"
+                  },
+                  {
+                    "Value": 12.359194,
+                    "Type": "310"
+                  },
+                  {
+                    "Value": 26.450339,
+                    "Type": "311"
+                  }
+                ]
+              }
+            ],
+            "GlobalBondSectorBreakdownLevel1": [
+              {
+                "NotClassified": 39.70509,
+                "SalePosition": "L",
+                "BreakdownValues": [
+                  {
+                    "Value": 39.984221,
+                    "Type": "10"
+                  },
+                  {
+                    "Value": 0.000431,
+                    "Type": "20"
+                  },
+                  {
+                    "Value": 28.034356,
+                    "Type": "30"
+                  },
+                  {
+                    "Value": 4.792444,
+                    "Type": "40"
+                  },
+                  {
+                    "Value": 17.482305,
+                    "Type": "50"
+                  },
+                  {
+                    "Value": 9.706242,
+                    "Type": "60"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 82.42839,
+                "SalePosition": "S",
+                "BreakdownValues": [
+                  {
+                    "Value": 4.829552,
+                    "Type": "10"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "20"
+                  },
+                  {
+                    "Value": 0.001707,
+                    "Type": "30"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "40"
+                  },
+                  {
+                    "Value": 69.433706,
+                    "Type": "50"
+                  },
+                  {
+                    "Value": 25.735035,
+                    "Type": "60"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 57.2767,
+                "SalePosition": "N",
+                "BreakdownValues": [
+                  {
+                    "Value": 54.442939,
+                    "Type": "10"
+                  },
+                  {
+                    "Value": 0.000609,
+                    "Type": "20"
+                  },
+                  {
+                    "Value": 39.563868,
+                    "Type": "30"
+                  },
+                  {
+                    "Value": 6.763522,
+                    "Type": "40"
+                  },
+                  {
+                    "Value": -3.884719,
+                    "Type": "50"
+                  },
+                  {
+                    "Value": 3.113781,
+                    "Type": "60"
+                  }
+                ]
+              }
+            ],
+            "GlobalBondSectorBreakdownLevel2": [
+              {
+                "NotClassified": 39.70508,
+                "SalePosition": "L",
+                "BreakdownValues": [
+                  {
+                    "Value": 30.129105,
+                    "Type": "1010"
+                  },
+                  {
+                    "Value": 9.855109,
+                    "Type": "1020"
+                  },
+                  {
+                    "Value": 0.000431,
+                    "Type": "2010"
+                  },
+                  {
+                    "Value": 0.006833,
+                    "Type": "3010"
+                  },
+                  {
+                    "Value": 0.101153,
+                    "Type": "3020"
+                  },
+                  {
+                    "Value": 27.907774,
+                    "Type": "3030"
+                  },
+                  {
+                    "Value": 0.018592,
+                    "Type": "3040"
+                  },
+                  {
+                    "Value": 0.122747,
+                    "Type": "4010"
+                  },
+                  {
+                    "Value": 0.004495,
+                    "Type": "4020"
+                  },
+                  {
+                    "Value": 0.000448,
+                    "Type": "4030"
+                  },
+                  {
+                    "Value": 4.3809,
+                    "Type": "4040"
+                  },
+                  {
+                    "Value": 0.283871,
+                    "Type": "4050"
+                  },
+                  {
+                    "Value": 17.482302,
+                    "Type": "5010"
+                  },
+                  {
+                    "Value": 0.394146,
+                    "Type": "6010"
+                  },
+                  {
+                    "Value": 9.312095,
+                    "Type": "6020"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 82.42839,
+                "SalePosition": "S",
+                "BreakdownValues": [
+                  {
+                    "Value": 0.019634,
+                    "Type": "1010"
+                  },
+                  {
+                    "Value": 4.809918,
+                    "Type": "1020"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "2010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "3010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "3020"
+                  },
+                  {
+                    "Value": 0.00074,
+                    "Type": "3030"
+                  },
+                  {
+                    "Value": 0.000967,
+                    "Type": "3040"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "4010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "4020"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "4030"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "4040"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "4050"
+                  },
+                  {
+                    "Value": 69.433706,
+                    "Type": "5010"
+                  },
+                  {
+                    "Value": 1.418766,
+                    "Type": "6010"
+                  },
+                  {
+                    "Value": 24.316269,
+                    "Type": "6020"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 57.27669,
+                "SalePosition": "N",
+                "BreakdownValues": [
+                  {
+                    "Value": 42.512788,
+                    "Type": "1010"
+                  },
+                  {
+                    "Value": 11.930138,
+                    "Type": "1020"
+                  },
+                  {
+                    "Value": 0.000609,
+                    "Type": "2010"
+                  },
+                  {
+                    "Value": 0.009643,
+                    "Type": "3010"
+                  },
+                  {
+                    "Value": 0.142756,
+                    "Type": "3020"
+                  },
+                  {
+                    "Value": 39.385619,
+                    "Type": "3030"
+                  },
+                  {
+                    "Value": 0.025841,
+                    "Type": "3040"
+                  },
+                  {
+                    "Value": 0.173231,
+                    "Type": "4010"
+                  },
+                  {
+                    "Value": 0.006343,
+                    "Type": "4020"
+                  },
+                  {
+                    "Value": 0.000632,
+                    "Type": "4030"
+                  },
+                  {
+                    "Value": 6.182714,
+                    "Type": "4040"
+                  },
+                  {
+                    "Value": 0.400624,
+                    "Type": "4050"
+                  },
+                  {
+                    "Value": -3.884718,
+                    "Type": "5010"
+                  },
+                  {
+                    "Value": -0.027268,
+                    "Type": "6010"
+                  },
+                  {
+                    "Value": 3.141049,
+                    "Type": "6020"
+                  }
+                ]
+              }
+            ],
+            "GlobalBondSectorBreakdownLevel3": [
+              {
+                "NotClassified": 39.7051,
+                "SalePosition": "L",
+                "BreakdownValues": [
+                  {
+                    "Value": 28.664713,
+                    "Type": "101010"
+                  },
+                  {
+                    "Value": 1.464402,
+                    "Type": "101020"
+                  },
+                  {
+                    "Value": 2.776122,
+                    "Type": "102010"
+                  },
+                  {
+                    "Value": 2.212758,
+                    "Type": "102020"
+                  },
+                  {
+                    "Value": 1.986354,
+                    "Type": "102030"
+                  },
+                  {
+                    "Value": 2.879862,
+                    "Type": "102040"
+                  },
+                  {
+                    "Value": 0.000166,
+                    "Type": "201010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201011"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201012"
+                  },
+                  {
+                    "Value": 0.00005,
+                    "Type": "201013"
+                  },
+                  {
+                    "Value": 0.000017,
+                    "Type": "201014"
+                  },
+                  {
+                    "Value": 0.000033,
+                    "Type": "201016"
+                  },
+                  {
+                    "Value": 0.000066,
+                    "Type": "201017"
+                  },
+                  {
+                    "Value": 0.00005,
+                    "Type": "201018"
+                  },
+                  {
+                    "Value": 0.000017,
+                    "Type": "201019"
+                  },
+                  {
+                    "Value": 0.000033,
+                    "Type": "201020"
+                  },
+                  {
+                    "Value": 0.006833,
+                    "Type": "301012"
+                  },
+                  {
+                    "Value": 0.002455,
+                    "Type": "302002"
+                  },
+                  {
+                    "Value": 0.005556,
+                    "Type": "302003"
+                  },
+                  {
+                    "Value": 0.011112,
+                    "Type": "302004"
+                  },
+                  {
+                    "Value": 0.034049,
+                    "Type": "302006"
+                  },
+                  {
+                    "Value": 0.013749,
+                    "Type": "302008"
+                  },
+                  {
+                    "Value": 0.033718,
+                    "Type": "302010"
+                  },
+                  {
+                    "Value": 0.000249,
+                    "Type": "302011"
+                  },
+                  {
+                    "Value": 0.000249,
+                    "Type": "302012"
+                  },
+                  {
+                    "Value": 0.467983,
+                    "Type": "303001"
+                  },
+                  {
+                    "Value": 1.557163,
+                    "Type": "303002"
+                  },
+                  {
+                    "Value": 12.226639,
+                    "Type": "303003"
+                  },
+                  {
+                    "Value": 0.71744,
+                    "Type": "303004"
+                  },
+                  {
+                    "Value": 0.745403,
+                    "Type": "303005"
+                  },
+                  {
+                    "Value": 1.331837,
+                    "Type": "303006"
+                  },
+                  {
+                    "Value": 1.034001,
+                    "Type": "303007"
+                  },
+                  {
+                    "Value": 0.867287,
+                    "Type": "303008"
+                  },
+                  {
+                    "Value": 0.806685,
+                    "Type": "303009"
+                  },
+                  {
+                    "Value": 6.853598,
+                    "Type": "303010"
+                  },
+                  {
+                    "Value": 1.025095,
+                    "Type": "303011"
+                  },
+                  {
+                    "Value": 0.274667,
+                    "Type": "303012"
+                  },
+                  {
+                    "Value": 0.003201,
+                    "Type": "304001"
+                  },
+                  {
+                    "Value": 0.000166,
+                    "Type": "304002"
+                  },
+                  {
+                    "Value": 0.004561,
+                    "Type": "304003"
+                  },
+                  {
+                    "Value": 0.000033,
+                    "Type": "304007"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "304009"
+                  },
+                  {
+                    "Value": 0.001576,
+                    "Type": "304010"
+                  },
+                  {
+                    "Value": 0.009055,
+                    "Type": "304012"
+                  },
+                  {
+                    "Value": 0.120276,
+                    "Type": "401010"
+                  },
+                  {
+                    "Value": 0.000829,
+                    "Type": "401030"
+                  },
+                  {
+                    "Value": 0.001642,
+                    "Type": "401040"
+                  },
+                  {
+                    "Value": 0.004495,
+                    "Type": "402010"
+                  },
+                  {
+                    "Value": 0.000448,
+                    "Type": "403010"
+                  },
+                  {
+                    "Value": 4.380901,
+                    "Type": "404010"
+                  },
+                  {
+                    "Value": 0.000017,
+                    "Type": "405020"
+                  },
+                  {
+                    "Value": 0.25095,
+                    "Type": "405030"
+                  },
+                  {
+                    "Value": 0.002587,
+                    "Type": "405040"
+                  },
+                  {
+                    "Value": 0.000282,
+                    "Type": "405050"
+                  },
+                  {
+                    "Value": 0.030036,
+                    "Type": "405060"
+                  },
+                  {
+                    "Value": 0.018642,
+                    "Type": "501010"
+                  },
+                  {
+                    "Value": 3.624303,
+                    "Type": "501011"
+                  },
+                  {
+                    "Value": 0.19257,
+                    "Type": "501012"
+                  },
+                  {
+                    "Value": 1.551159,
+                    "Type": "501013"
+                  },
+                  {
+                    "Value": 10.675679,
+                    "Type": "501014"
+                  },
+                  {
+                    "Value": 0.540527,
+                    "Type": "501016"
+                  },
+                  {
+                    "Value": 0.018509,
+                    "Type": "501019"
+                  },
+                  {
+                    "Value": 0.32288,
+                    "Type": "501021"
+                  },
+                  {
+                    "Value": 0.166565,
+                    "Type": "501022"
+                  },
+                  {
+                    "Value": 0.285679,
+                    "Type": "501023"
+                  },
+                  {
+                    "Value": 0.001725,
+                    "Type": "501024"
+                  },
+                  {
+                    "Value": 0.084054,
+                    "Type": "501025"
+                  },
+                  {
+                    "Value": 0.394146,
+                    "Type": "601010"
+                  },
+                  {
+                    "Value": 9.310721,
+                    "Type": "602030"
+                  },
+                  {
+                    "Value": 0.001377,
+                    "Type": "602040"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "602010"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 82.4284,
+                "SalePosition": "S",
+                "BreakdownValues": [
+                  {
+                    "Value": 0.019634,
+                    "Type": "101010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "101020"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "102010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "102020"
+                  },
+                  {
+                    "Value": 2.694006,
+                    "Type": "102030"
+                  },
+                  {
+                    "Value": 2.115914,
+                    "Type": "102040"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201011"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201012"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201013"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201014"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201016"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201017"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201018"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201019"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201020"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "301012"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "302002"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "302003"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "302004"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "302006"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "302008"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "302010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "302011"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "302012"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303001"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303002"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303003"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303004"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303005"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303006"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303007"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303008"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303009"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "303011"
+                  },
+                  {
+                    "Value": 0.00074,
+                    "Type": "303012"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "304001"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "304002"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "304003"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "304007"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "304009"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "304010"
+                  },
+                  {
+                    "Value": 0.000967,
+                    "Type": "304012"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "401010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "401030"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "401040"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "402010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "403010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "404010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "405020"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "405030"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "405040"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "405050"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "405060"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "501010"
+                  },
+                  {
+                    "Value": 2.408432,
+                    "Type": "501011"
+                  },
+                  {
+                    "Value": 0.000683,
+                    "Type": "501012"
+                  },
+                  {
+                    "Value": 50.329054,
+                    "Type": "501013"
+                  },
+                  {
+                    "Value": 16.189761,
+                    "Type": "501014"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "501016"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "501019"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "501021"
+                  },
+                  {
+                    "Value": 0.106137,
+                    "Type": "501022"
+                  },
+                  {
+                    "Value": 0.372135,
+                    "Type": "501023"
+                  },
+                  {
+                    "Value": 0.027488,
+                    "Type": "501024"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "501025"
+                  },
+                  {
+                    "Value": 1.418767,
+                    "Type": "601010"
+                  },
+                  {
+                    "Value": 24.316169,
+                    "Type": "602030"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "602040"
+                  },
+                  {
+                    "Value": 0.000114,
+                    "Type": "602010"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 57.2767,
+                "SalePosition": "N",
+                "BreakdownValues": [
+                  {
+                    "Value": 40.446103,
+                    "Type": "101010"
+                  },
+                  {
+                    "Value": 2.066694,
+                    "Type": "101020"
+                  },
+                  {
+                    "Value": 3.917909,
+                    "Type": "102010"
+                  },
+                  {
+                    "Value": 3.122839,
+                    "Type": "102020"
+                  },
+                  {
+                    "Value": 1.695304,
+                    "Type": "102030"
+                  },
+                  {
+                    "Value": 3.194065,
+                    "Type": "102040"
+                  },
+                  {
+                    "Value": 0.000234,
+                    "Type": "201010"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201011"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "201012"
+                  },
+                  {
+                    "Value": 0.00007,
+                    "Type": "201013"
+                  },
+                  {
+                    "Value": 0.000023,
+                    "Type": "201014"
+                  },
+                  {
+                    "Value": 0.000047,
+                    "Type": "201016"
+                  },
+                  {
+                    "Value": 0.000094,
+                    "Type": "201017"
+                  },
+                  {
+                    "Value": 0.00007,
+                    "Type": "201018"
+                  },
+                  {
+                    "Value": 0.000023,
+                    "Type": "201019"
+                  },
+                  {
+                    "Value": 0.000047,
+                    "Type": "201020"
+                  },
+                  {
+                    "Value": 0.009643,
+                    "Type": "301012"
+                  },
+                  {
+                    "Value": 0.003464,
+                    "Type": "302002"
+                  },
+                  {
+                    "Value": 0.007841,
+                    "Type": "302003"
+                  },
+                  {
+                    "Value": 0.015682,
+                    "Type": "302004"
+                  },
+                  {
+                    "Value": 0.048053,
+                    "Type": "302006"
+                  },
+                  {
+                    "Value": 0.019404,
+                    "Type": "302008"
+                  },
+                  {
+                    "Value": 0.047585,
+                    "Type": "302010"
+                  },
+                  {
+                    "Value": 0.000351,
+                    "Type": "302011"
+                  },
+                  {
+                    "Value": 0.000351,
+                    "Type": "302012"
+                  },
+                  {
+                    "Value": 0.660459,
+                    "Type": "303001"
+                  },
+                  {
+                    "Value": 2.197606,
+                    "Type": "303002"
+                  },
+                  {
+                    "Value": 17.255315,
+                    "Type": "303003"
+                  },
+                  {
+                    "Value": 1.012515,
+                    "Type": "303004"
+                  },
+                  {
+                    "Value": 1.051979,
+                    "Type": "303005"
+                  },
+                  {
+                    "Value": 1.879607,
+                    "Type": "303006"
+                  },
+                  {
+                    "Value": 1.459274,
+                    "Type": "303007"
+                  },
+                  {
+                    "Value": 1.223993,
+                    "Type": "303008"
+                  },
+                  {
+                    "Value": 1.138465,
+                    "Type": "303009"
+                  },
+                  {
+                    "Value": 9.672404,
+                    "Type": "303010"
+                  },
+                  {
+                    "Value": 1.446705,
+                    "Type": "303011"
+                  },
+                  {
+                    "Value": 0.38733,
+                    "Type": "303012"
+                  },
+                  {
+                    "Value": 0.004517,
+                    "Type": "304001"
+                  },
+                  {
+                    "Value": 0.000234,
+                    "Type": "304002"
+                  },
+                  {
+                    "Value": 0.006437,
+                    "Type": "304003"
+                  },
+                  {
+                    "Value": 0.000047,
+                    "Type": "304007"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "304009"
+                  },
+                  {
+                    "Value": 0.002224,
+                    "Type": "304010"
+                  },
+                  {
+                    "Value": 0.012382,
+                    "Type": "304012"
+                  },
+                  {
+                    "Value": 0.169743,
+                    "Type": "401010"
+                  },
+                  {
+                    "Value": 0.00117,
+                    "Type": "401030"
+                  },
+                  {
+                    "Value": 0.002317,
+                    "Type": "401040"
+                  },
+                  {
+                    "Value": 0.006343,
+                    "Type": "402010"
+                  },
+                  {
+                    "Value": 0.000632,
+                    "Type": "403010"
+                  },
+                  {
+                    "Value": 6.182715,
+                    "Type": "404010"
+                  },
+                  {
+                    "Value": 0.000023,
+                    "Type": "405020"
+                  },
+                  {
+                    "Value": 0.354163,
+                    "Type": "405030"
+                  },
+                  {
+                    "Value": 0.003651,
+                    "Type": "405040"
+                  },
+                  {
+                    "Value": 0.000398,
+                    "Type": "405050"
+                  },
+                  {
+                    "Value": 0.042389,
+                    "Type": "405060"
+                  },
+                  {
+                    "Value": 0.026309,
+                    "Type": "501010"
+                  },
+                  {
+                    "Value": 4.124377,
+                    "Type": "501011"
+                  },
+                  {
+                    "Value": 0.271491,
+                    "Type": "501012"
+                  },
+                  {
+                    "Value": -18.510625,
+                    "Type": "501013"
+                  },
+                  {
+                    "Value": 8.407801,
+                    "Type": "501014"
+                  },
+                  {
+                    "Value": 0.762839,
+                    "Type": "501016"
+                  },
+                  {
+                    "Value": 0.026122,
+                    "Type": "501019"
+                  },
+                  {
+                    "Value": 0.455676,
+                    "Type": "501021"
+                  },
+                  {
+                    "Value": 0.191418,
+                    "Type": "501022"
+                  },
+                  {
+                    "Value": 0.250121,
+                    "Type": "501023"
+                  },
+                  {
+                    "Value": -0.008871,
+                    "Type": "501024"
+                  },
+                  {
+                    "Value": 0.118624,
+                    "Type": "501025"
+                  },
+                  {
+                    "Value": -0.027268,
+                    "Type": "601010"
+                  },
+                  {
+                    "Value": 3.139154,
+                    "Type": "602030"
+                  },
+                  {
+                    "Value": 0.001943,
+                    "Type": "602040"
+                  },
+                  {
+                    "Value": -0.000047,
+                    "Type": "602010"
+                  }
+                ]
+              }
+            ],
+            "CountryExposure": [
+              {
+                "NotClassified": 56.82201,
+                "SalePosition": "L",
+                "Type": "Bond",
+                "BreakdownValues": [
+                  {
+                    "Value": 0.016305,
+                    "Type": "AGO"
+                  },
+                  {
+                    "Value": 0.000417,
+                    "Type": "ALB"
+                  },
+                  {
+                    "Value": 0.001436,
+                    "Type": "AND"
+                  },
+                  {
+                    "Value": 0.053106,
+                    "Type": "ARE"
+                  },
+                  {
+                    "Value": 0.130784,
+                    "Type": "ARG"
+                  },
+                  {
+                    "Value": 0.005234,
+                    "Type": "ARM"
+                  },
+                  {
+                    "Value": 0.7209,
+                    "Type": "AUS"
+                  },
+                  {
+                    "Value": 1.526681,
+                    "Type": "AUT"
+                  },
+                  {
+                    "Value": 0.005998,
+                    "Type": "AZE"
+                  },
+                  {
+                    "Value": 2.129742,
+                    "Type": "BEL"
+                  },
+                  {
+                    "Value": 0.012367,
+                    "Type": "BEN"
+                  },
+                  {
+                    "Value": 0.02675,
+                    "Type": "BGR"
+                  },
+                  {
+                    "Value": 0.019084,
+                    "Type": "BHR"
+                  },
+                  {
+                    "Value": 0.00264,
+                    "Type": "BHS"
+                  },
+                  {
+                    "Value": 0.002455,
+                    "Type": "BIH"
+                  },
+                  {
+                    "Value": 0.004099,
+                    "Type": "BMU"
+                  },
+                  {
+                    "Value": 0.000695,
+                    "Type": "BOL"
+                  },
+                  {
+                    "Value": 0.399231,
+                    "Type": "BRA"
+                  },
+                  {
+                    "Value": 0.001181,
+                    "Type": "BRB"
+                  },
+                  {
+                    "Value": 0.944162,
+                    "Type": "CAN"
+                  },
+                  {
+                    "Value": 1.123072,
+                    "Type": "CHE"
+                  },
+                  {
+                    "Value": 0.157187,
+                    "Type": "CHL"
+                  },
+                  {
+                    "Value": 0.098916,
+                    "Type": "CHN"
+                  },
+                  {
+                    "Value": 0.069341,
+                    "Type": "CIV"
+                  },
+                  {
+                    "Value": 0.001992,
+                    "Type": "CMR"
+                  },
+                  {
+                    "Value": 0.002247,
+                    "Type": "COD"
+                  },
+                  {
+                    "Value": 0.000903,
+                    "Type": "COG"
+                  },
+                  {
+                    "Value": 0.156098,
+                    "Type": "COL"
+                  },
+                  {
+                    "Value": 0.018783,
+                    "Type": "CRI"
+                  },
+                  {
+                    "Value": 0.000787,
+                    "Type": "CYM"
+                  },
+                  {
+                    "Value": 0.010445,
+                    "Type": "CYP"
+                  },
+                  {
+                    "Value": 0.242786,
+                    "Type": "CZE"
+                  },
+                  {
+                    "Value": 14.167311,
+                    "Type": "DEU"
+                  },
+                  {
+                    "Value": 6.454006,
+                    "Type": "DNK"
+                  },
+                  {
+                    "Value": 0.041178,
+                    "Type": "DOM"
+                  },
+                  {
+                    "Value": 0.021909,
+                    "Type": "ECU"
+                  },
+                  {
+                    "Value": 0.033258,
+                    "Type": "EGY"
+                  },
+                  {
+                    "Value": 7.338484,
+                    "Type": "ESP"
+                  },
+                  {
+                    "Value": 0.016166,
+                    "Type": "EST"
+                  },
+                  {
+                    "Value": 1.06281,
+                    "Type": "FIN"
+                  },
+                  {
+                    "Value": 13.171248,
+                    "Type": "FRA"
+                  },
+                  {
+                    "Value": 0.010769,
+                    "Type": "FRO"
+                  },
+                  {
+                    "Value": 0.002663,
+                    "Type": "GAB"
+                  },
+                  {
+                    "Value": 6.240564,
+                    "Type": "GBR"
+                  },
+                  {
+                    "Value": 0.006415,
+                    "Type": "GEO"
+                  },
+                  {
+                    "Value": 0.017138,
+                    "Type": "GHA"
+                  },
+                  {
+                    "Value": 0.437167,
+                    "Type": "GRC"
+                  },
+                  {
+                    "Value": 0.014197,
+                    "Type": "GTM"
+                  },
+                  {
+                    "Value": 0.021724,
+                    "Type": "HKG"
+                  },
+                  {
+                    "Value": 0.002918,
+                    "Type": "HND"
+                  },
+                  {
+                    "Value": 0.01876,
+                    "Type": "HRV"
+                  },
+                  {
+                    "Value": 0.299481,
+                    "Type": "HUN"
+                  },
+                  {
+                    "Value": 0.188522,
+                    "Type": "IDN"
+                  },
+                  {
+                    "Value": 0.091158,
+                    "Type": "IND"
+                  },
+                  {
+                    "Value": 1.378665,
+                    "Type": "IRL"
+                  },
+                  {
+                    "Value": 0.001575,
+                    "Type": "IRQ"
+                  },
+                  {
+                    "Value": 0.036963,
+                    "Type": "ISL"
+                  },
+                  {
+                    "Value": 0.034416,
+                    "Type": "ISR"
+                  },
+                  {
+                    "Value": 10.694175,
+                    "Type": "ITA"
+                  },
+                  {
+                    "Value": 0.007504,
+                    "Type": "JAM"
+                  },
+                  {
+                    "Value": 0.015147,
+                    "Type": "JOR"
+                  },
+                  {
+                    "Value": 1.193571,
+                    "Type": "JPN"
+                  },
+                  {
+                    "Value": 0.023669,
+                    "Type": "KAZ"
+                  },
+                  {
+                    "Value": 0.020612,
+                    "Type": "KEN"
+                  },
+                  {
+                    "Value": 0.00183,
+                    "Type": "KGZ"
+                  },
+                  {
+                    "Value": 0.06772,
+                    "Type": "KOR"
+                  },
+                  {
+                    "Value": 0.001621,
+                    "Type": "KWT"
+                  },
+                  {
+                    "Value": 0.001181,
+                    "Type": "LAO"
+                  },
+                  {
+                    "Value": 0.004354,
+                    "Type": "LBN"
+                  },
+                  {
+                    "Value": 0.016536,
+                    "Type": "LKA"
+                  },
+                  {
+                    "Value": 0.037311,
+                    "Type": "LTU"
+                  },
+                  {
+                    "Value": 0.211589,
+                    "Type": "LUX"
+                  },
+                  {
+                    "Value": 0.08275,
+                    "Type": "LVA"
+                  },
+                  {
+                    "Value": 0.008245,
+                    "Type": "MAC"
+                  },
+                  {
+                    "Value": 0.018736,
+                    "Type": "MAR"
+                  },
+                  {
+                    "Value": 0.0022,
+                    "Type": "MCO"
+                  },
+                  {
+                    "Value": 0.617699,
+                    "Type": "MEX"
+                  },
+                  {
+                    "Value": 0.008291,
+                    "Type": "MKD"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MLT"
+                  },
+                  {
+                    "Value": 0.004099,
+                    "Type": "MNE"
+                  },
+                  {
+                    "Value": 0.012391,
+                    "Type": "MNG"
+                  },
+                  {
+                    "Value": 0.001366,
+                    "Type": "MOZ"
+                  },
+                  {
+                    "Value": 0.131085,
+                    "Type": "MYS"
+                  },
+                  {
+                    "Value": 0.001737,
+                    "Type": "NAM"
+                  },
+                  {
+                    "Value": 0.043981,
+                    "Type": "NGA"
+                  },
+                  {
+                    "Value": 3.536084,
+                    "Type": "NLD"
+                  },
+                  {
+                    "Value": 0.70749,
+                    "Type": "NOR"
+                  },
+                  {
+                    "Value": 0.095164,
+                    "Type": "NZL"
+                  },
+                  {
+                    "Value": 0.025893,
+                    "Type": "OMN"
+                  },
+                  {
+                    "Value": 0.008801,
+                    "Type": "PAK"
+                  },
+                  {
+                    "Value": 0.030154,
+                    "Type": "PAN"
+                  },
+                  {
+                    "Value": 0.108551,
+                    "Type": "PER"
+                  },
+                  {
+                    "Value": 0.055584,
+                    "Type": "PHL"
+                  },
+                  {
+                    "Value": 0.003451,
+                    "Type": "PNG"
+                  },
+                  {
+                    "Value": 0.44305,
+                    "Type": "POL"
+                  },
+                  {
+                    "Value": 0.825837,
+                    "Type": "PRT"
+                  },
+                  {
+                    "Value": 0.011024,
+                    "Type": "PRY"
+                  },
+                  {
+                    "Value": 0.0044,
+                    "Type": "QAT"
+                  },
+                  {
+                    "Value": 0.345245,
+                    "Type": "ROU"
+                  },
+                  {
+                    "Value": 0.000278,
+                    "Type": "RUS"
+                  },
+                  {
+                    "Value": 0.000741,
+                    "Type": "RWA"
+                  },
+                  {
+                    "Value": 0.062486,
+                    "Type": "SAU"
+                  },
+                  {
+                    "Value": 0.009635,
+                    "Type": "SEN"
+                  },
+                  {
+                    "Value": 0.018806,
+                    "Type": "SGP"
+                  },
+                  {
+                    "Value": 0.009843,
+                    "Type": "SLV"
+                  },
+                  {
+                    "Value": 0.002131,
+                    "Type": "SMR"
+                  },
+                  {
+                    "Value": 0.020057,
+                    "Type": "SRB"
+                  },
+                  {
+                    "Value": 0.009241,
+                    "Type": "SUR"
+                  },
+                  {
+                    "Value": 0.14783,
+                    "Type": "SVK"
+                  },
+                  {
+                    "Value": 0.059683,
+                    "Type": "SVN"
+                  },
+                  {
+                    "Value": 1.059174,
+                    "Type": "SWE"
+                  },
+                  {
+                    "Value": 0.053847,
+                    "Type": "THA"
+                  },
+                  {
+                    "Value": 0.000069,
+                    "Type": "TJK"
+                  },
+                  {
+                    "Value": 0.006786,
+                    "Type": "TTO"
+                  },
+                  {
+                    "Value": 0.000486,
+                    "Type": "TUN"
+                  },
+                  {
+                    "Value": 0.102622,
+                    "Type": "TUR"
+                  },
+                  {
+                    "Value": 0.002733,
+                    "Type": "TWN"
+                  },
+                  {
+                    "Value": 0.010468,
+                    "Type": "UGA"
+                  },
+                  {
+                    "Value": 0.060378,
+                    "Type": "UKR"
+                  },
+                  {
+                    "Value": 0.040785,
+                    "Type": "URY"
+                  },
+                  {
+                    "Value": 16.530737,
+                    "Type": "USA"
+                  },
+                  {
+                    "Value": 0.023646,
+                    "Type": "UZB"
+                  },
+                  {
+                    "Value": 0.008662,
+                    "Type": "VEN"
+                  },
+                  {
+                    "Value": 0.000625,
+                    "Type": "VGB"
+                  },
+                  {
+                    "Value": 3.076429,
+                    "Type": "XSN"
+                  },
+                  {
+                    "Value": 0.243828,
+                    "Type": "ZAF"
+                  },
+                  {
+                    "Value": 0.012576,
+                    "Type": "ZMB"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 99.18639,
+                "SalePosition": "S",
+                "Type": "Bond",
+                "BreakdownValues": [
+                  {
+                    "Value": 0,
+                    "Type": "AGO"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ALB"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "AND"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ARE"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ARG"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ARM"
+                  },
+                  {
+                    "Value": 0.242131,
+                    "Type": "AUS"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "AUT"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "AZE"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BEL"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BEN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BGR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BHR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BHS"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BIH"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BMU"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BOL"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BRA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "BRB"
+                  },
+                  {
+                    "Value": 0.302356,
+                    "Type": "CAN"
+                  },
+                  {
+                    "Value": 1.183614,
+                    "Type": "CHE"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "CHL"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "CHN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "CIV"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "CMR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "COD"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "COG"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "COL"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "CRI"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "CYM"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "CYP"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "CZE"
+                  },
+                  {
+                    "Value": 32.593011,
+                    "Type": "DEU"
+                  },
+                  {
+                    "Value": 0.279003,
+                    "Type": "DNK"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "DOM"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ECU"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "EGY"
+                  },
+                  {
+                    "Value": 0.10816,
+                    "Type": "ESP"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "EST"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "FIN"
+                  },
+                  {
+                    "Value": 17.46537,
+                    "Type": "FRA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "FRO"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "GAB"
+                  },
+                  {
+                    "Value": 19.70846,
+                    "Type": "GBR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "GEO"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "GHA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "GRC"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "GTM"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "HKG"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "HND"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "HRV"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "HUN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "IDN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "IND"
+                  },
+                  {
+                    "Value": 0.738683,
+                    "Type": "IRL"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "IRQ"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ISL"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ISR"
+                  },
+                  {
+                    "Value": 2.919089,
+                    "Type": "ITA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "JAM"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "JOR"
+                  },
+                  {
+                    "Value": 3.379998,
+                    "Type": "JPN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "KAZ"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "KEN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "KGZ"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "KOR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "KWT"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "LAO"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "LBN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "LKA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "LTU"
+                  },
+                  {
+                    "Value": 0.119222,
+                    "Type": "LUX"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "LVA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MAC"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MAR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MCO"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MEX"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MKD"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MLT"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MNE"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MNG"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MOZ"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MYS"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "NAM"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "NGA"
+                  },
+                  {
+                    "Value": 0.087265,
+                    "Type": "NLD"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "NOR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "NZL"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "OMN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "PAK"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "PAN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "PER"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "PHL"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "PNG"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "POL"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "PRT"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "PRY"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "QAT"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ROU"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "RUS"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "RWA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "SAU"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "SEN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "SGP"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "SLV"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "SMR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "SRB"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "SUR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "SVK"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "SVN"
+                  },
+                  {
+                    "Value": 0.062684,
+                    "Type": "SWE"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "THA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "TJK"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "TTO"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "TUN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "TUR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "TWN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "UGA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "UKR"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "URY"
+                  },
+                  {
+                    "Value": 20.810954,
+                    "Type": "USA"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "UZB"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "VEN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "VGB"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "XSN"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ZAF"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "ZMB"
+                  }
+                ]
+              },
+              {
+                "NotClassified": 57.63562,
+                "SalePosition": "N",
+                "Type": "Bond",
+                "BreakdownValues": [
+                  {
+                    "Value": 0.016618,
+                    "Type": "AGO"
+                  },
+                  {
+                    "Value": 0.000425,
+                    "Type": "ALB"
+                  },
+                  {
+                    "Value": 0.001463,
+                    "Type": "AND"
+                  },
+                  {
+                    "Value": 0.054126,
+                    "Type": "ARE"
+                  },
+                  {
+                    "Value": 0.133296,
+                    "Type": "ARG"
+                  },
+                  {
+                    "Value": 0.005335,
+                    "Type": "ARM"
+                  },
+                  {
+                    "Value": 0.730094,
+                    "Type": "AUS"
+                  },
+                  {
+                    "Value": 1.556001,
+                    "Type": "AUT"
+                  },
+                  {
+                    "Value": 0.006114,
+                    "Type": "AZE"
+                  },
+                  {
+                    "Value": 2.170644,
+                    "Type": "BEL"
+                  },
+                  {
+                    "Value": 0.012605,
+                    "Type": "BEN"
+                  },
+                  {
+                    "Value": 0.027263,
+                    "Type": "BGR"
+                  },
+                  {
+                    "Value": 0.01945,
+                    "Type": "BHR"
+                  },
+                  {
+                    "Value": 0.002691,
+                    "Type": "BHS"
+                  },
+                  {
+                    "Value": 0.002502,
+                    "Type": "BIH"
+                  },
+                  {
+                    "Value": 0.004178,
+                    "Type": "BMU"
+                  },
+                  {
+                    "Value": 0.000708,
+                    "Type": "BOL"
+                  },
+                  {
+                    "Value": 0.406898,
+                    "Type": "BRA"
+                  },
+                  {
+                    "Value": 0.001204,
+                    "Type": "BRB"
+                  },
+                  {
+                    "Value": 0.956488,
+                    "Type": "CAN"
+                  },
+                  {
+                    "Value": 1.121909,
+                    "Type": "CHE"
+                  },
+                  {
+                    "Value": 0.160205,
+                    "Type": "CHL"
+                  },
+                  {
+                    "Value": 0.100816,
+                    "Type": "CHN"
+                  },
+                  {
+                    "Value": 0.070673,
+                    "Type": "CIV"
+                  },
+                  {
+                    "Value": 0.00203,
+                    "Type": "CMR"
+                  },
+                  {
+                    "Value": 0.00229,
+                    "Type": "COD"
+                  },
+                  {
+                    "Value": 0.000921,
+                    "Type": "COG"
+                  },
+                  {
+                    "Value": 0.159096,
+                    "Type": "COL"
+                  },
+                  {
+                    "Value": 0.019143,
+                    "Type": "CRI"
+                  },
+                  {
+                    "Value": 0.000803,
+                    "Type": "CYM"
+                  },
+                  {
+                    "Value": 0.010646,
+                    "Type": "CYP"
+                  },
+                  {
+                    "Value": 0.247448,
+                    "Type": "CZE"
+                  },
+                  {
+                    "Value": 13.813444,
+                    "Type": "DEU"
+                  },
+                  {
+                    "Value": 6.572597,
+                    "Type": "DNK"
+                  },
+                  {
+                    "Value": 0.041969,
+                    "Type": "DOM"
+                  },
+                  {
+                    "Value": 0.02233,
+                    "Type": "ECU"
+                  },
+                  {
+                    "Value": 0.033896,
+                    "Type": "EGY"
+                  },
+                  {
+                    "Value": 7.477343,
+                    "Type": "ESP"
+                  },
+                  {
+                    "Value": 0.016476,
+                    "Type": "EST"
+                  },
+                  {
+                    "Value": 1.083221,
+                    "Type": "FIN"
+                  },
+                  {
+                    "Value": 13.088779,
+                    "Type": "FRA"
+                  },
+                  {
+                    "Value": 0.010976,
+                    "Type": "FRO"
+                  },
+                  {
+                    "Value": 0.002715,
+                    "Type": "GAB"
+                  },
+                  {
+                    "Value": 5.981912,
+                    "Type": "GBR"
+                  },
+                  {
+                    "Value": 0.006539,
+                    "Type": "GEO"
+                  },
+                  {
+                    "Value": 0.017468,
+                    "Type": "GHA"
+                  },
+                  {
+                    "Value": 0.445563,
+                    "Type": "GRC"
+                  },
+                  {
+                    "Value": 0.01447,
+                    "Type": "GTM"
+                  },
+                  {
+                    "Value": 0.022141,
+                    "Type": "HKG"
+                  },
+                  {
+                    "Value": 0.002974,
+                    "Type": "HND"
+                  },
+                  {
+                    "Value": 0.01912,
+                    "Type": "HRV"
+                  },
+                  {
+                    "Value": 0.305233,
+                    "Type": "HUN"
+                  },
+                  {
+                    "Value": 0.192143,
+                    "Type": "IDN"
+                  },
+                  {
+                    "Value": 0.092908,
+                    "Type": "IND"
+                  },
+                  {
+                    "Value": 1.390956,
+                    "Type": "IRL"
+                  },
+                  {
+                    "Value": 0.001605,
+                    "Type": "IRQ"
+                  },
+                  {
+                    "Value": 0.037673,
+                    "Type": "ISL"
+                  },
+                  {
+                    "Value": 0.035077,
+                    "Type": "ISR"
+                  },
+                  {
+                    "Value": 10.843496,
+                    "Type": "ITA"
+                  },
+                  {
+                    "Value": 0.007648,
+                    "Type": "JAM"
+                  },
+                  {
+                    "Value": 0.015437,
+                    "Type": "JOR"
+                  },
+                  {
+                    "Value": 1.151581,
+                    "Type": "JPN"
+                  },
+                  {
+                    "Value": 0.024124,
+                    "Type": "KAZ"
+                  },
+                  {
+                    "Value": 0.021008,
+                    "Type": "KEN"
+                  },
+                  {
+                    "Value": 0.001865,
+                    "Type": "KGZ"
+                  },
+                  {
+                    "Value": 0.06902,
+                    "Type": "KOR"
+                  },
+                  {
+                    "Value": 0.001652,
+                    "Type": "KWT"
+                  },
+                  {
+                    "Value": 0.001204,
+                    "Type": "LAO"
+                  },
+                  {
+                    "Value": 0.004438,
+                    "Type": "LBN"
+                  },
+                  {
+                    "Value": 0.016854,
+                    "Type": "LKA"
+                  },
+                  {
+                    "Value": 0.038027,
+                    "Type": "LTU"
+                  },
+                  {
+                    "Value": 0.213363,
+                    "Type": "LUX"
+                  },
+                  {
+                    "Value": 0.08434,
+                    "Type": "LVA"
+                  },
+                  {
+                    "Value": 0.008403,
+                    "Type": "MAC"
+                  },
+                  {
+                    "Value": 0.019096,
+                    "Type": "MAR"
+                  },
+                  {
+                    "Value": 0.002242,
+                    "Type": "MCO"
+                  },
+                  {
+                    "Value": 0.629562,
+                    "Type": "MEX"
+                  },
+                  {
+                    "Value": 0.00845,
+                    "Type": "MKD"
+                  },
+                  {
+                    "Value": 0,
+                    "Type": "MLT"
+                  },
+                  {
+                    "Value": 0.004178,
+                    "Type": "MNE"
+                  },
+                  {
+                    "Value": 0.012629,
+                    "Type": "MNG"
+                  },
+                  {
+                    "Value": 0.001393,
+                    "Type": "MOZ"
+                  },
+                  {
+                    "Value": 0.133603,
+                    "Type": "MYS"
+                  },
+                  {
+                    "Value": 0.00177,
+                    "Type": "NAM"
+                  },
+                  {
+                    "Value": 0.044825,
+                    "Type": "NGA"
+                  },
+                  {
+                    "Value": 3.602319,
+                    "Type": "NLD"
+                  },
+                  {
+                    "Value": 0.721077,
+                    "Type": "NOR"
+                  },
+                  {
+                    "Value": 0.096992,
+                    "Type": "NZL"
+                  },
+                  {
+                    "Value": 0.02639,
+                    "Type": "OMN"
+                  },
+                  {
+                    "Value": 0.00897,
+                    "Type": "PAK"
+                  },
+                  {
+                    "Value": 0.030733,
+                    "Type": "PAN"
+                  },
+                  {
+                    "Value": 0.110635,
+                    "Type": "PER"
+                  },
+                  {
+                    "Value": 0.056651,
+                    "Type": "PHL"
+                  },
+                  {
+                    "Value": 0.003517,
+                    "Type": "PNG"
+                  },
+                  {
+                    "Value": 0.451559,
+                    "Type": "POL"
+                  },
+                  {
+                    "Value": 0.841698,
+                    "Type": "PRT"
+                  },
+                  {
+                    "Value": 0.011236,
+                    "Type": "PRY"
+                  },
+                  {
+                    "Value": 0.004485,
+                    "Type": "QAT"
+                  },
+                  {
+                    "Value": 0.351876,
+                    "Type": "ROU"
+                  },
+                  {
+                    "Value": 0.000283,
+                    "Type": "RUS"
+                  },
+                  {
+                    "Value": 0.000755,
+                    "Type": "RWA"
+                  },
+                  {
+                    "Value": 0.063686,
+                    "Type": "SAU"
+                  },
+                  {
+                    "Value": 0.00982,
+                    "Type": "SEN"
+                  },
+                  {
+                    "Value": 0.019167,
+                    "Type": "SGP"
+                  },
+                  {
+                    "Value": 0.010032,
+                    "Type": "SLV"
+                  },
+                  {
+                    "Value": 0.002172,
+                    "Type": "SMR"
+                  },
+                  {
+                    "Value": 0.020442,
+                    "Type": "SRB"
+                  },
+                  {
+                    "Value": 0.009418,
+                    "Type": "SUR"
+                  },
+                  {
+                    "Value": 0.150669,
+                    "Type": "SVK"
+                  },
+                  {
+                    "Value": 0.060829,
+                    "Type": "SVN"
+                  },
+                  {
+                    "Value": 1.078312,
+                    "Type": "SWE"
+                  },
+                  {
+                    "Value": 0.054881,
+                    "Type": "THA"
+                  },
+                  {
+                    "Value": 0.000071,
+                    "Type": "TJK"
+                  },
+                  {
+                    "Value": 0.006916,
+                    "Type": "TTO"
+                  },
+                  {
+                    "Value": 0.000496,
+                    "Type": "TUN"
+                  },
+                  {
+                    "Value": 0.104593,
+                    "Type": "TUR"
+                  },
+                  {
+                    "Value": 0.002785,
+                    "Type": "TWN"
+                  },
+                  {
+                    "Value": 0.010669,
+                    "Type": "UGA"
+                  },
+                  {
+                    "Value": 0.061538,
+                    "Type": "UKR"
+                  },
+                  {
+                    "Value": 0.041568,
+                    "Type": "URY"
+                  },
+                  {
+                    "Value": 16.448535,
+                    "Type": "USA"
+                  },
+                  {
+                    "Value": 0.0241,
+                    "Type": "UZB"
+                  },
+                  {
+                    "Value": 0.008828,
+                    "Type": "VEN"
+                  },
+                  {
+                    "Value": 0.000637,
+                    "Type": "VGB"
+                  },
+                  {
+                    "Value": 3.135511,
+                    "Type": "XSN"
+                  },
+                  {
+                    "Value": 0.248511,
+                    "Type": "ZAF"
+                  },
+                  {
+                    "Value": 0.012817,
+                    "Type": "ZMB"
+                  }
+                ]
+              }
+            ],
+            "EquityStatistics": {
+              "ProspectiveBookValueYield": 3.01428,
+              "ProspectiveRevenueYield": 2.20578,
+              "ProspectiveCashFlowYield": 12.05355
+            },
+            "BondStatistics": {
+              "EffectiveDuration": 3.34501,
+              "AverageCreditQuality": 11,
+              "AverageCreditQualityCode": "BBB",
+              "EffectiveMaturity": 4.30559
+            }
+          }
+        ]
+      },
+      {
+        "Id": "F00000US64",
+        "Type": "PrimaryBenchmark",
+        "Name": "Not Benchmarked"
+      }
+    ],
+    "Portfolios": [
+      {
+        "Date": "2026-04-30T00:00:00",
+        "SuppressionExpiration": "2026-07-29T00:00:00",
+        "ReleaseStatisticsDate": "2026-05-10T00:00:00",
+        "ReleaseTopHoldingDate": "2026-05-10T00:00:00",
+        "TopNcount": 10,
+        "CurrencyId": "EUR",
+        "Id": 2055907,
+        "AssetAllocations": [
+          {
+            "Type": "MorningstarEUR3",
+            "SalePosition": "L",
+            "BreakdownValues": [
+              {
+                "Value": 43.59524,
+                "Type": "1"
+              },
+              {
+                "Value": 53.16172,
+                "Type": "2"
+              },
+              {
+                "Value": 80.48835,
+                "Type": "3"
+              },
+              {
+                "Value": 0.05812,
+                "Type": "4"
+              },
+              {
+                "Value": 0,
+                "Type": "99"
+              }
+            ]
+          },
+          {
+            "Type": "MorningstarEUR3",
+            "SalePosition": "S",
+            "BreakdownValues": [
+              {
+                "Value": 0,
+                "Type": "1"
+              },
+              {
+                "Value": 0.43826,
+                "Type": "2"
+              },
+              {
+                "Value": 76.86519,
+                "Type": "3"
+              },
+              {
+                "Value": 0,
+                "Type": "4"
+              },
+              {
+                "Value": 0,
+                "Type": "99"
+              }
+            ]
+          },
+          {
+            "Type": "MorningstarEUR3",
+            "SalePosition": "N",
+            "BreakdownValues": [
+              {
+                "Value": 43.59524,
+                "Type": "1"
+              },
+              {
+                "Value": 52.72346,
+                "Type": "2"
+              },
+              {
+                "Value": 3.62316,
+                "Type": "3"
+              },
+              {
+                "Value": 0.05812,
+                "Type": "4"
+              },
+              {
+                "Value": 0.00002,
+                "Type": "99"
+              }
+            ]
+          }
+        ],
+        "RegionalExposure": [
+          {
+            "NotClassified": 56.40476,
+            "SalePosition": "L",
+            "BreakdownValues": [
+              {
+                "Value": 34.45968,
+                "Type": "1"
+              },
+              {
+                "Value": 0.123133,
+                "Type": "2"
+              },
+              {
+                "Value": 6.644969,
+                "Type": "3"
+              },
+              {
+                "Value": 0.461748,
+                "Type": "4"
+              },
+              {
+                "Value": 24.211749,
+                "Type": "5"
+              },
+              {
+                "Value": 0.213945,
+                "Type": "6"
+              },
+              {
+                "Value": 0.125679,
+                "Type": "7"
+              },
+              {
+                "Value": 0.800821,
+                "Type": "8"
+              },
+              {
+                "Value": 0,
+                "Type": "9"
+              },
+              {
+                "Value": 21.537305,
+                "Type": "10"
+              },
+              {
+                "Value": 0.060007,
+                "Type": "11"
+              },
+              {
+                "Value": 4.356255,
+                "Type": "12"
+              },
+              {
+                "Value": 7.00471,
+                "Type": "13"
+              },
+              {
+                "Value": 14.576179,
+                "Type": "14"
+              },
+              {
+                "Value": 85.423821,
+                "Type": "15"
+              },
+              {
+                "Value": 0,
+                "Type": "16"
+              }
+            ]
+          },
+          {
+            "NotClassified": 100,
+            "SalePosition": "S",
+            "BreakdownValues": [
+              {
+                "Value": 0,
+                "Type": "1"
+              },
+              {
+                "Value": 0,
+                "Type": "2"
+              },
+              {
+                "Value": 0,
+                "Type": "3"
+              },
+              {
+                "Value": 0,
+                "Type": "4"
+              },
+              {
+                "Value": 0,
+                "Type": "5"
+              },
+              {
+                "Value": 0,
+                "Type": "6"
+              },
+              {
+                "Value": 0,
+                "Type": "7"
+              },
+              {
+                "Value": 0,
+                "Type": "8"
+              },
+              {
+                "Value": 0,
+                "Type": "9"
+              },
+              {
+                "Value": 0,
+                "Type": "10"
+              },
+              {
+                "Value": 0,
+                "Type": "11"
+              },
+              {
+                "Value": 0,
+                "Type": "12"
+              },
+              {
+                "Value": 0,
+                "Type": "13"
+              },
+              {
+                "Value": 0,
+                "Type": "14"
+              },
+              {
+                "Value": 0,
+                "Type": "15"
+              },
+              {
+                "Value": 0,
+                "Type": "16"
+              }
+            ]
+          },
+          {
+            "NotClassified": 56.40476,
+            "SalePosition": "N",
+            "BreakdownValues": [
+              {
+                "Value": 34.45968,
+                "Type": "1"
+              },
+              {
+                "Value": 0.123133,
+                "Type": "2"
+              },
+              {
+                "Value": 6.644969,
+                "Type": "3"
+              },
+              {
+                "Value": 0.461748,
+                "Type": "4"
+              },
+              {
+                "Value": 24.211749,
+                "Type": "5"
+              },
+              {
+                "Value": 0.213945,
+                "Type": "6"
+              },
+              {
+                "Value": 0.125679,
+                "Type": "7"
+              },
+              {
+                "Value": 0.800821,
+                "Type": "8"
+              },
+              {
+                "Value": 0,
+                "Type": "9"
+              },
+              {
+                "Value": 21.537305,
+                "Type": "10"
+              },
+              {
+                "Value": 0.060007,
+                "Type": "11"
+              },
+              {
+                "Value": 4.356255,
+                "Type": "12"
+              },
+              {
+                "Value": 7.00471,
+                "Type": "13"
+              },
+              {
+                "Value": 14.576179,
+                "Type": "14"
+              },
+              {
+                "Value": 85.423821,
+                "Type": "15"
+              },
+              {
+                "Value": 0,
+                "Type": "16"
+              }
+            ]
+          }
+        ],
+        "StyleBoxBreakdown": [
+          {
+            "NotClassified": 56.78058,
+            "SalePosition": "L",
+            "BreakdownValues": [
+              {
+                "Value": 35.689466,
+                "Type": "1"
+              },
+              {
+                "Value": 30.625423,
+                "Type": "2"
+              },
+              {
+                "Value": 16.548093,
+                "Type": "3"
+              },
+              {
+                "Value": 5.862897,
+                "Type": "4"
+              },
+              {
+                "Value": 5.92803,
+                "Type": "5"
+              },
+              {
+                "Value": 1.788201,
+                "Type": "6"
+              },
+              {
+                "Value": 1.532737,
+                "Type": "7"
+              },
+              {
+                "Value": 1.211307,
+                "Type": "8"
+              },
+              {
+                "Value": 0.813847,
+                "Type": "9"
+              }
+            ]
+          },
+          {
+            "NotClassified": 100,
+            "SalePosition": "S",
+            "BreakdownValues": [
+              {
+                "Value": 0,
+                "Type": "1"
+              },
+              {
+                "Value": 0,
+                "Type": "2"
+              },
+              {
+                "Value": 0,
+                "Type": "3"
+              },
+              {
+                "Value": 0,
+                "Type": "4"
+              },
+              {
+                "Value": 0,
+                "Type": "5"
+              },
+              {
+                "Value": 0,
+                "Type": "6"
+              },
+              {
+                "Value": 0,
+                "Type": "7"
+              },
+              {
+                "Value": 0,
+                "Type": "8"
+              },
+              {
+                "Value": 0,
+                "Type": "9"
+              }
+            ]
+          },
+          {
+            "NotClassified": 56.78058,
+            "SalePosition": "N",
+            "BreakdownValues": [
+              {
+                "Value": 35.689466,
+                "Type": "1"
+              },
+              {
+                "Value": 30.625423,
+                "Type": "2"
+              },
+              {
+                "Value": 16.548093,
+                "Type": "3"
+              },
+              {
+                "Value": 5.862897,
+                "Type": "4"
+              },
+              {
+                "Value": 5.92803,
+                "Type": "5"
+              },
+              {
+                "Value": 1.788201,
+                "Type": "6"
+              },
+              {
+                "Value": 1.532737,
+                "Type": "7"
+              },
+              {
+                "Value": 1.211307,
+                "Type": "8"
+              },
+              {
+                "Value": 0.813847,
+                "Type": "9"
+              }
+            ]
+          }
+        ],
+        "GlobalStockSectorBreakdown": [
+          {
+            "NotClassified": 56.46351,
+            "SalePosition": "L",
+            "BreakdownValues": [
+              {
+                "Value": 4.358826,
+                "Type": "101"
+              },
+              {
+                "Value": 10.673713,
+                "Type": "102"
+              },
+              {
+                "Value": 24.82908,
+                "Type": "103"
+              },
+              {
+                "Value": 1.884029,
+                "Type": "104"
+              },
+              {
+                "Value": 4.19563,
+                "Type": "205"
+              },
+              {
+                "Value": 6.280846,
+                "Type": "206"
+              },
+              {
+                "Value": 3.26471,
+                "Type": "207"
+              },
+              {
+                "Value": 6.99156,
+                "Type": "308"
+              },
+              {
+                "Value": 3.065475,
+                "Type": "309"
+              },
+              {
+                "Value": 12.096267,
+                "Type": "310"
+              },
+              {
+                "Value": 22.359864,
+                "Type": "311"
+              }
+            ]
+          },
+          {
+            "NotClassified": 100,
+            "SalePosition": "S",
+            "BreakdownValues": [
+              {
+                "Value": 0,
+                "Type": "101"
+              },
+              {
+                "Value": 0,
+                "Type": "102"
+              },
+              {
+                "Value": 0,
+                "Type": "103"
+              },
+              {
+                "Value": 0,
+                "Type": "104"
+              },
+              {
+                "Value": 0,
+                "Type": "205"
+              },
+              {
+                "Value": 0,
+                "Type": "206"
+              },
+              {
+                "Value": 0,
+                "Type": "207"
+              },
+              {
+                "Value": 0,
+                "Type": "308"
+              },
+              {
+                "Value": 0,
+                "Type": "309"
+              },
+              {
+                "Value": 0,
+                "Type": "310"
+              },
+              {
+                "Value": 0,
+                "Type": "311"
+              }
+            ]
+          },
+          {
+            "NotClassified": 56.46351,
+            "SalePosition": "N",
+            "BreakdownValues": [
+              {
+                "Value": 4.358826,
+                "Type": "101"
+              },
+              {
+                "Value": 10.673713,
+                "Type": "102"
+              },
+              {
+                "Value": 24.82908,
+                "Type": "103"
+              },
+              {
+                "Value": 1.884029,
+                "Type": "104"
+              },
+              {
+                "Value": 4.19563,
+                "Type": "205"
+              },
+              {
+                "Value": 6.280846,
+                "Type": "206"
+              },
+              {
+                "Value": 3.26471,
+                "Type": "207"
+              },
+              {
+                "Value": 6.99156,
+                "Type": "308"
+              },
+              {
+                "Value": 3.065475,
+                "Type": "309"
+              },
+              {
+                "Value": 12.096267,
+                "Type": "310"
+              },
+              {
+                "Value": 22.359864,
+                "Type": "311"
+              }
+            ]
+          }
+        ],
+        "GlobalBondSectorBreakdownLevel1": [
+          {
+            "SalePosition": "L",
+            "BreakdownValues": [
+              {
+                "Value": 30.455629,
+                "Type": "10"
+              },
+              {
+                "Value": 9.347348,
+                "Type": "30"
+              },
+              {
+                "Value": 58.253425,
+                "Type": "50"
+              },
+              {
+                "Value": 1.943598,
+                "Type": "60"
+              }
+            ]
+          },
+          {
+            "NotClassified": 22.69655,
+            "SalePosition": "S",
+            "BreakdownValues": [
+              {
+                "Value": 0,
+                "Type": "10"
+              },
+              {
+                "Value": 0,
+                "Type": "30"
+              },
+              {
+                "Value": 97.049239,
+                "Type": "50"
+              },
+              {
+                "Value": 2.950761,
+                "Type": "60"
+              }
+            ]
+          },
+          {
+            "NotClassified": 43.59526,
+            "SalePosition": "N",
+            "BreakdownValues": [
+              {
+                "Value": 72.195475,
+                "Type": "10"
+              },
+              {
+                "Value": 22.158014,
+                "Type": "30"
+              },
+              {
+                "Value": 5.083243,
+                "Type": "50"
+              },
+              {
+                "Value": 0.563268,
+                "Type": "60"
+              }
+            ]
+          }
+        ],
+        "GlobalBondSectorBreakdownLevel2": [
+          {
+            "SalePosition": "L",
+            "BreakdownValues": [
+              {
+                "Value": 28.117986,
+                "Type": "1010"
+              },
+              {
+                "Value": 2.337643,
+                "Type": "1020"
+              },
+              {
+                "Value": 9.30388,
+                "Type": "3030"
+              },
+              {
+                "Value": 0.043468,
+                "Type": "3040"
+              },
+              {
+                "Value": 58.253425,
+                "Type": "5010"
+              },
+              {
+                "Value": 1.943598,
+                "Type": "6020"
+              },
+              {
+                "Value": 0,
+                "Type": "6010"
+              }
+            ]
+          },
+          {
+            "NotClassified": 22.69655,
+            "SalePosition": "S",
+            "BreakdownValues": [
+              {
+                "Value": 0,
+                "Type": "1010"
+              },
+              {
+                "Value": 0,
+                "Type": "1020"
+              },
+              {
+                "Value": 0,
+                "Type": "3030"
+              },
+              {
+                "Value": 0,
+                "Type": "3040"
+              },
+              {
+                "Value": 97.049239,
+                "Type": "5010"
+              },
+              {
+                "Value": 2.383826,
+                "Type": "6020"
+              },
+              {
+                "Value": 0.566935,
+                "Type": "6010"
+              }
+            ]
+          },
+          {
+            "NotClassified": 43.59526,
+            "SalePosition": "N",
+            "BreakdownValues": [
+              {
+                "Value": 66.654061,
+                "Type": "1010"
+              },
+              {
+                "Value": 5.541414,
+                "Type": "1020"
+              },
+              {
+                "Value": 22.054973,
+                "Type": "3030"
+              },
+              {
+                "Value": 0.103041,
+                "Type": "3040"
+              },
+              {
+                "Value": 5.083243,
+                "Type": "5010"
+              },
+              {
+                "Value": 1.34026,
+                "Type": "6020"
+              },
+              {
+                "Value": -0.776991,
+                "Type": "6010"
+              }
+            ]
+          }
+        ],
+        "GlobalBondSectorBreakdownLevel3": [
+          {
+            "SalePosition": "L",
+            "BreakdownValues": [
+              {
+                "Value": 25.516679,
+                "Type": "101010"
+              },
+              {
+                "Value": 2.601307,
+                "Type": "101020"
+              },
+              {
+                "Value": 2.337643,
+                "Type": "102020"
+              },
+              {
+                "Value": 0.463255,
+                "Type": "303001"
+              },
+              {
+                "Value": 1.18455,
+                "Type": "303002"
+              },
+              {
+                "Value": 0.489177,
+                "Type": "303003"
+              },
+              {
+                "Value": 0.871031,
+                "Type": "303004"
+              },
+              {
+                "Value": 0.310864,
+                "Type": "303005"
+              },
+              {
+                "Value": 0.465738,
+                "Type": "303006"
+              },
+              {
+                "Value": 0.690519,
+                "Type": "303007"
+              },
+              {
+                "Value": 0.693121,
+                "Type": "303008"
+              },
+              {
+                "Value": 0.465977,
+                "Type": "303009"
+              },
+              {
+                "Value": 2.349647,
+                "Type": "303010"
+              },
+              {
+                "Value": 0.621944,
+                "Type": "303011"
+              },
+              {
+                "Value": 0.698065,
+                "Type": "303012"
+              },
+              {
+                "Value": 0.001481,
+                "Type": "304010"
+              },
+              {
+                "Value": 0.041987,
+                "Type": "304012"
+              },
+              {
+                "Value": 0.003395,
+                "Type": "501010"
+              },
+              {
+                "Value": 1.269354,
+                "Type": "501011"
+              },
+              {
+                "Value": 0.000202,
+                "Type": "501012"
+              },
+              {
+                "Value": 55.46109,
+                "Type": "501013"
+              },
+              {
+                "Value": 0.023903,
+                "Type": "501021"
+              },
+              {
+                "Value": 0.007225,
+                "Type": "501022"
+              },
+              {
+                "Value": 0.034643,
+                "Type": "501023"
+              },
+              {
+                "Value": 1.453606,
+                "Type": "501024"
+              },
+              {
+                "Value": 1.943598,
+                "Type": "602030"
+              },
+              {
+                "Value": 0,
+                "Type": "601010"
+              }
+            ]
+          },
+          {
+            "NotClassified": 22.69656,
+            "SalePosition": "S",
+            "BreakdownValues": [
+              {
+                "Value": 0,
+                "Type": "101010"
+              },
+              {
+                "Value": 0,
+                "Type": "101020"
+              },
+              {
+                "Value": 0,
+                "Type": "102020"
+              },
+              {
+                "Value": 0,
+                "Type": "303001"
+              },
+              {
+                "Value": 0,
+                "Type": "303002"
+              },
+              {
+                "Value": 0,
+                "Type": "303003"
+              },
+              {
+                "Value": 0,
+                "Type": "303004"
+              },
+              {
+                "Value": 0,
+                "Type": "303005"
+              },
+              {
+                "Value": 0,
+                "Type": "303006"
+              },
+              {
+                "Value": 0,
+                "Type": "303007"
+              },
+              {
+                "Value": 0,
+                "Type": "303008"
+              },
+              {
+                "Value": 0,
+                "Type": "303009"
+              },
+              {
+                "Value": 0,
+                "Type": "303010"
+              },
+              {
+                "Value": 0,
+                "Type": "303011"
+              },
+              {
+                "Value": 0,
+                "Type": "303012"
+              },
+              {
+                "Value": 0,
+                "Type": "304010"
+              },
+              {
+                "Value": 0,
+                "Type": "304012"
+              },
+              {
+                "Value": 0,
+                "Type": "501010"
+              },
+              {
+                "Value": 2.545048,
+                "Type": "501011"
+              },
+              {
+                "Value": 0,
+                "Type": "501012"
+              },
+              {
+                "Value": 94.484553,
+                "Type": "501013"
+              },
+              {
+                "Value": 0,
+                "Type": "501021"
+              },
+              {
+                "Value": 0,
+                "Type": "501022"
+              },
+              {
+                "Value": 0,
+                "Type": "501023"
+              },
+              {
+                "Value": 0.019637,
+                "Type": "501024"
+              },
+              {
+                "Value": 2.383827,
+                "Type": "602030"
+              },
+              {
+                "Value": 0.566935,
+                "Type": "601010"
+              }
+            ]
+          },
+          {
+            "NotClassified": 43.59525,
+            "SalePosition": "N",
+            "BreakdownValues": [
+              {
+                "Value": 60.487619,
+                "Type": "101010"
+              },
+              {
+                "Value": 6.166431,
+                "Type": "101020"
+              },
+              {
+                "Value": 5.541413,
+                "Type": "102020"
+              },
+              {
+                "Value": 1.098152,
+                "Type": "303001"
+              },
+              {
+                "Value": 2.80799,
+                "Type": "303002"
+              },
+              {
+                "Value": 1.159601,
+                "Type": "303003"
+              },
+              {
+                "Value": 2.064791,
+                "Type": "303004"
+              },
+              {
+                "Value": 0.736906,
+                "Type": "303005"
+              },
+              {
+                "Value": 1.104038,
+                "Type": "303006"
+              },
+              {
+                "Value": 1.636883,
+                "Type": "303007"
+              },
+              {
+                "Value": 1.643053,
+                "Type": "303008"
+              },
+              {
+                "Value": 1.104606,
+                "Type": "303009"
+              },
+              {
+                "Value": 5.569868,
+                "Type": "303010"
+              },
+              {
+                "Value": 1.474326,
+                "Type": "303011"
+              },
+              {
+                "Value": 1.654772,
+                "Type": "303012"
+              },
+              {
+                "Value": 0.00351,
+                "Type": "304010"
+              },
+              {
+                "Value": 0.099531,
+                "Type": "304012"
+              },
+              {
+                "Value": 0.008049,
+                "Type": "501010"
+              },
+              {
+                "Value": -0.479002,
+                "Type": "501011"
+              },
+              {
+                "Value": 0.000479,
+                "Type": "501012"
+              },
+              {
+                "Value": 1.978929,
+                "Type": "501013"
+              },
+              {
+                "Value": 0.056662,
+                "Type": "501021"
+              },
+              {
+                "Value": 0.017126,
+                "Type": "501022"
+              },
+              {
+                "Value": 0.082121,
+                "Type": "501023"
+              },
+              {
+                "Value": 3.418879,
+                "Type": "501024"
+              },
+              {
+                "Value": 1.340259,
+                "Type": "602030"
+              },
+              {
+                "Value": -0.776991,
+                "Type": "601010"
+              }
+            ]
+          }
+        ],
+        "CountryExposure": [
+          {
+            "NotClassified": 46.83828,
+            "SalePosition": "L",
+            "Type": "Bond",
+            "BreakdownValues": [
+              {
+                "Value": 5.572732,
+                "Type": "BRA"
+              },
+              {
+                "Value": 0.585496,
+                "Type": "CAN"
+              },
+              {
+                "Value": 0.585308,
+                "Type": "COD"
+              },
+              {
+                "Value": 4.235115,
+                "Type": "COL"
+              },
+              {
+                "Value": 0.586211,
+                "Type": "CRI"
+              },
+              {
+                "Value": 5.00962,
+                "Type": "DEU"
+              },
+              {
+                "Value": 0.584199,
+                "Type": "ESP"
+              },
+              {
+                "Value": 16.04822,
+                "Type": "GBR"
+              },
+              {
+                "Value": 0.588939,
+                "Type": "ITA"
+              },
+              {
+                "Value": 5.308726,
+                "Type": "MEX"
+              },
+              {
+                "Value": 5.155232,
+                "Type": "PER"
+              },
+              {
+                "Value": 0.585196,
+                "Type": "SWE"
+              },
+              {
+                "Value": 44.118324,
+                "Type": "USA"
+              },
+              {
+                "Value": 5.879456,
+                "Type": "XSN"
+              },
+              {
+                "Value": 5.157226,
+                "Type": "ZAF"
+              }
+            ]
+          },
+          {
+            "NotClassified": 99.65269,
+            "SalePosition": "S",
+            "Type": "Bond",
+            "BreakdownValues": [
+              {
+                "Value": 0,
+                "Type": "BRA"
+              },
+              {
+                "Value": 0,
+                "Type": "CAN"
+              },
+              {
+                "Value": 0,
+                "Type": "COD"
+              },
+              {
+                "Value": 0,
+                "Type": "COL"
+              },
+              {
+                "Value": 0,
+                "Type": "CRI"
+              },
+              {
+                "Value": 0,
+                "Type": "DEU"
+              },
+              {
+                "Value": 0,
+                "Type": "ESP"
+              },
+              {
+                "Value": 0,
+                "Type": "GBR"
+              },
+              {
+                "Value": 0,
+                "Type": "ITA"
+              },
+              {
+                "Value": 0,
+                "Type": "MEX"
+              },
+              {
+                "Value": 0,
+                "Type": "PER"
+              },
+              {
+                "Value": 0,
+                "Type": "SWE"
+              },
+              {
+                "Value": 100,
+                "Type": "USA"
+              },
+              {
+                "Value": 0,
+                "Type": "XSN"
+              },
+              {
+                "Value": 0,
+                "Type": "ZAF"
+              }
+            ]
+          },
+          {
+            "NotClassified": 47.18559,
+            "SalePosition": "N",
+            "Type": "Bond",
+            "BreakdownValues": [
+              {
+                "Value": 5.609378,
+                "Type": "BRA"
+              },
+              {
+                "Value": 0.589347,
+                "Type": "CAN"
+              },
+              {
+                "Value": 0.589157,
+                "Type": "COD"
+              },
+              {
+                "Value": 4.262965,
+                "Type": "COL"
+              },
+              {
+                "Value": 0.590066,
+                "Type": "CRI"
+              },
+              {
+                "Value": 5.042563,
+                "Type": "DEU"
+              },
+              {
+                "Value": 0.58804,
+                "Type": "ESP"
+              },
+              {
+                "Value": 16.153754,
+                "Type": "GBR"
+              },
+              {
+                "Value": 0.592812,
+                "Type": "ITA"
+              },
+              {
+                "Value": 5.343636,
+                "Type": "MEX"
+              },
+              {
+                "Value": 5.189133,
+                "Type": "PER"
+              },
+              {
+                "Value": 0.589044,
+                "Type": "SWE"
+              },
+              {
+                "Value": 43.750844,
+                "Type": "USA"
+              },
+              {
+                "Value": 5.91812,
+                "Type": "XSN"
+              },
+              {
+                "Value": 5.19114,
+                "Type": "ZAF"
+              }
+            ]
+          },
+          {
+            "NotClassified": 56.40476,
+            "SalePosition": "L",
+            "Type": "Equity",
+            "BreakdownValues": [
+              {
+                "Value": 0.066498,
+                "Type": "ARG"
+              },
+              {
+                "Value": 0.060007,
+                "Type": "AUS"
+              },
+              {
+                "Value": 0.642341,
+                "Type": "AUT"
+              },
+              {
+                "Value": 0.731984,
+                "Type": "BEL"
+              },
+              {
+                "Value": 5.914063,
+                "Type": "BRA"
+              },
+              {
+                "Value": 0.123133,
+                "Type": "CAN"
+              },
+              {
+                "Value": 0.048996,
+                "Type": "CHE"
+              },
+              {
+                "Value": 2.173792,
+                "Type": "CHN"
+              },
+              {
+                "Value": 7.267628,
+                "Type": "DEU"
+              },
+              {
+                "Value": 0.125243,
+                "Type": "EGY"
+              },
+              {
+                "Value": 2.117594,
+                "Type": "ESP"
+              },
+              {
+                "Value": 1.926174,
+                "Type": "FIN"
+              },
+              {
+                "Value": 6.385537,
+                "Type": "FRA"
+              },
+              {
+                "Value": 0.461748,
+                "Type": "GBR"
+              },
+              {
+                "Value": 0.543087,
+                "Type": "HKG"
+              },
+              {
+                "Value": 3.623423,
+                "Type": "IDN"
+              },
+              {
+                "Value": 0.49026,
+                "Type": "IND"
+              },
+              {
+                "Value": 0.390043,
+                "Type": "IRL"
+              },
+              {
+                "Value": 1.345239,
+                "Type": "ITA"
+              },
+              {
+                "Value": 21.537305,
+                "Type": "JPN"
+              },
+              {
+                "Value": 0.208371,
+                "Type": "KAZ"
+              },
+              {
+                "Value": 1.643712,
+                "Type": "KOR"
+              },
+              {
+                "Value": 0.664407,
+                "Type": "MEX"
+              },
+              {
+                "Value": 0.00445,
+                "Type": "MOZ"
+              },
+              {
+                "Value": 3.102655,
+                "Type": "NLD"
+              },
+              {
+                "Value": 0.234773,
+                "Type": "PHL"
+              },
+              {
+                "Value": 0.302533,
+                "Type": "PRT"
+              },
+              {
+                "Value": 0,
+                "Type": "RUS"
+              },
+              {
+                "Value": 0.100745,
+                "Type": "SGP"
+              },
+              {
+                "Value": 0.164949,
+                "Type": "SWE"
+              },
+              {
+                "Value": 0.221148,
+                "Type": "THA"
+              },
+              {
+                "Value": 0.125679,
+                "Type": "TUR"
+              },
+              {
+                "Value": 2.068712,
+                "Type": "TWN"
+              },
+              {
+                "Value": 34.45968,
+                "Type": "USA"
+              },
+              {
+                "Value": 0.052964,
+                "Type": "VNM"
+              },
+              {
+                "Value": 0.671128,
+                "Type": "ZAF"
+              }
+            ]
+          },
+          {
+            "NotClassified": 100,
+            "SalePosition": "S",
+            "Type": "Equity",
+            "BreakdownValues": [
+              {
+                "Value": 0,
+                "Type": "ARG"
+              },
+              {
+                "Value": 0,
+                "Type": "AUS"
+              },
+              {
+                "Value": 0,
+                "Type": "AUT"
+              },
+              {
+                "Value": 0,
+                "Type": "BEL"
+              },
+              {
+                "Value": 0,
+                "Type": "BRA"
+              },
+              {
+                "Value": 0,
+                "Type": "CAN"
+              },
+              {
+                "Value": 0,
+                "Type": "CHE"
+              },
+              {
+                "Value": 0,
+                "Type": "CHN"
+              },
+              {
+                "Value": 0,
+                "Type": "DEU"
+              },
+              {
+                "Value": 0,
+                "Type": "EGY"
+              },
+              {
+                "Value": 0,
+                "Type": "ESP"
+              },
+              {
+                "Value": 0,
+                "Type": "FIN"
+              },
+              {
+                "Value": 0,
+                "Type": "FRA"
+              },
+              {
+                "Value": 0,
+                "Type": "GBR"
+              },
+              {
+                "Value": 0,
+                "Type": "HKG"
+              },
+              {
+                "Value": 0,
+                "Type": "IDN"
+              },
+              {
+                "Value": 0,
+                "Type": "IND"
+              },
+              {
+                "Value": 0,
+                "Type": "IRL"
+              },
+              {
+                "Value": 0,
+                "Type": "ITA"
+              },
+              {
+                "Value": 0,
+                "Type": "JPN"
+              },
+              {
+                "Value": 0,
+                "Type": "KAZ"
+              },
+              {
+                "Value": 0,
+                "Type": "KOR"
+              },
+              {
+                "Value": 0,
+                "Type": "MEX"
+              },
+              {
+                "Value": 0,
+                "Type": "MOZ"
+              },
+              {
+                "Value": 0,
+                "Type": "NLD"
+              },
+              {
+                "Value": 0,
+                "Type": "PHL"
+              },
+              {
+                "Value": 0,
+                "Type": "PRT"
+              },
+              {
+                "Value": 0,
+                "Type": "RUS"
+              },
+              {
+                "Value": 0,
+                "Type": "SGP"
+              },
+              {
+                "Value": 0,
+                "Type": "SWE"
+              },
+              {
+                "Value": 0,
+                "Type": "THA"
+              },
+              {
+                "Value": 0,
+                "Type": "TUR"
+              },
+              {
+                "Value": 0,
+                "Type": "TWN"
+              },
+              {
+                "Value": 0,
+                "Type": "USA"
+              },
+              {
+                "Value": 0,
+                "Type": "VNM"
+              },
+              {
+                "Value": 0,
+                "Type": "ZAF"
+              }
+            ]
+          },
+          {
+            "NotClassified": 56.40476,
+            "SalePosition": "N",
+            "Type": "Equity",
+            "BreakdownValues": [
+              {
+                "Value": 0.066498,
+                "Type": "ARG"
+              },
+              {
+                "Value": 0.060007,
+                "Type": "AUS"
+              },
+              {
+                "Value": 0.642341,
+                "Type": "AUT"
+              },
+              {
+                "Value": 0.731984,
+                "Type": "BEL"
+              },
+              {
+                "Value": 5.914063,
+                "Type": "BRA"
+              },
+              {
+                "Value": 0.123133,
+                "Type": "CAN"
+              },
+              {
+                "Value": 0.048996,
+                "Type": "CHE"
+              },
+              {
+                "Value": 2.173792,
+                "Type": "CHN"
+              },
+              {
+                "Value": 7.267628,
+                "Type": "DEU"
+              },
+              {
+                "Value": 0.125243,
+                "Type": "EGY"
+              },
+              {
+                "Value": 2.117594,
+                "Type": "ESP"
+              },
+              {
+                "Value": 1.926174,
+                "Type": "FIN"
+              },
+              {
+                "Value": 6.385537,
+                "Type": "FRA"
+              },
+              {
+                "Value": 0.461748,
+                "Type": "GBR"
+              },
+              {
+                "Value": 0.543087,
+                "Type": "HKG"
+              },
+              {
+                "Value": 3.623423,
+                "Type": "IDN"
+              },
+              {
+                "Value": 0.49026,
+                "Type": "IND"
+              },
+              {
+                "Value": 0.390043,
+                "Type": "IRL"
+              },
+              {
+                "Value": 1.345239,
+                "Type": "ITA"
+              },
+              {
+                "Value": 21.537305,
+                "Type": "JPN"
+              },
+              {
+                "Value": 0.208371,
+                "Type": "KAZ"
+              },
+              {
+                "Value": 1.643712,
+                "Type": "KOR"
+              },
+              {
+                "Value": 0.664407,
+                "Type": "MEX"
+              },
+              {
+                "Value": 0.00445,
+                "Type": "MOZ"
+              },
+              {
+                "Value": 3.102655,
+                "Type": "NLD"
+              },
+              {
+                "Value": 0.234773,
+                "Type": "PHL"
+              },
+              {
+                "Value": 0.302533,
+                "Type": "PRT"
+              },
+              {
+                "Value": 0,
+                "Type": "RUS"
+              },
+              {
+                "Value": 0.100745,
+                "Type": "SGP"
+              },
+              {
+                "Value": 0.164949,
+                "Type": "SWE"
+              },
+              {
+                "Value": 0.221148,
+                "Type": "THA"
+              },
+              {
+                "Value": 0.125679,
+                "Type": "TUR"
+              },
+              {
+                "Value": 2.068712,
+                "Type": "TWN"
+              },
+              {
+                "Value": 34.45968,
+                "Type": "USA"
+              },
+              {
+                "Value": 0.052964,
+                "Type": "VNM"
+              },
+              {
+                "Value": 0.671128,
+                "Type": "ZAF"
+              }
+            ]
+          }
+        ],
+        "EquityStatistics": {
+          "ProspectiveBookValueYield": 2.07123,
+          "ProspectiveRevenueYield": 1.58886,
+          "ProspectiveCashFlowYield": 9.78705
+        },
+        "PortfolioHoldings": [
+          {
+            "Id": "B1000D77MW",
+            "ExternalId": "BRXZ4W0",
+            "DetailHoldingTypeId": "BT",
+            "ExternalName": "TREASURY NOTE 4.625% 15/02/2035",
+            "ISIN": "US91282CMM00",
+            "CurrencyId": "USD",
+            "CUSIP": "91282CMM0",
+            "CountryId": "USA",
+            "SecurityName": "United States Treasury Notes 4.625%",
+            "Weighting": 5.98503,
+            "MarketValue": 37520734,
+            "NumberOfShare": 42720000,
+            "ShareChange": -650000,
+            "MaturityDate": "2035-02-15",
+            "LocalCurrencyCode": "USD",
+            "SecondarySectorId": "101010"
+          },
+          {
+            "Id": "B00032BQU5",
+            "ExternalId": "BMJ0P76",
+            "DetailHoldingTypeId": "BT",
+            "ExternalName": "TREASURY BOND 4.625% 15/11/2055",
+            "ISIN": "US912810UP11",
+            "CurrencyId": "USD",
+            "CUSIP": "912810UP1",
+            "CountryId": "USA",
+            "SecurityName": "United States Treasury Bonds 4.625%",
+            "Weighting": 5.44429,
+            "MarketValue": 34130825,
+            "NumberOfShare": 41560000,
+            "ShareChange": -710000,
+            "MaturityDate": "2055-11-15",
+            "LocalCurrencyCode": "USD",
+            "SecondarySectorId": "101010"
+          },
+          {
+            "Id": "F000010L8Y",
+            "ExternalId": "BFLV813",
+            "DetailHoldingTypeId": "FO",
+            "ExternalName": "M&G LUX GBL EMER MKTS FD EUR C INC",
+            "ISIN": "LU1670624409",
+            "CurrencyId": "EUR",
+            "CountryId": "LUX",
+            "SecurityName": "M&G (Lux) Glb Em Mkts C EUR Inc",
+            "Weighting": 5.32541,
+            "MarketValue": 33385520,
+            "NumberOfShare": 748368,
+            "ShareChange": -27526,
+            "LocalCurrencyCode": "EUR"
+          },
+          {
+            "Id": "B100059FS0",
+            "ExternalId": "BPSNBB3",
+            "DetailHoldingTypeId": "BT",
+            "ExternalName": "UK CONV GILT 4.375% 31/07/2054",
+            "ISIN": "GB00BPSNBB36",
+            "CurrencyId": "GBP",
+            "CUSIP": "G4527HF22",
+            "CountryId": "GBR",
+            "SecurityName": "United Kingdom of Great Britain and Northern Ireland 4.375%",
+            "Weighting": 4.47162,
+            "MarketValue": 28033042,
+            "NumberOfShare": 29350000,
+            "MaturityDate": "2054-07-31",
+            "LocalCurrencyCode": "GBP",
+            "SecondarySectorId": "101010"
+          },
+          {
+            "Id": "B10002VOFG",
+            "ExternalId": "BMHYMK2",
+            "DetailHoldingTypeId": "BZ",
+            "ExternalName": "EUROPEAN BANK FOR RECONSTRUCTION A 28% 27/09/2027",
+            "ISIN": "XS2537091899",
+            "CurrencyId": "TRY",
+            "CUSIP": "G315GTFV1",
+            "CountryId": "XSN",
+            "SecurityName": "European Bank For Reconstruction & Development 28%",
+            "Weighting": 3.12562,
+            "MarketValue": 19594830,
+            "NumberOfShare": 995500000,
+            "MaturityDate": "2027-09-27",
+            "LocalCurrencyCode": "TRY",
+            "SecondarySectorId": "102020"
+          },
+          {
+            "Id": "B10001OFE9",
+            "ExternalId": "BNT8674",
+            "DetailHoldingTypeId": "BT",
+            "ExternalName": "BRAZIL NOTAS DO TESOURO NACIONAL S 1% 01/01/2033",
+            "ISIN": "BRSTNCNTF212",
+            "CurrencyId": "BRL",
+            "CUSIP": "P8T60NKJ9",
+            "CountryId": "BRA",
+            "SecurityName": "Secretaria Do Tesouro Nacional 10%",
+            "Weighting": 2.96256,
+            "MarketValue": 18572563,
+            "NumberOfShare": 123950,
+            "MaturityDate": "2033-01-01",
+            "LocalCurrencyCode": "BRL",
+            "SecondarySectorId": "101010"
+          },
+          {
+            "Id": "B1000DWNDL",
+            "ExternalId": "BTJZN87",
+            "DetailHoldingTypeId": "BT",
+            "ExternalName": "MEXICO (UNITED MEXICAN STATES) (GO 8% 21/02/2036",
+            "ISIN": "MX0MGO0001L9",
+            "CurrencyId": "MXN",
+            "CUSIP": "P4R1NQAV3",
+            "CountryId": "MEX",
+            "SecurityName": "Mexico (United Mexican States) 8%",
+            "Weighting": 2.82221,
+            "MarketValue": 17692737,
+            "NumberOfShare": 3894000,
+            "MaturityDate": "2036-02-21",
+            "LocalCurrencyCode": "MXN",
+            "SecondarySectorId": "101010"
+          },
+          {
+            "Id": "B000353F8E",
+            "ExternalId": "BYY9RY3",
+            "DetailHoldingTypeId": "BT",
+            "ExternalName": "SOUTH AFRICA (REPUBLIC OF) 8.875% 28/02/2035",
+            "ISIN": "ZAG000125972",
+            "CurrencyId": "ZAR",
+            "CUSIP": "S69124WF8",
+            "CountryId": "ZAF",
+            "SecurityName": "South Africa (Republic of) 8.875%",
+            "Weighting": 2.74167,
+            "MarketValue": 17187826,
+            "NumberOfShare": 330197000,
+            "MaturityDate": "2035-02-28",
+            "LocalCurrencyCode": "ZAR",
+            "SecondarySectorId": "101010"
+          },
+          {
+            "Id": "B1000GAKU3",
+            "ExternalId": "BSJR6Q5",
+            "DetailHoldingTypeId": "BT",
+            "ExternalName": "PERU (REPUBLIC OF) 6.85% 12/08/2035",
+            "ISIN": "PEP01000C5K6",
+            "CurrencyId": "PEN",
+            "CUSIP": "P6S32DFK4",
+            "CountryId": "PER",
+            "SecurityName": "Peru (Republic Of) 6.85%",
+            "Weighting": 2.74061,
+            "MarketValue": 17181173,
+            "NumberOfShare": 67041000,
+            "MaturityDate": "2035-08-12",
+            "LocalCurrencyCode": "PEN",
+            "SecondarySectorId": "101010"
+          },
+          {
+            "Id": "B10005D84W",
+            "ExternalId": "BQXK2R9",
+            "DetailHoldingTypeId": "BT",
+            "ExternalName": "GERMANY (FEDERAL REPUBLIC OF) 2.5% 15/08/2054",
+            "ISIN": "DE000BU2D004",
+            "CurrencyId": "EUR",
+            "CUSIP": "D2R8H4KM0",
+            "CountryId": "DEU",
+            "SecurityName": "Germany (Federal Republic Of) 2.5%",
+            "Weighting": 2.35159,
+            "MarketValue": 14742335,
+            "NumberOfShare": 17646000,
+            "ShareChange": -1700000,
+            "MaturityDate": "2054-08-15",
+            "LocalCurrencyCode": "EUR",
+            "SecondarySectorId": "101010"
+          }
+        ]
+      }
+    ],
+    "DistributionHistory": [
+      {
+        "ExDate": "2016-01-04T00:00:00",
+        "PayDate": "2016-01-31T00:00:00",
+        "ReinvestmentDate": "2016-01-04T00:00:00",
+        "ReinvestmentPrice": 8.266748,
+        "Amount": 0.025036
+      },
+      {
+        "ExDate": "2016-02-01T00:00:00",
+        "PayDate": "2016-02-29T00:00:00",
+        "ReinvestmentDate": "2016-02-01T00:00:00",
+        "ReinvestmentPrice": 8.052179,
+        "Amount": 0.024003
+      },
+      {
+        "ExDate": "2016-03-01T00:00:00",
+        "PayDate": "2016-03-31T00:00:00",
+        "ReinvestmentDate": "2016-03-01T00:00:00",
+        "ReinvestmentPrice": 8.067177,
+        "Amount": 0.024128
+      },
+      {
+        "ExDate": "2016-04-01T00:00:00",
+        "PayDate": "2016-04-30T00:00:00",
+        "ReinvestmentDate": "2016-04-01T00:00:00",
+        "ReinvestmentPrice": 8.260511,
+        "Amount": 0.024988
+      },
+      {
+        "ExDate": "2016-05-03T00:00:00",
+        "PayDate": "2016-05-31T00:00:00",
+        "ReinvestmentDate": "2016-05-03T00:00:00",
+        "ReinvestmentPrice": 8.363712,
+        "Amount": 0.059818
+      },
+      {
+        "ExDate": "2016-06-01T00:00:00",
+        "PayDate": "2016-06-30T00:00:00",
+        "ReinvestmentDate": "2016-06-01T00:00:00",
+        "ReinvestmentPrice": 8.420658,
+        "Amount": 0.02284
+      },
+      {
+        "ExDate": "2016-07-01T00:00:00",
+        "PayDate": "2016-07-31T00:00:00",
+        "ReinvestmentDate": "2016-07-01T00:00:00",
+        "ReinvestmentPrice": 8.313448,
+        "Amount": 0.022322
+      },
+      {
+        "ExDate": "2016-08-01T00:00:00",
+        "PayDate": "2016-08-31T00:00:00",
+        "ReinvestmentDate": "2016-08-01T00:00:00",
+        "ReinvestmentPrice": 8.623124,
+        "Amount": 0.009731
+      },
+      {
+        "ExDate": "2016-09-01T00:00:00",
+        "PayDate": "2016-09-30T00:00:00",
+        "ReinvestmentDate": "2016-09-01T00:00:00",
+        "ReinvestmentPrice": 8.747114,
+        "Amount": 0.007999
+      },
+      {
+        "ExDate": "2016-10-03T00:00:00",
+        "PayDate": "2016-10-31T00:00:00",
+        "ReinvestmentDate": "2016-10-03T00:00:00",
+        "ReinvestmentPrice": 8.660618,
+        "Amount": 0.018795
+      },
+      {
+        "ExDate": "2016-11-01T00:00:00",
+        "PayDate": "2016-11-30T00:00:00",
+        "ReinvestmentDate": "2016-11-01T00:00:00",
+        "ReinvestmentPrice": 8.712293,
+        "Amount": 0.011056
+      },
+      {
+        "ExDate": "2016-12-01T00:00:00",
+        "PayDate": "2016-12-31T00:00:00",
+        "ReinvestmentDate": "2016-12-01T00:00:00",
+        "ReinvestmentPrice": 8.852171,
+        "Amount": 0.012331
+      },
+      {
+        "ExDate": "2017-01-03T00:00:00",
+        "PayDate": "2017-01-31T00:00:00",
+        "ReinvestmentDate": "2017-01-03T00:00:00",
+        "ReinvestmentPrice": 9.172835,
+        "Amount": 0.014222
+      },
+      {
+        "ExDate": "2017-02-01T00:00:00",
+        "PayDate": "2017-02-28T00:00:00",
+        "ReinvestmentDate": "2017-02-01T00:00:00",
+        "ReinvestmentPrice": 9.020484,
+        "Amount": 0.011393
+      },
+      {
+        "ExDate": "2017-03-01T00:00:00",
+        "PayDate": "2017-03-31T00:00:00",
+        "ReinvestmentDate": "2017-03-01T00:00:00",
+        "ReinvestmentPrice": 9.198821,
+        "Amount": 0.019685
+      },
+      {
+        "ExDate": "2017-04-03T00:00:00",
+        "PayDate": "2017-04-30T00:00:00",
+        "ReinvestmentDate": "2017-04-03T00:00:00",
+        "ReinvestmentPrice": 9.359636,
+        "Amount": 0.012515
+      },
+      {
+        "ExDate": "2017-05-02T00:00:00",
+        "PayDate": "2017-05-31T00:00:00",
+        "ReinvestmentDate": "2017-05-02T00:00:00",
+        "ReinvestmentPrice": 9.463876,
+        "Amount": 0.022114
+      },
+      {
+        "ExDate": "2017-06-01T00:00:00",
+        "PayDate": "2017-06-30T00:00:00",
+        "ReinvestmentDate": "2017-06-01T00:00:00",
+        "ReinvestmentPrice": 9.498029,
+        "Amount": 0.01086
+      },
+      {
+        "ExDate": "2017-07-03T00:00:00",
+        "PayDate": "2017-07-31T00:00:00",
+        "ReinvestmentDate": "2017-07-03T00:00:00",
+        "ReinvestmentPrice": 9.511987,
+        "Amount": 0.012474
+      },
+      {
+        "ExDate": "2017-08-01T00:00:00",
+        "PayDate": "2017-08-31T00:00:00",
+        "ReinvestmentDate": "2017-08-01T00:00:00",
+        "ReinvestmentPrice": 9.473899,
+        "Amount": 0.013856
+      },
+      {
+        "ExDate": "2017-09-01T00:00:00",
+        "PayDate": "2017-10-31T00:00:00",
+        "ReinvestmentDate": "2017-09-01T00:00:00",
+        "ReinvestmentPrice": 9.448656,
+        "Amount": 0.014221
+      },
+      {
+        "ExDate": "2017-10-02T00:00:00",
+        "PayDate": "2017-10-31T00:00:00",
+        "ReinvestmentDate": "2017-10-02T00:00:00",
+        "ReinvestmentPrice": 9.548887,
+        "Amount": 0.01059
+      },
+      {
+        "ExDate": "2017-11-01T00:00:00",
+        "PayDate": "2017-11-30T00:00:00",
+        "ReinvestmentDate": "2017-11-01T00:00:00",
+        "ReinvestmentPrice": 9.732792,
+        "Amount": 0.010531
+      },
+      {
+        "ExDate": "2017-12-01T00:00:00",
+        "PayDate": "2017-12-31T00:00:00",
+        "ReinvestmentDate": "2017-12-01T00:00:00",
+        "ReinvestmentPrice": 9.74972,
+        "Amount": 0.013135
+      },
+      {
+        "ExDate": "2018-01-02T00:00:00",
+        "PayDate": "2018-01-31T00:00:00",
+        "ReinvestmentDate": "2018-01-02T00:00:00",
+        "ReinvestmentPrice": 9.789589,
+        "Amount": 0.012647
+      }
+    ],
+    "KID": {
+      "SRI": 3
+    }
+  }
+]

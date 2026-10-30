@@ -21,16 +21,15 @@
 import type TreegraphSeries from './TreegraphSeries.js';
 
 import TreegraphPoint from './TreegraphPoint.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        treemap: {
-            prototype: {
-                NodeClass: TreemapNode
-            }
-        }
-    }
-} = SeriesRegistry;
+import TreemapSeries from '../Treemap/TreemapSeries.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const TreemapNode = TreemapSeries.prototype.NodeClass;
 
 /* *
  *

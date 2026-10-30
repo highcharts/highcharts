@@ -1,3 +1,10 @@
+---
+description: >-
+  Request dividend time-series data for one or more securities with the
+  TimeSeriesConnector, set the Dividend series type, and account for how a
+  multi-security request takes its starting date.
+---
+
 # Dividend
 
 This type yields dividend time series data for single or multiple securities.
@@ -33,8 +40,7 @@ For more details, see [Morningstar’s Time Series API - Dividend].
 
 ## Relevant demos
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve Price time series. Specify type `Dividend`.
+- [Highcharts Stock + Morningstar Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/).
 
 ## Morningstar API Reference
 

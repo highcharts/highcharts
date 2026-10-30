@@ -1,3 +1,10 @@
+---
+description: >-
+  Review the built-in HTML, Highcharts, Grid, and KPI components, their key
+  configuration options, and ways to provide data directly or through
+  connectors, then follow links for component-specific setup.
+---
+
 # Types of Dashboards components
 
 Components are the building blocks of **Dashboards** layout. Several types of components are provided and can be used out of the box. The KPI, Highcharts, and Grid components come pre-configured with default configurations, whereas the HTML component can be customized to fit specific needs. It is also possible to create and register Custom components.
@@ -180,7 +187,7 @@ Code snippet with data embedded in the `Grid` data table; no data connector used
 }
 ```
 
-The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/grid-lite/demo/minimal) that uses embedded data.
+The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/grid/demo/minimal) that uses embedded data.
 
 Code snippet using a data connector.
 

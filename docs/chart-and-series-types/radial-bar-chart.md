@@ -1,3 +1,10 @@
+---
+description: >-
+  Create circular columns by combining polar and inverted chart settings,
+  then reuse column data formats and stacking. Examples show thresholds,
+  pane angles, labels, and updates with a color axis.
+---
+
 Radial (or Circular) bar chart
 ===
 

@@ -38,10 +38,8 @@ const {
 } = H;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
 import {
@@ -384,6 +382,11 @@ class XRangeSeries extends ColumnSeries {
         };
 
         point.shapeArgs = shapeArgs;
+
+        // Rank data labels by the length of the bar. The point's `y` is a
+        // category index here, so the generic value based rank would order
+        // the labels by their row rather than by size (#23585).
+        point.labelrank = point.options.labelrank ?? width;
 
         // Move tooltip to default position
         if (!inverted) {

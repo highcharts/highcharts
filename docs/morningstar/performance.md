@@ -1,3 +1,10 @@
+---
+description: >-
+  Define portfolios and benchmarks in the PerformanceConnector, choose request
+  settings, and retrieve calendar-year returns, trailing returns, risk
+  statistics, correlation matrices, or MPT statistics for charting.
+---
+
 # Performance
 
 The Morningstar **Performance** feature calculates how a portfolio performed
@@ -77,6 +84,12 @@ await performanceConnector.load();
 
 const data = performanceConnector.dataTables.CalendarYearReturn;
 ```
+
+## Relevant demos
+
+You will find examples of how to use `PerformanceConnector` in our demos.
+
+- [Highcharts Core + Morningstar Calendar Year Return](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/calendar-year-return/)
 
 ## Morningstar API Reference
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Load Morningstar's current equity style and size grid plus its historical
+  time series, set optional date bounds on the converter, and use the returned
+  table rows to render a heatmap.
+---
+
 # Equity Style Box
 
 The **Equity Style Box** view returns Morningstar's proprietary Style Box along
@@ -135,8 +142,8 @@ Highcharts.chart('container', {
 
 You will find examples of how to use `EquityStyleBox` converter in our demos.
 
-- **Highcharts Core + Morningstar Equity Style Box**
-- **Highcharts Core + Morningstar Equity Style Box Time Series**
+- [Highcharts Core + Morningstar Equity Style Box](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-equity-style-box/)
+- [Highcharts Grid + Morningstar Equity Style Box Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/equity-style-box-grid/)
 
 ## Morningstar API Reference
 

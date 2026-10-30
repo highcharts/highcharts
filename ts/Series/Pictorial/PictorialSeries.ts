@@ -22,7 +22,6 @@ import '../Column/ColumnSeries.js';
 import { composePatternFill } from '../../Extensions/PatternFill.js';
 
 import type ColorType from '../../Core/Color/ColorType.js';
-import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
 
@@ -32,6 +31,7 @@ import PictorialPoint from './PictorialPoint.js';
 import PictorialSeriesDefaults from './PictorialSeriesDefaults.js';
 import PictorialUtilities from './PictorialUtilities.js';
 import Series from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -57,8 +57,6 @@ composePatternFill(Chart, Series, SVGRenderer);
  *  Constants
  *
  * */
-
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
 const {
     getStackMetrics,
@@ -593,6 +591,47 @@ export default PictorialSeries;
  * */
 
 /**
+ * The paths include options describing the series image. For further details on
+ * preparing the SVG image, please refer to the [pictorial
+ * documentation](https://www.highcharts.com/docs/chart-and-series-types/pictorial).
+ *
+ * @declare   Highcharts.SeriesPictorialPathsOptionsObject
+ * @type      {Array<*>}
+ *
+ * @sample    {highcharts} highcharts/demo/pictorial/
+ *            Pictorial chart
+ *
+ * @since     11.0.0
+ * @product   highcharts
+ * @apioption plotOptions.pictorial.paths
+ */
+
+/**
+ * The definition defines a path to be drawn. It corresponds `d` SVG attribute.
+ *
+ * @type      {string}
+ *
+ * @sample    {highcharts} highcharts/demo/pictorial/
+ *            Pictorial chart
+ *
+ * @product   highcharts
+ * @apioption plotOptions.pictorial.paths.definition
+ */
+
+/**
+ * The max option determines height of the image. It is the ratio of
+ * `yAxis.max` to the `paths.max`.
+ *
+ * @sample {highcharts} highcharts/series-pictorial/paths-max
+ *         Pictorial max option
+ *
+ * @type      {number}
+ * @default   yAxis.max
+ * @product   highcharts
+ * @apioption plotOptions.pictorial.paths.max
+ */
+
+/**
  * A `pictorial` series. If the [type](#series.pictorial.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
@@ -662,47 +701,6 @@ export default PictorialSeries;
  * @since 11.0.0
  * @product   highcharts
  * @apioption series.pictorial.data
- */
-
-/**
- * The paths include options describing the series image. For further details on
- * preparing the SVG image, please refer to the [pictorial
- * documentation](https://www.highcharts.com/docs/chart-and-series-types/pictorial).
- *
- * @declare   Highcharts.SeriesPictorialPathsOptionsObject
- * @type      {Array<*>}
- *
- * @sample    {highcharts} highcharts/demo/pictorial/
- *            Pictorial chart
- *
- * @since     11.0.0
- * @product   highcharts
- * @apioption series.pictorial.paths
- */
-
-/**
- * The definition defines a path to be drawn. It corresponds `d` SVG attribute.
- *
- * @type      {string}
- *
- * @sample    {highcharts} highcharts/demo/pictorial/
- *            Pictorial chart
- *
- * @product   highcharts
- * @apioption series.pictorial.paths.definition
- */
-
-/**
- * The max option determines height of the image. It is the ratio of
- * `yAxis.max` to the `paths.max`.
- *
- * @sample {highcharts} highcharts/series-pictorial/paths-max
- *         Pictorial max option
- *
- * @type      {number}
- * @default   yAxis.max
- * @product   highcharts
- * @apioption series.pictorial.paths.max
  */
 
 /**

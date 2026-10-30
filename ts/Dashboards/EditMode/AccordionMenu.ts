@@ -189,6 +189,13 @@ class AccordionMenu {
         propertyPath: Array<string>,
         value: boolean | string | number
     ): void {
+        // Reject paths that would allow prototype pollution
+        if (propertyPath.some((key): boolean => (
+            key === '__proto__' || key === 'constructor' || key === 'prototype'
+        ))) {
+            return;
+        }
+
         const pathLength = propertyPath.length - 1;
 
         let currentLevel = this.changedOptions as AnyRecord;
