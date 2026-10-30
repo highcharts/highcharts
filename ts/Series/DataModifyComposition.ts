@@ -245,7 +245,7 @@ namespace DataModifyComposition {
 
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'afterGetExtremes', afterGetExtremes);
-            addEvent(SeriesClass, 'afterProcessData', afterProcessData);
+            addEvent(SeriesClass, 'afterProcessData', updateCompareValue);
         }
 
         if (!axisProto.setCompare) {
@@ -457,13 +457,16 @@ namespace DataModifyComposition {
     }
 
     /**
-     * Extend series.processData by finding the first y value in the plot area,
-     * used for comparing the following values
+     * Set the series compare base by finding the first non-zero value in the
+     * visible x range and storing it on `dataModify.compareValue`. When the
+     * processed data is grouped, also mark
+     * `dataModify.isGroupCompareValue`.
      *
      * @ignore
-     * @function Highcharts.Series#processData
+     * @param {boolean} [hasGroupedData]
+     * Whether current processed data is grouped.
      */
-    function afterProcessData(this: Series): void {
+    function updateCompareValue(this: Series, hasGroupedData?: boolean): void {
         const series = this,
 
             // For series with more than one value (range, OHLC etc), compare
@@ -491,6 +494,8 @@ namespace DataModifyComposition {
                     compareValue !== 0 &&
                     processedXData[i + compareStart] >= (series.xAxis.min || 0)
                 ) {
+                    series.dataModify.isGroupCompareValue =
+                        hasGroupedData === true;
                     series.dataModify.compareValue = compareValue;
                     break;
                 }
@@ -636,6 +641,11 @@ namespace DataModifyComposition {
         public series: SeriesComposition;
         public compare?: 'percent'|'value'|null;
         public compareValue?: number;
+        /**
+         * Whether `compareValue` was calculated from grouped data.
+         * @internal
+         */
+        public isGroupCompareValue?: boolean;
 
         public modifyValue(
             value?: number|null,
@@ -682,6 +692,41 @@ namespace DataModifyComposition {
         }
 
         /**
+         * Recalculate `compareValue` after data grouping. For
+         * `compareToMain` series, copy the base (and grouped flag) from the
+         * linked parent, otherwise update from the series grouped data.
+         *
+         * @internal
+         */
+        public recalculateCompareValue(): number | undefined {
+            const series = this.series,
+                hasGroupedData = series.hasGroupedData,
+                compareToMain = 'compareToMain' in series.options &&
+                    !!series.options.compareToMain,
+                linkedParent = series.linkedParent;
+
+            if (
+                linkedParent &&
+                compareToMain &&
+                series.dataModify &&
+                linkedParent.hasGroupedData &&
+                linkedParent.dataModify?.compareValue &&
+                linkedParent.dataModify.isGroupCompareValue
+            ) {
+                // Reuse the parent's grouped base when
+                // series is comparing to the main series.
+                this.compareValue = linkedParent.dataModify.compareValue;
+                this.isGroupCompareValue =
+                    linkedParent.dataModify.isGroupCompareValue;
+            } else if (!this.isGroupCompareValue && hasGroupedData) {
+                // Recompute compareValue from grouped points.
+                updateCompareValue.call(this.series, hasGroupedData);
+            }
+
+            return this.compareValue;
+        }
+
+        /**
          * @ignore
          * @function Highcharts.Series#initCompare
          *
@@ -698,7 +743,8 @@ namespace DataModifyComposition {
                     value = 0;
                 }
 
-                const compareValue = this.compareValue;
+                // Recalculate compareValue when data is grouped (#25538)
+                const compareValue = this.recalculateCompareValue();
 
                 if (
                     typeof value !== 'undefined' &&
