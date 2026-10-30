@@ -506,7 +506,6 @@ function addTreeNode(
                             .replace(/\bany\b/gsu, '*')
                         )
                     };
-                    markSupportsArray(_nodeDoclet);
                 }
                 break;
 
@@ -531,6 +530,7 @@ function addTreeNode(
     // Expand aliases like `RuleKey`, `keyof` aliases, and `Foo[]` to concrete
     // display types in the API Ref.
     expandDisplayTypeAliases(sourceInfo, _nodeDoclet, info);
+    markSupportsArray(_nodeDoclet);
 
     expandRendererOptionChildren(_nodeDoclet, _treeNode, debug);
     expandDataProviderOptionChildren(
