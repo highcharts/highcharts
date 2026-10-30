@@ -39,7 +39,9 @@ import {
     pick
 } from '../Shared/Utilities.js';
 
-const systemColorKeywords = new Set([
+// The annotation marks the call as side-effect free, so the minifier can drop
+// the set in bundles importing only `isHighContrastModeActive`, like Grid.
+const systemColorKeywords = /* #__PURE__ */ new Set([
     'accentcolor',
     'accentcolortext',
     'activetext',
@@ -136,10 +138,8 @@ declare module '../Core/Series/PointBase' {
  *
  * @function Highcharts#isHighContrastModeActive
  * @return {boolean} Returns true if the browser is in High Contrast mode.
- *
- * @internal
  */
-function isHighContrastModeActive(): boolean {
+export function isHighContrastModeActive(): boolean {
     // Test BG image for IE
     if (isMS && win.getComputedStyle) {
         const testDiv = doc.createElement('div');

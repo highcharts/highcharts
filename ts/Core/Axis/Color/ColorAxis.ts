@@ -229,10 +229,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
         userOptions: Partial<ColorAxisOptions>
     ): void {
         const axis = this;
-        const legend = chart.options.legend || {},
-            horiz = userOptions.layout ?
-                userOptions.layout !== 'vertical' :
-                legend.layout !== 'vertical';
+        const horiz = userOptions.layout ?
+            userOptions.layout !== 'vertical' :
+            chart.options.legend?.layout !== 'vertical';
 
         axis.reversed = userOptions.reversed;
         axis.opposite = !horiz;
@@ -290,9 +289,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
      * @internal
      */
     public setOptions(userOptions: DeepPartial<ColorAxisOptions>): void {
-        const legend = this.chart.options.legend || {},
+        const legend = this.chart.options.legend,
             theme = defaultOptions.colorAxis as ColorAxisOptions,
-            layout = userOptions.layout || legend.layout || theme.layout,
+            layout = userOptions.layout || legend?.layout || theme.layout,
             horiz = layout !== 'vertical';
 
         const sideSpecific = horiz ? { title: { rotation: 0 } } :
@@ -310,7 +309,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
             // Forced options
             {
                 showEmpty: false,
-                visible: this.chart.options.legend.enabled &&
+                visible: legend?.enabled &&
                     userOptions.visible !== false
             }
         );
@@ -862,8 +861,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
                 []
             ),
             legendOptions = chart.options.legend,
-            valueDecimals = (legendOptions.valueDecimals ?? -1),
-            valueSuffix = (legendOptions.valueSuffix ?? '');
+            valueDecimals = (legendOptions?.valueDecimals ?? -1),
+            valueSuffix = (legendOptions?.valueSuffix ?? '');
 
         const getPointsInDataClass = (i: number): Array<Point> =>
             axis.series.reduce((points, s): Point[] => {

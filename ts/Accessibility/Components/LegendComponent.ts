@@ -103,9 +103,7 @@ function scrollLegendToItem(legend: Legend, itemIx: number): void {
 /** @internal */
 function shouldDoLegendA11y(chart: Chart): boolean {
     const items = chart.legend && chart.legend.allItems,
-        legendA11yOptions: LegendAccessibilityOptions = (
-            (chart.options.legend as any).accessibility || {}
-        ),
+        legendA11yOptions = chart.options.legend?.accessibility,
         unsupportedColorAxis = chart.colorAxis && chart.colorAxis.some(
             (c): boolean => !c.dataClasses || !c.dataClasses.length
         );
@@ -113,7 +111,7 @@ function shouldDoLegendA11y(chart: Chart): boolean {
     return !!(
         items && items.length &&
         !unsupportedColorAxis &&
-        legendA11yOptions.enabled !== false
+        legendA11yOptions?.enabled !== false
     );
 }
 
