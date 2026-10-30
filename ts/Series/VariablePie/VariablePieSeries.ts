@@ -229,7 +229,7 @@ class VariablePieSeries extends PieSeries {
     ): DataLabel.LabelPositionObject {
         const { center, options } = this,
             angle = point.angle || 0,
-            r = this.radii[point.index],
+            r = point.shapeArgs?.r || 0,
             x = center[0] + Math.cos(angle) * r,
             y = center[1] + Math.sin(angle) * r,
             connectorOffset = (options.slicedOffset || 0) +

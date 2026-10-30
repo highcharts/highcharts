@@ -20,7 +20,6 @@
 import type PieDataLabelOptions from './PieDataLabelOptions';
 import type PiePoint from './PiePoint';
 import type PieSeries from './PieSeries';
-import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -146,7 +145,7 @@ namespace ColumnDataLabel {
             // Find widest data label
             points.forEach(function (point): void {
                 dataLabelWidth = (point.dataLabel as any).getBBox().width;
-                if (dataLabelWidth > maxDataLabelWidth) {
+                if (dataLabelWidth > maxDataLabelWidth && !point.condemned) {
                     maxDataLabelWidth = dataLabelWidth;
                 }
             });
@@ -258,7 +257,7 @@ namespace ColumnDataLabel {
         this: PieSeries
     ): void {
         const series = this,
-            points = series.points,
+            points = series.points.concat(series.condemnedPoints),
             chart = series.chart,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
@@ -285,7 +284,7 @@ namespace ColumnDataLabel {
         }
 
         // Reset all labels that have been shortened
-        points.forEach((point): void => {
+        series.points.forEach((point): void => {
             (point.dataLabels || []).forEach((dataLabel): void => {
                 if (dataLabel.shortened) {
                     dataLabel
@@ -335,7 +334,10 @@ namespace ColumnDataLabel {
                     point,
                     distance
                 );
-                maxLabelDistance = Math.max(maxLabelDistance, distance);
+
+                if (!point.condemned) {
+                    maxLabelDistance = Math.max(maxLabelDistance, distance);
+                }
             });
         });
 
@@ -374,7 +376,8 @@ namespace ColumnDataLabel {
                         const labelPosition = dataLabel.dataLabelPosition;
                         if (
                             labelPosition &&
-                            labelPosition.distance > 0
+                            labelPosition.distance > 0 &&
+                            !point.condemned
                         ) {
                             // The point.top depends on point.labelDistance
                             // value. Used for calculation of y value in getX
@@ -460,8 +463,9 @@ namespace ColumnDataLabel {
 
                     let x = 0,
                         y = naturalY,
-                        visibility: 'hidden'|'inherit' = 'inherit';
-
+                        visibility = (
+                            point.condemned && dataLabel.visibility
+                        ) || 'inherit';
 
                     if (labelPosition) {
                         if (
@@ -547,8 +551,13 @@ namespace ColumnDataLabel {
                         labelPosition.computed.x = x;
                         labelPosition.computed.y = y - topOffset;
 
+                        // Fade out labels of condemned points without letting
+                        // them resize the pie
+                        if (point.condemned) {
+                            labelPosition.posAttribs.opacity = 0;
+
                         // Detect overflowing data labels
-                        if (dataLabelOptions.crop ?? true) {
+                        } else if (dataLabelOptions.crop ?? true) {
                             dataLabelWidth = dataLabel.getBBox().width;
 
                             let sideOverflow: number|undefined;
@@ -617,8 +626,7 @@ namespace ColumnDataLabel {
             // Place the labels in the final position
             (this.placeDataLabels as any)();
 
-
-            this.points.forEach((point): void => {
+            points.forEach((point): void => {
                 point.dataLabels?.forEach((dataLabel, i): void => {
                     // #8864: every connector can have individual options
                     const {
@@ -670,6 +678,10 @@ namespace ColumnDataLabel {
                                 visibility: labelPosition.attribs?.visibility
                             });
 
+                            if (point.condemned) {
+                                connector.animate({ opacity: 0 });
+                            }
+
                         } else if (connector) {
                             dataLabel.connector = connector.destroy();
                         }
@@ -687,7 +699,7 @@ namespace ColumnDataLabel {
     function placeDataLabels(
         this: PieSeries
     ): void {
-        this.points.forEach((point: Point): void => {
+        this.points.concat(this.condemnedPoints).forEach((point): void => {
             (point.dataLabels || []).forEach((dataLabel): void => {
                 const labelPosition = dataLabel.dataLabelPosition;
                 if (labelPosition) {
