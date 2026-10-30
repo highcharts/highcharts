@@ -18,6 +18,16 @@
         SVGElement.symbolCustomAttribs.push('padding');
     }
 
+    // Full circle as two half arcs, like the core `circle` symbol
+    function circle(cx, cy, rx, ry, clockwise) {
+        return [
+            ['M', cx, cy + ry],
+            ['A', rx, ry, 0, 0, clockwise, cx, cy - ry],
+            ['A', rx, ry, 0, 0, clockwise, cx, cy + ry],
+            ['Z']
+        ];
+    }
+
     function oldArc(cx, cy, w, h, options) {
         const arc = [];
 
@@ -29,11 +39,11 @@
                 radius = options.r || 0,
                 innerRadius = options.innerR,
                 minArcRange = 0.05,
-                // Subtract a small number to prevent cos and sin of start and
-                // end from becoming equal on 360 arcs (#1561).
-                // See "Arc proximity" tests at
+                // Treat arcs this close to 360 degrees as full circles
+                // (#1561). See "Arc proximity" tests at
                 // samples/unit-tests/svgrenderer/symbol/demo.js
-                proximity = 0.0001;
+                proximity = 0.0001,
+                clockwise = options.clockwise ?? 1;
 
             const paddingRadius = radius > 0 ?
                 radius : (innerRadius && innerRadius > 0 ? innerRadius : 0);
@@ -54,22 +64,28 @@
             }
 
             const rx = options.r ?? w,
-                ry = options.r ?? (h || w),
-                fullCircle = (
-                    Math.abs(end - start - 2 * Math.PI) <
-                    proximity
-                );
+                ry = options.r ?? (h || w);
 
-            if (fullCircle) {
-                start = Math.PI / 2;
-                end = Math.PI * 2.5 - proximity;
+            // A single arc can't end where it starts, so draw full circles
+            // as two half arcs, the inner one in the opposite direction to
+            // leave a hole (#21701)
+            if (Math.abs(end - start - 2 * Math.PI) < proximity) {
+                const path = circle(cx, cy, rx, ry, clockwise);
+
+                return innerRadius ? path.concat(circle(
+                    cx,
+                    cy,
+                    innerRadius,
+                    innerRadius,
+                    clockwise ? 0 : 1
+                )) : path;
             }
 
-            const open = options.open ?? fullCircle,
-                cosStart = fullCircle ? 0 : Math.cos(start),
-                sinStart = fullCircle ? 1 : Math.sin(start),
-                cosEnd = fullCircle ? 0 : Math.cos(end),
-                sinEnd = fullCircle ? 1 : Math.sin(end),
+            const open = options.open,
+                cosStart = Math.cos(start),
+                sinStart = Math.sin(start),
+                cosEnd = Math.cos(end),
+                sinEnd = Math.sin(end),
                 // Proximity takes care of rounding errors around PI (#6971)
                 longArc = (
                     options.longArc ??
@@ -82,9 +98,8 @@
                 ry, // Y radius
                 0, // Slanting
                 longArc, // Long or short arc
-                options.clockwise ?? 1, // Clockwise
-                // Use a static pixel offset for full circle (#21701)
-                cx + (fullCircle ? 0.001 : rx * cosEnd),
+                clockwise, // Clockwise
+                cx + rx * cosEnd,
                 cy + ry * sinEnd
             ];
             // Memo for border radius
@@ -128,10 +143,10 @@
                     }
                 }
 
-                const innerCosStart = fullCircle ? 0 : Math.cos(innerStart),
-                    innerSinStart = fullCircle ? 1 : Math.sin(innerStart),
-                    innerCosEnd = fullCircle ? 0 : Math.cos(innerEnd),
-                    innerSinEnd = fullCircle ? 1 : Math.sin(innerEnd),
+                const innerCosStart = Math.cos(innerStart),
+                    innerSinStart = Math.sin(innerStart),
+                    innerCosEnd = Math.cos(innerEnd),
+                    innerSinEnd = Math.sin(innerEnd),
                     // Proximity takes care of rounding errors around PI (#6971)
                     innerlongArc = (
                         options.longArc ??
@@ -145,8 +160,8 @@
                     0, // Slanting
                     innerlongArc, // Long or short arc
                     // Clockwise - opposite to the outer arc clockwise
-                    defined(options.clockwise) ? 1 - options.clockwise : 0,
-                    cx + (fullCircle ? -0.001 : cInnerRadius * innerCosStart),
+                    clockwise ? 0 : 1,
+                    cx + cInnerRadius * innerCosStart,
                     cy + cInnerRadius * innerSinStart
                 ];
                 // Memo for border radius
