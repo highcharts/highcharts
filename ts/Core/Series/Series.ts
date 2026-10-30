@@ -400,6 +400,9 @@ class Series {
     public condemnedPoints!: Array<Point>;
 
     /** @internal */
+    public continuesAnimation?: boolean;
+
+    /** @internal */
     public cropped?: boolean;
 
     /**
@@ -3039,6 +3042,14 @@ class Series {
         let animationClipRect = chart.sharedClips[animationClipKey],
             markerAnimationClipRect = chart.sharedClips[animationClipKey + 'm'];
 
+        // An update during the initial animation reuses the running clip
+        // animation, so its pending afterAnimate still applies (#25439)
+        if (!init) {
+            this.continuesAnimation = !!animationClipRect?.hasClass(
+                'highcharts-animating'
+            );
+        }
+
         // Initialize the animation. Set up the clipping rectangle.
         if (init && group) {
             const clipBox = chart.getClipBox(this);
@@ -3981,7 +3992,16 @@ class Series {
         // Call the afterAnimate function on animation complete (but don't
         // overwrite the animation.complete option which should be available
         // to the user).
-        if (!hasRendered) {
+        // An update during the initial animation keeps the pending timeout
+        // if it continues the same animation, otherwise it reschedules it
+        if (
+            !hasRendered &&
+            !(
+                series.animationTimeout !== void 0 &&
+                series.continuesAnimation
+            )
+        ) {
+            internalClearTimeout(series.animationTimeout);
             // Additional time if defer is defined before afterAnimate
             // will be triggered
             if (animDuration && animOptions.defer) {
@@ -4888,6 +4908,11 @@ class Series {
         // updated, `series.options.data` has correct merged options, use it:
         if (keepPoints && options.data) {
             options.data = series.options.data;
+        }
+
+        // Keep the pending afterAnimate of the initial animation (#25439)
+        if (!series.finishedAnimating) {
+            keepProps.push('animationTimeout');
         }
 
         // Make sure preserved properties are not destroyed (#3094)
