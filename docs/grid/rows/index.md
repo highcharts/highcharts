@@ -3,7 +3,7 @@ sidebar_label: "Overview"
 description: >-
   Explore how Grid rows come from the data provider, then choose guides for
   reading and updating row data, pagination, pinning, TreeView, grouping,
-  virtualization, and rendering performance.
+  summary rows, virtualization, and rendering performance.
 ---
 
 # Rows overview
@@ -41,6 +41,12 @@ See [Tree view](https://www.highcharts.com/docs/grid/rows/tree-view).
 Use row grouping to turn repeated values of flat data into expandable group rows
 with aggregated summaries. See
 [Row grouping](https://www.highcharts.com/docs/grid/rows/grouping).
+
+## Summary rows
+
+Use summary rows to show totals, averages or other aggregates of each column
+above or below the table body. See
+[Summary rows](https://www.highcharts.com/docs/grid/rows/summary-rows).
 
 ## Virtualization
 
