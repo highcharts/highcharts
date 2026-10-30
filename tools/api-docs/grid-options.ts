@@ -506,7 +506,6 @@ function addTreeNode(
                             .replace(/\bany\b/gsu, '*')
                         )
                     };
-                    markSupportsArray(_nodeDoclet);
                 }
                 break;
 
@@ -531,6 +530,7 @@ function addTreeNode(
     // Expand aliases like `RuleKey`, `keyof` aliases, and `Foo[]` to concrete
     // display types in the API Ref.
     expandDisplayTypeAliases(sourceInfo, _nodeDoclet, info);
+    markSupportsArray(_nodeDoclet);
 
     expandRendererOptionChildren(_nodeDoclet, _treeNode, debug);
     expandDataProviderOptionChildren(
@@ -1595,7 +1595,15 @@ function resolveTypeToInterface(
         return followTypeAlias(sourceInfo, resolved as any, info);
     }
 
-    if (resolved.kind === 'Interface') {
+    // 8. Union alias of one interface, like `Foo | Foo[]`
+    if (resolved.kind === 'Array') {
+        const [first, ...rest] = resolved.value as Array<TSLib.CodeInfo>;
+        resolved = rest.every((value): boolean => value === first) ?
+            first :
+            void 0;
+    }
+
+    if (resolved?.kind === 'Interface') {
         // Auto-extend to include inherited members
         TSLib.autoExtendInfo(resolved as TSLib.InterfaceInfo);
         return resolved;
