@@ -4,12 +4,20 @@ Highcharts.setOptions({
         rangeSelectorZoom: ''
     },
 
+    palette: {
+        colorScheme: 'dark',
+        dark: {
+            backgroundColor: '#000000',
+            neutralColor: '#d9d7d7',
+            highlightColor: '#f23644'
+        }
+    },
+
     chart: {
-        backgroundColor: '#000000',
         zooming: {
             resetButton: {
                 theme: {
-                    fill: '#f23644',
+                    fill: 'var(--highcharts-highlight-color-100)',
                     stroke: 'none',
                     style: {
                         color: '#ffffff'
@@ -29,24 +37,7 @@ Highcharts.setOptions({
 
     title: {
         style: {
-            color: '#b0abab',
             fontSize: '2em'
-        }
-    },
-
-    xAxis: {
-        labels: {
-            style: {
-                color: '#b0abab'
-            }
-        }
-    },
-
-    yAxis: {
-        labels: {
-            style: {
-                color: '#b0abab'
-            }
         }
     },
 
@@ -81,15 +72,15 @@ Highcharts.setOptions({
     exporting: {
         buttons: {
             contextButton: {
-                symbolStroke: '#d9d7d7',
+                symbolStroke: 'var(--highcharts-neutral-color-100)',
                 theme: {
-                    fill: '#000000',
+                    fill: 'var(--highcharts-background-color)',
                     states: {
                         hover: {
-                            fill: '#000000'
+                            fill: 'var(--highcharts-background-color)'
                         },
                         select: {
-                            fill: '#f23644'
+                            fill: 'var(--highcharts-highlight-color-100)'
                         }
                     }
                 }
@@ -109,7 +100,7 @@ Highcharts.setOptions({
             'stroke-width': 0,
             r: 8,
             style: {
-                color: '#d9d7d7',
+                color: 'var(--highcharts-neutral-color-100)',
                 fontWeight: 'bold',
                 fontSize: '1em'
             },
@@ -135,7 +126,7 @@ Highcharts.setOptions({
     plotOptions: {
         area: {
             threshold: null,
-            color: '#f23644',
+            color: 'var(--highcharts-highlight-color-100)',
             fillColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                 stops: [
