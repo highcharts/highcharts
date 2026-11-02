@@ -76,8 +76,9 @@ aggregated.
 ## Formatting and styling
 
 A summary cell uses the `cells.format` of its column. Set `format` on the row,
-or on a single cell in `columns`, to override it. Use `className` and `style`
-the same way.
+or on a single cell in `columns`, to override it. `className` and `style` on
+the row apply to the row element; in `columns`, they are added to the
+column's `cells.className` and `cells.style`.
 
 Summary rows carry the `hcg-summary-row` class. For their CSS variables, see
 [Summary separators](https://www.highcharts.com/docs/grid/theming/grid-variables#summary-separators).
