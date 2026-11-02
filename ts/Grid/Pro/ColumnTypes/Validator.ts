@@ -36,8 +36,7 @@ import Cell from '../../Core/Table/Cell.js';
 import { defined } from '../../../Shared/Utilities.js';
 
 const {
-    makeDiv,
-    setHTMLContent
+    makeDiv
 } = GridUtils;
 
 /* *
@@ -73,11 +72,13 @@ class Validator {
             notification: 'Value cannot be empty.'
         },
         number: {
-            validate: ({ rawValue }): boolean => !isNaN(+rawValue),
+            validate: ({ rawValue }): boolean => Number.isFinite(+rawValue),
             notification: 'Value has to be a number.'
         },
         datetime: {
-            validate: ({ value }): boolean => !defined(value) || !isNaN(+value),
+            validate: ({ value }): boolean => (
+                !defined(value) || Number.isFinite(+value)
+            ),
             notification: 'Value has to be parsed to a valid timestamp.'
         },
         'boolean': {
@@ -344,8 +345,19 @@ class Validator {
         // Set error container position
         this.reflow();
 
-        // Set width and content
-        setHTMLContent(this.notifContainer, errors.join('<br />'));
+        // Text nodes rather than markup, as a notification may echo the
+        // value the user typed
+        this.notifContainer.replaceChildren();
+        for (let i = 0, iEnd = errors.length; i < iEnd; ++i) {
+            if (i) {
+                this.notifContainer.appendChild(
+                    document.createElement('br')
+                );
+            }
+            this.notifContainer.appendChild(
+                document.createTextNode(errors[i])
+            );
+        }
 
         // A11y announcement
         if (grid.options?.accessibility?.announcements?.cellEditing) {

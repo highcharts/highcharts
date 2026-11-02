@@ -1,3 +1,10 @@
+---
+description: >-
+  Add the Accessibility module to a chart and provide meaningful titles,
+  series names, and text descriptions. Learn how these settings give screen
+  reader users context and support keyboard navigation.
+---
+
 Accessibility module
 ===
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Convert GIS data to GeoJSON with QGIS, and understand how the Map
+  Collection’s GeoJSON, TopoJSON, and SVG coordinate systems differ. The
+  guide covers projection, geometry simplification, export, and testing.
+---
+
 Custom GeoJSON maps
 ===================
 

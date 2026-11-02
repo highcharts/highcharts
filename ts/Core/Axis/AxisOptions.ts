@@ -521,17 +521,17 @@ export interface AxisLabelOptions {
     autoRotationLimit: number;
 
     /**
-     * The label's pixel distance from the perimeter of the plot area.
-     * On cartesian charts, this is overridden if the `labels.y` setting
-     * is set.
+     * The label's pixel distance from the perimeter of the plot area. On
+     * cartesian charts, this is overridden if the `labels.y` setting is set.
+     * Defaults to a smart guess based on the orientation of the axis and
+     * whether it is straight or circular.
      *
      * @sample {highcharts} highcharts/yaxis/labels-distance/
      *         Polar chart, labels centered under the arc
      *
-     * @default 15
      * @product highcharts gantt
      */
-    distance: number;
+    distance?: number;
 
     /**
      * Enable or disable the axis labels.
@@ -651,7 +651,8 @@ export interface AxisLabelOptions {
 
     /**
      * Rotation of the labels in degrees. When `undefined`, the
-     * `autoRotation` option takes precedence.
+     * `autoRotation` option takes precedence. On radial axes, labels can be
+     * rotated along the axis by setting the rotation to 'auto'.
      *
      * @sample {highcharts} highcharts/xaxis/labels-rotation/
      *         X axis labels rotated 90°
@@ -708,7 +709,7 @@ export interface AxisLabelOptions {
      *         Red X axis labels
      */
     style: CSSObject & {
-        /** @default ${palette.neutralColor80} */
+        /** @default 'var(--highcharts-neutral-color-80)' */
         color?: CSSObject['color'];
 
         /** @default 'default' */
@@ -875,6 +876,16 @@ export interface AxisOptions {
      * @since   4.1
      */
     crosshair?: (boolean|AxisCrosshairOptions);
+
+    /**
+     * A reserved subspace to store options and values for customized
+     * functionality. Here you can add additional data for your own event
+     * callbacks and formatter callbacks.
+     *
+     * @type      {Highcharts.Dictionary<*>}
+     * @apioption xAxis.custom
+     */
+    custom?: any;
 
     /**
      * The value on a perpendicular axis where this axis should cross. This
@@ -1996,7 +2007,7 @@ export interface AxisSetExtremesEventObject extends Axis.ExtremesObject {
     preventDefault: Function;
     rangeSelectorButton?: RangeSelectorButtonOptions;
     scale?: number;
-    target: SVGElement;
+    target: Axis;
     trigger?: string;
     triggerOp?: string;
     type: 'setExtremes';
@@ -2035,7 +2046,7 @@ export interface AxisTitleOptions {
     align: ('high'|'low'|'middle');
 
     /**
-     * Deprecated. Set the `text` to `undefined` to disable the title.
+     * Deprecated. Set the `text` to `null` to disable the title.
      *
      * @deprecated 3.0.0
      * @product highcharts
@@ -2100,7 +2111,7 @@ export interface AxisTitleOptions {
      *         Styled mode
      */
     style: CSSObject & {
-        /** @default ${palette.neutralColor60} */
+        /** @default 'var(--highcharts-neutral-color-60)' */
         color?: CSSObject['color'];
 
         /** @default '0.8em' */

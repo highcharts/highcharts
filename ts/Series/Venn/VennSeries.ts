@@ -55,10 +55,8 @@ const {
 import DPU from '../DrawPointUtilities.js';
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getCenterOfPoints } = GU;
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
 import VennPoint from './VennPoint.js';
 import VennSeriesDefaults from './VennSeriesDefaults.js';
 import VennUtils from './VennUtils.js';
@@ -94,6 +92,7 @@ class VennSeries extends ScatterSeries {
 
     public static splitter = 'highcharts-split';
 
+    /** @internal */
     public static defaultOptions: VennSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         VennSeriesDefaults
@@ -397,6 +396,7 @@ class VennSeries extends ScatterSeries {
 
     public data!: Array<VennPoint>;
 
+    /** @internal */
     public mapOfIdToRelation!: Record<string, VennRelationObject>;
 
     public options!: VennSeriesOptions;
@@ -410,6 +410,7 @@ class VennSeries extends ScatterSeries {
      * */
 
 
+    /** @internal */
     public animate(init?: boolean): void {
         if (!init) {
             const series = this,
@@ -486,6 +487,7 @@ class VennSeries extends ScatterSeries {
 
     }
 
+    /** @internal */
     public init(): void {
         ScatterSeries.prototype.init.apply(this, arguments);
 
@@ -531,6 +533,7 @@ class VennSeries extends ScatterSeries {
         };
     }
 
+    /** @internal */
     public translate(): void {
 
         const chart = this.chart;
@@ -660,10 +663,15 @@ class VennSeries extends ScatterSeries {
  * */
 
 interface VennSeries {
+    /** @internal */
     directTouch: boolean;
+    /** @internal */
     isCartesian: boolean;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof VennPoint;
+    /** @internal */
     utils: typeof VennUtils;
 }
 
@@ -678,6 +686,7 @@ extend(VennSeries.prototype, {
 
 // Modify final series options.
 addEvent(VennSeries, 'afterSetOptions', function (
+    /** @internal */
     e: { options: VennSeriesOptions }
 ): void {
     const options = e.options,

@@ -1,3 +1,10 @@
+---
+description: >-
+  Group Gantt subtasks under a parent with the data point parent ID, collapse
+  groups initially, or place tasks on horizontal tracks by assigning
+  categories to a vertical axis.
+---
+
 Grouping tasks in a hierarchy
 ===
 

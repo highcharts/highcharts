@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Styling and Theming"
+description: >-
+  Style entire columns or only headers with CSS classes and inline options,
+  compute styles through a callback, and use shared theme variables or
+  conditional theming for consistent grid appearance.
 ---
 
 # Column styling and theming

@@ -38,6 +38,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 type Nullable<T> = {
     [P in keyof T]: T[P] | null;
 };
+/** @internal */
 export type NullableHTMLAttributes = Nullable<HTMLAttributes>;
 
 import H from '../Core/Globals.js';
@@ -65,8 +66,9 @@ const {
  * Represents a proxy element that overlays a target and relays events
  * to its target.
  *
- * @private
  * @class
+ *
+ * @internal
  */
 class ProxyElement {
 
@@ -347,6 +349,7 @@ class ProxyElement {
  *
  * */
 
+/** @internal */
 namespace ProxyElement {
 
     /* *
@@ -355,6 +358,7 @@ namespace ProxyElement {
      *
      * */
 
+    /** @internal */
     export interface Target {
         click: (DOMElementType|SVGElement|HTMLElement);
         visual?: DOMElementType;
@@ -368,4 +372,5 @@ namespace ProxyElement {
  *
  * */
 
+/** @internal */
 export default ProxyElement;

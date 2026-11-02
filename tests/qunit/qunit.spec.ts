@@ -174,6 +174,7 @@ test.describe('QUnit tests', () => {
             join('tmp', 'json-sources.js'),
             join('test', 'test-template.js'),
             ...(await glob('test/templates/**/*.js')),
+            join('test', 'visual-comparator.js'),
             join('test', 'karma-setup.js')
         ];
 

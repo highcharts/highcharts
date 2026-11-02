@@ -34,10 +34,8 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import DotPlotSeriesDefaults from './DotPlotSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -47,7 +45,6 @@ import { extend, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dotplot
  *
@@ -61,6 +58,7 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DotPlotSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         DotPlotSeriesDefaults
@@ -84,6 +82,7 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             options = series.options,
@@ -222,9 +221,10 @@ class DotPlotSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface DotPlotSeries {
+    /** @internal */
     pointAttr?: SVGAttributes;
+    /** @internal */
     pointClass: typeof DotPlotPoint;
 }
 
@@ -238,7 +238,6 @@ extend(DotPlotSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dotplot: typeof DotPlotSeries;
@@ -253,5 +252,4 @@ SeriesRegistry.registerSeriesType('dotplot', DotPlotSeries);
  *
  * */
 
-/** @internal */
 export default DotPlotSeries;

@@ -39,7 +39,7 @@ import type {
 } from '../../Core/Series/SeriesOptions';
 import type Templating from '../../Core/Templating';
 import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
-import type { DeepPartial } from '../../Shared/Types';
+import type { AnyRecord, DeepPartial } from '../../Shared/Types';
 import { StateGenericOptions } from '../../Core/Series/StatesOptions';
 
 /* *
@@ -109,6 +109,13 @@ export interface SankeySeriesLevelOptions {
 }
 
 export interface SankeySeriesNodeOptions {
+
+    /**
+     * A reserved subspace to store options and values for customized
+     * functionality. Here you can add additional data for your own event
+     * callbacks and formatter callbacks.
+     */
+    custom?: AnyRecord;
 
     /**
      * The color of the auto generated node.
@@ -288,13 +295,12 @@ export interface SankeySeriesNodeOptions {
  *            zones, minPointLength, dataSorting, boostBlending
  *
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderWidth, crisp, cropThreshold, dataParser,
- *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
- *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
- *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
- *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,
- *            pointStart, pointWidth, shadow, softThreshold, stacking,
- *            threshold, zoneAxis, zones, dataSorting
+ *            borderWidth, crisp, cropThreshold, depth, dragDrop, edgeColor,
+ *            edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
+ *            groupPadding, groupZPadding, label, maxPointWidth, negativeColor,
+ *            pointInterval, pointIntervalUnit, pointPadding, pointPlacement,
+ *            pointRange, pointStart, pointWidth, shadow, softThreshold,
+ *            stacking, threshold, zoneAxis, zones, dataSorting
  *
  * @requires modules/sankey
  */

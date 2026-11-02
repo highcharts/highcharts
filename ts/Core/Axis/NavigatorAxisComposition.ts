@@ -23,12 +23,13 @@ import type { AxisSetExtremesEventObject } from './AxisOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
-const { isTouchDevice } = H;
+const { composed, isTouchDevice } = H;
 import {
     addEvent,
     correctFloat,
     defined,
-    isNumber
+    isNumber,
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -147,9 +148,7 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (!AxisClass.keepProps.includes('navigatorAxis')) {
-            AxisClass.keepProps.push('navigatorAxis');
-
+        if (pushUnique(composed, 'Axis.Navigator')) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'setExtremes', onAxisSetExtremes);
         }

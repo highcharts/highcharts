@@ -443,7 +443,7 @@ QUnit.test(
         chart = $('#container').highcharts(options).highcharts();
 
         assert.strictEqual(
-            chart.yAxis[0].plotLinesAndBands.length,
+            chart.yAxis[0].plotBands.length,
             1,
             'One band, four backgrounds initially'
         );
@@ -455,7 +455,7 @@ QUnit.test(
 
         // Run update
         assert.strictEqual(
-            chart.yAxis[0].plotLinesAndBands.length,
+            chart.yAxis[0].plotBands.length,
             1,
             'One band, four backgrounds initially'
         );

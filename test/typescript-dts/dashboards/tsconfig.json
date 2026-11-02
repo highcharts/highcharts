@@ -4,22 +4,22 @@
         "lib": ["ES2020", "DOM"],
         "paths": {
             "@highcharts/dashboards": [
-                "code/dashboards/dashboards.src"
+                "../../../code/dashboards/dashboards.src"
             ],
             "@highcharts/dashboards/*": [
-                "code/dashboards/*"
+                "../../../code/dashboards/*"
             ],
             "highcharts": [
-                "code/highcharts.src"
+                "../../../code/highcharts.src"
             ],
             "highcharts/*": [
-                "code/*"
+                "../../../code/*"
             ],
             "@highcharts/grid/grid-pro": [
-                "code/grid/grid-pro.src"
+                "../../../code/grid/grid-pro.src"
             ],
             "@highcharts/grid/grid-pro/*": [
-                "code/grid/grid-pro/*"
+                "../../../code/grid/grid-pro/*"
             ],
         },
         "skipLibCheck": true

@@ -135,7 +135,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.waterfall
- * @excluding dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding boostThreshold, boostBlending
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.waterfall

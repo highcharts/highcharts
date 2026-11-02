@@ -13,12 +13,10 @@ export function before(size: number) {
     return {
         fileName: `${size}-ohlc.json`,
         func: generateOHLC.bind(undefined, size)
-  };
+    };
 }
 
 export default function benchmarkTest({
-    size,
-    CODE_PATH,
     data
 }: BenchmarkContext): BenchmarkResult {
     const { Highcharts: hc, el } = getHighchartsJSDOM('highstock');
@@ -47,24 +45,19 @@ export default function benchmarkTest({
     for (let i = 0; i < 250; i++) {
         chart.update({
             rangeSelector: {
-                buttons:
-                    i % 2 === 0
-                        ? [
-                              {
-                                  type: 'month',
-                                  count: 1,
-                                  text: '1m',
-                                  title: 'View 1 month'
-                              }
-                          ]
-                        : [
-                              {
-                                  type: 'month',
-                                  count: 3,
-                                  text: '3m',
-                                  title: 'View 3 months'
-                              }
-                          ]
+                buttons: i % 2 === 0 ?
+                    [{
+                        type: 'month',
+                        count: 1,
+                        text: '1m',
+                        title: 'View 1 month'
+                    }] :
+                    [{
+                        type: 'month',
+                        count: 3,
+                        text: '3m',
+                        title: 'View 3 months'
+                    }]
             }
         });
     }

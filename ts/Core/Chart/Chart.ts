@@ -59,10 +59,7 @@ import {
     setAnimation
 } from '../Animation/AnimationUtilities.js';
 import Axis from '../Axis/Axis.js';
-import D from '../Defaults.js';
-const {
-    defaultOptions
-} = D;
+import { defaultOptions } from '../Defaults.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import Templating from '../Templating.js';
@@ -1661,7 +1658,10 @@ class Chart {
             )
                 .attr({
                     align: options.align,
-                    'class': 'highcharts-' + key,
+                    'class': [
+                        options.className,
+                        'highcharts-' + key
+                    ].filter(isString).join(' '),
                     zIndex: options.zIndex || 4
                 })
                 .css({
@@ -1713,6 +1713,15 @@ class Chart {
              *
              * @name Highcharts.Chart#subtitle
              * @type {Highcharts.SubtitleObject}
+             */
+
+            /**
+             * The chart caption. The caption has an `update` method that
+             * allows modifying the options directly or indirectly via
+             * `chart.update`.
+             *
+             * @name Highcharts.Chart#caption
+             * @type {Highcharts.CaptionObject}
              */
             this[key] = elem;
         }
@@ -3033,7 +3042,7 @@ class Chart {
                     (labels.reserveSpace ?? !isNumber(options.crossing))
                 ) {
                     expectedSpace = label.getBBox().height +
-                        labels.distance +
+                        (labels.distance ?? 15) +
                         Math.max(isNumber(offset) ? offset : 0, 0);
                 }
 
@@ -3145,9 +3154,17 @@ class Chart {
         const chart = this,
             creds = merge(
                 true, this.options.credits as Chart.CreditsOptions, credits
-            );
+            ),
+            position = creds.position || {};
 
         if (creds.enabled && !this.credits) {
+
+            // Run the user-supplied URL through the allow list, so that
+            // references like `javascript:` can't be executed from the
+            // credits label
+            const href = creds.href ?
+                AST.filterUserAttributes({ href: creds.href }).href :
+                void 0;
 
             /**
              * The chart's credits label. The label has an `update` method that
@@ -3171,14 +3188,14 @@ class Chart {
                         'creditsClick',
                         e as Event,
                         (): void => {
-                            if (creds.href) {
-                                win.location.href = creds.href;
+                            if (href) {
+                                win.location.href = href;
                             }
                         }
                     );
                 })
                 .attr({
-                    align: (creds.position as any).align,
+                    align: position.align,
                     zIndex: 8
                 });
 
@@ -3193,13 +3210,13 @@ class Chart {
 
             this.credits
                 .add()
-                .align(creds.position);
+                .align(position, false, position.relativeTo);
 
             // Dynamically update
             this.credits.update = function (
                 options: Chart.CreditsOptions
             ): void {
-                chart.credits = (chart.credits as any).destroy();
+                chart.credits = chart.credits?.destroy();
                 chart.addCredits(options);
             };
         }
@@ -3884,6 +3901,8 @@ class Chart {
                 chart.renderer.setStyle(chart.options.chart.style || {});
             }
         }
+
+        setAnimation(animation, chart);
 
         // Moved up, because tooltip needs updated plotOptions (#6218)
         if (!chart.styledMode && options.colors) {
@@ -4737,7 +4756,7 @@ namespace Chart {
 
         /** @internal */
         zIndex?: number;
-
+        className?: string;
     }
 
     /** @internal */
@@ -4780,6 +4799,10 @@ namespace Chart {
 
         /**
          * The URL for the credits label.
+         *
+         * URLs that do not start with one of the
+         * [AST.allowedReferences](https://api.highcharts.com/class-reference/Highcharts.AST#.allowedReferences),
+         * for example `javascript:` URLs, are ignored.
          *
          * @sample {highcharts} highcharts/credits/href/
          *         Custom URL and text
@@ -4854,13 +4877,21 @@ namespace Chart {
             /** @default 'right' */
             align?: AlignObject['align'];
 
+            /**
+             * Which box to align the credits to. Can be either `chartBox`,
+             * `plotBox` or `spacingBox`.
+             * @default spacingBox
+             * @since next
+             */
+            relativeTo?: 'chartBox'|'plotBox'|'spacingBox';
+
             /** @default 'bottom' */
             verticalAlign?: AlignObject['verticalAlign'];
 
-            /** @default -10 */
+            /** @default 0 */
             x?: AlignObject['x'];
 
-            /** @default -5 */
+            /** @default 10 */
             y?: AlignObject['y'];
         };
 
@@ -5071,7 +5102,7 @@ namespace Chart {
 
         /** @internal */
         zIndex?: number;
-
+        className?: string;
     }
 
     /**
@@ -5250,7 +5281,7 @@ namespace Chart {
 
         /** @internal */
         zIndex?: number;
-
+        className?: string;
     }
 
 }

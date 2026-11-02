@@ -1,3 +1,10 @@
+---
+description: >-
+  Retrieve equity, fixed-income, and revenue exposure by region or country
+  with the InvestmentsConnector, inspect the available data tables, and build
+  a chart from selected columns such as regional net exposure.
+---
+
 # Country and Regional Exposure Breakdown
 
 The **Country and Regional Exposure Breakdown** view provides a portfolio's
@@ -66,7 +73,7 @@ Highcharts.chart('container', {
 You will find examples of how to use `CountryAndRegionExposure` converter in
 our demos.
 
-- **Highcharts Core + Morningstar Country and Region Exposure**
+- [Highcharts Core + Morningstar Country and Region Exposure](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-region-breakdown-chart/)
 
 ## Morningstar API Reference
 

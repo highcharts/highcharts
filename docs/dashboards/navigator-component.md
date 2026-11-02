@@ -1,3 +1,10 @@
+---
+description: >-
+  Add a Navigator component to show a table column overview and synchronize
+  selected extremes; configure crossfilter with a shared connector,
+  FilterModifier, and affectNavigators option to filter related tables.
+---
+
 # Navigator component
 
 ## Overview

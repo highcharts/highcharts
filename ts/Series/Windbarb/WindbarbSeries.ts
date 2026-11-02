@@ -31,10 +31,8 @@ import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
 import OnSeriesComposition from '../OnSeriesComposition.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import WindbarbPoint from './WindbarbPoint.js';
 import WindbarbSeriesDefaults from './WindbarbSeriesDefaults.js';
 import { extend, merge } from '../../Shared/Utilities.js';
@@ -106,6 +104,7 @@ class WindbarbSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: WindbarbSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         WindbarbSeriesDefaults
@@ -127,6 +126,7 @@ class WindbarbSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public init(
         chart: Chart,
         options: WindbarbSeriesOptions
@@ -135,6 +135,7 @@ class WindbarbSeries extends ColumnSeries {
     }
 
     // Get presentational attributes.
+    /** @internal */
     public pointAttribs(
         point?: WindbarbPoint,
         state?: StatesOptionsKey
@@ -158,6 +159,7 @@ class WindbarbSeries extends ColumnSeries {
 
     // Create a single wind arrow. It is later rotated around the zero
     // centerpoint.
+    /** @internal */
     public windArrow(
         point: WindbarbPoint
     ): (SVGElement|SVGPath) {
@@ -236,6 +238,7 @@ class WindbarbSeries extends ColumnSeries {
         return path;
     }
 
+    /** @internal */
     public drawPoints(): void {
         const chart = this.chart,
             yAxis = this.yAxis,
@@ -296,6 +299,7 @@ class WindbarbSeries extends ColumnSeries {
     }
 
     // Fade in the arrows on initializing series.
+    /** @internal */
     public animate(
         init?: boolean
     ): void {
@@ -310,14 +314,17 @@ class WindbarbSeries extends ColumnSeries {
         }
     }
 
+    /** @internal */
     public markerAttribs(): SVGAttributes {
         return {};
     }
 
+    /** @internal */
     public getExtremes(): DataExtremesObject {
         return {};
     }
 
+    /** @internal */
     public shouldShowTooltip(
         plotX: number,
         plotY: number,
@@ -336,15 +343,25 @@ class WindbarbSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
+    /** @internal */
     beaufortFloor: Array<number>;
+    /** @internal */
     beaufortName: Array<string>;
+    /** @internal */
     group: typeof ColumnSeries.prototype.group;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof WindbarbPoint;
+    /** @internal */
     remove: typeof ColumnSeries.prototype.remove;
+    /** @internal */
     drawTracker: typeof ColumnSeries.prototype.remove;
+    /** @internal */
     windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
 
 }

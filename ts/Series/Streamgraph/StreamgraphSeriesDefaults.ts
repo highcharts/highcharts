@@ -80,7 +80,7 @@ const StreamgraphSeriesDefaults: StreamgraphSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.streamgraph
- * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
+ * @excluding step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  modules/streamgraph
  * @apioption series.streamgraph

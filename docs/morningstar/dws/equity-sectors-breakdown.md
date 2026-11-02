@@ -1,3 +1,10 @@
+---
+description: >-
+  Read portfolio equity exposure at super-sector, sector, and industry levels
+  from the InvestmentsConnector, then choose long, short, net, or rescaled
+  percentage columns to build a chart.
+---
+
 # Equity Sectors Breakdown
 
 The **Equity Sectors Breakdown** view provides the equity portion of
@@ -77,7 +84,8 @@ Highcharts.chart('container', {
 You will find examples of how to use `EquitySectorsBreakdown` converter in our
 demos.
 
-- **Highcharts Core + Morningstar Equity Sectors Breakdown**
+- [Highcharts Core + Morningstar Equity Sectors Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-sector-breakdown-bar-chart/)
+- [Highcharts Core + Morningstar Equity Sectors Breakdown (Spider)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-sector-breakdown-spider/)
 
 ## Morningstar API Reference
 

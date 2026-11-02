@@ -1,3 +1,10 @@
+---
+description: >-
+  Load the Dashboards stylesheet and choose system-based or forced light and
+  dark themes. Configure chart components using Highcharts color-scheme
+  classes, palette options, or styled mode with the required CSS.
+---
+
 # Light and Dark Theme
 
 The Light and Dark adaptive theme allows you to switch between a light and dark theme for the dashboard.

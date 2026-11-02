@@ -88,7 +88,7 @@ interface PieSeriesEventsOptions extends SeriesEventsOptions {
  *            softThreshold, stacking, step, threshold, turboThreshold,
  *            zoneAxis, zones, dataSorting, boostBlending
  *
- * @excluding cropThreshold, dataParser, dataURL, linkedTo, stack, xAxis, yAxis,
+ * @excluding cropThreshold, linkedTo, stack, xAxis, yAxis,
  *            dataSorting, step, boostThreshold, boostBlending
  *
  * @product highcharts highmaps

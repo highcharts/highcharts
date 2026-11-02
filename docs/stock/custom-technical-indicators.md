@@ -1,5 +1,9 @@
 ---
 title: Custom technical indicators
+description: >-
+  Implement custom indicators by defining getValues and calculation logic,
+  then extend the examples to multiple lines, event-triggered recalculation,
+  or columns using Highcharts series types and mixins.
 ---
 
 import Tabs from '@theme/Tabs';

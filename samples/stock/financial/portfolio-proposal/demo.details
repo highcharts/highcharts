@@ -1,0 +1,9 @@
+---
+name: Portfolio Proposal
+description: Compares current and proposed portfolio allocations with performance and risk metrics for decision-making.
+tags:
+  - Dashboards
+  - Morningstar
+js_wrap: b
+requiresManualTesting: true
+...

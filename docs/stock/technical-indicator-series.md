@@ -1,3 +1,10 @@
+---
+description: >-
+  Load indicator modules and link overlays or oscillators to a main series,
+  set indicator parameters and axes, and provide a volume-series ID for
+  calculations that use volume data.
+---
+
 Technical indicators
 ===
 

@@ -1,5 +1,9 @@
 ---
 tags: ["grid-pro"]
+description: >-
+  Choose built-in Grid Pro renderers for text, numbers, dates, booleans, and
+  select options; configure renderers for display or edit mode, add input
+  attributes, and link to validation.
 ---
 
 # Cell renderers

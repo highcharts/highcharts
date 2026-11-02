@@ -24,10 +24,8 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import AD from '../AD/ADIndicator.js'; // For historic reasons, AD is built into Chaikin
+import EMAIndicator from '../EMA/EMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    ema: EMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -40,7 +38,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The Chaikin series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.chaikin
  *
@@ -67,9 +64,10 @@ class ChaikinIndicator extends EMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/chaikin
+     * @requires     indicators/indicators
+     * @requires     indicators/chaikin
      * @optionparent plotOptions.chaikin
+     * @internal
      */
     public static defaultOptions: ChaikinOptions = merge(EMAIndicator.defaultOptions, {
         /**
@@ -118,6 +116,7 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ChaikinParamsOptions
@@ -195,7 +194,6 @@ class ChaikinIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface ChaikinIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -212,7 +210,6 @@ extend(ChaikinIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         chaikin: typeof ChaikinIndicator;
@@ -225,7 +222,6 @@ SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
  *  Default Export
  *
  * */
-/** @internal */
 export default ChaikinIndicator;
 
 /* *
@@ -241,11 +237,11 @@ export default ChaikinIndicator;
  * @extends   series,plotOptions.chaikin
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, stacking, showInNavigator
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/chaikin
+ * @requires  indicators/indicators
+ * @requires  indicators/chaikin
  * @apioption series.chaikin
  */
 

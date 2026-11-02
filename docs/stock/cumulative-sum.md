@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable cumulative sums to add each visible value to the preceding total,
+  configure the feature on a series or axis, and use sum as the default
+  approximation when data grouping is active.
+---
+
 Cumulative Sum
 ================
 

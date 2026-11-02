@@ -42,6 +42,7 @@ import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
  *               linecap, shadow, stacking, step, boostBlending
  * @since        6.0.0
  * @product      highcharts highstock
+ * @requires     modules/datagrouping
  * @requires     modules/windbarb
  * @optionparent plotOptions.windbarb
  */
@@ -160,8 +161,9 @@ const WindbarbSeriesDefaults: WindbarbSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.windbarb
- * @excluding dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding boostThreshold, boostBlending
  * @product   highcharts highstock
+ * @requires  modules/datagrouping
  * @requires  modules/windbarb
  * @apioption series.windbarb
  */

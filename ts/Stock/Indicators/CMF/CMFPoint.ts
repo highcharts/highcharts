@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class CMFPoint extends SMAPoint {
+    /** @internal */
     public series: CMFIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class CMFPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default CMFPoint;

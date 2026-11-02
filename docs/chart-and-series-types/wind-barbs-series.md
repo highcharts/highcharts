@@ -1,3 +1,10 @@
+---
+description: >-
+  Encode wind direction with a stem and speed with barbs, using x, value,
+  and direction data. The article explains knot-based barb conventions and
+  how to place and size symbols alongside another series.
+---
+
 Wind barbs
 ===
 

@@ -23,8 +23,7 @@ import type { SeriesTypeRegistry } from './SeriesType';
 import type Series from './Series.js';
 
 import H from '../Globals.js';
-import D from '../Defaults.js';
-const { builtinPlotOptions, defaultOptions } = D;
+import { builtinPlotOptions, defaultOptions } from '../Defaults.js';
 import Point from './Point.js';
 import { extend, extendClass, merge } from '../../Shared/Utilities.js';
 

@@ -26,6 +26,7 @@ import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type {
+    CellEvent,
     Column,
     ColumnCollection,
     ColumnEvent,
@@ -67,8 +68,7 @@ import {
     setAnimation
 } from '../Animation/AnimationUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import D from '../Defaults.js';
-const { defaultOptions, globalUserPlotOptions } = D;
+import { defaultOptions, globalUserPlotOptions } from '../Defaults.js';
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -300,6 +300,7 @@ class Series {
     public static keepProps = [
         'colorIndex',
         'eventOptions',
+        'hasBoundDataTableEvents',
         'navigatorSeries',
         'symbolIndex',
         'baseSeries'
@@ -540,7 +541,12 @@ class Series {
      */
     public linkedSeries!: Array<Series>;
 
-    /** @internal */
+    /**
+     * The SVG group containing point marker elements that should not be
+     * clipped.
+     *
+     * @readonly
+     */
     public markerGroup?: SVGElement;
 
     /**
@@ -742,6 +748,14 @@ class Series {
      *
      * @name Highcharts.Series#linkedSeries
      * @type {Array<Highcharts.Series>}
+     * @readonly
+     */
+    /**
+     * The SVG group containing point marker elements that should not be
+     * clipped.
+     *
+     * @name Highcharts.Series#markerGroup
+     * @type {Highcharts.SVGElement}
      * @readonly
      */
     /**
@@ -1158,7 +1172,9 @@ class Series {
         fireEvent(this, 'setOptions', e);
 
         // These may be modified by the event
-        const typeOptions = (e.plotOptions as any)[this.type],
+        const typeOptions: SeriesTypeOptions =
+                e.plotOptions[this.type] ||
+                merge(defaultOptions.plotOptions[this.type]), // #24254
             userPlotOptions = (
                 userOptions.plotOptions || {} as SeriesTypePlotOptions
             ),
@@ -1551,8 +1567,11 @@ class Series {
         const { dataTable, options, requireSorting } = this,
             dataSorting = options.dataSorting,
             oldData = this.data,
-            rowsToAdd: Array<{ newIndex: number, oldIndex: number }> = [],
-            rowsToUpdate: Array<{ newIndex: number, oldIndex: number }> = [],
+            // Keeps `data[i]` paired with `options.data[i]` (#25312)
+            newData: Array<Point> = [],
+            // Where to resume the search per needle, so that repeated
+            // values match distinct points (#25083)
+            searchFrom = new Map<unknown, number>(),
             equalLength = dataTable.rowCount === oldData.length;
         let hasUpdatedByKey,
             i,
@@ -1593,46 +1612,28 @@ class Series {
             // We have a needle and a haystack to search for matching points
             if (haystack) {
 
-                pointIndex = haystack.indexOf(needle as any, lastIndex);
-
-                // Matching X not found or used already due to non-unique x
-                // values (#8995), add point (but later)
-                if (pointIndex === -1) {
-                    const optionsX = newXColumn?.[i];
-                    let newIndex = oldXColumn?.length ?? dataTable.rowCount;
-                    while (
-                        newIndex &&
-                        oldXColumn &&
-                        typeof optionsX === 'number' &&
-                        oldXColumn[newIndex - 1] as number > optionsX
-                    ) {
-                        newIndex--;
-                    }
-                    rowsToAdd.push({ newIndex, oldIndex: i });
+                // Speed optimize by only searching after the last known index.
+                // Performs ~20% better on large data sets.
+                pointIndex = haystack.indexOf(
+                    needle as any,
+                    requireSorting ? lastIndex : searchFrom.get(needle) ?? 0
+                );
+                if (pointIndex !== -1) {
+                    searchFrom.set(needle, pointIndex + 1);
+                }
 
                 // Matching X found, update
-                } else if (
-                    oldData[pointIndex] /* &&
-                    pOptions === oldData[pointIndex]?.options*/
-                ) {
-                    rowsToUpdate.push({
-                        newIndex: pointIndex,
-                        oldIndex: i
-                    });
+                if (oldData[pointIndex]) {
+                    newData[i] = oldData[pointIndex];
 
                     // Mark it touched, below we will remove all points that
                     // are not touched.
                     oldData[pointIndex].touched = true;
 
-                    // Speed optimize by only searching after last known
-                    // index. Performs ~20% better on large data sets.
                     if (requireSorting) {
                         lastIndex = pointIndex + 1;
                     }
-                // Point exists, no changes, don't remove it
-                } /*/ else if (oldData[pointIndex]) {
-                    oldData[pointIndex].touched = true;
-                }*/
+                }
 
                 // If the length is equal and some of the nodes had a
                 // match in the same position, we don't want to remove
@@ -1645,37 +1646,35 @@ class Series {
                 ) {
                     hasUpdatedByKey = true;
                 }
-            } else {
-                // Gather all points that are not matched
-                rowsToAdd.push({ newIndex: i, oldIndex: i });
             }
         }
 
         // Remove points that don't exist in the updated data set
         if (hasUpdatedByKey) {
-            // Update matching points
-            rowsToUpdate.forEach((row): void => {
-                oldData[row.newIndex].applyOptions(
-                    dataTable.getRowObject(row.oldIndex) as PointOptions
-                );
-            });
 
-            // Add new points
-            rowsToAdd.sort((a, b): number => b.newIndex - a.newIndex);
-            rowsToAdd.forEach((data): void => {
-                // Splice in an undefined item, `generatePoints` will pick it
-                // up and create the point
-                oldData.splice(data.newIndex, 0, void 0 as any);
-            });
+            newData.length = dataTable.rowCount;
+
+            // Update matching points
+            for (i = 0; i < newData.length; i++) {
+                point = newData[i];
+                if (point) {
+                    point.applyOptions(
+                        dataTable.getRowObject(i) as PointOptions
+                    );
+                    point.index = i;
+                }
+            }
+
             // Remove points not touched
             i = oldData.length;
             while (i--) {
                 point = oldData[i];
                 if (point && !point.touched) {
                     point.destroy();
-                    oldData.splice(i, 1);
                 }
             }
+
+            this.data = newData;
 
             this.isDirtyData = this.isDirty = true;
 
@@ -1711,7 +1710,7 @@ class Series {
         }
 
         oldData.forEach((point): void => {
-            if (point) {
+            if (point && !point.condemned) {
                 point.touched = false;
             }
         });
@@ -2026,7 +2025,20 @@ class Series {
                     .call({ series: this }, data[i]);
 
                 for (const key of Object.keys(ptOptions)) {
-                    columns[key] ||= new Array(dataLength);
+                    // Assigning these would write through to
+                    // `Object.prototype` or the `Object` constructor instead
+                    // of creating a column, and thereby affect unrelated
+                    // objects on the page
+                    if (key === '__proto__' || key === 'constructor') {
+                        continue;
+                    }
+
+                    // Inherited keys like `toString` are truthy without being
+                    // columns of ours, so test for an own property rather
+                    // than for a value (#25321)
+                    if (!Object.hasOwnProperty.call(columns, key)) {
+                        columns[key] = new Array(dataLength);
+                    }
                     columns[key][i] = (ptOptions as any)[key];
                 }
             }
@@ -2130,19 +2142,15 @@ class Series {
             return;
         }
 
-        const { chart, eventsToUnbind } = this,
+        const { chart } = this,
             queueRedraw = (): void => {
                 clearTimeout(chart.redrawTimeout);
                 chart.redrawTimeout = setTimeout(
                     (): void => chart.renderer && chart.redraw(),
                     0
                 );
-            };
-
-        eventsToUnbind.push(addEvent(
-            dataTable,
-            'afterSetRows',
-            (e: RowEvent): void => {
+            },
+            onSetRow = (e: CellEvent|RowEvent): void => {
                 const rowIndex = e.rowIndex;
 
                 if (isNumber(rowIndex)) {
@@ -2167,10 +2175,12 @@ class Series {
                         }
                     }
                 }
-            }
-        ));
+            };
 
-        eventsToUnbind.push(addEvent(
+        addEvent(dataTable, 'afterSetCell', onSetRow);
+        addEvent(dataTable, 'afterSetRows', onSetRow);
+
+        addEvent(
             dataTable,
             'afterDeleteRows',
             (e: RowEvent): void => {
@@ -2188,15 +2198,15 @@ class Series {
                     queueRedraw();
                 }
             }
-        ));
+        );
 
-        eventsToUnbind.push(addEvent(
+        addEvent(
             dataTable,
             'afterSetColumns',
             (e: ColumnEvent): void => {
                 this.setData(e.target);
             }
-        ));
+        );
 
         this.hasBoundDataTableEvents = true;
     }
@@ -2719,9 +2729,9 @@ class Series {
         this.generatePoints();
 
         const series = this,
-            { hasRendered, options, xAxis, yAxis } = series,
+            { options, xAxis, yAxis } = series,
             { stacking, threshold } = options,
-            { polar } = series.chart,
+            { hasRendered, polar } = series.chart,
             points = series.points.concat(series.condemnedPoints),
             dataLength = points.length,
             pointPlacement = series.pointPlacementToXValue(), // #7860
@@ -2866,10 +2876,13 @@ class Series {
             point.plotY = getPlotY(yValue, point);
 
             // Set the starting point of point entrance animation
-            point.origin = hasRendered && !point.graphic && !polar ? {
-                x: getPlotX(xValue, true),
-                y: getPlotY(yValue, point, true)
-            } : void 0;
+            point.origin = (
+                // The isNumber check is for toggling treemap/treegraph series
+                hasRendered && !point.graphic && !polar && isNumber(yValue)
+            ) ? {
+                    x: getPlotX(xValue, true),
+                    y: getPlotY(yValue, point, true)
+                } : void 0;
 
             point.isInside = this.isPointInside(point);
 
@@ -3004,7 +3017,7 @@ class Series {
         // Apply plotBorderRadius clipping
         plotClipGroup?.clip(
             // Navigator y-axis is not clippable
-            clip && this.yAxis.clippable ?
+            clip && this.yAxis?.clippable ?
                 chart.plotClipInner :
                 void 0
         );
@@ -3456,10 +3469,8 @@ class Series {
 
         const series = this,
             chart = series.chart,
-            issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
-            data = series.data || [];
+            issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent);
         let destroy: ('hide'|'destroy'),
-            i,
             axis;
 
         // Add event hook
@@ -3469,13 +3480,13 @@ class Series {
         this.removeEvents(keepEventsForUpdate);
 
         // Erase from axes
-        (series.axisTypes || []).forEach(function (AXIS: string): void {
-            axis = (series as any)[AXIS];
+        for (const coll of (series.axisTypes || [])) {
+            axis = series[coll];
             if (axis?.series) {
                 erase(axis.series, series);
                 axis.isDirty = axis.forceRedraw = true;
             }
-        });
+        }
 
         // Remove legend items
         if (series.legendItem) {
@@ -3483,9 +3494,8 @@ class Series {
         }
 
         // Destroy all points with their elements
-        i = data.length;
-        while (i--) {
-            data[i]?.destroy?.(true);
+        for (const point of series.points || []) {
+            point?.destroy?.(true);
         }
 
         for (const zone of series.zones || []) {
@@ -5012,7 +5022,7 @@ class Series {
         fireEvent(this, 'afterUpdate');
 
         if (redraw ?? true) {
-            chart.redraw(keepPoints ? void 0 : false);
+            chart.redraw();
         }
     }
 
@@ -5658,8 +5668,97 @@ export default Series;
  *     }]
  * });
  *
- * @interface Highcharts.DataMappingOptionsObject
+ * @typedef {Record<string, string|Highcharts.DataMappingItemObject>} Highcharts.DataMappingOptionsObject
  * @since 13.0.0
+ */
+
+/**
+ * The data table and column to read a point property from in
+ * [dataMapping](#plotOptions.series.dataMapping).
+ *
+ * @interface Highcharts.DataMappingItemObject
+ * @since 13.0.0
+ *//**
+ * The column from which to read the value for this data point property. This
+ * can be either a column id (string) or a column index (number) in the data
+ * table. Defaults to the column with the same id as the point property.
+ * @name Highcharts.DataMappingItemObject#column
+ * @type {number|string|undefined}
+ *//**
+ * The data table from which to read the value for this data point property.
+ * This can be either a data table id (string) or a data table index (number).
+ * Defaults to the first data table.
+ * @name Highcharts.DataMappingItemObject#dataTable
+ * @type {number|string|undefined}
+ */
+
+
+/**
+ * Function callback when adding a point
+ *
+ * @callback Highcharts.SeriesAddPointCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesAddPointEventObject} event
+ *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
+ */
+
+/**
+ * Event information regarding adding a point to a series.
+ *
+ * @interface Highcharts.SeriesAddPointEventObject
+ *//**
+ * Point that was added to the series.
+ * @name Highcharts.SeriesAddPointEventObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * Series to which the point was added.
+ * @name Highcharts.SeriesAddPointEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesAddPointEventObject#type
+ * @type {"addPoint"}
+ */
+
+/**
+ * Function callback when the series has set its options.
+ *
+ * @callback Highcharts.SeriesAfterSetOptionsCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesAfterSetOptionsEventObject} event
+ *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
+ */
+
+/**
+ * Event information regarding the options after a series has been set.
+ *
+ * @interface Highcharts.SeriesAfterSetOptionsEventObject
+ *//**
+ * Series whose options were updated.
+ * @name Highcharts.SeriesAfterSetOptionsEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * The final merged series options.
+ * @name Highcharts.SeriesAfterSetOptionsEventObject#options
+ * @type {Highcharts.SeriesOptionsType}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesAfterSetOptionsEventObject#type
+ * @type {"afterSetOptions"}
  */
 
 /**

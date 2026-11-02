@@ -1,3 +1,10 @@
+---
+description: >-
+  Place markers over a map with longitude and latitude or GeoJSON geometry,
+  and label points with series options. The article also describes
+  interactive clustering for dense point sets and links to the API.
+---
+
 Map point series
 ================
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn how chart options use JavaScript objects and arrays, how to change
+  those objects programmatically, and how Highcharts.setOptions applies shared
+  settings across multiple charts on the same page.
+---
+
 How to set options
 ===
 

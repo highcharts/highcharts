@@ -40,7 +40,7 @@ import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
  *
  * @product highcharts
  *
- * @exclude connectNulls, dashStyle, dataParser, dataURL, gapSize, gapUnit,
+ * @exclude connectNulls, dashStyle, gapSize, gapUnit,
  *          linecap, lineWidth, marker, connectEnds, step
  */
 export interface BarSeriesOptions extends ColumnSeriesOptions {

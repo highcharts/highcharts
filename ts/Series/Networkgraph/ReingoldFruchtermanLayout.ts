@@ -388,11 +388,11 @@ class ReingoldFruchtermanLayout {
             visitedNodes = {} as Record<string, boolean>,
             radius = this.options.initialPositionRadius,
             addToNodes = (node: Point): void => {
-                for (const link of node.linksFrom || []) {
-                    if (!visitedNodes[(link.toNode as any).id]) {
-                        visitedNodes[(link.toNode as any).id] = true;
-                        sortedNodes.push(link.toNode as any);
-                        addToNodes(link.toNode as any);
+                for (const { toNode } of node.linksFrom || []) {
+                    if (toNode && !visitedNodes[toNode.id]) {
+                        visitedNodes[toNode.id] = true;
+                        sortedNodes.push(toNode);
+                        addToNodes(toNode);
                     }
                 }
             };

@@ -1,3 +1,10 @@
+---
+description: >-
+  Install Dashboards in Angular, connect Highcharts and Grid plugins when
+  needed, and render charts with either the built-in row-and-cell layout or a
+  custom HTML structure managed by an Angular component.
+---
+
 # Highcharts Dashboards with Angular
 
 To create a dashboard with **Angular**, please follow the steps below:

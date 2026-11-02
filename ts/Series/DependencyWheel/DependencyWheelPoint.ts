@@ -26,11 +26,16 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    sankey: { prototype: { pointClass: SankeyPoint } }
-} = SeriesRegistry.seriesTypes;
+import SankeySeries from '../Sankey/SankeySeries.js';
 import { pInt, wrap } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const SankeyPoint = SankeySeries.prototype.pointClass;
 
 /* *
  *
@@ -38,7 +43,6 @@ import { pInt, wrap } from '../../Shared/Utilities.js';
  *
  * */
 
-/** @internal */
 class DependencyWheelPoint extends SankeyPoint {
 
     /* *
@@ -47,26 +51,36 @@ class DependencyWheelPoint extends SankeyPoint {
      *
      * */
 
+    /** @internal */
     public angle!: number;
 
+    /** @internal */
     public fromNode!: DependencyWheelPoint;
 
+    /** @internal */
     public index!: number;
 
+    /** @internal */
     public linksFrom!: Array<DependencyWheelPoint>;
 
+    /** @internal */
     public linksTo!: Array<DependencyWheelPoint>;
 
     public options!: DependencyWheelPointOptions;
 
+    /** @internal */
     public series!: DependencyWheelSeries;
 
+    /** @internal */
     public shapeArgs!: SVGAttributes;
 
+    /** @internal */
     public toNode!: DependencyWheelPoint;
 
+    /** @internal */
     public weightTo?: number;
 
+    /** @internal */
     public sumTo?: number;
 
     /* *
@@ -144,6 +158,7 @@ class DependencyWheelPoint extends SankeyPoint {
         return point.dataLabelPath;
     }
 
+    /** @internal */
     public isValid(): boolean {
         // No null points here
         return true;
@@ -157,5 +172,4 @@ class DependencyWheelPoint extends SankeyPoint {
  *
  * */
 
-/** @internal */
 export default DependencyWheelPoint;

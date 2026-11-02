@@ -38,7 +38,7 @@ async function getGitIgnoreMeProperties() {
         .then(data => data.toString());
     const script = await fs.readFile(`samples/${argv.path}/demo.js`)
         .then(data => data.toString());
-    const details = yaml.load(
+    const details = yaml.safeLoad(
         await fs.readFile(`samples/${argv.path}/demo.details`)
     );
 

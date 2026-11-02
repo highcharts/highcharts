@@ -1,3 +1,10 @@
+---
+description: >-
+  Install the Highcharts Flutter package, check the documented Dart and
+  Flutter minimum versions, import its widgets, and create a simple line chart
+  with HighchartsChart and typed options.
+---
+
 # Getting started with Highcharts Flutter
 
 Highcharts Flutter provides a robust set of widgets for an seamless integration

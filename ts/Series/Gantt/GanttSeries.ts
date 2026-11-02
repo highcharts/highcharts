@@ -29,13 +29,9 @@ import type Tick from '../../Core/Axis/Tick';
 import GanttPoint from './GanttPoint.js';
 import GanttSeriesDefaults from './GanttSeriesDefaults.js';
 import Pathfinder from '../../Gantt/Pathfinder.js';
+import Series from '../../Core/Series/Series.js';
+import XRangeSeries from '../XRange/XRangeSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        xrange: XRangeSeries
-    }
-} = SeriesRegistry;
 import { composeStaticScale } from '../../Extensions/StaticScale.js';
 import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 import { extend, isNumber, merge } from '../../Shared/Utilities.js';
@@ -47,7 +43,6 @@ import { extend, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.gantt
  *
@@ -61,6 +56,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: GanttSeriesOptions = merge(
         XRangeSeries.defaultOptions,
         GanttSeriesDefaults
@@ -72,6 +68,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass?: typeof Chart,
@@ -119,6 +116,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public getColumn(columnName: string): Array<number> {
         const time = this.chart.time;
         if (columnName === 'x') {
@@ -140,7 +138,7 @@ class GanttSeries extends XRangeSeries {
      *
      * @requires highcharts-gantt
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.gantt#drawPoint
      *
      * @param {Highcharts.Point} point
@@ -203,7 +201,7 @@ class GanttSeries extends XRangeSeries {
 
     /**
      * Handle milestones, as they have no x2.
-     * @private
+     * @internal
      */
     public translatePoint(point: GanttPoint): void {
         let shapeArgs: SVGAttributes,
@@ -232,7 +230,9 @@ class GanttSeries extends XRangeSeries {
  * */
 
 interface GanttSeries{
+    /** @internal */
     keyboardMoveVertical: boolean;
+    /** @internal */
     pointClass: typeof GanttPoint;
 }
 

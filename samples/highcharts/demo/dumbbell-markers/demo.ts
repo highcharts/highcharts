@@ -16,8 +16,10 @@ const createChart = (
 
         tooltip: {
             pointFormat: 'Season 21: used in deck by ' +
-                '<strong>{point.previous}</strong> of 1000 top players<br>' +
-                'Season 22: used in deck by <strong>{point.current}</strong> ' +
+                '<strong>{point.custom.previous}</strong> ' +
+                'of 1000 top players<br>' +
+                'Season 22: used in deck by ' +
+                '<strong>{point.custom.current}</strong> ' +
                 'of 1000 top players',
             shared: true
         },

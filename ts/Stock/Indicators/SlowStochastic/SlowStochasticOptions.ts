@@ -37,9 +37,9 @@ import type {
  * @extends      plotOptions.stochastic
  * @since        8.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/stochastic
- * @requires     stock/indicators/slow-stochastic
+ * @requires     indicators/indicators
+ * @requires     indicators/stochastic
+ * @requires     indicators/slow-stochastic
  * @interface Highcharts.SlowStochasticOptions
  */
 export interface SlowStochasticOptions extends StochasticOptions, MultipleLinesComposition.IndicatorOptions {

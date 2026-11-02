@@ -52,12 +52,13 @@ import type WindbarbPointOptions from './WindbarbPointOptions';
  *            cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
  *            linecap, shadow, stacking, step, boostBlending
  *
- * @excluding dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding boostThreshold, boostBlending
  *
  * @since 6.0.0
  *
  * @product highcharts highstock
  *
+ * @requires modules/datagrouping
  * @requires modules/windbarb
  */
 export interface WindbarbSeriesOptions extends ColumnSeriesOptions {

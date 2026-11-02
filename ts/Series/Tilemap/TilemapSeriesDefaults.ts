@@ -52,6 +52,8 @@ import type TilemapSeriesOptions from './TilemapSeriesOptions';
  *               dataSorting, boostThreshold, boostBlending
  * @product      highcharts highmaps
  * @requires     modules/tilemap
+ * @requires     product:highmaps
+ * @requires     modules/heatmap
  * @optionparent plotOptions.tilemap
  */
 const TilemapSeriesDefaults: TilemapSeriesOptions = {
@@ -86,6 +88,24 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
      *         Point padding on tiles
      */
     pointPadding: 2,
+
+    /**
+     * When using automatic point colors pulled from the global
+     * [colors](#colors) collection, this option determines whether the chart
+     * should receive one color per series or one color per point.
+     *
+     * In styled mode, the `colors` array is not supported, and instead this
+     * option gives the points individual color class names on the form
+     * `highcharts-color-{n}`.
+     *
+     * @sample maps/demo/diamondmap
+     *         Diamondmap tilemap with one color per point
+     *
+     * @type      {boolean}
+     * @default   false
+     * @product   highcharts highmaps
+     * @apioption plotOptions.tilemap.colorByPoint
+     */
 
     /**
      * The column size - how many X axis units each column in the tilemap
@@ -138,11 +158,13 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.tilemap
- * @excluding allAreas, dataParser, dataURL, joinBy, mapData, marker,
+ * @excluding allAreas, joinBy, mapData, marker,
  *            pointRange, shadow, stack, dataSorting, boostThreshold,
  *            boostBlending
  * @product   highcharts highmaps
  * @requires  modules/tilemap
+ * @requires  product:highmaps
+ * @requires  modules/heatmap
  * @apioption series.tilemap
  */
 

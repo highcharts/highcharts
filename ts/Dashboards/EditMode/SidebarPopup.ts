@@ -484,7 +484,7 @@ class SidebarPopup extends BaseForm {
                     );
                 }
             });
-            gridElement.innerHTML = components[i].text;
+            gridElement.textContent = components[i].text;
         }
         return;
     }

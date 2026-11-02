@@ -24,10 +24,8 @@ import type HistogramSeriesOptions from './HistogramSeriesOptions';
 
 import DerivedComposition from '../DerivedComposition.js';
 import HistogramSeriesDefaults from './HistogramSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import AnimationOptions from '../../Core/Animation/AnimationOptions';
 import {
     arrayMax,
@@ -87,7 +85,6 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
 
 /**
  * Histogram class
- * @internal
  * @class
  * @name Highcharts.seriesTypes.histogram
  * @augments Highcharts.Series
@@ -100,6 +97,7 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: HistogramSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         HistogramSeriesDefaults
@@ -111,6 +109,7 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public binWidth?: number;
 
     public data!: Array<HistogramPoint>;
@@ -119,6 +118,7 @@ class HistogramSeries extends ColumnSeries {
 
     public points!: Array<HistogramPoint>;
 
+    /** @internal */
     public userOptions!: HistogramSeriesOptions;
 
     /* *
@@ -287,13 +287,18 @@ class HistogramSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface HistogramSeries extends DerivedComposition.SeriesComposition {
     animate: typeof ColumnSeries.prototype.animate;
+    /** @internal */
     destroy: typeof ColumnSeries.prototype.destroy;
     drawPoints: typeof ColumnSeries.prototype.drawPoints;
+    /** @internal */
     drawTracker: typeof ColumnSeries.prototype.drawTracker;
     group: typeof ColumnSeries.prototype.group;
+    /** @internal */
     init: typeof ColumnSeries.prototype.init;
+    /** @internal */
     pointAttribs: typeof ColumnSeries.prototype.pointAttribs;
     pointClass: typeof HistogramPoint;
     remove: typeof ColumnSeries.prototype.remove;

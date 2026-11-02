@@ -97,7 +97,7 @@ declare module '../../Core/Series/StatesOptions' {
  *
  * @extends series,plotOptions.column
  *
- * @excluding connectEnds, connectNulls, dataParser, dataURL, gapSize, gapUnit,
+ * @excluding connectEnds, connectNulls, gapSize, gapUnit,
  *            linecap, lineWidth, marker, step, useOhlcData
  *
  * @product highcharts highstock
@@ -113,7 +113,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
      *         Dark gray border
      *
-     * @default var(--highcharts-background-color)
+     * @default 'var(--highcharts-background-color)'
      *
      * @product highcharts highstock gantt
      */
@@ -163,44 +163,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @product highcharts highstock gantt
      */
     centerInCategory?: boolean;
-
-    /**
-     * When using automatic point colors pulled from the global
-     * [colors](colors) or series-specific
-     * [plotOptions.column.colors](series.colors) collections, this option
-     * determines whether the chart should receive one color per series or
-     * one color per point.
-     *
-     * In styled mode, the `colors` or `series.colors` arrays are not
-     * supported, and instead this option gives the points individual color
-     * class names on the form `highcharts-color-{n}`.
-     *
-     * @see [series colors](#plotOptions.column.colors)
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
-     *         False by default
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
-     *         True
-     *
-     * @default false
-     *
-     * @since 2.0
-     *
-     * @product highcharts highstock gantt
-     */
-    colorByPoint?: boolean;
-
-    /**
-     * A series specific or series type specific color set to apply instead
-     * of the global [colors](#colors) when [colorByPoint](
-     * #plotOptions.column.colorByPoint) is true.
-     *
-     * @since 3.0
-     *
-     * @product highcharts highstock gantt
-     */
-    colors?: Array<ColorType>;
 
     /**
      * When the series contains less points than the crop threshold, all
@@ -350,14 +312,18 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * The minimal height for a column or width for a bar. By default,
      * 0 values are not shown. To visualize a 0 (or close to zero) point,
      * set the minimal point length to a pixel value like 3\. In stacked
-     * column charts, minPointLength might not be respected for tightly
-     * packed values.
+     * column charts, the length is applied to each point in isolation, so
+     * tightly packed values may overlap. See the stacked sample below for a
+     * plugin that lays out the stack as a whole instead.
      *
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength/
      *         Zero base value
      *
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/
      *         Positive and negative close to zero values
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-minpointlength-stacked/
+     *         Stack-aware minimum length
      *
      * @product highcharts highstock gantt
      */
@@ -441,15 +407,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
     threshold?: (number|null);
 
     tooltip?: ColumnSeriesTooltipOptions;
-
-    /* *
-     *
-     *  Excluded
-     *
-     * */
-
-    dataParser?: undefined;
-    dataURL?: undefined;
 }
 
 export interface ColumnSeriesTooltipOptions extends SeriesTooltipOptions {

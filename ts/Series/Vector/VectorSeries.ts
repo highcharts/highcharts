@@ -28,13 +28,9 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import H from '../../Core/Globals.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
 import VectorSeriesDefaults from './VectorSeriesDefaults.js';
 import { arrayMax, extend, merge } from '../../Shared/Utilities.js';
 
@@ -61,6 +57,7 @@ class VectorSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: VectorSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         VectorSeriesDefaults
@@ -74,8 +71,10 @@ class VectorSeries extends ScatterSeries {
 
     public data!: Array<VectorPoint>;
 
+    /** @internal */
     public lengthData?: Array<number>;
 
+    /** @internal */
     public lengthMax!: number;
 
     public options!: VectorSeriesOptions;

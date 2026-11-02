@@ -1,3 +1,10 @@
+---
+description: >-
+  Define chart series using numeric arrays, point objects, or mapped DataTable
+  columns. Learn how shared and individual series options control markers,
+  selection, labels, colors, and other aspects of data presentation.
+---
+
 Series
 ======
 

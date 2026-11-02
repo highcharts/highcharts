@@ -123,19 +123,55 @@ function createTemplateForChangedSamples(changedFilesProvider = getFilesChanged)
 function createPRCommentBody(
     diffingSamples,
     prNumber,
-    changedFilesProvider = getFilesChanged
+    changedFilesProvider,
+    comparedCount
 ) {
     const reviewUrl = `${normalizeApiUrl(getVisualReviewApiUrl())}/pr/${prNumber}/review`;
+    const referenceFailures = readTestResultsFile('test/visual-reference-failures.json');
+    const failures = Array.isArray(referenceFailures) ? referenceFailures
+        .filter(failure => failure && typeof failure.sample === 'string' &&
+            typeof failure.error === 'string') : [];
     let commentTemplate = `${DEFAULT_COMMENT_TITLE} - No difference found`;
     if (diffingSamples.length > 0) {
-        commentTemplate = `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
+        commentTemplate = `${DEFAULT_COMMENT_TITLE} - Differences found`;
+    }
+    if (failures.length) {
+        commentTemplate = `${DEFAULT_COMMENT_TITLE} - ${
+            comparedCount ? 'Partial comparison' : 'No comparable samples'
+        }`;
+    }
+    commentTemplate += `\n\nCompared **${comparedCount}** samples.`;
+    if (diffingSamples.length > 0) {
+        commentTemplate += '\n' +
             `Found **${diffingSamples.length}** diffing sample(s). ${createMarkdownLink(
-                reviewUrl,
-                'Please review the differences.'
+                argv.artifactsUrl || reviewUrl,
+                argv.artifactsUrl ?
+                    'Download the visual-test-results artifact.' :
+                    'Please review the differences.'
             )}\n`;
+    }
+    if (argv.artifactsUrl) {
+        commentTemplate += '\n\nKarma results are available in ' +
+            createMarkdownLink(argv.artifactsUrl, 'GitHub Actions artifacts') +
+            '. Production Visual Review contains Playwright results.';
     }
     const changedSamplesTemplate = createTemplateForChangedSamples(changedFilesProvider);
     commentTemplate += `\n\n${changedSamplesTemplate}`;
+
+    if (failures.length > 0) {
+        const failureList = failures
+            .map(({ sample, error }) => {
+                const oneLineError = error.trim().replace(/\s+/gu, ' ')
+                    .replace(/([\\`])/gu, '\\$1').slice(0, 200);
+                return `- \`${sample}\`: ${oneLineError}`;
+            });
+        commentTemplate += `\n\n**${failures.length}** candidates rendered without a reference.\n\n` +
+            'Reference failures (not compared)\n' +
+            'Candidate renderings are in the GitHub Actions artifacts.\n' +
+            failureList.join('\n');
+    } else if (referenceFailures !== false && !Array.isArray(referenceFailures)) {
+        logLib.warn('Invalid visual reference failures file: expected a JSON array.');
+    }
 
     return commentTemplate;
 }
@@ -165,7 +201,6 @@ function getPullRequestSha() {
 
 function getSubmissionOptions(testResults, prNumber) {
     const runId = process.env.GITHUB_RUN_ID || String(Date.now());
-    const runNumber = process.env.GITHUB_RUN_NUMBER || runId;
     return {
         apiKey: argv.visualReviewApiKey || process.env.VISUAL_REVIEW_API_KEY,
         apiUrl: getVisualReviewApiUrl(),
@@ -174,7 +209,7 @@ function getSubmissionOptions(testResults, prNumber) {
         productVersion: highchartsVersion,
         runAttempt: process.env.GITHUB_RUN_ATTEMPT || '1',
         runId,
-        runNumber,
+        runNumber: runId,
         samples: createSubmissionSamples(testResults),
         testReport: testResults
     };
@@ -188,6 +223,10 @@ async function submitReview(testResults, prNumber) {
     if (hasVisualTestErrors()) {
         logLib.warn('Visual test errors found; skipping visual review API finalization.');
         return false;
+    }
+    if (argv.artifactsUrl) {
+        logLib.message('Skipping visual review API submission.');
+        return true;
     }
 
     const progressBar = createUploadProgressBar();
@@ -250,7 +289,8 @@ async function commentOnPR({ changedFilesProvider = getFilesChanged } = {}) {
         return writeCommentFile(createPRCommentBody(
             diffingSamples,
             prNumber,
-            changedFilesProvider
+            changedFilesProvider,
+            Object.values(testResults).filter(value => typeof value === 'number').length
         ));
     } catch (err) {
         if (!argv.failSilently) {
@@ -266,6 +306,7 @@ commentOnPR.flags = {
     '--pr': 'Pull request number',
     '--fail-silently': 'Will always return exitCode 0 (success)',
     '--dryrun': 'Skips the Visual Review API submission.',
+    '--artifacts-url': 'Writes an artifact-linked PR comment without publishing to Visual Review.',
     '--results-path': 'Path to the visual test results JSON file.',
     '--visual-review-api-url': 'Use VISUAL_REVIEW_API_URL to select the service origin. Defaults to https://vrevs.highsoft.com.',
     '--visual-review-api-key': 'Use VISUAL_REVIEW_API_KEY to authenticate with the ingestion API.'

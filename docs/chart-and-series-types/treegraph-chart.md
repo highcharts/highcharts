@@ -1,3 +1,10 @@
+---
+description: >-
+  Build a rooted hierarchy from nodes and parent IDs without requiring
+  numeric values, then configure the links and collapse child branches. The
+  article also explains x positions for dendrogram branch lengths.
+---
+
 Treegraph chart
 ===
 A Tree graph is a way of visualizing a [tree](https://www.highcharts.com/docs/chart-concepts/dataviz-glossary#tree-data-structure) or hierarchy data structure. The best examples of a tree data structure are:

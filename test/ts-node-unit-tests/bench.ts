@@ -3,8 +3,10 @@ import type { BenchResults, BenchmarkResult, BenchmarkDetails } from './benchmar
 import { readdirSync, existsSync } from 'node:fs';
 import { readdir, mkdir, writeFile, rm, lstat } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { Worker } from 'node:worker_threads';
 import { argv, exit } from 'node:process';
+import { pathToFileURL } from 'node:url';
 
 import yargs from 'yargs';
 import * as swc from '@swc/core';
@@ -24,7 +26,6 @@ const OUTPUT_PATH = join(__dirname, '../../tmp/benchmarks');
 
 const TEST_TIMEOUT_SECONDS = 100;
 
-const errors = [];
 let testCounter: number = 0;
 
 async function transpileFile(path: string) {
@@ -64,7 +65,7 @@ const getDirRecursive = async (dir: string): Promise<Array<string>> => {
     }
 };
 
-async function runTestInWorker(testFile: string, size: number): Promise<BenchmarkResult | undefined> {
+async function runTestInWorker(testFile: string, size: number): Promise<BenchmarkResult> {
     const worker = new Worker( await transpileFile(join(__dirname, 'bench-worker.ts')), {
         resourceLimits: {
             stackSizeMb: 20
@@ -74,34 +75,40 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
         },
     );
 
-    const promise = new Promise((resolve, reject) =>{
+    let timeout: ReturnType<typeof setTimeout>;
+    const promise = new Promise<BenchmarkResult>((resolve, reject) =>{
         worker.on('message', value =>{
-            if (value.error){
-                worker.terminate();
+            if (Object.prototype.hasOwnProperty.call(value, 'error')) {
                 reject(value.error);
-            }
-
-            if (value.result){
-                worker.terminate();
+            } else if (Number.isFinite(value.result)) {
                 resolve(value.result);
+            } else {
+                reject(new Error(
+                    `Benchmark ${testFile} must return a finite number`
+                ));
             }
         });
+        worker.on('error', reject);
+        worker.on('exit', code => {
+            reject(new Error(
+                `Benchmark worker exited with code ${code} before returning ` +
+                `a result: ${testFile}`
+            ));
+        });
 
-        setTimeout(()=>{
-            worker.terminate();
+        timeout = setTimeout(()=>{
             reject(new Error(`Test ${testFile} timed out after ${TEST_TIMEOUT_SECONDS} seconds`));
         }, TEST_TIMEOUT_SECONDS * 1000);
     });
 
     worker.postMessage({ testFile, size, CODE_PATH });
 
-    const result = await promise
-        .catch(error =>{
-            console.error(error);
-            return undefined;
-        });
-
-    return result as BenchmarkResult | undefined;
+    try {
+        return await promise;
+    } finally {
+        clearTimeout(timeout);
+        await worker.terminate();
+    }
 }
 
 const ITERATIONS = 15;
@@ -122,7 +129,7 @@ function quartile (arr: number[], q:number) {
 };
 
 async function runRest(testFile: string) : Promise<BenchResults>{
-    const { config } = await import(testFile);
+    const { config } = await import(pathToFileURL(testFile).href);
 
     const results = [];
     await mkdir(join(__dirname, 'test-data'), { recursive: true });
@@ -146,7 +153,7 @@ async function runRest(testFile: string) : Promise<BenchResults>{
         while (i < ITERATIONS) {
             i++;
 
-            const result = await runTestInWorker(testFile, size) ?? 0;
+            const result = await runTestInWorker(testFile, size);
             details.results.push(result);
 
             if (result > details.max) {
@@ -192,7 +199,7 @@ async function benchmark(){
 
         const testFiles = result.filter(file => {
             if (pattern && typeof pattern === 'string') {
-                return new RegExp(pattern).test(file);
+                return file.includes(pattern);
             }
 
             return file.includes('.bench.ts');
@@ -221,13 +228,12 @@ async function benchmark(){
         };
     }
 
-    if (errors.length) {
-        throw new Error(`Failed ${errors.length}/${testCounter} tests`);
-    }
-
     success(`Ran ${testCounter} successful benches`);
     finished('Benchmarks');
     exit(0);
 }
 
-benchmark().catch(console.error);
+benchmark().catch(error => {
+    console.error(error);
+    exit(1);
+});

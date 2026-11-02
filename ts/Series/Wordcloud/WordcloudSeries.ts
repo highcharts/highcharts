@@ -34,10 +34,8 @@ import DPU from '../DrawPointUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudSeriesDefaults from './WordcloudSeriesDefaults.js';
 import WU from './WordcloudUtils.js';
@@ -88,6 +86,7 @@ class WordcloudSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: WordcloudSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         WordcloudSeriesDefaults
@@ -99,7 +98,9 @@ class WordcloudSeries extends ColumnSeries {
      *
      * */
     public data!: Array<WordcloudPoint>;
+    /** @internal */
     public defaultScale?: number;
+    /** @internal */
     public field?: WordcloudSeries.WordcloudFieldObject;
     public options!: WordcloudSeriesOptions;
     public points!: Array<WordcloudPoint>;
@@ -154,6 +155,7 @@ class WordcloudSeries extends ColumnSeries {
         return Math.floor(Math.max(min, weight * max));
     }
 
+    /** @internal */
     public drawPoints(): void {
         if (
             this.zooming ||
@@ -365,6 +367,7 @@ class WordcloudSeries extends ColumnSeries {
         });
     }
 
+    /** @internal */
     public hasData(): boolean {
         const series = this;
 
@@ -376,6 +379,7 @@ class WordcloudSeries extends ColumnSeries {
         );
     }
 
+    /** @internal */
     public getPlotBox(name?: string): Series.PlotBoxTransform {
         const series = this,
             { chart, group, zooming } = this,
@@ -517,10 +521,15 @@ class WordcloudSeries extends ColumnSeries {
  *
  * */
 interface WordcloudSeries {
+    /** @internal */
     placementStrategy: Record<string, WordcloudSeries.WordcloudPlacementFunction>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof WordcloudPoint;
+    /** @internal */
     spirals: Record<string, WordcloudSeries.WordcloudSpiralFunction>;
+    /** @internal */
     utils: typeof WU;
 }
 

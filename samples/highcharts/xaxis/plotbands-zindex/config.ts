@@ -11,6 +11,11 @@ export default {
     }],
     templates: ['categories-12'],
     chartOptionsExtra: {
+        subtitle: {
+            text: `<em>zIndex: 0</em> → behind the grid lines<br>
+            <em>zIndex: 4</em> → in front of the line graph<br>
+            <em>zIndex: 9</em> → in front of the tooltip`
+        },
         xAxis: {
             plotBands: [{
                 color: '#8888ff',

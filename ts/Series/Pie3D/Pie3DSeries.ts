@@ -30,10 +30,7 @@ const {
     deg2rad
 } = H;
 import Pie3DPoint from './Pie3DPoint.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
+import PieSeries from '../Pie/PieSeries.js';
 import { extend, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
@@ -44,7 +41,7 @@ import { extend, pushUnique } from '../../Shared/Utilities.js';
 
 /**
  * Internal types
- * @private
+ * @internal
  */
 declare module '../Pie/PieSeriesOptions' {
     interface PieSeriesOptions {
@@ -68,6 +65,7 @@ class Pie3DSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series
     ): void {
@@ -85,7 +83,7 @@ class Pie3DSeries extends PieSeries {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public addPoint(): void {
         super.addPoint.apply(this, arguments);
@@ -96,7 +94,7 @@ class Pie3DSeries extends PieSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         if (!this.chart.is3d()) {
@@ -155,7 +153,7 @@ class Pie3DSeries extends PieSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public getDataLabelPosition(
         point: Pie3DPoint,
@@ -197,7 +195,7 @@ class Pie3DSeries extends PieSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public pointAttribs(point: Pie3DPoint): SVGAttributes {
         const attr = super.pointAttribs.apply(this, arguments),
@@ -212,7 +210,7 @@ class Pie3DSeries extends PieSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public translate(): void {
         super.translate.apply(this, arguments);
@@ -269,7 +267,7 @@ class Pie3DSeries extends PieSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public drawTracker(): void {
         super.drawTracker.apply(this, arguments);

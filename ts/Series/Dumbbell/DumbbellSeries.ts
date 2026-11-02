@@ -24,16 +24,14 @@ import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type LollipopPoint from '../Lollipop/LollipopPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
+import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
+import ColumnRangeSeries from '../ColumnRange/ColumnRangeSeries.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import DumbbellPoint from './DumbbellPoint.js';
 import DumbbellSeriesDefaults from './DumbbellSeriesDefaults.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    arearange: AreaRangeSeries,
-    column: ColumnSeries,
-    columnrange: ColumnRangeSeries
-} = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import { extend, merge } from '../../Shared/Utilities.js';
 
@@ -58,7 +56,6 @@ declare module '../../Core/Series/StatesOptions' {
 /**
  * The dumbbell series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dumbbell
  *
@@ -72,6 +69,7 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DumbbellSeriesOptions = merge(
         AreaRangeSeries.defaultOptions,
         DumbbellSeriesDefaults
@@ -86,7 +84,9 @@ class DumbbellSeries extends AreaRangeSeries {
     public data!: Array<DumbbellPoint>;
     public options!: DumbbellSeriesOptions;
     public points!: Array<DumbbellPoint>;
+    /** @internal */
     public columnMetrics!: ColumnMetricsObject;
+    /** @internal */
     public lowColor?: ColorType;
 
 
@@ -373,9 +373,9 @@ class DumbbellSeries extends AreaRangeSeries {
  *
  * */
 
-/** @internal */
 interface DumbbellSeries {
     pointClass: typeof DumbbellPoint;
+    /** @internal */
     crispCol: typeof ColumnSeries.prototype.crispCol;
     trackerGroups: Array<string>;
     translatePoint: typeof AreaRangeSeries.prototype['translate'];
@@ -398,7 +398,6 @@ extend(DumbbellSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dumbbell: typeof DumbbellSeries;
@@ -413,5 +412,4 @@ SeriesRegistry.registerSeriesType('dumbbell', DumbbellSeries);
  *
  * */
 
-/** @internal */
 export default DumbbellSeries;

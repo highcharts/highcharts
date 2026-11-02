@@ -1,3 +1,10 @@
+---
+description: >-
+  Choose an installation method for Highcharts Core, Stock, Maps, or Gantt.
+  Load product bundles and optional modules in the right order using npm,
+  browser imports, script tags, or self-hosted files.
+---
+
 Installation
 ===
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Build a hierarchy from nodes and links, then use node data labels as HTML
+  cards with optional titles, descriptions, and images. The article also
+  shows how to style nodes by level.
+---
+
 Organization chart
 ===
 

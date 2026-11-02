@@ -54,7 +54,7 @@ import type { PointShortOptions } from '../../Core/Series/PointOptions';
  * @excluding allAreas, boostThreshold, colorAxis, compare, compareBase,
  *            dataSorting, boostBlending
  *
- * @excluding dataParser, dataURL, marker, boostThreshold,
+ * @excluding marker, boostThreshold,
  *            boostBlending
  *
  * @requires modules/bullet

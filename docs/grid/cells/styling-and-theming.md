@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Styling and Theming"
+description: >-
+  Apply CSS classes or inline styles to body cells, use a callback for
+  value-dependent styling, and use theme variables for shared cell appearance
+  and conditional row or column treatments.
 ---
 
 # Cell styling and theming
