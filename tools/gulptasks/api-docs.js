@@ -28,6 +28,9 @@ npx gulp api-docs [OPTIONS]
 OPTIONS:
   --info           This information.
   --debug          Includes source code of the related node.
+  --expected-highcharts-version  Required with --react-artifact.
+  --expected-react-version      Required with --react-artifact.
+  --react-artifact  Validated React static artifact directory to stage.
   --source [PATH]  Only loads source files from the given path. (recursive)
 `;
 
@@ -52,14 +55,73 @@ const TARGET_DIRECTORY = 'build/api/';
  * Promise to keep.
  */
 async function apiDocs() {
-    const ProcessLib = require('../libs/process');
     const Yargs = require('yargs');
+    await runApiDocs(Yargs.argv);
+}
 
-    const args = Yargs.argv;
+
+/**
+ * Runs API documentation generation with optional dependencies for tests.
+ *
+ * @param {object} args
+ * Parsed yargs arguments.
+ *
+ * @param {object} dependencies
+ * Injectable dependencies for task tests.
+ *
+ * @return {Promise<void>}
+ * Promise to keep.
+ */
+async function runApiDocs(args, dependencies = {}) {
+    const ProcessLib = dependencies.processLib || require('../libs/process');
+    const path = require('node:path');
+    const targetDirectory = dependencies.targetDirectory || TARGET_DIRECTORY;
+    let reactStatic = dependencies.reactStatic;
 
     if (args.info) {
         process.stdout.write(INFO);
         return;
+    }
+
+    let verifiedReactArtifact;
+
+    if (args.reactArtifact !== void 0) {
+        if (
+            typeof args.reactArtifact !== 'string' ||
+            !args.reactArtifact.trim() ||
+            typeof args.expectedReactVersion !== 'string' ||
+            !args.expectedReactVersion.trim() ||
+            typeof args.expectedHighchartsVersion !== 'string' ||
+            !args.expectedHighchartsVersion.trim()
+        ) {
+            throw new Error(
+                '--react-artifact requires --expected-react-version and ' +
+                '--expected-highcharts-version.'
+            );
+        }
+
+        reactStatic = reactStatic || require('./lib/reactStatic');
+
+        verifiedReactArtifact = await reactStatic.verifyArtifact(
+            path.resolve(args.reactArtifact.trim()),
+            {
+                expectedHighchartsVersion:
+                    args.expectedHighchartsVersion.trim(),
+                expectedReactVersion: args.expectedReactVersion.trim()
+            }
+        );
+
+        await reactStatic.validateStagingRoots(
+            verifiedReactArtifact,
+            path.resolve(targetDirectory)
+        );
+    } else if (
+        args.expectedHighchartsVersion !== void 0 ||
+        args.expectedReactVersion !== void 0
+    ) {
+        throw new Error(
+            'Expected React version flags require --react-artifact.'
+        );
     }
 
     const source = (args.source || 'ts');
@@ -74,8 +136,14 @@ async function apiDocs() {
             ` --source "${source}"`
     );
 
-    await createApiDocumentation();
+    await (dependencies.createApiDocumentation || createApiDocumentation)();
 
+    if (verifiedReactArtifact) {
+        await reactStatic.stageArtifact(
+            verifiedReactArtifact,
+            path.resolve(targetDirectory)
+        );
+    }
 }
 
 
@@ -123,3 +191,5 @@ function createApiDocumentation() {
 require('./api-tree');
 
 Gulp.task('api-docs', apiDocs);
+
+module.exports = { runApiDocs };

@@ -309,6 +309,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'highcharts-more'
     ],
     'series.geoheatmap': [
+        'modules/map',
         'modules/geoheatmap'
     ],
     'series.heatmap': [
@@ -332,6 +333,7 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'series.keltnerchannels': [
         'indicators/indicators',
+        'indicators/atr',
         'indicators/keltner-channels'
     ],
     'series.klinger': [
@@ -472,6 +474,7 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'series.supertrend': [
         'indicators/indicators',
+        'indicators/atr',
         'indicators/supertrend'
     ],
     'series.tema': [
@@ -479,6 +482,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'indicators/tema'
     ],
     'series.tiledwebmap': [
+        'modules/map',
         'modules/tiledwebmap'
     ],
     'series.tilemap': [
@@ -531,6 +535,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'indicators/williams-r'
     ],
     'series.windbarb': [
+        'modules/datagrouping',
         'modules/windbarb'
     ],
     'series.wma': [

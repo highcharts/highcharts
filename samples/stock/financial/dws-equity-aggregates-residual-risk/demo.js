@@ -26,6 +26,7 @@ async function renderChart() {
 
     // Set global options
     Highcharts.setOptions({
+        dataTable,
         chart: {
             type: 'column'
         },
@@ -35,12 +36,7 @@ async function renderChart() {
         },
         xAxis: {
             crosshair: true,
-            categories: dataTable.getRows(
-                void 0,
-                void 0,
-                ['Type']
-            )
-                .flat()
+            categories: dataTable.getColumn('Type')
                 .map(item => item.replace(/(\d+)([A-Za-z]+)/u, '$1 $2'))
         }
     });
@@ -63,18 +59,14 @@ async function renderChart() {
         },
         series: [{
             name: 'Alpha',
-            data: dataTable.getRows(
-                void 0,
-                void 0,
-                ['Alpha']
-            )
+            dataMapping: {
+                y: 'Alpha'
+            }
         }, {
             name: 'Non Dividend Alpha',
-            data: dataTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendAlpha']
-            )
+            dataMapping: {
+                y: 'NonDividendAlpha'
+            }
         }]
     });
 
@@ -102,18 +94,14 @@ async function renderChart() {
         },
         series: [{
             name: 'Beta',
-            data: dataTable.getRows(
-                void 0,
-                void 0,
-                ['Beta']
-            )
+            dataMapping: {
+                y: 'Beta'
+            }
         }, {
             name: 'Non Dividend Beta',
-            data: dataTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendBeta']
-            )
+            dataMapping: {
+                y: 'NonDividendBeta'
+            }
         }]
     });
 
@@ -129,18 +117,14 @@ async function renderChart() {
         },
         series: [{
             name: 'All Companies',
-            data: dataTable.getRows(
-                void 0,
-                void 0,
-                ['AlphaCompanies']
-            )
+            dataMapping: {
+                y: 'AlphaCompanies'
+            }
         }, {
             name: 'Non Dividend Companies',
-            data: dataTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendAlphaCompanies']
-            )
+            dataMapping: {
+                y: 'NonDividendAlphaCompanies'
+            }
         }]
     });
 
@@ -156,18 +140,14 @@ async function renderChart() {
         },
         series: [{
             name: 'All Companies',
-            data: dataTable.getRows(
-                void 0,
-                void 0,
-                ['BetaCompanies']
-            )
+            dataMapping: {
+                y: 'BetaCompanies'
+            }
         }, {
             name: 'Non Dividend Companies',
-            data: dataTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendBetaCompanies']
-            )
+            dataMapping: {
+                y: 'NonDividendBetaCompanies'
+            }
         }]
     });
 }

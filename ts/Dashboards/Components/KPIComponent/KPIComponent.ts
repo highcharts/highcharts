@@ -474,14 +474,20 @@ class KPIComponent extends Component {
             }
 
             if (valueFormatter) {
-                value = valueFormatter.call(this, value);
+                AST.setElementHTML(
+                    this.value,
+                    '' + valueFormatter.call(this, value)
+                );
             } else if (valueFormat) {
-                value = format(valueFormat, { value });
-            } else if (isNumber(value)) {
-                value = value.toLocaleString();
+                AST.setElementHTML(
+                    this.value,
+                    '' + format(valueFormat, { value })
+                );
+            } else {
+                this.value.textContent = isNumber(value) ?
+                    value.toLocaleString() : '' + value;
             }
 
-            AST.setElementHTML(this.value, '' + value);
             this.linkValueToChart(prevValue);
 
             this.prevValue = prevValue;

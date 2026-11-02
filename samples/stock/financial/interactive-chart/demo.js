@@ -163,7 +163,11 @@ const chart = Highcharts.stockChart('container', {
         }
     },
     series: [{
-        name: 'FSPGX'
+        name: 'FSPGX',
+        dataMapping: {
+            x: 'Date',
+            y: '0P0001F5J3'
+        }
     }],
     navigator: {
         maskFill: '#274FE026',
@@ -250,7 +254,9 @@ async function renderChart() {
     await timeSeriesConnector.load();
 
     // Set series data
-    chart.series[0].setData(timeSeriesConnector.getTable().getRows(0));
+    chart.series[0].update({
+        dataTable: timeSeriesConnector.getTable()
+    });
 
     handleRangeSelection();
 }

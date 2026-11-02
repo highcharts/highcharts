@@ -61,12 +61,6 @@ Dashboards.board('container', {
 });
 ```
 
-## Relevant demos
-
-You will find examples of how to use `ProspectusFees` converter in our demos.
-
-- **Highcharts Dashboards Grid + Morningstar Prospectus Fees**
-
 ## Morningstar API Reference
 
 For more details, see [Morningstar's Investment Details API].

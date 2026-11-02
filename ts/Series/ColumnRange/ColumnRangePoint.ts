@@ -21,24 +21,17 @@
 import type ColumnRangePointOptions from './ColumnRangePointOptions.js';
 import type ColumnRangeSeries from './ColumnRangeSeries.js';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: {
-            prototype: {
-                pointClass: {
-                    prototype: columnProto
-                }
-            }
-        },
-        arearange: {
-            prototype: {
-                pointClass: AreaRangePoint
-            }
-        }
-    }
-} = SeriesRegistry;
+import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import { extend, isNumber } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *
@@ -80,15 +73,15 @@ class ColumnRangePoint extends AreaRangePoint {
 /** @internal */
 interface ColumnRangePoint {
     /** @internal */
-    barX: typeof columnProto.barX;
+    barX: typeof ColumnPoint.prototype.barX;
     /** @internal */
-    pointWidth: typeof columnProto.pointWidth;
+    pointWidth: typeof ColumnPoint.prototype.pointWidth;
     /** @internal */
-    shapeType: typeof columnProto.shapeType;
+    shapeType: typeof ColumnPoint.prototype.shapeType;
 
 }
 extend(ColumnRangePoint.prototype, {
-    setState: columnProto.setState
+    setState: ColumnPoint.prototype.setState
 });
 
 /* *

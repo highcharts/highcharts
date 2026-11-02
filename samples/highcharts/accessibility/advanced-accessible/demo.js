@@ -192,5 +192,5 @@ const chart = Highcharts.chart('container', {
 // Remove click events on container to avoid having "clickable" announced by AT
 // These events are needed for custom click events, drag to zoom, and navigator
 // support.
-chart.container.onmousedown = null;
-chart.container.onclick = null;
+Highcharts.removeEvent(chart.container, 'mousedown');
+Highcharts.removeEvent(chart.container, 'click');

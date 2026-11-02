@@ -29,10 +29,8 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import ItemPoint from './ItemPoint.js';
 import ItemSeriesDefaults from './ItemSeriesDefaults.js';
+import PieSeries from '../Pie/PieSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
 import {
     defined,
     extend,
