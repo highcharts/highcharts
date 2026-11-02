@@ -4,22 +4,6 @@ const compareSnapshotCommand = require('cypress-visual-regression/dist/command')
 
 compareSnapshotCommand();
 
-Cypress.Commands.add('zoom', chartElement => {
-    return cy.get(chartElement)
-        .trigger('mouseenter')
-        .trigger('mousedown', 50)
-        .trigger('mousemove', 50, 50)
-        .trigger('mouseup')
-})
-
-Cypress.Commands.add('pan', chartElement => {
-    return cy.get(chartElement)
-        .trigger('mouseenter')
-        .trigger('mousedown', { shiftKey: true })
-        .trigger('mousemove', { x: 50, y: 50, shiftKey: true })
-        .trigger('mouseup')
-})
-
 Cypress.Commands.add('board', () =>
     cy.window().its('Dashboards.boards').should('have.length.gte', 1).then(boards => {
         const [board] = boards;
@@ -63,21 +47,6 @@ Cypress.Commands.add('boardRendered', () =>
         )
     })
 );
-
-Cypress.Commands.add('hideSidebar', () =>
-    cy.get('.highcharts-dashboards-edit-popup-close:visible').click()
-);
-
-Cypress.Commands.add('openCellEditSidebar', (cellId) => {
-    cy.get(cellId).click();
-    cy.get('.highcharts-dashboards-edit-menu-item > div')
-        .each(($el) => {
-            const backgroundImage = $el.css('background-image');
-            if (backgroundImage.includes('dashboards-icons/settings.svg')) {
-                cy.wrap($el).click();
-            }
-        });
-});
 
 Cypress.Commands.add('chart', () =>
     cy.window().then(win => new Cypress.Promise((resolve, reject) => {
@@ -166,31 +135,8 @@ Cypress.Commands.add('toggleEditMode', () => {
     });
 });
 
-Cypress.Commands.add('submitEditing', () => {
-    cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
-});
-
-Cypress.Commands.add('cancelEditing', () => {
-    cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
-    cy.get('.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
-});
-
 Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
     return false
 })
-
-Cypress.Commands.add('grabComponent', (name) => {
-    cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click({ force: true});
-    cy.get('.highcharts-dashboards-edit-grid-items')
-        .children()
-        .contains(name)
-        .trigger('mousedown', { force: true });
-});
-
-Cypress.Commands.add('dropComponent', (elementName) => {
-    cy.get(elementName).first().trigger('mouseenter', {force: true});
-    cy.get(elementName).first().trigger('mousemove', 'right', {force: true});
-    cy.get(elementName).first().trigger('mouseup', 'right', {force: true});
-});

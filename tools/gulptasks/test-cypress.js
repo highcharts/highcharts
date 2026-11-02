@@ -29,12 +29,6 @@ async function testCypress() {
 
     logLib.success('Cypress tests running ' + product + '...');
 
-    // Ensure relevant bundles are built before running Cypress
-    if (product.toLowerCase() === 'dashboards') {
-        await processLib.exec('npx gulp scripts --product Dashboards');
-        await processLib.exec('npx gulp scripts --product Grid');
-    }
-
     const configFile = path.join('test', 'cypress', product, 'config.mjs');
 
     await processLib.exec(

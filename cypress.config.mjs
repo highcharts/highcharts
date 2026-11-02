@@ -6,10 +6,8 @@ const products = new Set();
 for (const product of getProducts()) {
     switch (product) {
         case 'Dashboards':
-            products.add('dashboards');
-            continue;
         case 'Grid':
-            // Grid tests run in Playwright
+            // Dashboards and Grid tests run in Playwright
             continue;
         default:
             products.add('highcharts');

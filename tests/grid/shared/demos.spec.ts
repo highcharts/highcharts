@@ -13,8 +13,6 @@ const expectedStyles = {
 
 // Samples that need resources the test routes cannot serve locally
 const excludedDemos: Record<string, string> = {
-    'grid-lite/basic/data-connector':
-        'Loads a CSV from demo-live-data that is not in samples/data',
     'grid-lite/studies/columns-virtualization-benchmark':
         'Loads CSS from the /code/ path of the utils server',
     'grid-lite/studies/grid-virtual-scroll-benchmark':
@@ -53,9 +51,12 @@ for (const product of ['grid-lite', 'grid-pro']) {
                     errors.push(error.message);
                 });
                 page.on('requestfailed', request => {
-                    errors.push(
-                        `${request.failure()?.errorText}: ${request.url()}`
-                    );
+                    const error = request.failure()?.errorText;
+
+                    // Requests the page cancels itself, e.g. by reloading a frame
+                    if (error !== 'net::ERR_ABORTED') {
+                        errors.push(`${error}: ${request.url()}`);
+                    }
                 });
                 page.on('response', response => {
                     if (response.status() >= 400) {

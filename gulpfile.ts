@@ -32,7 +32,6 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/api',
     'dashboards/api2',
     'dashboards/api-docs',
-    'dashboards/cypress',
     'default',
     'dependency-mapping',
     'dist',
