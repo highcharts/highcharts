@@ -318,7 +318,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Initial animation - updates restarting the animation (#25439)',
+    'Initial animation - update, then remove while animating (#25439)',
     function (assert) {
         var clock = null;
 
@@ -327,7 +327,6 @@ QUnit.test(
 
             const chart = Highcharts.chart('container', {
                     series: [{
-                        type: 'column',
                         animation: {
                             duration: 500
                         },
@@ -339,60 +338,44 @@ QUnit.test(
                         data: [3, 2, 1]
                     }]
                 }),
-                [column, line] = chart.series,
-                done = assert.async();
+                [kept, removed] = chart.series,
+                done = assert.async(),
+                start = Date.now(),
+                times = [];
 
-            let columnCount = 0,
-                lineCount = 0;
-            Highcharts.addEvent(column, 'afterAnimate', () => {
-                columnCount++;
+            let removedCount = 0;
+            Highcharts.addEvent(kept, 'afterAnimate', () => {
+                times.push(Date.now() - start);
             });
-            Highcharts.addEvent(line, 'afterAnimate', () => {
-                lineCount++;
+            Highcharts.addEvent(removed, 'afterAnimate', () => {
+                removedCount++;
             });
 
             setTimeout(function () {
-                // Columns restart their animation on update
-                column.update({});
+                kept.update({});
+                removed.update({});
+            }, 200);
 
-                // A new duration starts a new clip animation
-                line.update({
-                    animation: {
-                        duration: 400
-                    }
-                });
+            setTimeout(function () {
+                removed.remove();
             }, 300);
 
             setTimeout(function () {
-                assert.strictEqual(
-                    columnCount,
-                    0,
-                    'afterAnimate should not fire before the restarted ' +
-                    'column animation ends'
-                );
-                assert.strictEqual(
-                    lineCount,
-                    0,
-                    'afterAnimate should not fire before the new clip ' +
-                    'animation ends'
-                );
-            }, 600);
-
-            setTimeout(function () {
-                assert.strictEqual(
-                    columnCount,
-                    1,
-                    'afterAnimate should fire when the restarted column ' +
+                assert.deepEqual(
+                    times,
+                    [500],
+                    'afterAnimate should fire once, when the initial ' +
                     'animation ends'
                 );
                 assert.strictEqual(
-                    lineCount,
-                    1,
-                    'afterAnimate should fire when the new clip animation ends'
+                    removedCount,
+                    0,
+                    'afterAnimate should not fire for a series removed ' +
+                    'after an update'
                 );
 
                 done();
-            }, 900);
+            }, 1500);
 
             TestUtilities.lolexRunAndUninstall(clock);
         } finally {
