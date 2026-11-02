@@ -56,6 +56,7 @@ async function renderChart() {
 
     // Create chart
     Highcharts.chart('container', {
+        dataTable: xRayConnector.getTable('TrailingReturns'),
         chart: {
             type: 'column'
         },
@@ -94,19 +95,15 @@ async function renderChart() {
         },
         series: [{
             name: 'Portfolio Value',
-            data: xRayConnector.getTable('TrailingReturns').getRows(
-                void 0,
-                void 0,
-                ['Value']
-            ),
+            dataMapping: {
+                y: 'Value'
+            },
             color: '#274FE0'
         }, {
             name: 'Benchmark',
-            data: xRayConnector.getTable('TrailingReturns').getRows(
-                void 0,
-                void 0,
-                ['Value_Benchmark']
-            ),
+            dataMapping: {
+                y: 'Value_Benchmark'
+            },
             color: '#E1E1E6'
         }],
         responsive: {

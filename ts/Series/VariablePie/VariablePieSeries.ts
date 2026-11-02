@@ -23,10 +23,8 @@ import type DataLabel from '../../Core/Series/DataLabel';
 import type VariablePiePoint from './VariablePiePoint';
 import type VariablePieSeriesOptions from './VariablePieSeriesOptions';
 
+import PieSeries from '../Pie/PieSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
 import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
 import {
     arrayMax,

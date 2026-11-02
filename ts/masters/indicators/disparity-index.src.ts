@@ -4,6 +4,7 @@
  * @module highcharts/indicators/disparity-index
  * @requires highcharts
  * @requires highcharts/modules/stock
+ * @requires highcharts/indicators/indicators
  *
  * Indicator series type for Highstock
  *

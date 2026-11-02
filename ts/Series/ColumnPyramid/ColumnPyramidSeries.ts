@@ -22,10 +22,8 @@ import type ColumnPyramidPoint from './ColumnPyramidPoint';
 import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions';
 
 import ColumnPyramidSeriesDefaults from './ColumnPyramidSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import { clamp, merge } from '../../Shared/Utilities.js';
 
 /* *

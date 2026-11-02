@@ -24,10 +24,8 @@ import type {
 } from './RSIOptions';
 import type RSIPoint from './RSIPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *

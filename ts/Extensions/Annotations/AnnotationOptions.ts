@@ -535,6 +535,13 @@ export interface AnnotationLabelOptionsOptions {
 }
 
 export interface AnnotationLabelOptions extends AnnotationLabelOptionsOptions {
+
+
+    /**
+     * An id for later identification of the annotation label.
+     */
+    id?: string;
+
     /* *
     *
     *  Excluded properties. Not omitted for ancestor type matching.

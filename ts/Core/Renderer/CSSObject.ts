@@ -155,7 +155,7 @@ export interface CSSObject {
     /**
      * Font weight.
      */
-    fontWeight?: string;
+    fontWeight?: string|number;
     /**
      * Height.
      */

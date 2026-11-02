@@ -20,16 +20,12 @@
 
 import type LinePoint from '../../Series/Line/LinePoint';
 import type Point from '../../Core/Series/Point';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type SMAOptions from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    sma: { prototype: smaProto }
-} = SeriesRegistry.seriesTypes;
+import SMAIndicator from './SMA/SMAIndicator.js';
 import { defined, merge } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
@@ -277,7 +273,7 @@ namespace MultipleLinesComposition {
             ) as any;
             indicator.graph = indicator.area;
             indicator.fillGraph = true;
-            smaProto.drawGraph.call(indicator);
+            SMAIndicator.prototype.drawGraph.call(indicator);
 
             indicator.area = indicator.graph;
             // Clean temporary properties:
@@ -303,7 +299,7 @@ namespace MultipleLinesComposition {
                     );
                 }
                 indicator.graph = (indicator as any)['graph' + lineName];
-                smaProto.drawGraph.call(indicator);
+                SMAIndicator.prototype.drawGraph.call(indicator);
 
                 // Now save lines:
                 (indicator as any)['graph' + lineName] = indicator.graph;
@@ -320,7 +316,7 @@ namespace MultipleLinesComposition {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
-        smaProto.drawGraph.call(indicator);
+        SMAIndicator.prototype.drawGraph.call(indicator);
     }
 
     /**
@@ -342,12 +338,15 @@ namespace MultipleLinesComposition {
 
         // Render Span
         if (this.fillGraph && this.nextPoints) {
-            areaPath = smaProto.getGraphPath.call(this, this.nextPoints);
+            areaPath = SMAIndicator.prototype.getGraphPath.call(
+                this,
+                this.nextPoints
+            );
 
             if (areaPath && areaPath.length) {
                 areaPath[0][0] = 'L';
 
-                path = smaProto.getGraphPath.call(this, points);
+                path = SMAIndicator.prototype.getGraphPath.call(this, points);
 
                 higherAreaPath = areaPath.slice(0, path.length);
 
@@ -357,7 +356,7 @@ namespace MultipleLinesComposition {
                 }
             }
         } else {
-            path = smaProto.getGraphPath.apply(this, arguments);
+            path = SMAIndicator.prototype.getGraphPath.apply(this, arguments);
         }
         return path;
     }
@@ -397,7 +396,7 @@ namespace MultipleLinesComposition {
 
         LinesNames = getTranslatedLinesNames(this);
 
-        smaProto.translate.apply(this, arguments);
+        SMAIndicator.prototype.translate.apply(this, arguments);
 
         this.points.forEach((point): void => {
             pointArrayMap.forEach((propertyName, i): void => {

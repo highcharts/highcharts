@@ -651,7 +651,8 @@ export interface AxisLabelOptions {
 
     /**
      * Rotation of the labels in degrees. When `undefined`, the
-     * `autoRotation` option takes precedence.
+     * `autoRotation` option takes precedence. On radial axes, labels can be
+     * rotated along the axis by setting the rotation to 'auto'.
      *
      * @sample {highcharts} highcharts/xaxis/labels-rotation/
      *         X axis labels rotated 90°
@@ -875,6 +876,16 @@ export interface AxisOptions {
      * @since   4.1
      */
     crosshair?: (boolean|AxisCrosshairOptions);
+
+    /**
+     * A reserved subspace to store options and values for customized
+     * functionality. Here you can add additional data for your own event
+     * callbacks and formatter callbacks.
+     *
+     * @type      {Highcharts.Dictionary<*>}
+     * @apioption xAxis.custom
+     */
+    custom?: any;
 
     /**
      * The value on a perpendicular axis where this axis should cross. This
@@ -1996,7 +2007,7 @@ export interface AxisSetExtremesEventObject extends Axis.ExtremesObject {
     preventDefault: Function;
     rangeSelectorButton?: RangeSelectorButtonOptions;
     scale?: number;
-    target: SVGElement;
+    target: Axis;
     trigger?: string;
     triggerOp?: string;
     type: 'setExtremes';

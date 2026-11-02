@@ -16,7 +16,6 @@
  * */
 
 import type ColorString from '../../../Core/Color/ColorString';
-import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -29,12 +28,11 @@ import type MACDPoint from './MACDPoint';
 import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
+import ColumnSeries from '../../../Series/Column/ColumnSeries.js';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     correctFloat,
     defined,
@@ -546,9 +544,9 @@ extend(MACDIndicator.prototype, {
     pointValKey: 'y',
     // Columns support:
     markerAttribs: noop as any,
-    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    crispCol: H.seriesTypes.column.prototype.crispCol,
-    drawPoints: H.seriesTypes.column.prototype.drawPoints
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
+    crispCol: ColumnSeries.prototype.crispCol,
+    drawPoints: ColumnSeries.prototype.drawPoints
 });
 
 /* *

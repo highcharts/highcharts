@@ -56,8 +56,7 @@ import AxisDefaults from './AxisDefaults.js';
 const { xAxis, yAxis } = AxisDefaults;
 import Color from '../Color/Color.js';
 const { parse: color } = Color;
-import D from '../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Defaults.js';
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -5085,7 +5084,7 @@ export default Axis;
  * @type {Function}
  *//**
  * @name Highcharts.AxisSetExtremesEventObject#target
- * @type {Highcharts.SVGElement}
+ * @type {Highcharts.Axis}
  *//**
  * @name Highcharts.AxisSetExtremesEventObject#trigger
  * @type {Highcharts.AxisExtremesTriggerValue|string}

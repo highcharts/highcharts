@@ -18,14 +18,8 @@
  *
  * */
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import CandlestickSeries from '../Candlestick/CandlestickSeries.js';
 import HollowCandlestickSeries from './HollowCandlestickSeries.js';
-
-const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
-} = SeriesRegistry;
 
 /* *
  *
