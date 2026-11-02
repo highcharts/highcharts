@@ -9,6 +9,7 @@
  * See www.highcharts.com/license
  */
 
+@import url("./grid-element-reset.css");
 @import url("./grid-base-variables.css");
 @import url("./grid-popup-variables.css");
 @import url("./grid-menu-variables.css");
