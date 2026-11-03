@@ -20,6 +20,7 @@
 import * as FS from 'node:fs';
 import * as Path from 'node:path';
 import Webpack from 'webpack';
+import { updateFile } from '../../libs/fs.js';
 
 
 /* *
@@ -141,40 +142,37 @@ export class ProductMetaPlugin {
         const options = this.options;
         const filepath = Path.join(outputOptions.path, outputOptions.filename);
 
-        if (!FS.existsSync(filepath)) {
-            return;
-        }
+        updateFile(filepath, content => {
+            let productMatch = content.indexOf('@product.');
+            // Use the last match - should be the one from ts/masters.
+            let headerMatch = [...content.matchAll(HEADER_PATTERN)].at(-1);
 
-        let content = FS.readFileSync(filepath, 'utf8');
-        let productMatch = content.indexOf('@product.');
-        // Use the last match - should be the one from ts/masters.
-        let headerMatch = [...content.matchAll(HEADER_PATTERN)].at(-1);
+            if (
+                headerMatch?.index < 80 &&
+                productMatch < 0
+            ) {
+                return void 0;
+            }
 
-        if (
-            headerMatch?.index < 80 &&
-            productMatch < 0
-        ) {
-            return;
-        }
+            if (headerMatch?.index > 80) {
+                content = (
+                    headerMatch[0] + '\n' +
+                    content.substring(0, headerMatch.index) +
+                    content.substring(headerMatch.index + headerMatch[0].length)
+                );
+            }
 
-        if (headerMatch?.index > 80) {
-            content = (
-                headerMatch[0] + '\n' +
-                content.substring(0, headerMatch.index) +
-                content.substring(headerMatch.index + headerMatch[0].length)
-            );
-        }
-
-        if (productMatch >= 0) {
-            content = content
-                .replace(/@product\.name@/gu, () => options.productName)
-                .replace(/@product\.version@/gu, () => options.productVersion)
-                .replace(/@product\.assetPrefix@/gu, () => options.assetPrefix)
-                .replace(/@product\.date@/gu, () => options.productDate);
-        }
+            if (productMatch >= 0) {
+                content = content
+                    .replace(/@product\.name@/gu, () => options.productName)
+                    .replace(/@product\.version@/gu, () => options.productVersion)
+                    .replace(/@product\.assetPrefix@/gu, () => options.assetPrefix)
+                    .replace(/@product\.date@/gu, () => options.productDate);
+            }
 
 
-        FS.writeFileSync(filepath, content, 'utf8');
+            return content;
+        }, { optional: true });
 
     }
 
