@@ -20,23 +20,15 @@ async function renderChart() {
     // Load data
     await securityCompareConnector.load();
 
-    const {
-        Nav_M12_Y_Date_F0GBR050DD: fundDates,
-        Nav_M12_Y_Value_F0GBR050DD: fundValues,
-        Nav_M12_Y_Date_EUCA000527: benchmarkDates,
-        Nav_M12_Y_Value_EUCA000527: benchmarkValues
-    } = securityCompareConnector.getTable('HistoricalPerformanceSeries')
-        .getColumns();
-
-    const fundData = fundDates
-        .map((date, index) => [date, fundValues[index]])
-        .filter(([, value]) => value !== undefined);
-
-    const benchmarkData = benchmarkDates
-        .map((date, index) => [date, benchmarkValues[index]])
-        .filter(([, value]) => value !== undefined);
+    // Get data table. It also holds the quarterly series, which are one row
+    // longer, so remove the trailing row without yearly data.
+    const dataTable = securityCompareConnector.getTable(
+        'HistoricalPerformanceSeries'
+    );
+    dataTable.deleteRows(dataTable.getRowCount() - 1);
 
     Highcharts.chart('container', {
+        dataTable,
         chart: {
             type: 'column',
             zooming: {
@@ -73,13 +65,19 @@ async function renderChart() {
             name:
                 'NAV M12 Yearly Returns for ' +
                 '<b>Aviva Investors UK Lstd Eq Uncons2GBPAcc</b>',
-            data: fundData,
+            dataMapping: {
+                x: 'Nav_M12_Y_Date_F0GBR050DD',
+                y: 'Nav_M12_Y_Value_F0GBR050DD'
+            },
             color: '#274FE0'
         }, {
             name:
                 'NAV M12 Yearly Returns for ' +
                 '<b>iShares NASDAQ 100 UCITS ETF USD (Acc) EUR</b>',
-            data: benchmarkData,
+            dataMapping: {
+                x: 'Nav_M12_Y_Date_EUCA000527',
+                y: 'Nav_M12_Y_Value_EUCA000527'
+            },
             color: '#E1E1E6'
         }]
     });

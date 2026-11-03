@@ -23,10 +23,8 @@ import type ParetoSeriesOptions from './ParetoSeriesOptions';
 
 import DerivedComposition from '../DerivedComposition.js';
 import ParetoSeriesDefaults from './ParetoSeriesDefaults.js';
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, extend, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -38,7 +36,6 @@ import { correctFloat, extend, merge } from '../../Shared/Utilities.js';
 /**
  * The pareto series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.pareto
  *
@@ -179,9 +176,6 @@ DerivedComposition.compose(ParetoSeries);
  *
  * */
 
-/**
- * @internal
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pareto: typeof ParetoSeries;

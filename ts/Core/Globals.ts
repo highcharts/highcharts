@@ -93,8 +93,6 @@ declare global {
         /** @deprecated */
         msRequestFullscreen: Function;
         /** @deprecated */
-        webkitMatchesSelector: Element['matches'];
-        /** @deprecated */
         webkitRequestFullScreen: Function;
     }
 

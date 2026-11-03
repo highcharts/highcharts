@@ -480,6 +480,16 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  */
 
 /**
+ * A reserved subspace to store options and values for customized
+ * functionality. Here you can add additional data for your own event
+ * callbacks and formatter callbacks.
+ * @apioption series.sankey.nodes.custom
+ * @type      {Highcharts.Dictionary<*>}
+ * @product   highcharts
+ * @since     next
+ */
+
+/**
  * Individual data label for each node. The options are the same as
  * the ones for [series.sankey.dataLabels](#series.sankey.dataLabels).
  *

@@ -29,12 +29,17 @@ import type {
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: { prototype: { pointClass: ColumnPoint } }
-} = SeriesRegistry.seriesTypes;
+import ColumnSeries from '../Column/ColumnSeries.js';
 import XRangeSeries from './XRangeSeries.js';
 import { extend } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *
