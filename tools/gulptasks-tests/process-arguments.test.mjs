@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
@@ -117,5 +118,67 @@ test('Cypress passes literal config paths and preserves prerequisite ordering', 
                     argv.demos ? 'demos.config.mjs' : 'config.mjs')]);
         }
         assert.deepEqual(calls, expected);
+    }
+});
+
+test('declaration lint compiles literal directory names and filters products', async () => {
+    const url = new URL('../gulptasks/lint-dts.js', import.meta.url);
+    const taskRequire = createRequire(url);
+    const root = fs.mkdtempSync(join(tmpdir(), 'hc-lint-dts-'));
+    const cwd = process.cwd();
+    const names = ['folder with spaces', 'folder; echo injected #', 'grid', 'dashboards'];
+    const calls = [];
+    const module = { exports: {} };
+    const { lib } = loadProcess();
+    for (const name of names) {
+        const folder = join(root, 'test', 'typescript-dts', name);
+        fs.mkdirSync(folder, { recursive: true });
+        fs.writeFileSync(join(folder, 'index.ts'), 'const value: number = 1;');
+        fs.writeFileSync(join(folder, 'tsconfig.json'), JSON.stringify({
+            compilerOptions: { noEmit: true, types: [], skipLibCheck: true },
+            files: ['index.ts']
+        }));
+    }
+    runInNewContext(fs.readFileSync(url, 'utf8'), {
+        module,
+        process,
+        require: Object.assign(name => {
+            if (name === 'gulp') {
+                return { task() {} };
+            }
+            if (name === '../libs/log') {
+                return { message() {}, success() {}, failure() {} };
+            }
+            if (name === '../libs/process') {
+                return {
+                    async exec() {
+                        throw new Error('Unexpected shell execution');
+                    },
+                    async execFile(file, args) {
+                        calls.push([file, ...args]);
+                        return lib.execFile(file, args, { silent: 2 });
+                    }
+                };
+            }
+            return taskRequire(name);
+        }, { resolve: taskRequire.resolve })
+    });
+    process.chdir(root);
+    try {
+        for (const product of ['Highcharts', 'Grid', 'Dashboards']) {
+            calls.length = 0;
+            await module.exports.lintDTS({ product });
+            const selected = product === 'Highcharts' ? names.slice(0, 2).sort() :
+                [product.toLowerCase()];
+            assert.deepEqual(calls, selected.map(name => [process.execPath,
+                taskRequire.resolve('typescript/bin/tsc'), '-p',
+                join('test', 'typescript-dts', name)]));
+        }
+        fs.writeFileSync(join('test', 'typescript-dts', 'grid', 'index.ts'),
+            'const value: number = "invalid";');
+        await assert.rejects(module.exports.lintDTS({ product: 'Grid' }), { code: 2 });
+    } finally {
+        process.chdir(cwd);
+        fs.rmSync(root, { recursive: true, force: true });
     }
 });
