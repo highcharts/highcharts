@@ -1,5 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
-import { useSharedPage, waitForBoard } from '../helpers.ts';
+import { useSharedPage } from '~/helpers.ts';
+import { waitForBoard } from '../helpers.ts';
 
 test.describe('Remove the dashboard.', () => {
     const getPage = useSharedPage('/dashboards/cypress/component-grid');

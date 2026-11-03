@@ -1,12 +1,11 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
+import { trigger, useSharedPage } from '~/helpers.ts';
 import {
     dropComponent,
     grabComponent,
     hideSidebar,
     toggleEditMode,
-    trigger,
-    useSharedPage,
     waitForBoard
 } from './helpers.ts';
 

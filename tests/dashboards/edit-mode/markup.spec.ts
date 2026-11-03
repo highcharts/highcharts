@@ -1,5 +1,5 @@
 import { test, expect } from '~/fixtures.ts';
-import { useSharedPage } from '../helpers.ts';
+import { useSharedPage } from '~/helpers.ts';
 
 test.describe('Edit Mode options', () => {
     const getPage = useSharedPage(

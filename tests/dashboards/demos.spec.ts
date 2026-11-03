@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import { globSync } from 'glob';
 import { test, expect } from '~/fixtures.ts';
-import { testViewport } from './helpers.ts';
+import { testViewport } from '~/helpers.ts';
 
 const excludedDemos: Record<string, string> = {
     'gui/layout': 'Excluded since the Cypress test',

@@ -1,12 +1,11 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
+import { testViewport, trigger } from '~/helpers.ts';
 import {
     dropComponent,
     editChartOptionsInSidebar,
     grabComponent,
-    testViewport,
     toggleEditMode,
-    trigger,
     waitForBoard
 } from './helpers.ts';
 

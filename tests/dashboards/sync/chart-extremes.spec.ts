@@ -1,11 +1,7 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
-import {
-    panChart,
-    useSharedPage,
-    waitForBoardRendered,
-    zoomChart
-} from '../helpers.ts';
+import { panChart, useSharedPage, zoomChart } from '~/helpers.ts';
+import { waitForBoardRendered } from '../helpers.ts';
 
 /**
  * Tests that all charts have the same min and max values on their first x and

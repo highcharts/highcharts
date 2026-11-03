@@ -1,10 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
-import {
-    trigger,
-    useSharedPage,
-    waitForBoardRendered,
-    waitForChart
-} from '../helpers.ts';
+import { trigger, useSharedPage, waitForChart } from '~/helpers.ts';
+import { waitForBoardRendered } from '../helpers.ts';
 
 test.describe('Sync when new connector added to components.', () => {
     const getPage = useSharedPage(

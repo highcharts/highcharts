@@ -1,5 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
-import { testViewport, trigger, waitForBoard } from '../../helpers.ts';
+import { testViewport, trigger } from '~/helpers.ts';
+import { waitForBoard } from '../../helpers.ts';
 
 test.use({ viewport: testViewport });
 

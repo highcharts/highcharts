@@ -1,10 +1,10 @@
 import { test, expect } from '~/fixtures.ts';
+import { testViewport } from '~/helpers.ts';
 import {
     dropComponent,
     grabComponent,
     openCellEditSidebar,
     sidebarAccordion,
-    testViewport,
     toggleEditMode,
     waitForBoard
 } from '../../helpers.ts';

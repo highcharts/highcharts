@@ -1,6 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
-import { toggleEditMode, typeAtEnd } from '../helpers.ts';
+import { typeAtEnd } from '~/helpers.ts';
+import { toggleEditMode } from '../helpers.ts';
 
 async function openTextArea(page: Page): Promise<Locator> {
     await page.locator('.highcharts-dashboards-component').first().click();

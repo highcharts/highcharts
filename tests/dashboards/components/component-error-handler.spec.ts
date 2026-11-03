@@ -1,5 +1,5 @@
 import { test, expect } from '~/fixtures.ts';
-import { useSharedPage } from '../helpers.ts';
+import { useSharedPage } from '~/helpers.ts';
 
 const titleClassError = /\bhighcharts-dashboards-component-title-error\b/;
 

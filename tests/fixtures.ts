@@ -38,12 +38,11 @@ async function replaceHCCode(route: Route) {
 
     let rootPath = 'code';
 
-    if (relativePath.includes('gfx')) {
+    // Both `gfx/…` and e.g. `dashboards/gfx/…` are served from `gfx/`
+    const gfxIndex = relativePath.indexOf('gfx/');
+    if (gfxIndex >= 0) {
         rootPath = '';
-        const { preceding } =
-            relativePath.match(/(?<preceding>^.+)\/gfx/).groups;
-
-        relativePath = relativePath.replace(preceding, '');
+        relativePath = relativePath.slice(gfxIndex);
     }
 
     if (rootPath === 'code') {
@@ -421,10 +420,10 @@ export async function replaceSampleData(route: Route) {
 }
 
 /**
- * Builds the page of a sample in `samples/dashboards/`, like the sample view
- * of highcharts-utils.
+ * Builds the page of a sample in `samples/dashboards/` or
+ * `samples/highcharts/`, like the sample view of highcharts-utils.
  */
-async function replaceDashboardsSample(route: Route) {
+async function replaceSamplePage(route: Route) {
     const { pathname } = new URL(route.request().url());
     const sampleDir = join(__dirname, '..', 'samples', pathname);
     const read = (file: string) => readFile(join(sampleDir, file), 'utf8')
@@ -1043,8 +1042,8 @@ export async function setupRoutes(page: Page){
             },
             {
                 pattern: url => url.hostname === 'localhost' &&
-                    url.pathname.startsWith('/dashboards/'),
-                handler: replaceDashboardsSample
+                    /^\/(?:dashboards|highcharts)\//u.test(url.pathname),
+                handler: replaceSamplePage
             },
             {
                 pattern: url => url.hostname === 'localhost' &&

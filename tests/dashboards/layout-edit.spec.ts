@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
-import { toggleEditMode, trigger, useSharedPage } from './helpers.ts';
+import { trigger, useSharedPage } from '~/helpers.ts';
+import { toggleEditMode } from './helpers.ts';
 
 /**
  * Returns the rows, or only the cells, that are larger than their parents,

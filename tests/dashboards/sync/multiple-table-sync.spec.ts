@@ -1,10 +1,7 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
-import {
-    testViewport,
-    trigger,
-    waitForBoard
-} from '../helpers.ts';
+import { testViewport, trigger } from '~/helpers.ts';
+import { waitForBoard } from '../helpers.ts';
 
 async function getTooltipsHidden(page: Page): Promise<boolean[]> {
     await waitForBoard(page);

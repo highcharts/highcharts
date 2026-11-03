@@ -1,9 +1,9 @@
 import { test, expect } from '~/fixtures.ts';
+import { useSharedPage } from '~/helpers.ts';
 import {
     dropComponent,
     grabComponent,
     toggleEditMode,
-    useSharedPage,
     waitForBoard
 } from '../helpers.ts';
 

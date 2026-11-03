@@ -1,5 +1,5 @@
 import { test, expect } from '~/fixtures.ts';
-import { trigger, useSharedPage, waitForChart } from '../../helpers.ts';
+import { trigger, useSharedPage, waitForChart } from '~/helpers.ts';
 
 test.describe('Multiple connectors', () => {
     const getPage = useSharedPage(

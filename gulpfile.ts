@@ -86,7 +86,6 @@ Gulp.registry(new GulpForwardReference());
     'test',
     'test-docs',
     'test-tree',
-    'test-cypress',
     'typecheck-samples',
     'update',
     'unsorted/build-modules',

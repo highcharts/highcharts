@@ -1,5 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
-import { useSharedPage, waitForBoard, waitForChart } from '../../helpers.ts';
+import { useSharedPage, waitForChart } from '~/helpers.ts';
+import { waitForBoard } from '../../helpers.ts';
 
 const kpiValue = '.highcharts-dashboards-component-kpi-value';
 

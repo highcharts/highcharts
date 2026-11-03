@@ -13,6 +13,8 @@ on:
       - 'ts/Data/**'
       - 'ts/Grid/**'
       - 'ts/masters-grid/**'
+      - 'tests/fixtures.ts'
+      - 'tests/grid/**'
 
 permissions:
   contents: read

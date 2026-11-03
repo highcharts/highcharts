@@ -1,10 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
-import {
-    trigger,
-    useSharedPage,
-    waitForBoardRendered,
-    waitForChart
-} from '../helpers.ts';
+import { trigger, useSharedPage, waitForChart } from '~/helpers.ts';
+import { waitForBoardRendered } from '../helpers.ts';
 
 test.describe('Highlight sync options', () => {
     const getPage = useSharedPage('/dashboards/sync/sync-highlight-options');

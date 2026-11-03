@@ -1,5 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
-import { toggleEditMode, trigger, useSharedPage } from '../helpers.ts';
+import { trigger, useSharedPage } from '~/helpers.ts';
+import { toggleEditMode } from '../helpers.ts';
 
 const toolbarItem = (n: number) => '.highcharts-dashboards-edit-toolbar-cell > ' +
     `.highcharts-dashboards-edit-toolbar-item:nth-child(${n})`;

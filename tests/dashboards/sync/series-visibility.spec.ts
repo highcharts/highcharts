@@ -1,5 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
-import { useSharedPage, waitForBoardRendered } from '../helpers.ts';
+import { useSharedPage } from '~/helpers.ts';
+import { waitForBoardRendered } from '../helpers.ts';
 
 test.describe('Remove the dashboard.', () => {
     const getPage = useSharedPage('/dashboards/cypress/chart-series-visibility');

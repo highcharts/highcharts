@@ -1,6 +1,6 @@
 import { devices } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
-import { useSharedPage } from '../helpers.ts';
+import { useSharedPage } from '~/helpers.ts';
 
 test.describe('Responsive options.', () => {
     const getPage = useSharedPage(

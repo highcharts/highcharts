@@ -1,14 +1,16 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
 import {
-    openCellEditSidebar,
     testViewport,
-    toggleEditMode,
     trigger,
     typeAtEnd,
     useSharedPage,
-    waitForBoard,
     waitForChart
+} from '~/helpers.ts';
+import {
+    openCellEditSidebar,
+    toggleEditMode,
+    waitForBoard
 } from '../../helpers.ts';
 
 const accordionButton = '.highcharts-dashboards-edit-accordion-header-btn';

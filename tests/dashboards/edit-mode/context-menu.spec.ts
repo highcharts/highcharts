@@ -1,5 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
-import { toggleEditMode, useSharedPage } from '../helpers.ts';
+import { useSharedPage } from '~/helpers.ts';
+import { toggleEditMode } from '../helpers.ts';
 
 test.describe('Context menu.', () => {
     const getPage = useSharedPage(

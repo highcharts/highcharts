@@ -1,5 +1,5 @@
 import { test, expect } from '~/fixtures.ts';
-import { testViewport } from '../helpers.ts';
+import { testViewport } from '~/helpers.ts';
 
 test.use({ viewport: testViewport });
 

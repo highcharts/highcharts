@@ -1,7 +1,8 @@
 import type { Page } from '@playwright/test';
 import { devices } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
-import { trigger, useSharedPage, waitForBoard } from './helpers.ts';
+import { trigger, useSharedPage } from '~/helpers.ts';
+import { waitForBoard } from './helpers.ts';
 
 /**
  * Whether every chart container has the content width of its parent.

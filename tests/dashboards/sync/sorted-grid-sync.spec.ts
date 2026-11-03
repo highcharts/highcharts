@@ -1,9 +1,5 @@
 import { test, expect } from '~/fixtures.ts';
-import {
-    trigger,
-    useSharedPage,
-    waitForChart
-} from '../helpers.ts';
+import { trigger, useSharedPage, waitForChart } from '~/helpers.ts';
 
 test.describe('Highlight sync after sorting grid column.', () => {
     const getPage = useSharedPage('/dashboards/cypress/component-grid');

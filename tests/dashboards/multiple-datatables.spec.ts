@@ -1,5 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
-import { testViewport, waitForBoard } from './helpers.ts';
+import { testViewport } from '~/helpers.ts';
+import { waitForBoard } from './helpers.ts';
 
 const CONNECTOR_ID = 'data-connector';
 const DATA_TABLE_KEY = 'kpis';

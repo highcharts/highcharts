@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
-import { testViewport } from '../../helpers.ts';
+import { testViewport } from '~/helpers.ts';
 
 const csvURL = 'https://demo-live-data.highcharts.com/updating-set.csv';
 const staticResponse = `X,Y

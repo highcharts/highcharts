@@ -1,9 +1,9 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '~/fixtures.ts';
+import { typeAtEnd } from '~/helpers.ts';
 import {
     openCellEditSidebar,
     toggleEditMode,
-    typeAtEnd,
     waitForBoard
 } from '../../helpers.ts';
 
