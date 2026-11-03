@@ -117,6 +117,7 @@
     "gulp-jsdoc3": "^3.0.0",
     "gulp-zip": "5.1.0",
     "gzip-size": "6.0.0",
+    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.6",
     "husky": "^8.0.3",
     "jquery": "^3.7.1",
     "js-yaml": "3.15.2",

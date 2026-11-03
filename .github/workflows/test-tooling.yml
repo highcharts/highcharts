@@ -27,6 +27,7 @@ permissions:
 jobs:
   notify:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
         node-version: ['lts/*', 'latest']
