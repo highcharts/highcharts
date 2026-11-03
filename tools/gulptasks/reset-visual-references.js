@@ -79,9 +79,9 @@ function getVisualSampleIds(tests, root = process.cwd()) {
 /**
  * Sets the correct config before creating the references
  * and uploading them to S3. Deletes any existing reference.svgs.
- * @return {void} Task result.
+ * @return {Promise<void>} Task result.
  */
-function configureVisualTestRun() {
+async function configureVisualTestRun() {
     log.starting('Setting config for creating and uploading reference images..');
 
     const { tests } = yargs.argv;

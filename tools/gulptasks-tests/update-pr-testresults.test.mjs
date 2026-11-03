@@ -45,6 +45,7 @@ const environmentKeys = [
 ];
 
 async function runComment({
+    args = {},
     dryrun = false,
     environment = {},
     existingComment,
@@ -130,7 +131,8 @@ async function runComment({
             dryrun,
             failSilently,
             pr: '25068',
-            resultsPath
+            resultsPath,
+            ...args
         });
 
         globalThis.fetch = async (...args) => {
@@ -376,6 +378,28 @@ test('dryrun writes comments without credentials or API requests', async () => {
         assert.match(payload.title, pixels ? /Differences found/u : /No difference found/u);
         if (pixels) {
             assert.match(payload.body, /Found \*\*1\*\* diffing sample/u);
+        }
+    }
+});
+
+test('rejects the retired artifact mode before publishing or changing comments', async () => {
+    const existingComment = '{"title":"Existing","body":"KEEP"}';
+    for (const failSilently of [false, true]) {
+        const options = {
+            args: { artifactsUrl: 'https://github.com/highcharts/highcharts/actions/runs/123#artifacts' },
+            existingComment,
+            failSilently,
+            testResults: {},
+            fetchImplementation: () => assert.fail('Retired mode must not publish')
+        };
+        if (failSilently) {
+            const { comment, requests } = await runComment(options);
+            assert.equal(comment, existingComment);
+            assert.equal(requests.length, 0);
+        } else {
+            await assert.rejects(runComment(options), error =>
+                /--artifacts-url is no longer supported.*--dryrun/u.test(error.message) &&
+                error.commentAfterAttempt === existingComment);
         }
     }
 });

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import {
     existsSync,
@@ -10,6 +11,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 const require = createRequire(import.meta.url);
@@ -24,6 +26,68 @@ const {
     getVisualSampleIds,
     runVisualReferenceTests
 } = require('../gulptasks/reset-visual-references.js');
+
+test('registered reset task renders and uploads after configuration', () => {
+    const result = spawnSync(process.execPath, [
+        '--import', 'tsx', '--input-type=commonjs', '-e', `
+        const assert = require('node:assert/strict');
+        const fs = require('node:fs');
+        const path = require('node:path');
+        const root = fs.mkdtempSync(path.join(require('node:os').tmpdir(),
+            'highcharts-reset-series-'));
+        const repositoryRoot = process.cwd();
+        const samplePath = path.join(root, 'samples/highcharts/demo/basic-line');
+        const referencePath = path.join(samplePath, 'reference.svg');
+        const calls = [];
+        const gulp = require('gulp');
+        const processLib = require('./tools/libs/process');
+        const yargs = require('yargs');
+        const cleanup = () => {
+            process.chdir(repositoryRoot);
+            fs.rmSync(root, { recursive: true, force: true });
+        };
+        fs.mkdirSync(samplePath, { recursive: true });
+        fs.writeFileSync(path.join(samplePath, 'demo.js'), '');
+        fs.writeFileSync(referencePath, '<svg>stale</svg>');
+        processLib.exec = async (command, options) => {
+            calls.push('render');
+            assert.equal(command, 'npm run test:pw:visual');
+            assert.equal(fs.existsSync(referencePath), false);
+            assert.deepEqual(JSON.parse(fs.readFileSync(
+                options.env.VISUAL_TEST_MANIFEST, 'utf8'
+            )), ['highcharts/demo/basic-line']);
+            fs.writeFileSync(referencePath, '<svg>new</svg>');
+        };
+        gulp.task('dist-testresults', async () => {
+            calls.push('upload');
+            assert.equal(fs.readFileSync(referencePath, 'utf8'), '<svg>new</svg>');
+        });
+        process.chdir(root);
+        yargs.parse(['--tests', 'highcharts/demo/basic-line']);
+        require(path.join(repositoryRoot, 'tools/gulptasks/reset-visual-references.js'));
+        const timeout = setTimeout(() => {
+            cleanup();
+            throw new Error('Reset task did not signal completion');
+        }, 1000);
+        gulp.task('reset-visual-references')(error => {
+            clearTimeout(timeout);
+            try {
+                assert.ifError(error);
+                assert.deepEqual(calls, ['render', 'upload']);
+            } finally {
+                cleanup();
+            }
+        });
+        `
+    ], {
+        cwd: fileURLToPath(new URL('../..', import.meta.url)),
+        encoding: 'utf8',
+        timeout: 5000
+    });
+
+    assert.ifError(result.error);
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+});
 
 test('expands sample globs using shared discovery and exclusions', t => {
     const root = mkdtempSync(join(tmpdir(), 'highcharts-visual-reset-'));
@@ -60,10 +124,10 @@ test('expands sample globs using shared discovery and exclusions', t => {
     );
     for (const pattern of ['../outside', '/tmp', 'C:/tmp']) {
         assert.throws(() => getVisualSampleIds(pattern, root),
-            /Invalid visual sample path/);
+            /Invalid visual sample path/u);
     }
     assert.throws(() => getVisualSampleIds('highcharts/demo/line-skipped', root),
-        /No eligible visual samples matched/);
+        /No eligible visual samples matched/u);
 });
 
 test('runs Playwright in reference mode with an exact manifest', async t => {
@@ -94,9 +158,11 @@ test('runs Playwright in reference mode with an exact manifest', async t => {
     assert.equal(existsSync(manifestPath), false);
 
     await assert.rejects(runVisualReferenceTests({
-        execute: async () => { throw new Error('Render failed'); },
+        execute: async () => {
+            throw new Error('Render failed');
+        },
         manifestPath,
         sampleIds
-    }), /Render failed/);
+    }), /Render failed/u);
     assert.equal(existsSync(manifestPath), false);
 });

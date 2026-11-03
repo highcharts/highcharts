@@ -254,6 +254,12 @@ async function writeCommentFile(content) {
  * @return {Promise<*>} Promise to keep.
  */
 async function commentOnPR({ changedFilesProvider = getFilesChanged } = {}) {
+    if ('artifactsUrl' in argv) {
+        return completeTask(
+            '--artifacts-url is no longer supported. ' +
+            'Use --dryrun to write a comment without publishing to Visual Review.'
+        );
+    }
     const {
         pr,
         resultsPath = 'test/visual-test-results.json'
