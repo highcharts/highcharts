@@ -43,9 +43,12 @@ async function testCypress() {
         path.join('test', 'cypress', product, 'demos.config.mjs') :
         path.join('test', 'cypress', product, 'config.mjs');
 
-    await processLib.exec(
-        'npx cypress run --config-file ' + configFile
+    const cypress = path.join(
+        path.dirname(require.resolve('cypress/package.json')), 'bin', 'cypress'
     );
+    await processLib.execFile(process.execPath, [
+        cypress, 'run', '--config-file', configFile
+    ]);
 
     logLib.success('Cypress tests successful');
 }
