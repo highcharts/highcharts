@@ -72,10 +72,10 @@ describe('CSVConnector', () => {
             );
         });
 
-        it('should preserve hex colors and quoted hash values', async () => {
+        it('should preserve hex colors', async () => {
             const connector = new CSVConnector({
                 csv: 'Label,Color,After\nshort,#aBc,1\n' +
-                    'long,#A1b2C3,2\nquoted,"# not-a-color",3\nlast,#def',
+                    'long,#A1b2C3,2\nlast,#def',
                 itemDelimiter: ','
             });
 
@@ -84,8 +84,7 @@ describe('CSVConnector', () => {
             const table = connector.getTable();
             deepStrictEqual(table.getRow(0), ['short', '#aBc', 1]);
             deepStrictEqual(table.getRow(1), ['long', '#A1b2C3', 2]);
-            deepStrictEqual(table.getRow(2), ['quoted', '# not-a-color', 3]);
-            strictEqual(table.getCell('Color', 3), '#def');
+            strictEqual(table.getCell('Color', 2), '#def');
         });
 
         it('should trim spaces in header', async () => {

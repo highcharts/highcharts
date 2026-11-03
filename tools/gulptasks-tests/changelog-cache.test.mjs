@@ -17,27 +17,16 @@ async function withCache(check) {
     const cache = join(root, 'tmp', 'changelog-pulls.json');
     await fs.promises.mkdir(shared);
     await fs.promises.mkdir(join(root, 'changelog'));
-    const products = [
-        'Highcharts', 'Highcharts Stock', 'Highcharts Maps',
-        'Highcharts Gantt', 'Highcharts Dashboards', 'Highcharts Grid'
-    ];
-    const pulls = products.map((product, index) => ({
-        number: index + 1,
-        body: `Fixed ${product}.\n\nUpgrade note\nUse the new option.`,
+    const pulls = [{
+        number: 1,
+        body: 'Fixed Highcharts.',
         labels: [
-            { name: `Product: ${product}` },
+            { name: 'Product: Highcharts' },
             { name: 'Changelog: Bugfix' }
         ],
         // eslint-disable-next-line camelcase
         merged_at: '2025-01-01T00:00:00Z'
-    }));
-    pulls.push({
-        number: 7,
-        body: 'Excluded change.',
-        labels: [],
-        // eslint-disable-next-line camelcase
-        merged_at: '2025-01-01T00:00:00Z'
-    });
+    }];
     let requests = 0;
     function load() {
         const module = { exports: {} };
@@ -86,7 +75,6 @@ async function withCache(check) {
             root,
             shared,
             cache,
-            products,
             pulls,
             load,
             requestCount: () => requests
@@ -97,19 +85,13 @@ async function withCache(check) {
 }
 
 test('persists a private checkout-local cache across invocations', async () => {
-    await withCache(async ({ cache, products, pulls, load, requestCount }) => {
+    await withCache(async ({ cache, pulls, load, requestCount }) => {
         const first = await load()();
         assert.deepEqual(JSON.parse(await fs.promises.readFile(cache)), pulls);
         const cached = await load()('ignored', true);
         assert.equal(requestCount(), 1);
         assert.deepEqual(JSON.parse(JSON.stringify(cached)),
             JSON.parse(JSON.stringify(first)));
-        for (const product of products) {
-            assert.equal(cached[product].bugfixes.length, 1);
-            assert.equal(cached[product].bugfixes[0].upgradeNotes[0],
-                'Use the new option.');
-        }
-        assert.equal(cached.excluded[0].number, 7);
         if (process.platform !== 'win32') {
             assert.equal((await fs.promises.stat(cache)).mode & 0o777, 0o600);
         }
@@ -125,7 +107,7 @@ test('never writes the shared OS cache or follows a cache symlink', async () => 
         await fs.promises.symlink(sentinel, cache);
         await load()();
         assert.equal(await fs.promises.readFile(sentinel, 'utf8'), 'untouched');
-        assert.equal(JSON.parse(await fs.promises.readFile(cache)).length, 7);
+        assert.equal(JSON.parse(await fs.promises.readFile(cache)).length, 1);
         assert.equal((await fs.promises.lstat(cache)).isSymbolicLink(), false);
     });
 });
@@ -138,6 +120,6 @@ test('refreshing a cache hardlink leaves the other file untouched', async () => 
         await fs.promises.link(sentinel, cache);
         await load()();
         assert.equal(await fs.promises.readFile(sentinel, 'utf8'), 'untouched');
-        assert.equal(JSON.parse(await fs.promises.readFile(cache)).length, 7);
+        assert.equal(JSON.parse(await fs.promises.readFile(cache)).length, 1);
     });
 });

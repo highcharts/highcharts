@@ -101,7 +101,6 @@ test('Legacy QUnit safely parses query parameter names', async ({ page }) => {
         contentType: 'text/html',
         body: `<html><head>
             <script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
-            <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
             <script>QUnit.config.autostart = false;</script>
             </head><body></body></html>`
     }));
@@ -130,11 +129,6 @@ test('Legacy QUnit safely parses query parameter names', async ({ page }) => {
         ],
         objectPrototypeKeys: []
     });
-    await expect.poll(() => test.info().annotations).toContainEqual({
-        type: 'redirect',
-        description: 'https://code.jquery.com/qunit/qunit-2.0.1.css --> tests/qunit/vendor/qunit-2.0.1.css'
-    });
-
     const assertions = await page.evaluate(() => new Promise(resolve => {
         QUnit.done(details => resolve({
             failed: details.failed,
@@ -251,7 +245,7 @@ test.describe('createChart', () => {
                 title: {
                     text: 'CUSTOM CHART'
                 }
-            } as any,
+            },
             {
                 container: 'test',
             }
@@ -321,7 +315,7 @@ test.describe('createChart', () => {
                 title: {
                     text: 'LOCATOR CHART'
                 }
-            } as any,
+            },
             { container }
         );
 

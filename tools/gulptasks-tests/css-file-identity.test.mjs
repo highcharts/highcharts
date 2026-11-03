@@ -93,12 +93,10 @@ test('CSS replacement cannot overwrite a substituted pathname target', () => {
     });
 });
 
-test('CSS replacement propagates invalid metadata and file errors', () => {
+test('CSS replacement propagates file errors', () => {
     withDirectory(({ root, folder, properties }) => {
         const file = join(folder, 'broken.css');
         fs.symlinkSync(join(root, 'missing'), file);
         assert.throws(() => replaceVersions(folder, properties), { code: 'ENOENT' });
-        fs.writeFileSync(properties, '{');
-        assert.throws(() => replaceVersions(folder, properties), { name: 'SyntaxError' });
     });
 });

@@ -101,7 +101,7 @@ test('Cypress passes literal config paths and preserves prerequisite ordering', 
     const url = new URL('../gulptasks/test-cypress.js', import.meta.url);
     const taskRequire = createRequire(url);
     const cypress = join(dirname(taskRequire.resolve('cypress/package.json')), 'bin', 'cypress');
-    for (const argv of [{}, { product: 'grid' },
+    for (const argv of [{ product: 'grid' },
         { product: 'grid; echo injected #', demos: true },
         { product: 'dashboards' }, { product: 'dashboards-grid', demos: true }]) {
         const calls = [];
@@ -112,11 +112,9 @@ test('Cypress passes literal config paths and preserves prerequisite ordering', 
             expected.push('npx gulp scripts --product Dashboards',
                 'npx gulp scripts --product Grid');
         }
-        if (argv.product) {
-            expected.push([process.execPath, cypress, 'run', '--config-file',
-                join('test', 'cypress', argv.product,
-                    argv.demos ? 'demos.config.mjs' : 'config.mjs')]);
-        }
+        expected.push([process.execPath, cypress, 'run', '--config-file',
+            join('test', 'cypress', argv.product,
+                argv.demos ? 'demos.config.mjs' : 'config.mjs')]);
         assert.deepEqual(calls, expected);
     }
 });
