@@ -1,52 +1,65 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
-const taskSource = readFileSync(
-    new URL('../gulptasks/test.js', import.meta.url),
-    'utf8'
-);
-const resetTaskSource = readFileSync(
-    new URL('../gulptasks/reset-visual-references.js', import.meta.url),
-    'utf8'
-);
 const gulpPath = fileURLToPath(
     new URL('../../node_modules/gulp/bin/gulp.js', import.meta.url)
 );
 const rootPath = fileURLToPath(new URL('../..', import.meta.url));
 
-for (const flag of ['reference', 'visualcompare']) {
-    test(`rejects --${flag} with Playwright guidance`, () => {
-        const result = spawnSync(
-            process.execPath,
-            [gulpPath, 'test', `--${flag}`, '--product', 'Core'],
-            { cwd: rootPath, encoding: 'utf8' }
-        );
-        const output = result.stdout + result.stderr;
+function runTask(...args) {
+    const result = spawnSync(
+        process.execPath,
+        [gulpPath, 'test', '--helpme', ...args],
+        { cwd: rootPath, encoding: 'utf8', timeout: 15000 }
+    );
+    assert.ifError(result.error);
+    return { status: result.status, output: result.stdout + result.stderr };
+}
 
-        assert.notEqual(result.status, 0);
+for (const flag of ['reference', 'visualcompare']) {
+    test(`rejects --${flag} with Playwright visual guidance`, () => {
+        const { status, output } = runTask(`--${flag}`);
+
+        assert.notEqual(status, 0);
         assert.match(output, new RegExp(`--${flag}`, 'u'));
         assert.match(output, /npm run test:pw:visual/u);
         assert.match(output, /VISUAL_TEST_REFERENCE=1/u);
     });
 }
 
-test('rejects retired flags before any ordinary test routing', () => {
-    assert.doesNotMatch(taskSource, /karma/u);
+test('rejects legacy options instead of silently ignoring them', () => {
+    for (const args of [
+        ['--browsers', 'Firefox'],
+        ['--browsercount', '2'],
+        ['--splitbrowsers', 'Chrome'],
+        ['--debug'],
+        ['--tests', 'unit-tests/chart/*'],
+        ['--testsAbsolutePath', '/tmp/demo.js'],
+        ['--ts'],
+        ['--dots'],
+        ['--timeout', '5000']
+    ]) {
+        const { status, output } = runTask(...args);
+
+        assert.notEqual(status, 0, args[0]);
+        assert.ok(
+            output.includes(`${args[0]} is no longer supported by gulp test.`),
+            output
+        );
+        assert.match(output, /npx playwright test/u);
+    }
 });
 
-test('keeps Playwright unit-test routing and filters', () => {
-    assert.match(taskSource, /npx playwright test/u);
-    assert.match(taskSource, /argv\.modified/u);
-    assert.match(taskSource, /argv\.product/u);
-    assert.match(taskSource, /productTests/u);
-});
+test('help describes supported options and direct Playwright commands', () => {
+    const { status, output } = runTask();
 
-test('registers Playwright reference generation before uploading', () => {
-    assert.match(
-        resetTaskSource,
-        /gulp\.series\(\s*configureVisualTestRun,\s*runVisualReferenceTests,\s*'dist-testresults'/u
+    assert.equal(status, 0, output);
+    assert.deepEqual(
+        output.match(/^--\w+/gmu),
+        ['--force', '--modified', '--product', '--speak']
     );
+    assert.match(output, /npx playwright test tests\/highcharts\/chart/u);
+    assert.match(output, /npm run test:pw:visual/u);
 });

@@ -22,6 +22,9 @@ npx gulp test --modified
 npm test
 ```
 
+For browser selection or individual test paths, use Playwright directly.
+`gulp test` rejects the former Karma browser, filtering and reporter options.
+
 ### Running Timezone Tests
 
 Timezone tests verify that Highcharts handles time conversions correctly across

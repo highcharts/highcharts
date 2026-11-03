@@ -10,11 +10,9 @@ const glob = require('glob');
 const log = require('../libs/log');
 const processLib = require('../libs/process');
 const yargs = require('yargs');
-const { getVisualSampleSkipReason } = require('../../test/visual-test-samples');
+const { selectVisualSamples } = require('../../tests/visual/visual-samples.ts');
 
 const SAMPLES_SRC_DIR = 'samples/**';
-const VISUAL_SAMPLES_GLOB =
-    'samples/{highcharts,stock,maps,gantt}/*/*/demo.{js,ts}';
 const VISUAL_SAMPLE_MANIFEST_PATH = Path.resolve(
     'tmp/reset-visual-references.json'
 );
@@ -39,18 +37,7 @@ function getVisualSampleIds(tests, root = process.cwd()) {
             .replace(/^samples\//u, ''))
         .filter(Boolean);
 
-    function getSampleId(file) {
-        return Path.relative(
-            sampleRoot,
-            Path.dirname(Path.resolve(rootPath, file))
-        ).replace(/\\/gu, '/');
-    }
-
-    const availableSamples = new Set(
-        glob.sync(VISUAL_SAMPLES_GLOB, { cwd: rootPath, nodir: true })
-            .map(getSampleId)
-    );
-    const selectedSamples = new Set();
+    const matchingSamples = new Set();
 
     for (const pattern of patterns) {
         if (
@@ -69,24 +56,24 @@ function getVisualSampleIds(tests, root = process.cwd()) {
             cwd: rootPath,
             nodir: true
         })) {
-            const sampleId = getSampleId(file);
-
-            if (
-                availableSamples.has(sampleId) &&
-                !getVisualSampleSkipReason(rootPath, sampleId)
-            ) {
-                selectedSamples.add(sampleId);
-            }
+            matchingSamples.add(Path.relative(
+                sampleRoot,
+                Path.dirname(Path.resolve(rootPath, file))
+            ).replace(/\\/gu, '/'));
         }
     }
 
-    if (!selectedSamples.size) {
+    const selectedSamples = selectVisualSamples(rootPath)
+        .map(sample => sample.id)
+        .filter(id => matchingSamples.has(id));
+
+    if (!selectedSamples.length) {
         throw new Error(
             `No eligible visual samples matched --tests "${tests}".`
         );
     }
 
-    return [...selectedSamples].sort();
+    return selectedSamples;
 }
 
 /**

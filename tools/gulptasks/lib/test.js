@@ -277,62 +277,25 @@ Available products are: ${availableProducts.join(', ')}`;
 
 const HELP_TEXT_COMMON = `
 
---browsers
-Comma separated list of browsers to test. Available browsers are
-'ChromeHeadless, Chrome, Firefox, Safari, Edge, IE' depending on what is
-installed on the local system. Defaults to ChromeHeadless.
-
-In addition, virtual browsers from Browserstack are supported. They are
-prefixed by the operating system. Available BrowserStack browsers are
-'Mac.Chrome, Mac.Firefox, Mac.Safari, Win.Chrome, Win.Edge, Win.Firefox,
-Win.IE'.
-
-For debugging in Visual Studio Code, use 'ChromeHeadless.Debugging'.
-
-A shorthand option, '--browsers all', runs all BrowserStack machines.
-
---browsercount
-Number of browserinstances to spread/shard the tests across. Default value is 2.
-Will default use ChromeHeadless browser. For other browsers specify
-argument --splitbrowsers (same usage as above --browsers argument).
-
---debug
-Skips rebuilding and prints some debugging info.
-
 --force
-Forces all tests without cached results.
+Forces tests without cached results.
 
 --modified
 Runs tests for products affected by modified files staged for commit.
 
 --product
-Comma separated list of products to test.
+Selects a product to test.
 Available products are Core, Gantt, Maps, Stock, Dashboards and Grid.
 
 --speak
 Says if tests failed or succeeded.
 
---tests
-Comma separated list of tests to run. Defaults to '*.*' that runs all tests
-in the 'samples/' directory.
-Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
-directory.
+For browser selection, individual test paths and other Playwright options,
+use \`npx playwright test\` directly. For example:
+npx playwright test tests/highcharts/chart --project=highcharts
 
---testsAbsolutePath
-Comma separated list of tests to run. By default runs all tests
-in the 'samples/' directory.
-Example:
-'gulp test --testsAbsolutePath /User/{userName}/{path}/{to}/highcharts/samples/unit-tests/3d/axis/demo.js'
-runs all tests in the file.
-
---ts
-Compile TypeScript-based tests.
-
---dots
-Use the less verbose 'dots' reporter
-
---timeout
-Set a different disconnect timeout from default config
+For visual tests, use \`npm run test:pw:visual\`.
+Set VISUAL_TEST_REFERENCE=1 when generating references.
 
 `;
 

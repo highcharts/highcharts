@@ -238,9 +238,6 @@ jobs:
           echo "HIGHCHARTS_VERSION=${HIGHCHARTS_VERSION}" >> "$GITHUB_ENV"
           echo "${HIGHCHARTS_VERSION}"
 
-      - name: Build Highcharts
-        run: npx gulp scripts
-
       - name: Generate nightly references
         env:
           VISUAL_TEST_REFERENCE: '1'

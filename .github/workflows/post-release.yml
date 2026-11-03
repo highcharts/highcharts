@@ -29,7 +29,6 @@ jobs:
       - run: echo ${{github.ref_name}}
 
       - run: npm ci
-      - run: npx gulp scripts
       - run: npx playwright install --with-deps chromium
 
       - name: Generate release reference images

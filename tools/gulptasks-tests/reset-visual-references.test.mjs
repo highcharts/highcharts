@@ -13,6 +13,7 @@ import { dirname, join } from 'node:path';
 import test from 'node:test';
 
 const require = createRequire(import.meta.url);
+require('tsx/cjs');
 const gulp = require('gulp');
 const GulpForwardReference = require('undertaker-forward-reference');
 
@@ -24,12 +25,14 @@ const {
     runVisualReferenceTests
 } = require('../gulptasks/reset-visual-references.js');
 
-test('expands comma-separated sample globs to Playwright sample IDs', t => {
+test('expands sample globs using shared discovery and exclusions', t => {
     const root = mkdtempSync(join(tmpdir(), 'highcharts-visual-reset-'));
     t.after(() => rmSync(root, { recursive: true, force: true }));
 
     const scripts = [
         'samples/highcharts/demo/line-labels/demo.js',
+        'samples/highcharts/demo/line-labels/demo.ts',
+        'samples/highcharts/demo/line-skipped/demo.js',
         'samples/highcharts/plotoptions/line-step/demo.js',
         'samples/stock/demo/candles/demo.ts'
     ];
@@ -39,6 +42,10 @@ test('expands comma-separated sample globs to Playwright sample IDs', t => {
         mkdirSync(dirname(scriptPath), { recursive: true });
         writeFileSync(scriptPath, '');
     }
+    writeFileSync(
+        join(root, 'samples/highcharts/demo/line-skipped/demo.details'),
+        'skipTest: true'
+    );
 
     assert.deepEqual(
         getVisualSampleIds(
@@ -51,6 +58,12 @@ test('expands comma-separated sample globs to Playwright sample IDs', t => {
             'stock/demo/candles'
         ]
     );
+    for (const pattern of ['../outside', '/tmp', 'C:/tmp']) {
+        assert.throws(() => getVisualSampleIds(pattern, root),
+            /Invalid visual sample path/);
+    }
+    assert.throws(() => getVisualSampleIds('highcharts/demo/line-skipped', root),
+        /No eligible visual samples matched/);
 });
 
 test('runs Playwright in reference mode with an exact manifest', async t => {
@@ -78,5 +91,12 @@ test('runs Playwright in reference mode with an exact manifest', async t => {
     });
 
     assert.equal(calls, 1);
+    assert.equal(existsSync(manifestPath), false);
+
+    await assert.rejects(runVisualReferenceTests({
+        execute: async () => { throw new Error('Render failed'); },
+        manifestPath,
+        sampleIds
+    }), /Render failed/);
     assert.equal(existsSync(manifestPath), false);
 });

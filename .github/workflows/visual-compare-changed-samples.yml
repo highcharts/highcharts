@@ -56,11 +56,14 @@ jobs:
           fi
 
           product_globs=''
+          visual_paths=''
           while IFS= read -r product; do
             if [[ -n "$product_globs" ]]; then
               product_globs+=','
+              visual_paths+=','
             fi
             product_globs+="$product/*/*"
+            visual_paths+="samples/$product/"
           done < "$products_file"
 
           has_products=false
@@ -73,7 +76,7 @@ jobs:
           {
             printf 'has_products=%s\n' "$has_products"
             printf 'product_globs=%s\n' "$product_globs"
-            printf 'products=%s\n' "$(paste -sd, "$products_file")"
+            printf 'visual_paths=%s\n' "$visual_paths"
           } >> "$GITHUB_OUTPUT"
 
       - name: Use Node.js lts/*
@@ -87,39 +90,19 @@ jobs:
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
         run: npm ci
 
-      - name: Select visual samples
-        id: selected_samples
-        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
-        env:
-          PRODUCTS: ${{ steps.changed_samples.outputs.products }}
-        run: |
-          set -euo pipefail
-          manifest="$RUNNER_TEMP/visual-samples.json"
-          node .github/scripts/selectVisualSamples.mjs --products "$PRODUCTS" > "$manifest"
-          if [[ "$(cat "$manifest")" == '[]' ]]; then
-            echo 'No visual samples selected.'
-            echo 'has_samples=false' >> "$GITHUB_OUTPUT"
-          else
-            echo 'has_samples=true' >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Build Highcharts
-        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
-        run: npx gulp scripts
-
       - name: Generate changed samples
-        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
         env:
           PRODUCT_GLOBS: ${{ steps.changed_samples.outputs.product_globs }}
         run: npx gulp generate-samples --samples "$PRODUCT_GLOBS"
 
       - name: Install Playwright Chromium
-        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
         run: npx playwright install --with-deps chromium
 
       - name: Generate changed sample references
-        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
         env:
-          VISUAL_TEST_MANIFEST: ${{ runner.temp }}/visual-samples.json
+          VISUAL_TEST_PATH: ${{ steps.changed_samples.outputs.visual_paths }}
           VISUAL_TEST_REFERENCE: '1'
         run: npm run test:pw:visual
