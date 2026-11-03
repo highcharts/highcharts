@@ -96,6 +96,56 @@ test('QUnit assets are served locally', async ({ page }) => {
         .toBe('2.4.0');
 });
 
+test('Legacy QUnit safely parses query parameter names', async ({ page }) => {
+    await page.route('**/legacy-qunit?*', route => route.fulfill({
+        contentType: 'text/html',
+        body: `<html><head>
+            <script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
+            <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
+            <script>QUnit.config.autostart = false;</script>
+            </head><body></body></html>`
+    }));
+    await page.goto('/legacy-qunit?' +
+        '%5F%5Fproto%5F%5F=first&__proto__=second&constructor=literal&' +
+        'toString=text&empty=&empty=second&repeat=one&repeat=two&' +
+        'flag&greeting=hello+world%21');
+
+    const result = await page.evaluate(() => ({
+        version: QUnit.version,
+        nullPrototype: Object.getPrototypeOf(QUnit.urlParams) === null,
+        entries: Object.entries(QUnit.urlParams),
+        objectPrototypeKeys: Object.keys(Object.prototype)
+    }));
+    expect(result).toEqual({
+        version: '2.0.1',
+        nullPrototype: true,
+        entries: [
+            ['__proto__', ['first', 'second']],
+            ['constructor', 'literal'],
+            ['toString', 'text'],
+            ['empty', ['', 'second']],
+            ['repeat', ['one', 'two']],
+            ['flag', true],
+            ['greeting', 'hello world!']
+        ],
+        objectPrototypeKeys: []
+    });
+    await expect.poll(() => test.info().annotations).toContainEqual({
+        type: 'redirect',
+        description: 'https://code.jquery.com/qunit/qunit-2.0.1.css --> tests/qunit/vendor/qunit-2.0.1.css'
+    });
+
+    const assertions = await page.evaluate(() => new Promise(resolve => {
+        QUnit.done(details => resolve({
+            failed: details.failed,
+            passed: details.passed
+        }));
+        QUnit.test('ordinary assertions still run', assert => assert.ok(true));
+        QUnit.start();
+    }));
+    expect(assertions).toEqual({ failed: 0, passed: 1 });
+});
+
 test.describe('Redirects for data', () => {
     test('jsonSources', async ({ page }) => {
         const template = `<html>
