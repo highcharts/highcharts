@@ -293,12 +293,13 @@ function compose(
     wrap(seriesProto, 'searchPoint', function (
         this: Series,
         proceed: Function,
-        e: PointerEvent
+        e: PointerEvent,
+        compareX?: boolean
     ): (Point|undefined) {
         if (this.gpu) {
             // Chart coordinates: `toValue` subtracts the axis position,
             // and `axis.pos` differs from `chart.plotLeft` with panes.
-            return this.gpu.hitAt(e);
+            return this.gpu.hitAt(e, compareX);
         }
         return proceed.apply(this, [].slice.call(arguments, 1));
     });

@@ -13,12 +13,6 @@ under `boostHairline`, with optional circular markers.
   series on the GPU shows only `B` in 60. Fix direction: a branch in
   `getHoverData` that asks the strategy instead of scanning `points`.
 
-- **No antialiasing on the ribbon.** Edges are hard, so coverage per
-  column is quantised to whole pixels: a 45 degree stroke of width 2
-  measures 3 against a geometric 2.83, and dense data lands 2.6% under
-  SVG. The analytic approach is proven on markers, where coverage matches
-  `pi*r^2` to 0.02%; the ribbon needs a distance-from-centre varying.
-
 ## Options that silently render differently
 
 These are not rejected by `isSupported`, so a chart using them is drawn
@@ -66,6 +60,10 @@ path does not yet draw.
 
 - Null gaps. A NaN point discards the triangles around it, so the gap may
   be a few pixels wider than the SVG one. Not measured.
+- `hitAt` searches every point, while the core k-d tree is built from
+  `series.points`, the cropped set. A point just outside the view can
+  therefore win here and not there, though the distance bound keeps the
+  difference to the plot edge.
 - Hover state rendering: `halo` and `states.hover` draw from
   `point.graphic`, which no longer exists.
 - Series visibility, legend interaction and the inactive state.

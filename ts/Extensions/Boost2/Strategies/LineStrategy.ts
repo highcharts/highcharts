@@ -571,11 +571,15 @@ class LineStrategy {
     }
 
     /**
-     * Nearest point by x, without a k-d tree or mock points. Requires the
+     * Nearest point, without a k-d tree or mock points. Requires the
      * sorted x column that `isSupported` enforces.
+     *
+     * `compareX` carries the contract of `Series.searchPoint`: by x alone
+     * when set, by plane distance otherwise, which is what
+     * `findNearestPointBy: 'xy'` and a shared tooltip ask for.
      * @internal
      */
-    public hitAt(e: PointerEvent): (Point|undefined) {
+    public hitAt(e: PointerEvent, compareX?: boolean): (Point|undefined) {
         const series = this.series,
             xData = series.getColumn('x');
 
@@ -605,7 +609,99 @@ class LineStrategy {
             low--;
         }
 
-        return this.materialize(low, e);
+        return this.materialize(
+            compareX ? low : this.nearest(low, e),
+            e
+        );
+    }
+
+    /**
+     * Nearest point in the plane, seeded by the nearest in x.
+     *
+     * Blocks of the min/max index carry an x interval and a y interval, so
+     * the distance to the nearest corner of that rectangle bounds every
+     * point inside it from below. A block beyond the bound is skipped
+     * whole, and since x is sorted, the first block whose horizontal
+     * distance alone exceeds the best ends the walk on that side.
+     * @internal
+     */
+    private nearest(seed: number, e: PointerEvent): number {
+        const series = this.series,
+            { xAxis, yAxis } = series,
+            xData = series.getColumn('x'),
+            yData = series.getColumn('y'),
+            last = xData.length - 1,
+            cx = e.chartX - xAxis.pos,
+            cy = e.chartY - yAxis.pos;
+
+        let best = seed,
+            bestDist = Infinity;
+
+        const scan = (b: number): void => {
+            const to = Math.min(b * BLOCK + BLOCK - 1, last);
+
+            for (let i = b * BLOCK; i <= to; i++) {
+                const value = yData[i];
+
+                if (isNumber(value)) {
+                    const dx = xAxis.toPixels(xData[i], true) - cx,
+                        dy = yAxis.toPixels(value, true) - cy,
+                        dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < bestDist) {
+                        bestDist = dist;
+                        best = i;
+                    }
+                }
+            }
+        };
+
+        // Scans the block when it may hold something nearer, and reports
+        // its horizontal distance, which only grows away from the seed.
+        const visit = (b: number): number => {
+            const to = Math.min(b * BLOCK + BLOCK - 1, last),
+                left = xAxis.toPixels(xData[b * BLOCK], true),
+                right = xAxis.toPixels(xData[to], true),
+                dx = Math.max(0, left - cx, cx - right);
+
+            if (dx >= bestDist) {
+                return dx;
+            }
+
+            const low = this.blockMin[b],
+                high = this.blockMax[b];
+
+            // An empty block holds no y at all.
+            if (low <= high) {
+                const top = yAxis.toPixels(high, true),
+                    bottom = yAxis.toPixels(low, true),
+                    dy = Math.max(0, top - cy, cy - bottom);
+
+                if (Math.sqrt(dx * dx + dy * dy) < bestDist) {
+                    scan(b);
+                }
+            }
+
+            return dx;
+        };
+
+        const seedBlock = seed >> BLOCK_SHIFT;
+
+        scan(seedBlock);
+
+        for (let b = seedBlock - 1; b >= 0; b--) {
+            if (visit(b) >= bestDist) {
+                break;
+            }
+        }
+
+        for (let b = seedBlock + 1; b <= (last >> BLOCK_SHIFT); b++) {
+            if (visit(b) >= bestDist) {
+                break;
+            }
+        }
+
+        return best;
     }
 
     /**
