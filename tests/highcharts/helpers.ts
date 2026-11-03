@@ -58,7 +58,7 @@ export async function selectIndicator(
 ): Promise<void> {
     // The list and its items share the class
     await page.locator('li.highcharts-indicator-list', {
-        hasText: new RegExp(name.replace(/[()]/gu, '\\$&'), 'u')
+        hasText: name
     }).first().click();
 }
 
