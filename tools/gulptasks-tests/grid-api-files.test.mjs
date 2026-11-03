@@ -74,8 +74,9 @@ test('preserves Grid JavaScript, CSS, JSON and sitemap transformations', () => {
         assert.deepEqual(readJSON('nav/index.json').children,
             [{ fullname: 'columns', product: 'gridpro' }]);
         assert.equal(readJSON('nav/columns.json').product, 'gridpro');
-        assert.match(fs.readFileSync(join(root, 'sitemap.xml'), 'utf8'),
-            /https:\/\/api\.highcharts\.com\/grid\/columns/u);
+        assert.equal(fs.readFileSync(join(root, 'sitemap.xml'), 'utf8'),
+            '<url><loc>https://api.highcharts.com/grid/columns</loc>' +
+            '<priority>0.5</priority></url>');
     });
 });
 
