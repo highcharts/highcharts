@@ -71,15 +71,17 @@ test('runs the exact Karma command with inherited stdio', () => {
 
 test('removes a stale marker and accepts a fresh marker', () => {
     const paths = temporaryPaths();
+    let createdFreshMarker = false;
     writeFileSync(paths.completionPath, 'stale');
     try {
         const result = runVisualCompare('Stock', 'stock/*/*', {
             ...paths,
             runChild: () => {
-                assert.equal(existsSync(paths.completionPath), false);
-                writeFileSync(paths.completionPath, 'fresh');
+                writeFileSync(paths.completionPath, 'fresh', { flag: 'wx' });
+                createdFreshMarker = true;
             }
         });
+        assert.equal(createdFreshMarker, true);
         assert.equal(result, 0);
         assert.equal(existsSync(paths.errorPath), false);
     } finally {
