@@ -59,6 +59,19 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
+/** @internal */
+declare module '../../Core/Series/SeriesOptions' {
+    /** @internal */
+    interface SeriesOptions {
+        /**
+         * Draw the graph one device pixel wide, ignoring `lineWidth` and
+         * joins, from a quarter of the vertices.
+         * @internal
+         */
+        boostHairline?: boolean;
+    }
+}
+
 /* *
  *
  *  Constants

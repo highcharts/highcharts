@@ -117,11 +117,7 @@ function markersEnabled(series: Series): boolean {
         (rangePx >= (marker.enabledThreshold ?? 2) * (marker.radius as number));
 }
 
-/**
- * A single device pixel comes from the hardware line primitive; anything
- * wider is built as geometry.
- * @internal
- */
+/** @internal */
 function buildPipeline(
     device: GPUDevice,
     format: GPUTextureFormat,
@@ -291,13 +287,15 @@ class LineStrategy {
     }
 
     /** @internal */
-    private ensureResources(wide: boolean, markers: boolean): void {
+    private ensureResources(hairline: boolean, markers: boolean): void {
+        // The pipelines share one bind group layout, so switching between
+        // them leaves the bind group valid.
         this.pipeline = GPUContext.pipeline(
-            wide ? 'boost2-ribbon' : 'boost2-line',
+            hairline ? 'boost2-hairline' : 'boost2-line',
             (device, format, layout): GPURenderPipeline => buildPipeline(
                 device, format, layout, LineShader,
-                wide ? 'vsRibbon' : 'vsLine', 'fs',
-                wide ? 'triangle-strip' : 'line-strip'
+                hairline ? 'vsHairline' : 'vsLine', 'fs',
+                hairline ? 'line-strip' : 'triangle-strip'
             )
         );
 
@@ -342,7 +340,7 @@ class LineStrategy {
             chart = series.chart,
             options = series.options,
             lineWidth = options.lineWidth ?? 2,
-            wide = lineWidth > 1,
+            hairline = options.boostHairline === true,
             markers = markersEnabled(series);
 
         // Nothing to draw. A surface is still needed if one exists, so
@@ -353,7 +351,7 @@ class LineStrategy {
 
         this.surface ||= new GPUSurface(series);
         this.surface.layout();
-        this.ensureResources(wide, markers);
+        this.ensureResources(hairline, markers);
 
         const { xAxis, yAxis } = series,
             rgba = resolveColor(series.color as string, chart.container),
@@ -385,7 +383,7 @@ class LineStrategy {
 
         if (lineWidth > 0) {
             pass.setPipeline(this.pipeline!);
-            pass.draw(wide ? this.count * 2 : this.count);
+            pass.draw(hairline ? this.count : this.count * 4);
         }
 
         // Markers last, so they sit on top of the graph as in SVG.

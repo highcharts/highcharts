@@ -25,12 +25,15 @@ import Prelude from './Prelude.js';
  * */
 
 /**
- * Two vertex entry points over one fragment shader and uniform layout.
+ * `vsHairline` is one vertex per point on `line-strip`, which the hardware
+ * rasterizes one device pixel wide, ignoring `lineWidth` and joins.
  *
- * `vsLine` is one vertex per point on `line-strip`, which the hardware
- * rasterizes one device pixel wide. `vsRibbon` is two vertices per point
- * on `triangle-strip`, offset along the miter normal; consecutive points
- * share their vertices, so joins need no separate geometry.
+ * `vsLine` is four vertices per point on `triangle-strip`: a pair for the
+ * segment arriving at the point and a pair for the one leaving it.
+ * Each segment therefore carries the normal of its own direction and keeps
+ * its exact width, while the two triangles between the pairs form the
+ * join. Collapsing the pairs onto the miter point empties those triangles
+ * and leaves a miter; keeping them apart fills them as a bevel.
  *
  * The offset is taken in device pixels: the domain mapping is anisotropic,
  * so a normal from data space would vary the width with the slope.
@@ -46,16 +49,18 @@ const EPS = 1e-6;
 // Reciprocal of the SVG default stroke-miterlimit of 4.
 const MITER_LIMIT = 0.25;
 
+// One vertex per point, for line-strip topology.
 @vertex
-fn vsLine(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
+fn vsHairline(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
     return toClip(toPixels(pts[vi]));
 }
 
 @vertex
-fn vsRibbon(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
+fn vsLine(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
     let last = u32(u.count) - 1u;
-    let i    = vi >> 1u;
-    let side = f32(vi & 1u) * 2.0 - 1.0;
+    let i    = vi >> 2u;
+    let k    = vi & 3u;
+    let side = select(1.0, -1.0, (k & 1u) == 1u);
 
     let curr = toPixels(pts[i]);
     let dIn  = curr - toPixels(pts[max(i, 1u) - 1u]);
@@ -69,40 +74,39 @@ fn vsRibbon(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
     let okIn  = lIn  > EPS;
     let okOut = lOut > EPS;
 
-    var tangent : vec2f;
-    var scale = 1.0;
+    var dir : vec2f;
 
     if (okIn && okOut) {
         let uIn  = dIn / lIn;
         let uOut = dOut / lOut;
-
-        tangent = uIn + uOut;
-
+        let tangent = uIn + uOut;
         let lTan = length(tangent);
 
-        if (lTan <= EPS) {
-            // The path reverses onto itself; the miter is unbounded.
-            return toClip(curr);
+        if (lTan > EPS) {
+            let m = tangent / lTan;
+            let n = vec2f(-m.y, m.x);
+            // Grows as 1 / sin(theta / 2) towards a reversal.
+            let sinHalf = dot(n, vec2f(-uIn.y, uIn.x));
+
+            if (sinHalf >= MITER_LIMIT) {
+                // Both halves meet at the miter point, which leaves the
+                // two join triangles with no area.
+                return toClip(curr + n * side * u.halfWidth / sinHalf);
+            }
         }
 
-        tangent = tangent / lTan;
-
-        // The miter grows as 1 / sin(theta / 2) and is clamped rather than
-        // replaced by a bevel, which a shared-vertex strip cannot express.
-        scale = 1.0 / max(
-            dot(vec2f(-tangent.y, tangent.x), vec2f(-uIn.y, uIn.x)),
-            MITER_LIMIT
-        );
+        // Past the limit each half keeps the normal of its own segment,
+        // and the join triangles span the gap between them as a bevel.
+        dir = select(uIn, uOut, k >= 2u);
     } else if (okIn) {
-        tangent = dIn / lIn;
+        dir = dIn / lIn;
     } else if (okOut) {
-        tangent = dOut / lOut;
+        dir = dOut / lOut;
     } else {
         return toClip(curr);
     }
 
-    return toClip(curr + vec2f(-tangent.y, tangent.x) *
-        side * u.halfWidth * scale);
+    return toClip(curr + vec2f(-dir.y, dir.x) * side * u.halfWidth);
 }
 
 @fragment

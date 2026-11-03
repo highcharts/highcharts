@@ -1,19 +1,10 @@
 # Boost2 - open work
 
-Scope of the current proof of concept: the `line` series, drawn as a
-hardware line at `lineWidth: 1`, as a miter-joined ribbon above it, with
-optional circular markers.
+Scope of the current proof of concept: the `line` series, drawn at any
+width as a ribbon with miter and bevel joins, or as a one pixel hairline
+under `boostHairline`, with optional circular markers.
 
 ## Defects
-
-- **Sharp joins collapse the stroke.** The miter is clamped to the SVG
-  default `stroke-miterlimit` of 4, but in a shared-vertex strip the
-  clamped vertex also defines the edge of both neighbouring segments, so
-  the whole segment thins instead of only the corner being cut. Measured
-  on a zigzag at `lineWidth: 3`: 0.84 px of actual width. SVG does not
-  have this because its fallback is a bevel, which preserves segment
-  width. Fix direction: four vertices per point, so each segment carries
-  its own normals, with a gap on the outside of sharp turns.
 
 - **The series is missing from a shared tooltip.** `getHoverData`
   collects the other members with `find(s.points, ...)`, and this module
@@ -22,13 +13,11 @@ optional circular markers.
   series on the GPU shows only `B` in 60. Fix direction: a branch in
   `getHoverData` that asks the strategy instead of scanning `points`.
 
-- **No antialiasing on the ribbon.** Edges are hard. The analytic
-  approach is already proven on markers, where coverage matches `pi*r^2`
-  to 0.02%; it needs a distance-from-centre varying on the ribbon.
-
-- **`lineWidth: 1` is one device pixel.** The hardware line primitive
-  ignores the device pixel ratio, so on a 2x display the stroke is half
-  the thickness of the SVG one.
+- **No antialiasing on the ribbon.** Edges are hard, so coverage per
+  column is quantised to whole pixels: a 45 degree stroke of width 2
+  measures 3 against a geometric 2.83, and dense data lands 2.6% under
+  SVG. The analytic approach is proven on markers, where coverage matches
+  `pi*r^2` to 0.02%; the ribbon needs a distance-from-centre varying.
 
 ## Options that silently render differently
 
@@ -83,6 +72,13 @@ path does not yet draw.
   new one, so the whole series is uploaded again on the way back. The
   dirty check lives on the strategy, which no longer exists at that
   point. Caching the buffer across a detach would avoid it.
+
+## Unmeasured
+
+- `boostHairline` cuts the vertex count to a quarter, but the GPU draw
+  measured 0.2 ms of a 159 ms frame, so the saving has no established
+  effect on frame time. It needs a measurement across many charts before
+  being presented as a performance option rather than a visual one.
 
 ## Cleanup
 

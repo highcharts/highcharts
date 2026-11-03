@@ -26,7 +26,6 @@ Highcharts.chart('container', {
     series: [{
         type: 'line',
         boostThreshold: 1,
-        marker: { enabled: false },
         name: 'Measurement',
         dataTable: {
             columns: { x: x, y: y }
