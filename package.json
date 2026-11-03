@@ -209,6 +209,8 @@
   "allowScripts": {
     "esbuild@0.28.2": true,
     "@swc/core@1.16.1": true,
-    "cypress@15.21.1": true
+    "cypress@15.21.1": true,
+    "core-js": false,
+    "fsevents": false
   }
 }
