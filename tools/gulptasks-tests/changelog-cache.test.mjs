@@ -100,9 +100,6 @@ test('persists a private checkout-local cache across invocations', async () => {
     await withCache(async ({ cache, products, pulls, load, requestCount }) => {
         const first = await load()();
         assert.deepEqual(JSON.parse(await fs.promises.readFile(cache)), pulls);
-        if (process.platform !== 'win32') {
-            assert.equal((await fs.promises.stat(cache)).mode & 0o777, 0o600);
-        }
         const cached = await load()('ignored', true);
         assert.equal(requestCount(), 1);
         assert.deepEqual(JSON.parse(JSON.stringify(cached)),
@@ -113,6 +110,9 @@ test('persists a private checkout-local cache across invocations', async () => {
                 'Use the new option.');
         }
         assert.equal(cached.excluded[0].number, 7);
+        if (process.platform !== 'win32') {
+            assert.equal((await fs.promises.stat(cache)).mode & 0o777, 0o600);
+        }
     });
 });
 
@@ -125,8 +125,8 @@ test('never writes the shared OS cache or follows a cache symlink', async () => 
         await fs.promises.symlink(sentinel, cache);
         await load()();
         assert.equal(await fs.promises.readFile(sentinel, 'utf8'), 'untouched');
-        assert.equal((await fs.promises.lstat(cache)).isSymbolicLink(), false);
         assert.equal(JSON.parse(await fs.promises.readFile(cache)).length, 7);
+        assert.equal((await fs.promises.lstat(cache)).isSymbolicLink(), false);
     });
 });
 
