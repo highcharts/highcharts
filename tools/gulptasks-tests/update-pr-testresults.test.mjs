@@ -33,6 +33,7 @@ const commentOnPR = updatePrTestResults.default.default;
 
 const commentPath = join(process.cwd(), 'tmp', 'pr-visual-test-comment.json');
 const visualTestErrorsPath = join(process.cwd(), 'test', 'visual-test-errors.log');
+const referenceFailuresPath = join(process.cwd(), 'test', 'visual-reference-failures.json');
 const environmentKeys = [
     'GITHUB_RUN_ATTEMPT',
     'GITHUB_RUN_ID',
@@ -52,6 +53,7 @@ async function runComment({
     immediateTimers = false,
     changedFilesProvider = () => '',
     testResults,
+    referenceFailures,
     visualTestErrors = false
 }) {
     const resultsDirectory = await mkdtemp(join(tmpdir(), 'highcharts-pr-results-'));
@@ -67,6 +69,7 @@ async function runComment({
     );
     let previousComment;
     let previousVisualTestErrors;
+    let previousReferenceFailures;
     const previousFetch = globalThis.fetch;
     const previousSetTimeout = globalThis.setTimeout;
     const requests = [];
@@ -81,9 +84,18 @@ async function runComment({
         } catch {
             previousVisualTestErrors = undefined;
         }
+        try {
+            previousReferenceFailures = await readFile(referenceFailuresPath);
+        } catch {
+            previousReferenceFailures = undefined;
+        }
 
         await rm(commentPath, { force: true });
         await rm(visualTestErrorsPath, { force: true });
+        await rm(referenceFailuresPath, { force: true });
+        if (referenceFailures !== undefined) {
+            await writeFile(referenceFailuresPath, JSON.stringify(referenceFailures));
+        }
         if (existingComment !== undefined) {
             await writeFile(commentPath, existingComment);
         }
@@ -160,6 +172,10 @@ async function runComment({
         if (previousVisualTestErrors !== undefined) {
             await writeFile(visualTestErrorsPath, previousVisualTestErrors);
         }
+        await rm(referenceFailuresPath, { force: true });
+        if (previousReferenceFailures !== undefined) {
+            await writeFile(referenceFailuresPath, previousReferenceFailures);
+        }
         if (previousFetch === undefined) {
             delete globalThis.fetch;
         } else {
@@ -197,6 +213,28 @@ test('creates API samples from positive visual differences', () => {
         }]
     );
 });
+
+for (const compared of [0, 1]) {
+    test(`reference failures report ${compared} compared samples without claiming a clean run`, async () => {
+        const { comment, requests } = await runComment({
+            artifactsUrl: 'https://github.com/highcharts/highcharts/actions/runs/1',
+            testResults: compared ? { 'highcharts/demo/line-basic': 0 } : {},
+            referenceFailures: [{
+                sample: 'stock/financial/interactive-chart',
+                error: 'getRow is not a function\nstack trace'
+            }]
+        });
+        const { title, body } = JSON.parse(comment);
+        assert.match(title, compared ? /Partial comparison/ : /No comparable samples/);
+        assert.doesNotMatch(title, /No difference found/);
+        assert.match(body, new RegExp(`Compared \\*\\*${compared}\\*\\* samples`));
+        assert.equal([...body.matchAll(/Compared /gu)].length, 1);
+        assert.match(body, /\*\*1\*\* candidates rendered without a reference/);
+        assert.match(body, /stock\/financial\/interactive-chart/);
+        assert.match(body, /getRow is not a function/);
+        assert.equal(requests.length, 0);
+    });
+}
 
 test('renders upload progress in interactive terminals', () => {
     const writes = [];
@@ -327,6 +365,8 @@ test('reports Karma artifacts without credentials or API requests', async () => 
         });
         const payload = JSON.parse(comment);
         assert.equal(requests.length, 0);
+        assert.match(payload.body, /Compared \*\*1\*\* samples/u);
+        assert.equal([...payload.body.matchAll(/Compared /gu)].length, 1);
         assert.match(payload.body, /Production Visual Review contains Playwright results/u);
         const linkDestinations = Array.from(
             payload.body.matchAll(/\[[^\]]*\]\(([^)]+)\)/gu),

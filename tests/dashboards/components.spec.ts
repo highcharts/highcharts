@@ -241,6 +241,71 @@ test.describe('HTML Component', () => {
         expect(result.elementsText, 'HTML from elements should be rendered and text should be correct.').toBe('HTML from elements');
         expect(result.stringText, 'HTML from string should be rendered and text should be correct.').toBe('HTML from string');
     });
+
+    test('HTML Component tags should not widen the shared allow lists', async ({ page }) => {
+        await page.setContent(dashboardsWithLayoutHTML, { waitUntil: 'networkidle' });
+
+        const result = await page.evaluate(async () => {
+            const Dashboards = (window as any).Dashboards;
+            const AST = Dashboards.AST;
+
+            const onImport = {
+                input: AST.allowedTags.indexOf('input'),
+                selected: AST.allowedAttributes.indexOf('selected'),
+                dataImage: AST.allowedReferences
+                    .filter((r: string) => r.indexOf('data:') === 0)
+            };
+
+            const board = await Dashboards.board('container', {
+                gui: {
+                    layouts: [{
+                        rows: [{ cells: [{ id: 'dashboard-cell-1' }] }]
+                    }]
+                },
+                components: [{
+                    type: 'HTML',
+                    renderTo: 'dashboard-cell-1',
+                    html: '<label for="a">L</label>' +
+                        '<select id="a"><option>o</option></select>' +
+                        '<img src="data:image/png;base64,iVBORw0KGgo=">' +
+                        '<img class="svg" src="data:image/svg+xml,<svg/>">'
+                }]
+            }, true);
+
+            const el = board.mountedComponents[0].component.element;
+
+            return {
+                onImport,
+                // Still widened while the component renders
+                hasSelect: !!el.querySelector('select'),
+                hasOption: !!el.querySelector('option'),
+                hasLabelFor: el.querySelector('label')?.getAttribute('for'),
+                pngKept: !!el.querySelector('img[src^="data:image/png"]'),
+                svgHref: el.querySelector('img.svg')?.getAttribute('src'),
+                // Restored afterwards
+                afterRender: {
+                    input: AST.allowedTags.indexOf('input'),
+                    selected: AST.allowedAttributes.indexOf('selected'),
+                    dataImage: AST.allowedReferences
+                        .filter((r: string) => r.indexOf('data:') === 0)
+                }
+            };
+        });
+
+        expect(result.onImport.input, 'Importing the module must not add tags.').toBe(-1);
+        expect(result.onImport.selected, 'Importing the module must not add attributes.').toBe(-1);
+        expect(result.onImport.dataImage, 'Importing the module must not add references.').toEqual([]);
+
+        expect(result.hasSelect, 'The component still renders a select.').toBe(true);
+        expect(result.hasOption, 'The component still renders an option.').toBe(true);
+        expect(result.hasLabelFor, 'The component still keeps the for attribute.').toBe('a');
+        expect(result.pngKept, 'A data: PNG source is kept.').toBe(true);
+        expect(result.svgHref, 'A data: SVG source is dropped.').toBeFalsy();
+
+        expect(result.afterRender.input, 'Tags are restored after rendering.').toBe(-1);
+        expect(result.afterRender.selected, 'Attributes are restored after rendering.').toBe(-1);
+        expect(result.afterRender.dataImage, 'References are restored after rendering.').toEqual([]);
+    });
 });
 
 test.describe('Grid Component', () => {
@@ -437,6 +502,55 @@ test.describe('KPI Component', () => {
 
         expect(result.hasChartBeforeUpdate, 'KPI Component should be loaded without a chart.').toBe(false);
         expect(result.hasChartAfterUpdate, 'KPI Component should have a chart after update.').toBe(true);
+    });
+
+    test('KPI Component value escaping', async ({ page }) => {
+        await page.setContent(dashboardsWithHighchartsHTML, { waitUntil: 'networkidle' });
+
+        const result = await page.evaluate(async () => {
+            const Highcharts = (window as any).Highcharts;
+            const Dashboards = (window as any).Dashboards;
+
+            Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+            Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+            const dashboard = await Dashboards.board('container', {
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{
+                                id: 'dashboard-cell-1'
+                            }]
+                        }]
+                    }]
+                },
+                components: [{
+                    renderTo: 'dashboard-cell-1',
+                    type: 'KPI',
+                    title: 'Value',
+                    value: '<a href="https://example.com">link</a>'
+                }]
+            }, true);
+
+            const kpi = dashboard.mountedComponents[0].component;
+            const rawValueHTML = kpi.value.innerHTML;
+
+            kpi.update({ valueFormat: '<b>{value}</b>' });
+
+            return {
+                rawValueHTML,
+                formattedValueHasBold: !!kpi.value.querySelector('b')
+            };
+        });
+
+        expect(
+            result.rawValueHTML,
+            'Raw value should be escaped, not rendered as markup.'
+        ).toBe('&lt;a href="https://example.com"&gt;link&lt;/a&gt;');
+        expect(
+            result.formattedValueHasBold,
+            'Value format should still be rendered as HTML.'
+        ).toBe(true);
     });
 });
 

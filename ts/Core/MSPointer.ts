@@ -25,7 +25,6 @@ import type PointerEvent from './PointerEvent';
 import H from './Globals.js';
 const {
     charts,
-    composed,
     doc,
     noop,
     win
@@ -38,7 +37,6 @@ import {
     css,
     defined,
     objectEach,
-    pushUnique,
     removeEvent
 } from '../Shared/Utilities.js';
 
@@ -344,11 +342,7 @@ namespace MSPointer {
     export function compose(
         ChartClass: typeof Chart
     ): void {
-        if (pushUnique(composed, 'Core.MSPointer')) {
-            addEvent(ChartClass, 'beforeRender', function (): void {
-                this.pointer = new MSPointer(this, this.options);
-            });
-        }
+        Pointer.compose(ChartClass, MSPointer);
     }
 
 }

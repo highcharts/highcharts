@@ -27,10 +27,8 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import PivotPointsPoint from './PivotPointsPoint.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { defined, extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /**
@@ -65,8 +63,8 @@ class PivotPointsIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/pivot-points
+     * @requires     indicators/indicators
+     * @requires     indicators/pivot-points
      * @optionparent plotOptions.pivotpoints
      * @internal
      */
@@ -473,8 +471,8 @@ export default PivotPointsIndicator;
  * @extends   series,plotOptions.pivotpoints
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/pivot-points
+ * @requires  indicators/indicators
+ * @requires  indicators/pivot-points
  * @apioption series.pivotpoints
  */
 

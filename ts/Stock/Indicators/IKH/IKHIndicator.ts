@@ -36,8 +36,8 @@ import ApproximationRegistry from '../../../Extensions/DataGrouping/Approximatio
 import Axis from '../../../Core/Axis/Axis.js';
 import Color from '../../../Core/Color/Color.js';
 const { parse: color } = Color;
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import {
     defined,
     extend,
@@ -201,8 +201,8 @@ class IKHIndicator extends SMAIndicator {
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ichimoku-kinko-hyo
+     * @requires     indicators/indicators
+     * @requires     indicators/ichimoku-kinko-hyo
      * @optionparent plotOptions.ikh
      * @internal
      */
@@ -995,8 +995,8 @@ export default IKHIndicator;
  * @extends   series,plotOptions.ikh
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ichimoku-kinko-hyo
+ * @requires  indicators/indicators
+ * @requires  indicators/ichimoku-kinko-hyo
  * @apioption series.ikh
  */
 

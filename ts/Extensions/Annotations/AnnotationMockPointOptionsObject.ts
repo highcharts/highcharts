@@ -37,13 +37,13 @@ export interface AnnotationMockPointOptionsObject {
     label?: ControllableLabelOptions;
 
     /**
-     * The x position of the point. Units can be either in axis
-     * or chart pixel coordinates.
+     * The x position of the point. Units can be either in axis or chart pixel
+     * coordinates. Date strings can be used for datetime axes.
      *
-     * @type      {number}
+     * @type      {number|string}
      * @name      Highcharts.AnnotationMockPointOptionsObject.x
      */
-    x?: number;
+    x?: number|string;
 
     /**
      * This option defines which `xAxis` the point is connected to.
@@ -52,7 +52,7 @@ export interface AnnotationMockPointOptionsObject {
      * is not found the point's x coordinate refers to the chart
      * pixels.
      *
-     * @type      {number|string|null}
+     * @type      {number|string|null|undefined}
      * @name      Highcharts.AnnotationMockPointOptionsObject.xAxis
      */
     xAxis?: (number|string|AxisType|null);
@@ -73,7 +73,7 @@ export interface AnnotationMockPointOptionsObject {
      * is not found the point's y coordinate refers to the chart
      * pixels.
      *
-     * @type      {number|string|null}
+     * @type      {number|string|null|undefined}
      * @name      Highcharts.AnnotationMockPointOptionsObject.yAxis
      */
     yAxis?: (number|string|AxisType|null);

@@ -330,8 +330,40 @@ module.exports = function (config) {
             },
         ],
 
-        // These ones fail
-        exclude: excludedSamples,
+        exclude: [
+            ...excludedSamples,
+            // Karma lacks the assets or recorded data these demos need for
+            // deterministic captures. Playwright covers them with offline
+            // fixtures. Keep exact paths so new financial demos remain eligible.
+            // interactive-chart also fails on master until its getRow fix lands.
+            'samples/stock/financial/asset-allocations-bar/demo.js',
+            'samples/stock/financial/asset-allocations-pie/demo.js',
+            'samples/stock/financial/bond-style-box-breakdown-chart/demo.js',
+            'samples/stock/financial/calendar-year-return/demo.js',
+            'samples/stock/financial/correlation-matrix-xrayus/demo.js',
+            'samples/stock/financial/country-breakdown-chart/demo.js',
+            'samples/stock/financial/credit-quality-breakdown/demo.js',
+            'samples/stock/financial/dws-equity-aggregates-residual-risk/demo.js',
+            'samples/stock/financial/dws-equity-residual-risk/demo.js',
+            'samples/stock/financial/dws-equity-style-box/demo.js',
+            'samples/stock/financial/dws-region-breakdown-chart/demo.js',
+            'samples/stock/financial/dws-sector-breakdown-bar-chart/demo.js',
+            'samples/stock/financial/dws-sector-breakdown-spider/demo.js',
+            'samples/stock/financial/equity-style-box/demo.js',
+            'samples/stock/financial/growth-chart-hypo/demo.js',
+            'samples/stock/financial/interactive-chart/demo.js',
+            'samples/stock/financial/key-stats/demo.js',
+            'samples/stock/financial/magnum-ice-cream/demo.js',
+            'samples/stock/financial/market-capitalization/demo.js',
+            'samples/stock/financial/region-breakdown-chart/demo.js',
+            'samples/stock/financial/returns-chart/demo.js',
+            'samples/stock/financial/risk-return-chart/demo.js',
+            'samples/stock/financial/sector-breakdown-bar-chart/demo.js',
+            'samples/stock/financial/sector-breakdown-pie-chart/demo.js',
+            'samples/stock/financial/sector-breakdown-spider/demo.js',
+            'samples/stock/financial/top-holdings-chart/demo.js',
+            'samples/stock/financial/xray-us-trailing-returns/demo.js'
+        ],
         reporters: ['progress'],
         port: 9876,  // karma web server port
         colors: true,

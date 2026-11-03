@@ -26,17 +26,10 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import PU from '../PathUtilities.js';
 const { getLinkPath } = PU;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import Series from '../../Core/Series/Series.js';
+import TreemapSeries from '../Treemap/TreemapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
-const {
-    series: {
-        prototype: seriesProto
-    },
-    seriesTypes: {
-        treemap: TreemapSeries,
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import TreegraphNode from './TreegraphNode.js';
@@ -83,7 +76,6 @@ interface LayoutModifiers {
 /**
  * The Treegraph series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.treegraph
  *
@@ -356,7 +348,7 @@ class TreegraphSeries extends TreemapSeries {
 
     /**
      * Run pre-translation by generating the nodeColumns.
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -367,7 +359,7 @@ class TreegraphSeries extends TreemapSeries {
             rootNode;
 
         // Call prototype function
-        seriesProto.translate.call(series);
+        Series.prototype.translate.call(series);
 
         const tree = series.tree = series.getTree();
         rootNode = series.nodeMap[rootId];
@@ -552,7 +544,7 @@ class TreegraphSeries extends TreemapSeries {
 
         }
 
-        seriesProto.drawDataLabels.call(this, points);
+        Series.prototype.drawDataLabels.call(this, points);
     }
 
     /**
@@ -596,7 +588,7 @@ class TreegraphSeries extends TreemapSeries {
             this.drawNodeLabels(this.points);
 
             // Render link labels.
-            seriesProto.drawDataLabels.call(this, this.links);
+            Series.prototype.drawDataLabels.call(this, this.links);
         }
     }
 
@@ -610,12 +602,12 @@ class TreegraphSeries extends TreemapSeries {
             this.links.length = 0;
         }
 
-        return seriesProto.destroy.apply(this, arguments);
+        return Series.prototype.destroy.apply(this, arguments);
     }
 
     /**
      * Return the presentational attributes.
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: TreegraphPoint,
@@ -648,7 +640,7 @@ class TreegraphSeries extends TreemapSeries {
                 levelOptions.link?.lineWidth ??
                 series.options.link?.lineWidth
             ),
-            attribs = seriesProto.pointAttribs.call(series, point, state);
+            attribs = Series.prototype.pointAttribs.call(series, point, state);
 
         if (point) {
             if (point.isLink) {
@@ -672,7 +664,7 @@ class TreegraphSeries extends TreemapSeries {
     }
     /**
      * Run translation operations for one node.
-     * @private
+     * @internal
      */
     public translateNode(point: TreegraphPoint): void {
         const chart = this.chart,
@@ -863,12 +855,6 @@ export default TreegraphSeries;
  * Set collapsed status for nodes level-wise.
  * @type {boolean}
  * @apioption series.treegraph.levels.collapsed
- */
-
-/**
- * Set marker options for nodes at the level.
- * @extends   series.treegraph.marker
- * @apioption series.treegraph.levels.marker
  */
 
 /**

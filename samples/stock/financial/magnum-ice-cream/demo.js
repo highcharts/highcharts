@@ -20,28 +20,27 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a38d619238/samples/data/morningstar/magnum-ice-cream-company-ohlcv.json'
     ).then(r => r.json());
 
-    const rawData = json.ts.results[0].data;
+    const rawData = json.ts.results[0].data,
+        dataTable = new Highcharts.DataTable();
 
-    const ohlc = [];
-    const volume = [];
-
+    // The data is sorted from newest to oldest, with values as strings
     for (let i = rawData.length - 1; i >= 0; i--) {
         const entry = rawData[i],
-            parts = entry['Date Received (GMT)'].split('-'),
-            ts = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            parts = entry['Date Received (GMT)'].split('-');
 
-        ohlc.push([
-            ts,
-            +entry['Open price'],
-            +entry['High price'],
-            +entry['Low price'],
-            +entry['Last price']
-        ]);
-
-        volume.push([ts, +entry['Cumulative volume']]);
+        dataTable.setRow({
+            Date: `${parts[2]}-${parts[1]}-${parts[0]}`,
+            Open: +entry['Open price'],
+            High: +entry['High price'],
+            Low: +entry['Low price'],
+            Close: +entry['Last price'],
+            Volume: +entry['Cumulative volume']
+        });
     }
 
     Highcharts.stockChart('container', {
+
+        dataTable,
 
         chart: {
             spacing: 16,
@@ -151,6 +150,7 @@
             series: {
                 type: 'areaspline',
                 color: 'var(--mstar-accent)',
+                dataMapping: { y: 'Close' },
                 fillColor: 'var(--mstar-accent-soft)',
                 lineWidth: 1
             },
@@ -230,7 +230,8 @@
                 color: 'var(--mstar-accent-soft)'
             },
             series: {
-                dataGrouping: { enabled: true }
+                dataGrouping: { enabled: true },
+                dataMapping: { x: 'Date' }
             }
         },
 
@@ -239,7 +240,12 @@
                 description: 'Daily open, high, low, and close prices. Red ' +
                     'candles mark down days, green candles up days.'
             },
-            data: ohlc,
+            dataMapping: {
+                open: 'Open',
+                high: 'High',
+                low: 'Low',
+                close: 'Close'
+            },
             name: 'MICC',
             tooltip: { valuePrefix: '€' },
             type: 'candlestick'
@@ -247,7 +253,7 @@
             accessibility: {
                 description: 'Cumulative trading volume per session.'
             },
-            data: volume,
+            dataMapping: { y: 'Volume' },
             name: 'Volume',
             tooltip: { valueDecimals: 0 },
             type: 'column',

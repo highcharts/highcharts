@@ -24,10 +24,8 @@ import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -67,8 +65,9 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart,showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/keltner-channels
+     * @requires     indicators/indicators
+     * @requires     indicators/atr
+     * @requires     indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
      * @internal
      */
@@ -306,8 +305,9 @@ export default KeltnerChannelsIndicator;
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               stacking, showInNavigator
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/keltner-channels
+ * @requires     indicators/indicators
+ * @requires     indicators/atr
+ * @requires     indicators/keltner-channels
  * @apioption    series.keltnerchannels
  */
 

@@ -25,11 +25,9 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import EMAIndicator from '../EMA/EMAIndicator.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    ema: EMAIndicator,
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     correctFloat,
     extend,
@@ -70,8 +68,8 @@ class KlingerIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since 9.1.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/klinger
+     * @requires     indicators/indicators
+     * @requires     indicators/klinger
      * @optionparent plotOptions.klinger
      * @internal
      */
@@ -441,8 +439,8 @@ export default KlingerIndicator;
  * @extends   series,plotOptions.klinger
  * @since 9.1.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/klinger
+ * @requires  indicators/indicators
+ * @requires  indicators/klinger
  * @apioption series.klinger
  */
 

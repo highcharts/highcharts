@@ -31,11 +31,9 @@ import type {
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
+import ATRIndicator from '../ATR/ATRIndicator.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    atr: ATRIndicator,
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     addEvent,
     correctFloat,
@@ -102,8 +100,9 @@ class SupertrendIndicator extends SMAIndicator {
      *               keys, navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking, threshold
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/supertrend
+     * @requires     indicators/indicators
+     * @requires     indicators/atr
+     * @requires     indicators/supertrend
      * @optionparent plotOptions.supertrend
      * @internal
      */
@@ -712,8 +711,9 @@ export default SupertrendIndicator;
  *            joinBy, keys, navigatorOptions, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            showInNavigator, stacking, threshold
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/supertrend
+ * @requires  indicators/indicators
+ * @requires  indicators/atr
+ * @requires  indicators/supertrend
  * @apioption series.supertrend
  */
 

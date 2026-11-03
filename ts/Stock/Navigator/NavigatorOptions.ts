@@ -80,7 +80,7 @@ declare module '../../Core/Series/SeriesOptions' {
          * @see [navigator.series](#navigator.series)
          *
          * @since     5.0.0
-         * @product   highstock
+         * @product   highstock gantt
          */
         navigatorOptions?: NavigatorSeriesOptions;
 
@@ -89,7 +89,7 @@ declare module '../../Core/Series/SeriesOptions' {
          * over [navigator.baseSeries](#navigator.baseSeries) if defined.
          *
          * @since     5.0.0
-         * @product   highstock
+         * @product   highstock gantt
          */
         showInNavigator?: boolean;
     }
@@ -193,7 +193,7 @@ export interface BaseNavigatorOptions {
     /**
      * The color of the mask covering the areas of the navigator series
      * that are currently not visible in the main series. The default
-     * color is bluish with an opacity of 0.3 to see the series below.
+     * color is semi-transparent to see the series below.
      *
      * @see In styled mode, the mask is styled with the
      *      `.highcharts-navigator-mask` and
@@ -202,7 +202,7 @@ export interface BaseNavigatorOptions {
      * @sample {highstock} stock/navigator/maskfill/
      *         Blue, semi transparent mask
      *
-     * @default rgba(102,133,194,0.3)
+     * @default color-mix(in srgb, var(--highcharts-highlight-color-60) 30%, transparent)
      */
     maskFill?: ColorType;
 
@@ -240,7 +240,7 @@ export interface BaseNavigatorOptions {
      * @sample {highstock} stock/navigator/outline/
      *         2px blue outline
      *
-     * @default #cccccc
+     * @default var(--highcharts-neutral-color-40)
      */
     outlineColor?: ColorType;
 

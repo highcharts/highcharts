@@ -25,10 +25,8 @@ import type {
 import type LinearRegressionInterceptPoint from
     './LinearRegressionInterceptPoint';
 
+import LinearRegressionIndicator from '../LinearRegression/LinearRegressionIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    linearregression: LinearRegressionIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -63,8 +61,8 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     indicators/indicators
+     * @requires     indicators/regressions
      * @optionparent plotOptions.linearregressionintercept
      * @internal
      */
@@ -157,8 +155,8 @@ export default LinearRegressionInterceptIndicator;
  * @extends   series,plotOptions.linearregressionintercept
  * @since     7.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  indicators/indicators
+ * @requires  indicators/regressions
  * @apioption series.linearregressionintercept
  */
 

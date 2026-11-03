@@ -31,13 +31,9 @@ const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import {
     addEvent,
@@ -488,9 +484,8 @@ extend(FlagsSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypesDictionary {
+    interface SeriesTypeRegistry {
         flags: typeof FlagsSeries;
     }
 }

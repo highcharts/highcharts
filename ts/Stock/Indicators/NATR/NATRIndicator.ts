@@ -24,11 +24,9 @@ import type {
 } from './NATROptions';
 import type NATRPoint from './NATRPoint';
 
+import ATRIndicator from '../ATR/ATRIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import { merge } from '../../../Shared/Utilities.js';
-const {
-    atr: ATRIndicator
-} = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -63,9 +61,9 @@ class NATRIndicator extends ATRIndicator {
      * @extends      plotOptions.atr
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/atr
-     * @requires     stock/indicators/natr
+     * @requires     indicators/indicators
+     * @requires     indicators/atr
+     * @requires     indicators/natr
      * @optionparent plotOptions.natr
      * @internal
      */
@@ -168,9 +166,9 @@ export default NATRIndicator;
  * @extends   series,plotOptions.natr
  * @since     7.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/atr
- * @requires  stock/indicators/natr
+ * @requires  indicators/indicators
+ * @requires  indicators/atr
+ * @requires  indicators/natr
  * @apioption series.natr
  */
 

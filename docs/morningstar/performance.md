@@ -85,6 +85,12 @@ await performanceConnector.load();
 const data = performanceConnector.dataTables.CalendarYearReturn;
 ```
 
+## Relevant demos
+
+You will find examples of how to use `PerformanceConnector` in our demos.
+
+- [Highcharts Core + Morningstar Calendar Year Return](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/calendar-year-return/)
+
 ## Morningstar API Reference
 
 For more details, see [Morningstar's Performance API].

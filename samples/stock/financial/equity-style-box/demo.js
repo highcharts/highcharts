@@ -102,12 +102,12 @@ async function renderChart() {
             name: 'Portfolio Weight',
             borderWidth: 1,
             borderColor: '#e5e7e9',
-            keys: ['Type', 'NotClassified', 'L', 'S', 'value', 'x', 'y'],
-            data: securityDetailsConnector
-                .getTable('StyleBoxBreakdown').getRows(
-                    0,
-                    9
-                ),
+            dataTable: securityDetailsConnector.getTable('StyleBoxBreakdown'),
+            dataMapping: {
+                x: 'Style',
+                y: 'Size',
+                value: 'N'
+            },
             dataLabels: {
                 enabled: true,
                 format: '{value:.0f}%',

@@ -36,8 +36,8 @@ import type {
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/rsi
+ * @requires     indicators/indicators
+ * @requires     indicators/rsi
  * @interface Highcharts.RSIOptions
  */
 export interface RSIOptions extends SMAOptions {

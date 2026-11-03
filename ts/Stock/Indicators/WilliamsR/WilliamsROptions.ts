@@ -38,8 +38,8 @@ import type {
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/williams-r
+ * @requires     indicators/indicators
+ * @requires     indicators/williams-r
  * @interface Highcharts.WilliamsROptions
  */
 export interface WilliamsROptions extends SMAOptions {

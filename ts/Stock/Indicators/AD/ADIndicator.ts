@@ -23,10 +23,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -62,8 +60,8 @@ class ADIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/accumulation-distribution
+     * @requires     indicators/indicators
+     * @requires     indicators/accumulation-distribution
      * @optionparent plotOptions.ad
      * @internal
      */
@@ -243,8 +241,8 @@ export default ADIndicator;
  * @extends   series,plotOptions.ad
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/accumulation-distribution
+ * @requires  indicators/indicators
+ * @requires  indicators/accumulation-distribution
  * @apioption series.ad
  */
 

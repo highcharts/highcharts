@@ -154,9 +154,19 @@ Highcharts.chart('container', {
 });
 ```
 
-## Relevant demo
+## Relevant demos
 
 You will find examples of how to use `SecurityDetailsConnector` in our demos.
+
+- [Highcharts Dashboards + Morningstar Fund Profile](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/fund-profile/)
+- [Highcharts Dashboards + Morningstar Top Holdings Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/top-holdings-chart/)
+- [Highcharts Core + Morningstar Equity Style Box](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/equity-style-box/)
+- [Highcharts Core + Morningstar Bond Style Box Breakdown Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/bond-style-box-breakdown-chart/)
+- [Highcharts Dashboards + Morningstar Asset Allocations Pie](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/asset-allocations-pie/)
+- [Highcharts Dashboards + Morningstar Asset Allocations Bar](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/asset-allocations-bar/)
+- [Highcharts Dashboards + Morningstar Sector Breakdown Pie Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/sector-breakdown-pie-chart/)
+- [Highcharts Dashboards + Morningstar Key Stats](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/key-stats/)
+- [Highcharts Dashboards + Morningstar Market Capitalization](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/market-capitalization/)
 
 ## Morningstar API Reference
 

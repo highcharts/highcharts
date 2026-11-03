@@ -27,8 +27,8 @@ import type {
 } from './WMAOptions';
 import type WMAPoint from './WMAPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -121,8 +121,8 @@ class WMAIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/wma
+     * @requires     indicators/indicators
+     * @requires     indicators/wma
      * @optionparent plotOptions.wma
      * @internal
      */
@@ -258,8 +258,8 @@ export default WMAIndicator;
  * @extends   series,plotOptions.wma
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/wma
+ * @requires  indicators/indicators
+ * @requires  indicators/wma
  * @apioption series.wma
  */
 
