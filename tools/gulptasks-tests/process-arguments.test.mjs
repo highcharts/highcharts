@@ -56,7 +56,7 @@ test('execFile preserves stdout, silent modes and process errors', async () => {
 
 test('exec retains existing shell execution semantics', async () => {
     const { lib } = loadProcess();
-    assert.equal((await lib.exec('echo first && echo second', { silent: 2 }))
+    assert.equal((await lib.exec('echo first&&echo second', { silent: 2 }))
         .trim().replace(/\r/gu, ''), 'first\nsecond');
 });
 

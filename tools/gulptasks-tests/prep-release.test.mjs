@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -9,6 +9,8 @@ import test from 'node:test';
 
 const sourceURL = new URL('../gulptasks/prep-release.js', import.meta.url);
 const require = createRequire(sourceURL);
+const nativeReleaseTools = ['grep', 'sed'].every(tool =>
+    !spawnSync(tool, ['--version'], { stdio: 'ignore' }).error);
 
 async function withRelease(argv, check, dependencies = {}) {
     const root = fs.mkdtempSync(join(tmpdir(), 'hc-prep-release-'));
@@ -75,7 +77,9 @@ async function withRelease(argv, check, dependencies = {}) {
     }
 }
 
-test('prep-release preserves versions, formatting, backups and doclet semantics', async () => {
+test('prep-release preserves versions, formatting, backups and doclet semantics', {
+    skip: !nativeReleaseTools && 'requires the existing grep and sed release tools'
+}, async () => {
     const version = '13.2.0-rc.1+build.42';
     await withRelease({ nextversion: version }, async ({ root, task, calls }) => {
         const originals = ['package.json', 'bower.json'].map(file => fs.readFileSync(file));
@@ -83,7 +87,9 @@ test('prep-release preserves versions, formatting, backups and doclet semantics'
         const text = 'é @since\t next @since next @deprecated next @deprecated next\n' +
             '@since\nnext\n@since {next}\n@since nextThing\n';
         fs.writeFileSync('docs/file with spaces.ts', text);
-        fs.writeFileSync('docs/line\nbreak.ts', '@since next');
+        if (process.platform !== 'win32') {
+            fs.writeFileSync('docs/line\nbreak.ts', '@since next');
+        }
         const binary = Buffer.concat([Buffer.from([0x01, 0]),
             Buffer.from('@since next\n'), Buffer.from([0x02])]);
         fs.writeFileSync('docs/bytes.dat', binary);
@@ -124,9 +130,11 @@ test('prep-release preserves versions, formatting, backups and doclet semantics'
             `@since\nnext\n@since {next}\n@since ${version}Thing\n`);
         assert.equal(fs.readFileSync('docs/file with spaces.ts.bak', 'utf8'), text);
         assert.equal(fs.readFileSync('docs/unicode.ts', 'utf8'), unicodeExpected);
-        assert.equal(fs.statSync('docs/bytes.dat').mode & 0o777, 0o664);
-        assert.equal(fs.statSync('docs/bytes.dat.bak').mode & 0o777, 0o664);
-        assert.equal(fs.readFileSync('docs/line\nbreak.ts', 'utf8'), `@since ${version}`);
+        if (process.platform !== 'win32') {
+            assert.equal(fs.statSync('docs/bytes.dat').mode & 0o777, 0o664);
+            assert.equal(fs.statSync('docs/bytes.dat.bak').mode & 0o777, 0o664);
+            assert.equal(fs.readFileSync('docs/line\nbreak.ts', 'utf8'), `@since ${version}`);
+        }
         assert.deepEqual(fs.readFileSync('docs/bytes.dat.bak'), binary);
         assert.deepEqual(fs.readFileSync('docs/bytes.dat'), Buffer.concat([
             Buffer.from([0x01, 0]), Buffer.from(`@since ${version}\n`), Buffer.from([0x02])
@@ -155,7 +163,9 @@ test('prep-release rejects malformed and injected versions before writes', async
     }
 });
 
-test('prep-release handles absent doclets and stops after replacement errors', async () => {
+test('prep-release handles absent doclets and stops after replacement errors', {
+    skip: !nativeReleaseTools && 'requires the existing grep and sed release tools'
+}, async () => {
     await withRelease({ nextversion: '13.2.0' }, async ({ task }) => {
         await task();
         assert.equal(JSON.parse(fs.readFileSync('package.json')).version, '13.2.0');
