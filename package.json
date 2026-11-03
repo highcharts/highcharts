@@ -205,5 +205,10 @@
       "node -e \"require('node:child_process').execSync('npm run test-node:tooling', {stdio: 'inherit'})\""
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>"
+  "license": "SEE LICENSE IN <license.txt>",
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "@swc/core@1.16.1": true,
+    "cypress@15.21.1": true
+  }
 }
