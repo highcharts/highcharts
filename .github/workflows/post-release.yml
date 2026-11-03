@@ -36,6 +36,8 @@ jobs:
           VISUAL_TEST_REFERENCE: '1'
         run: npm run test:pw:visual
 
+      - name: Prepare release reference report
+        run: node -e "require('node:fs').writeFileSync('test/visual-test-results.json', '{}')"
 
       - name: Publish release reference images
         if: ${{ github.event_name == 'push' || inputs.dryrun == false }}

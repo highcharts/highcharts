@@ -29,6 +29,9 @@ const workflow = require('js-yaml').safeLoad(await readFile(
     new URL('../../.github/workflows/nightly.yml', import.meta.url), 'utf8'
 ));
 const visualSteps = workflow.jobs.nightly_visual_diff.steps;
+const releaseWorkflow = require('js-yaml').safeLoad(await readFile(
+    new URL('../../.github/workflows/post-release.yml', import.meta.url), 'utf8'
+));
 const commandArgv = { _: [], $0: 'node' };
 Object.defineProperty(require('yargs'), 'argv', {
     value: commandArgv
@@ -482,6 +485,55 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
                 process.env[key] = value;
             }
         }
+    }
+});
+
+test('release references produce a publishable report without candidate results', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'highcharts-release-reference-'));
+    const id = 'highcharts/demo/basic-line';
+    const steps = releaseWorkflow.jobs.generate_release_reference_images.steps;
+    const prepareReport = steps.find(step => step.name === 'Prepare release reference report');
+    try {
+        const reporter = new VisualReporter({ root, referenceMode: true });
+        const sample = {
+            title: id,
+            location: { file: '/tests/visual/visual.spec.ts' },
+            results: [{ status: 'passed' }],
+            annotations: []
+        };
+        reporter.onBegin({}, { allTests: () => [sample] });
+        reporter.onTestBegin(sample);
+        writeReference(root, id, '<svg>release</svg>');
+        assert.ok(!reporter.onEnd({ status: 'passed' }));
+
+        const resultsPath = join(root, 'test/visual-test-results.json');
+        assert.throws(() => readTestResultsFile(resultsPath), { code: 'ENOENT' });
+        const result = spawnSync('bash', ['-e', '-c', prepareReport.run], {
+            cwd: root,
+            encoding: 'utf8'
+        });
+        assert.ifError(result.error);
+        assert.equal(result.status, 0, result.stdout + result.stderr);
+        const testResults = readTestResultsFile(resultsPath);
+        assert.deepEqual(testResults, {});
+        const samples = createNightlySubmissionSamples({
+            sampleRoot: join(root, 'samples'),
+            testResults
+        });
+        assert.equal(samples.length, 1);
+        assert.equal(samples[0].name, id);
+        assert.equal(samples[0].comparisonValue, 0);
+        assert.equal(samples[0].artifacts.reference.toString(), '<svg>release</svg>');
+        assert.deepEqual(samples[0].artifacts.candidate, samples[0].artifacts.reference);
+        assert.deepEqual(samples[0].artifacts.difference, TRANSPARENT_GIF);
+        assert.ok(!('if' in prepareReport), 'Requires successful reference generation');
+        assert.ok(!('continue-on-error' in prepareReport));
+        assert.ok(steps.indexOf(prepareReport) > steps.findIndex(step =>
+            step.name === 'Generate release reference images'));
+        assert.ok(steps.indexOf(prepareReport) < steps.findIndex(step =>
+            step.name === 'Publish release reference images'));
+    } finally {
+        await rm(root, { recursive: true, force: true });
     }
 });
 
