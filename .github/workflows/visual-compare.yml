@@ -176,7 +176,7 @@ jobs:
 
       - name: Use Firefox 153.0.4
         id: reference-firefox
-        uses: browser-actions/setup-firefox@v1
+        uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1
         with:
           firefox-version: '153.0.4'
 
@@ -220,7 +220,7 @@ jobs:
 
       - name: Use Firefox 153.0.4
         id: candidate-firefox
-        uses: browser-actions/setup-firefox@v1
+        uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1
         with:
           firefox-version: '153.0.4'
 
