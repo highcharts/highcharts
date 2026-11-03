@@ -7,6 +7,7 @@ on:
       'tools/*'
     ]
     paths:
+      - '.npmrc'
       - 'package.json'
       - 'package-lock.json'
       - 'tsconfig.json'
@@ -30,6 +31,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+        # latest intentionally catches upcoming Node/npm compatibility changes.
         node-version: ['lts/*', 'latest']
 
     runs-on: ${{ matrix.os }}
