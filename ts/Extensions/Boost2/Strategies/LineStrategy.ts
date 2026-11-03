@@ -130,7 +130,8 @@ function buildPipeline(
     const module = device.createShaderModule({ code }),
         blendComponent: GPUBlendComponent = {
             srcFactor: 'one',
-            dstFactor: 'one-minus-src-alpha'
+            dstFactor: 'one',
+            operation: 'max'
         };
 
     return device.createRenderPipeline({
@@ -294,7 +295,8 @@ class LineStrategy {
             hairline ? 'boost2-hairline' : 'boost2-line',
             (device, format, layout): GPURenderPipeline => buildPipeline(
                 device, format, layout, LineShader,
-                hairline ? 'vsHairline' : 'vsLine', 'fs',
+                hairline ? 'vsHairline' : 'vsLine',
+                hairline ? 'fs' : 'fsLine',
                 hairline ? 'line-strip' : 'triangle-strip'
             )
         );

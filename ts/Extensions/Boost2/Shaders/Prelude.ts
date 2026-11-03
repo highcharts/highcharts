@@ -17,9 +17,14 @@
  * */
 
 /**
- * Bindings and domain mapping, prepended to the shaders. Declares no entry
- * point, so it is not a shader itself. All pipelines share one bind group
- * layout, so a series needs a single bind group.
+ * Bindings, domain mapping and the antialiasing rule, prepended to the
+ * shaders. Declares no entry point, so it is not a shader itself.
+ *
+ * Each shape measures its own signed distance, which is intrinsic to it,
+ * and turns it into coverage through the one rule here.
+ *
+ * All pipelines share one bind group layout, so a series needs a single
+ * bind group.
  *
  * @internal
  */
@@ -51,6 +56,16 @@ fn toPixels(p : vec2f) -> vec2f {
 
 fn toClip(px : vec2f) -> vec4f {
     return vec4f(px / u.viewport * 2.0 - 1.0, 0.0, 1.0);
+}
+
+// Device pixels a shape is grown by, to leave room for its own fringe.
+const AA_PAD = 1.0;
+
+// Coverage from a signed distance in device pixels, negative inside.
+// fwidth is the change of d across one pixel, so the ratio is the
+// fraction of the pixel that falls inside the shape. Fragment stage only.
+fn coverage(d : f32) -> f32 {
+    return clamp(0.5 - d / fwidth(d), 0.0, 1.0);
 }
 
 `;

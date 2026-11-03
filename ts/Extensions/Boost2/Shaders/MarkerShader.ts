@@ -47,7 +47,7 @@ fn vsMarker(
     @builtin(vertex_index)   vi : u32,
     @builtin(instance_index) ii : u32
 ) -> MarkerOut {
-    let reach  = u.radius + 1.0;
+    let reach  = u.radius + AA_PAD;
     let corner = vec2f(
         f32(vi & 1u) * 2.0 - 1.0,
         f32(vi >> 1u) * 2.0 - 1.0
@@ -61,11 +61,7 @@ fn vsMarker(
 
 @fragment
 fn fsMarker(in : MarkerOut) -> @location(0) vec4f {
-    let d = length(in.offset) - u.radius;
-
-    // fwidth is the change of d across one pixel, so the ratio is the
-    // fraction of the pixel that falls inside the circle.
-    let alpha = u.color.a * clamp(0.5 - d / fwidth(d), 0.0, 1.0);
+    let alpha = u.color.a * coverage(length(in.offset) - u.radius);
 
     // Target alphaMode is 'premultiplied'.
     return vec4f(u.color.rgb * alpha, alpha);

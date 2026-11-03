@@ -55,12 +55,24 @@ fn vsHairline(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
     return toClip(toPixels(pts[vi]));
 }
 
+struct LineOut {
+    @builtin(position) pos : vec4f,
+    // Signed distance from the centreline, in device pixels
+    @location(0)       off : f32,
+};
+
 @vertex
-fn vsLine(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
+fn vsLine(@builtin(vertex_index) vi : u32) -> LineOut {
     let last = u32(u.count) - 1u;
     let i    = vi >> 2u;
     let k    = vi & 3u;
     let side = select(1.0, -1.0, (k & 1u) == 1u);
+    // Built wider than the stroke; the fragment shader fades the surplus
+    // out, so the edge is not cut off at the geometry.
+    let reach = u.halfWidth + AA_PAD;
+
+    var out : LineOut;
+    out.off = side * reach;
 
     let curr = toPixels(pts[i]);
     let dIn  = curr - toPixels(pts[max(i, 1u) - 1u]);
@@ -91,7 +103,8 @@ fn vsLine(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
             if (sinHalf >= MITER_LIMIT) {
                 // Both halves meet at the miter point, which leaves the
                 // two join triangles with no area.
-                return toClip(curr + n * side * u.halfWidth / sinHalf);
+                out.pos = toClip(curr + n * side * reach / sinHalf);
+                return out;
             }
         }
 
@@ -103,16 +116,27 @@ fn vsLine(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
     } else if (okOut) {
         dir = dOut / lOut;
     } else {
-        return toClip(curr);
+        out.pos = toClip(curr);
+        return out;
     }
 
-    return toClip(curr + vec2f(-dir.y, dir.x) * side * u.halfWidth);
+    out.pos = toClip(curr + vec2f(-dir.y, dir.x) * side * reach);
+    return out;
 }
 
+// Hairlines are a single pixel of the primitive, with nothing to fade.
 @fragment
 fn fs() -> @location(0) vec4f {
     // Target alphaMode is 'premultiplied'.
     return vec4f(u.color.rgb * u.color.a, u.color.a);
+}
+
+@fragment
+fn fsLine(in : LineOut) -> @location(0) vec4f {
+    let alpha = u.color.a * coverage(abs(in.off) - u.halfWidth);
+
+    // Target alphaMode is 'premultiplied'.
+    return vec4f(u.color.rgb * alpha, alpha);
 }
 
 `;
