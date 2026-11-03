@@ -96,7 +96,7 @@ test('prep-release preserves versions, formatting, backups and doclet semantics'
         fs.chmodSync('docs/bytes.dat', 0o664);
         fs.writeFileSync('docs/unicode.ts', '@since\u00a0next @deprecated\u3000next');
         const unicodeExpected = execFileSync('sed', ['-e',
-            `s/@since\\([[:space:]][[:space:]]*\\)next/@since\\1${version}/;` +
+            `s/@since\\([[:space:]][[:space:]]*\\)next/@since\\1${version}/; ` +
             `s/@deprecated\\([[:space:]][[:space:]]*\\)next/@deprecated\\1${version}/`,
             'docs/unicode.ts'], { encoding: 'utf8' });
         const untouched = ['node_modules/skip.ts', 'code/skip.ts',

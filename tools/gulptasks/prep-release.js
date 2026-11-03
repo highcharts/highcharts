@@ -30,8 +30,9 @@ function replaceNextTags(directory, version) {
         }
         throw error;
     }
+    // The space preserves regex backslashes when invoked through Windows/MSYS.
     const script =
-        `s/@since\\([[:space:]][[:space:]]*\\)next/@since\\1${version}/;` +
+        `s/@since\\([[:space:]][[:space:]]*\\)next/@since\\1${version}/; ` +
         `s/@deprecated\\([[:space:]][[:space:]]*\\)next/@deprecated\\1${version}/`;
     for (let index = 0; index < files.length; index += 50) {
         ChildProcess.execFileSync('sed', [
