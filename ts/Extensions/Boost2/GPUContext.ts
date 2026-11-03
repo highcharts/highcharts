@@ -35,9 +35,16 @@ declare const GPUBufferUsage: {
 };
 
 /** @internal */
+declare const GPUShaderStage: {
+    readonly FRAGMENT: GPUFlagsConstant;
+    readonly VERTEX: GPUFlagsConstant;
+};
+
+/** @internal */
 export type PipelineFactory = (
     device: GPUDevice,
-    format: GPUTextureFormat
+    format: GPUTextureFormat,
+    layout: GPUPipelineLayout
 ) => GPURenderPipeline;
 
 /* *
@@ -84,6 +91,12 @@ class GPUContext {
     /** @internal */
     private static waiters: Array<() => void> = [];
 
+    /** @internal */
+    private static layout?: GPUBindGroupLayout;
+
+    /** @internal */
+    private static pipelineLayout?: GPUPipelineLayout;
+
     /* *
      *
      *  Static Functions
@@ -122,8 +135,7 @@ class GPUContext {
 
         if (!gpu) {
             // WebGPU requires a secure context, so `navigator.gpu` is
-            // absent on a plain HTTP host other than localhost. The reason
-            // is reported because the fallback is otherwise silent.
+            // absent on a plain HTTP host other than localhost.
             this.unavailable = true;
             const secure = typeof isSecureContext === 'undefined' ?
                 'unknown' :
@@ -157,6 +169,7 @@ class GPUContext {
             this.ready = false;
             this.device = void 0;
             this.pipelines = {};
+            this.layout = this.pipelineLayout = void 0;
             this.promise = void 0;
         });
 
@@ -176,6 +189,25 @@ class GPUContext {
     }
 
     /**
+     * The bindings every pipeline uses. One explicit layout rather than an
+     * implicit one per pipeline, so a series needs a single bind group.
+     * @internal
+     */
+    public static bindGroupLayout(): GPUBindGroupLayout {
+        return (this.layout ||= this.device!.createBindGroupLayout({
+            entries: [{
+                binding: 0,
+                visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+                buffer: { type: 'uniform' }
+            }, {
+                binding: 1,
+                visibility: GPUShaderStage.VERTEX,
+                buffer: { type: 'read-only-storage' }
+            }]
+        }));
+    }
+
+    /**
      * Pipelines are created once per key and shared by every series.
      * @internal
      */
@@ -183,9 +215,13 @@ class GPUContext {
         key: string,
         factory: PipelineFactory
     ): GPURenderPipeline {
-        return (
-            this.pipelines[key] ||= factory(this.device!, this.format!)
-        );
+        this.pipelineLayout ||= this.device!.createPipelineLayout({
+            bindGroupLayouts: [this.bindGroupLayout()]
+        });
+
+        return (this.pipelines[key] ||= factory(
+            this.device!, this.format!, this.pipelineLayout
+        ));
     }
 
     /** @internal */

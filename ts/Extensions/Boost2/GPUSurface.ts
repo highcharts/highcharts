@@ -30,11 +30,8 @@ const { doc, win } = H;
  * */
 
 /**
- * One canvas per series, held by a `foreignObject` inside the series group.
- *
- * Living in the SVG tree gives the canvas the group's transform, clip and
- * z-order, so it layers against the other series the same way an SVG graph
- * would.
+ * One canvas per series, held by a `foreignObject` inside the series group,
+ * which gives it the group's transform, clip and z-order.
  *
  * @internal
  */
@@ -104,8 +101,7 @@ class GPUSurface {
 
     /**
      * Fit the canvas to the plot area. The series group already carries the
-     * plot box transform, so the `foreignObject` stays at the origin. The
-     * backing buffer is reallocated only when the device-pixel size changes.
+     * plot box transform, so the `foreignObject` stays at the origin.
      * @internal
      */
     public layout(): void {

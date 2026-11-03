@@ -17,6 +17,7 @@
  * */
 
 import type Point from '../../../Core/Series/Point';
+import type PointerEvent from '../../../Core/PointerEvent';
 import type Series from '../../../Core/Series/Series';
 
 import Color from '../../../Core/Color/Color.js';
@@ -24,7 +25,8 @@ import GPUContext from '../GPUContext.js';
 import GPUSurface from '../GPUSurface.js';
 import H from '../../../Core/Globals.js';
 const { doc, win } = H;
-import LineShader from './LineShader.js';
+import LineShader from '../Shaders/LineShader.js';
+import MarkerShader from '../Shaders/MarkerShader.js';
 import { isNumber } from '../../../Shared/Utilities.js';
 
 /* *
@@ -33,8 +35,11 @@ import { isNumber } from '../../../Shared/Utilities.js';
  *
  * */
 
-/** Uniform buffer size: two vec4f of 16 bytes each. */
-const UNIFORM_BYTES = 32;
+/**
+ * Uniform buffer size: two vec4f, then viewport, half width, count and
+ * marker radius, padded to the 16 byte struct alignment.
+ */
+const UNIFORM_BYTES = 64;
 
 /**
  * Resolved color expressions, keyed by color scheme and expression. The same
@@ -50,11 +55,9 @@ const colorCache: Record<string, Color.RGBA> = {};
  * */
 
 /**
- * Resolve a CSS color expression to RGBA components.
- *
- * `Color.parse` does not resolve `var()` or `color-mix()`. Those are passed
- * to a probe element inside the chart container, so the cascade - including
- * the active color scheme - resolves them.
+ * Resolve a CSS color expression to RGBA. `Color.parse` handles neither
+ * `var()` nor `color-mix()`, so those go through a probe element in the
+ * chart container, where the cascade resolves them.
  *
  * @internal
  */
@@ -96,29 +99,57 @@ function resolveColor(expression: string, container: HTMLElement): Color.RGBA {
         [0, 0, 0, 1] as Color.RGBA);
 }
 
-/** @internal */
+/**
+ * The rule from `Series.drawPoints`. Its `closestPointRangePx` comes from
+ * `translate`, which the GPU path skips, so the same quantity is derived
+ * from the closest data distance and the axis scale.
+ *
+ * @internal
+ */
+function markersEnabled(series: Series): boolean {
+    const marker = series.options.marker || {},
+        xAxis = series.xAxis,
+        rangePx = (series.closestPointRange ?? 0) * (xAxis?.transA ?? 0);
+
+    return marker.enabled ??
+        ((!xAxis || xAxis.isRadial) ? true : null) ??
+        // `radius` carries the series default, as it does in the core.
+        (rangePx >= (marker.enabledThreshold ?? 2) * (marker.radius as number));
+}
+
+/**
+ * A single device pixel comes from the hardware line primitive; anything
+ * wider is built as geometry.
+ * @internal
+ */
 function buildPipeline(
     device: GPUDevice,
-    format: GPUTextureFormat
+    format: GPUTextureFormat,
+    layout: GPUPipelineLayout,
+    code: string,
+    vertexEntry: string,
+    fragmentEntry: string,
+    topology: GPUPrimitiveTopology
 ): GPURenderPipeline {
-    const module = device.createShaderModule({ code: LineShader }),
+    const module = device.createShaderModule({ code }),
         blendComponent: GPUBlendComponent = {
             srcFactor: 'one',
             dstFactor: 'one-minus-src-alpha'
         };
 
     return device.createRenderPipeline({
-        layout: 'auto',
-        vertex: { module, entryPoint: 'vs' },
+        layout,
+        vertex: { module, entryPoint: vertexEntry },
         fragment: {
             module,
-            entryPoint: 'fs',
+            entryPoint: fragmentEntry,
             targets: [{
                 format,
                 blend: { color: blendComponent, alpha: blendComponent }
             }]
         },
-        primitive: { topology: 'line-strip' }
+        // Culling stays off: the strip winds both ways as the path turns.
+        primitive: { topology }
     });
 }
 
@@ -129,11 +160,9 @@ function buildPipeline(
  * */
 
 /**
- * Series sub-object, following the pattern of `axis.ordinal` and
- * `axis.logarithmic`.
- *
- * Reads `dataTable`, the axes and the options; writes only to `series.gpu`.
- * Detaching therefore requires no state to be restored.
+ * Series sub-object, as `axis.ordinal` and `axis.logarithmic` are. Reads
+ * `dataTable`, the axes and the options; writes nothing back, so detaching
+ * restores no state.
  *
  * @internal
  */
@@ -158,7 +187,11 @@ class LineStrategy {
     /** @internal */
     public series: Series;
 
-    /** @internal */
+    /**
+     * Buffer and draw timings. Written here, read by nothing in the module.
+     * @todo Debugging only, remove.
+     * @internal
+     */
     public stats = { uploads: 0, draws: 0, buildMs: 0, drawMs: 0 };
 
     /** @internal */
@@ -178,6 +211,9 @@ class LineStrategy {
 
     /** @internal */
     private pipeline?: GPURenderPipeline;
+
+    /** @internal */
+    private markerPipeline?: GPURenderPipeline;
 
     /** @internal */
     private capacity = 0;
@@ -209,11 +245,8 @@ class LineStrategy {
      * */
 
     /**
-     * Upload the whole series. Called from `translate()`, before any
-     * `Point` objects are created.
-     *
-     * All points are uploaded, not only the visible ones; the shader maps
-     * the domain, so zoom and pan only rewrite uniforms.
+     * Upload the whole series, not only the visible points: the shader
+     * maps the domain, so zoom and pan only rewrite uniforms.
      * @internal
      */
     public buildBuffer(): void {
@@ -258,8 +291,25 @@ class LineStrategy {
     }
 
     /** @internal */
-    private ensureResources(): void {
-        this.pipeline = GPUContext.pipeline('boost2-line', buildPipeline);
+    private ensureResources(wide: boolean, markers: boolean): void {
+        this.pipeline = GPUContext.pipeline(
+            wide ? 'boost2-ribbon' : 'boost2-line',
+            (device, format, layout): GPURenderPipeline => buildPipeline(
+                device, format, layout, LineShader,
+                wide ? 'vsRibbon' : 'vsLine', 'fs',
+                wide ? 'triangle-strip' : 'line-strip'
+            )
+        );
+
+        if (markers) {
+            this.markerPipeline = GPUContext.pipeline(
+                'boost2-marker',
+                (device, format, layout): GPURenderPipeline => buildPipeline(
+                    device, format, layout, MarkerShader,
+                    'vsMarker', 'fsMarker', 'triangle-strip'
+                )
+            );
+        }
 
         if (!this.uniformBuffer) {
             this.uniformBuffer = GPUContext.createUniformBuffer(UNIFORM_BYTES);
@@ -267,7 +317,7 @@ class LineStrategy {
 
         if (!this.bindGroup) {
             this.bindGroup = GPUContext.device!.createBindGroup({
-                layout: this.pipeline.getBindGroupLayout(0),
+                layout: GPUContext.bindGroupLayout(),
                 entries: [
                     { binding: 0, resource: { buffer: this.uniformBuffer } },
                     { binding: 1, resource: { buffer: this.buffer! } }
@@ -281,17 +331,29 @@ class LineStrategy {
      * @internal
      */
     public draw(): void {
-        if (!GPUContext.ready || !this.buffer || this.count < 2) {
+        // A single point still carries a marker. The line primitives need
+        // two vertices and draw nothing below that on their own.
+        if (!GPUContext.ready || !this.buffer || !this.count) {
             return;
         }
 
         const start = performance.now(),
             series = this.series,
-            chart = series.chart;
+            chart = series.chart,
+            options = series.options,
+            lineWidth = options.lineWidth ?? 2,
+            wide = lineWidth > 1,
+            markers = markersEnabled(series);
+
+        // Nothing to draw. A surface is still needed if one exists, so
+        // that output from an earlier width is cleared.
+        if (lineWidth <= 0 && !markers && !this.surface) {
+            return;
+        }
 
         this.surface ||= new GPUSurface(series);
         this.surface.layout();
-        this.ensureResources();
+        this.ensureResources(wide, markers);
 
         const { xAxis, yAxis } = series,
             rgba = resolveColor(series.color as string, chart.container),
@@ -305,6 +367,13 @@ class LineStrategy {
         uniforms[5] = rgba[1] / 255;
         uniforms[6] = rgba[2] / 255;
         uniforms[7] = rgba[3];
+        uniforms[8] = this.surface.width;
+        uniforms[9] = this.surface.height;
+        const ratio = win.devicePixelRatio || 1;
+
+        uniforms[10] = lineWidth * ratio / 2;
+        uniforms[11] = this.count;
+        uniforms[12] = (options.marker?.radius ?? 4) * ratio;
 
         const device = GPUContext.device!;
         device.queue.writeBuffer(this.uniformBuffer!, 0, uniforms);
@@ -312,9 +381,19 @@ class LineStrategy {
         const encoder = device.createCommandEncoder(),
             pass = this.surface.beginPass(encoder);
 
-        pass.setPipeline(this.pipeline!);
         pass.setBindGroup(0, this.bindGroup!);
-        pass.draw(this.count);
+
+        if (lineWidth > 0) {
+            pass.setPipeline(this.pipeline!);
+            pass.draw(wide ? this.count * 2 : this.count);
+        }
+
+        // Markers last, so they sit on top of the graph as in SVG.
+        if (markers) {
+            pass.setPipeline(this.markerPipeline!);
+            pass.draw(4, this.count);
+        }
+
         pass.end();
 
         device.queue.submit([encoder.finish()]);
@@ -324,13 +403,11 @@ class LineStrategy {
     }
 
     /**
-     * Nearest point by x, without a k-d tree or mock points.
-     *
-     * Requires a sorted x column, which `Boost2.isEligible` enforces through
-     * `requireSorting`. Allocates nothing.
+     * Nearest point by x, without a k-d tree or mock points. Requires the
+     * sorted x column that `isSupported` enforces.
      * @internal
      */
-    public hitAt(chartX: number): (Point|undefined) {
+    public hitAt(e: PointerEvent): (Point|undefined) {
         const series = this.series,
             xData = series.getColumn('x');
 
@@ -339,7 +416,7 @@ class LineStrategy {
         }
 
         // Chart coordinates: `toValue` subtracts the axis position itself.
-        const value = series.xAxis.toValue(chartX);
+        const value = series.xAxis.toValue(e.chartX);
 
         let low = 0,
             high = xData.length - 1;
@@ -360,28 +437,42 @@ class LineStrategy {
             low--;
         }
 
-        return this.materialize(low);
+        return this.materialize(low, e);
     }
 
     /**
-     * Creates the `Point` for a single hit.
+     * Creates the `Point` for a single hit. `clientX`, `dist` and `distX`
+     * carry the k-d tree contract that `Pointer.findNearestKDPoint` ranks
+     * the series by.
+     *
      * @internal
      */
-    private materialize(index: number): Point {
+    private materialize(index: number, e: PointerEvent): Point {
         const series = this.series,
+            { xAxis, yAxis } = series,
             xData = series.getColumn('x'),
             yData = series.getColumn('y'),
             x = xData[index],
             y = yData[index],
             PointClass = series.pointClass,
-            point = new PointClass(series, [x, y], x);
+            point = new PointClass(series, [x, y], x),
+            plotX = xAxis.toPixels(x, true),
+            // A null value has no position; the search treats its
+            // contribution along y as zero rather than as a distance.
+            plotY = isNumber(y) ? yAxis.toPixels(y, true) : void 0;
 
         point.index = index;
         point.category = x as unknown as string;
         point.key = point.category;
-        point.plotX = series.xAxis.toPixels(x, true);
-        point.plotY = series.yAxis.toPixels(y, true);
+        point.plotX = point.clientX = plotX;
+        point.plotY = plotY;
         point.isInside = series.isPointInside(point);
+
+        const dx = e.chartX - xAxis.pos - plotX,
+            dy = isNumber(plotY) ? e.chartY - yAxis.pos - plotY : 0;
+
+        point.dist = Math.sqrt(dx * dx + dy * dy);
+        point.distX = Math.abs(dx);
 
         return point;
     }
@@ -405,4 +496,5 @@ class LineStrategy {
  * */
 
 /** @internal */
+export { markersEnabled };
 export default LineStrategy;

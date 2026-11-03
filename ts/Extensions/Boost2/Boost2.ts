@@ -26,7 +26,7 @@ import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import GPUContext from './GPUContext.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import LineStrategy from './Pipelines/LineStrategy.js';
+import LineStrategy, { markersEnabled } from './Strategies/LineStrategy.js';
 import {
     fireEvent,
     isNumber,
@@ -79,14 +79,14 @@ const DEFAULT_THRESHOLD = 10000;
  * */
 
 /**
- * Capability check. False when the series type has no pipeline, the point
- * count is below the threshold, or an option is used that the strategy does
- * not support; such a series renders in SVG rather than differently.
+ * Capability check. A series that fails it renders in SVG rather than
+ * differently.
  *
  * @internal
  */
 function isSupported(series: Series): boolean {
     const options = series.options,
+        marker = options.marker,
         // Shared with the boost module: 0 disables, 1 forces.
         threshold = options.boostThreshold ?? DEFAULT_THRESHOLD;
 
@@ -96,7 +96,13 @@ function isSupported(series: Series): boolean {
         options.dashStyle ||
         options.stacking ||
         options.zones?.length ||
-        options.marker?.enabled === true ||
+        // Only circles in the series color are drawn, and the automatic
+        // rule decides by zoom whether markers appear at all.
+        (markersEnabled(series) && (
+            series.symbol !== 'circle' ||
+            marker?.fillColor ||
+            marker?.lineWidth
+        )) ||
         // `hitAt` assumes a sorted x column.
         !series.requireSorting ||
         series.chart.inverted ||
@@ -106,7 +112,9 @@ function isSupported(series: Series): boolean {
         return false;
     }
 
-    return series.dataTable.rowCount >= threshold;
+    // The count in view, not of the whole series. `processData` crops
+    // only above `cropThreshold`, below which the threshold has no effect.
+    return series.dataTable.getModified().rowCount >= threshold;
 }
 
 /** @internal */
@@ -115,9 +123,8 @@ function isEligible(series: Series): boolean {
 }
 
 /**
- * True while an eligible series waits for the device. Such a series is not
- * drawn in SVG meanwhile, since that output would be replaced as soon as
- * the device arrives.
+ * True while an eligible series waits for the device. Drawing it in SVG
+ * meanwhile produces output the device would immediately replace.
  *
  * @internal
  */
@@ -148,13 +155,12 @@ function canServeExtremes(series: Series): boolean {
 }
 
 /**
- * Attach or detach the strategy according to current eligibility.
+ * Attach or detach the strategy by current eligibility, which zooming can
+ * change at any redraw.
  *
  * Detaching restores no state, since the strategy writes none. Attaching
- * discards the SVG output of an earlier render: `graph`, `area` and the
- * `tracker`, a copy of the graph path used for mouse tracking. With
- * `drawGraph` suppressed nothing would update or remove them, and hit
- * testing goes through `searchPoint` instead.
+ * discards the SVG output of an earlier render, which `drawGraph` and
+ * `drawPoints` would otherwise never reach again.
  *
  * @internal
  */
@@ -162,6 +168,12 @@ function syncStrategy(series: Series): void {
     if (isEligible(series)) {
         if (!series.gpu) {
             series.gpu = new LineStrategy(series);
+
+            // `points` is emptied below, so nothing else reaches these.
+            for (const point of series.points || []) {
+                point?.destroyElements?.();
+            }
+
             series.graph = series.graph?.destroy();
             series.area = series.area?.destroy();
             series.tracker = series.tracker?.destroy();
@@ -174,12 +186,9 @@ function syncStrategy(series: Series): void {
 }
 
 /**
- * Wire the strategy into the series.
- *
- * In the eventual version these five branches are five `if (this.gpu)`
- * checks inside `Series`: one each in `translate()`, `render()` and
- * `searchPoint()`, plus two around `drawGraph()`/`drawPoints()`. The proof
- * of concept uses `wrap` because a module cannot change the core.
+ * Wire the strategy into the series. Each branch belongs in `Series`
+ * itself as an `if (this.gpu)` check; a module cannot change the core,
+ * hence `wrap`.
  *
  * @internal
  */
@@ -206,9 +215,8 @@ function compose(
         syncStrategy(this);
 
         if (isPending(this) && !this.boost2Pending) {
-            // The series must be marked dirty before the redraw, because
-            // `redraw()` alone does not call `translate()` and eligibility
-            // would not be re-evaluated. Registered once per series.
+            // `redraw()` alone does not call `translate()`, so without the
+            // dirty flag eligibility would not be re-evaluated.
             const series = this;
 
             series.boost2Pending = true;
@@ -232,8 +240,7 @@ function compose(
             return;
         }
 
-        // Still waiting for the device: draw nothing rather than build an
-        // SVG rendering that is about to be thrown away.
+        // Still waiting for the device; see `isPending`.
         if (this.boost2Pending) {
             this.points = [];
             return;
@@ -283,14 +290,13 @@ function compose(
         if (this.gpu) {
             // Chart coordinates: `toValue` subtracts the axis position,
             // and `axis.pos` differs from `chart.plotLeft` with panes.
-            return this.gpu.hitAt(e.chartX);
+            return this.gpu.hitAt(e);
         }
         return proceed.apply(this, [].slice.call(arguments, 1));
     });
 
-    // --- 6. getExtremes(): the same scan as the core, tracking both
-    //        extremes inline instead of collecting every in-range value
-    //        into an array and walking it again.
+    // --- 6. getExtremes(): the same scan as the core, but tracking both
+    //        extremes inline instead of filling an array first.
     wrap(seriesProto, 'getExtremes', function (
         this: Series,
         proceed: Function,
