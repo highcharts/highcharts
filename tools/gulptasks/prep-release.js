@@ -7,6 +7,38 @@ const packageJson = require('../../package.json');
 const ChildProcess = require('child_process');
 const LogLib = require('../libs/log');
 const fs = require('fs');
+const semver = require('semver');
+
+/**
+ * Replace the first since/deprecated tag on each line, as in the release task.
+ * @param {string} directory Directory to search without following symlinks.
+ * @param {string} version Validated release version.
+ */
+function replaceNextTags(directory, version) {
+    let files;
+    try {
+        files = ChildProcess.execFileSync('grep', [
+            '-rl', '--null',
+            '--exclude=*.bak', '--exclude=*.md',
+            '--exclude-dir=node_modules', '--exclude-dir=code',
+            '-e', '@since[[:space:]][[:space:]]*next',
+            '-e', '@deprecated[[:space:]][[:space:]]*next', directory
+        ], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 }).split('\0').filter(Boolean);
+    } catch (error) {
+        if (error.status === 1) {
+            return; // No matching doclets.
+        }
+        throw error;
+    }
+    const script =
+        `s/@since\\([[:space:]][[:space:]]*\\)next/@since\\1${version}/;` +
+        `s/@deprecated\\([[:space:]][[:space:]]*\\)next/@deprecated\\1${version}/`;
+    for (let index = 0; index < files.length; index += 50) {
+        ChildProcess.execFileSync('sed', [
+            '-i.bak', '-e', script, ...files.slice(index, index + 50)
+        ]);
+    }
+}
 
 /**
  * Prepares a new release by replacing version numbers with the supplied
@@ -47,8 +79,8 @@ function prepareRelease() {
         }
 
         if (argv.cleanup) {
-            const stagedChanges = ChildProcess.execSync(
-                'git diff --cached --name-only'
+            const stagedChanges = ChildProcess.execFileSync(
+                'git', ['diff', '--cached', '--name-only']
             ).toString();
             buildProperties.version = packageJsonVersion + '-modified';
             buildProperties.date = '';
@@ -65,8 +97,10 @@ function prepareRelease() {
                     ));
                     return;
                 }
-                ChildProcess.execSync('git add build-properties.json && git' +
-                    ` commit -m"Cleaned up after v${packageJsonVersion}."`);
+                ChildProcess.execFileSync('git', ['add', 'build-properties.json']);
+                ChildProcess.execFileSync('git', [
+                    'commit', '-m', `Cleaned up after v${packageJsonVersion}.`
+                ]);
                 LogLib.message(
                     'Clean up commit added. git push when you are ready.'
                 );
@@ -85,11 +119,11 @@ function prepareRelease() {
                 ' --cleanup when starting the command.'));
             return;
         }
-        if (
-            nextVersion &&
-            !/^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}/.test(nextVersion)
-        ) {
-            reject(new Error('--nextversion must be on the form x.x.x'));
+        const parsed = typeof nextVersion === 'string' && semver.parse(nextVersion);
+        const canonical = parsed && parsed.version +
+            (parsed.build.length ? '+' + parsed.build.join('.') : '');
+        if (!parsed || canonical !== nextVersion) {
+            reject(new Error('--nextversion must be a complete semantic version'));
             return;
         }
 
@@ -97,10 +131,13 @@ function prepareRelease() {
         // should be equal, but since they sometimes have proven not to be,
         // we make sure to replace the existing version in the exact file
         // with the next version
-        ChildProcess.execSync('sed -i\'.bak\' -e \'/version/s/' +
-            `"${packageJsonVersion}"/'\\"${nextVersion}\\"/ package.json`);
-        ChildProcess.execSync('sed -i\'.bak\' -e \'/version/s/' +
-            `"${bowerJsonVersion}"/'\\"${nextVersion}\\"/ bower.json`);
+        for (const file of ['package.json', 'bower.json']) {
+            ChildProcess.execFileSync('sed', [
+                '-i.bak', '-e',
+                `s/\\("version"[[:space:]]*:[[:space:]]*"\\)[^"]*/\\1${nextVersion}/`,
+                file
+            ]);
+        }
 
         // Update build-properties.json
         buildProperties.version = nextVersion;
@@ -110,27 +147,7 @@ function prepareRelease() {
             JSON.stringify(buildProperties, null, 2)
         );
 
-        // Replace occurrences of "@ since next" in docs with
-        // "@ since x.y.z", and the same for "deprecated",
-        // first checking if xargs is on gnu (linux) or bsd (osx).
-        const isGNU = ChildProcess.execSync(
-            'xargs --version 2>&1 |grep -s GNU >/dev/null && echo true ||' +
-            ' echo false'
-        ).toString().replace('\n', '') === 'true';
-
-        ChildProcess.execSync([
-            'grep -Rl',
-            '--exclude=*.bak',
-            '--exclude=*.md',
-            '--exclude-dir=node_modules',
-            '--exclude-dir=code',
-            '-e "@since[[:space:]][[:space:]]*next"',
-            '-e "@deprecated[[:space:]][[:space:]]*next"',
-            '. |',
-            `xargs ${isGNU ? '-r' : ''} sed -i'.bak'`,
-            `-e 's/@since\\([[:space:]][[:space:]]*\\)next/@since\\1${nextVersion}/;`,
-            `s/@deprecated\\([[:space:]][[:space:]]*\\)next/@deprecated\\1${nextVersion}/'`
-        ].join(' '));
+        replaceNextTags('.', nextVersion);
 
         LogLib.success(
             'Updated version in package.json, bower.json,' +
