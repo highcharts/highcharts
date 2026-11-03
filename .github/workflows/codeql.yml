@@ -13,9 +13,7 @@ name: "CodeQL Advanced"
 
 on:
   push:
-    branches:
-      - master
-      - codex/expand-codeql-security-coverage
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
   schedule:
