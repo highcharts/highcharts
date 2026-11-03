@@ -23,12 +23,7 @@ import type OHLCSeries from './OHLCSeries';
 import type Series from './../../Core/Series/Series';
 
 import Point from './../../Core/Series/Point.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        hlc: HLCSeries
-    }
-} = SeriesRegistry;
+import HLCSeries from '../HLC/HLCSeries.js';
 
 /* *
  *

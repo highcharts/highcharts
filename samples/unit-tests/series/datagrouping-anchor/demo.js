@@ -228,7 +228,6 @@ QUnit.test(
             `When the last point anchor is set to lastPoint,
         the point should be placed where the last point in group is.`
         );
-
     });
 
 QUnit.test('Deprecated smoothed option.', function (assert) {

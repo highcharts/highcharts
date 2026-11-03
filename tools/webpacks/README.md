@@ -162,6 +162,9 @@ Each entry is an object with the following properties:
 * `included`: Defines the masters files that should bundle the covered file matches.
   An empty array defaults to the default product master (`highcharts`).
 
+* `esmExcluded`: Optional masters from `included` that, in ESM bundles, import the covered files from the first master in `included` instead of bundling them.
+  Use it when the master already imports that first master, e.g. `modules/gantt` imports `modules/xrange`.
+
 * `namespacePath`: This points to the namespace property when the files are not bundled.
    - It reflects the namespace assignment that happens in the masters files (the ones in `included`).
    - A leading dot will be replaced with the shared product namespace.

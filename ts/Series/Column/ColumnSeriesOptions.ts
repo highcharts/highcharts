@@ -113,7 +113,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
      *         Dark gray border
      *
-     * @default var(--highcharts-background-color)
+     * @default 'var(--highcharts-background-color)'
      *
      * @product highcharts highstock gantt
      */
@@ -163,44 +163,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @product highcharts highstock gantt
      */
     centerInCategory?: boolean;
-
-    /**
-     * When using automatic point colors pulled from the global
-     * [colors](colors) or series-specific
-     * [plotOptions.column.colors](series.colors) collections, this option
-     * determines whether the chart should receive one color per series or
-     * one color per point.
-     *
-     * In styled mode, the `colors` or `series.colors` arrays are not
-     * supported, and instead this option gives the points individual color
-     * class names on the form `highcharts-color-{n}`.
-     *
-     * @see [series colors](#plotOptions.column.colors)
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
-     *         False by default
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
-     *         True
-     *
-     * @default false
-     *
-     * @since 2.0
-     *
-     * @product highcharts highstock gantt
-     */
-    colorByPoint?: boolean;
-
-    /**
-     * A series specific or series type specific color set to apply instead
-     * of the global [colors](#colors) when [colorByPoint](
-     * #plotOptions.column.colorByPoint) is true.
-     *
-     * @since 3.0
-     *
-     * @product highcharts highstock gantt
-     */
-    colors?: Array<ColorType>;
 
     /**
      * When the series contains less points than the crop threshold, all

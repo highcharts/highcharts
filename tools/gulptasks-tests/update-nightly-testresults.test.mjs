@@ -16,6 +16,7 @@ import test from 'node:test';
 const require = createRequire(import.meta.url);
 const { require: requireTS } = require('tsx/cjs/api');
 const {
+    aggregateCandidateResults,
     appendError,
     recordCandidateResult,
     resetVisualRun,
@@ -402,6 +403,7 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
         });
         resetVisualRun(root, [id]);
         recordCandidateResult(root, id, 12, '<svg>new</svg>', Buffer.from('GIF89a'));
+        aggregateCandidateResults(root);
 
         process.env.GITHUB_RUN_ATTEMPT = '2';
         process.env.GITHUB_RUN_ID = '9876';

@@ -30,7 +30,9 @@ import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
-import whcm from '../Accessibility/HighContrastMode.js';
+import {
+    isHighContrastModeActive
+} from '../Accessibility/HighContrastMode.js';
 import { merge } from '../Shared/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
@@ -88,9 +90,16 @@ import '../Grid/Core/Responsive/ResponsiveComposition.js';
 import '../Grid/Pro/RowPinning/RowPinningComposition.js';
 import '../Grid/Pro/GridEvents.js';
 import '../Grid/Pro/CellEditing/CellEditingComposition.js';
+import '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
 import '../Grid/Pro/Export/ExportingComposition.js';
+import '../Grid/Pro/License/LicenseValidationComposition.js';
+import '../Grid/Pro/Pagination/PaginationComposition.js';
+import '../Grid/Pro/SummaryColumns/SummaryColumnsComposition.js';
+import '../Grid/Pro/SummaryRows/SummaryRowsComposition.js';
 import '../Grid/Pro/TableEditing/TableEditingComposition.js';
+import '../Grid/Pro/TreeView/TreeViewComposition.js';
+import '../Grid/Pro/TreeView/TreeViewValidation.js';
 
 // Cell Renderers
 import '../Grid/Pro/CellRendering/CellRenderer.js';
@@ -137,7 +146,7 @@ const G = {
     grid: _Grid.grid,
     grids: _Grid.grids,
     HeaderCell,
-    isHighContrastModeActive: whcm.isHighContrastModeActive,
+    isHighContrastModeActive,
     merge: merge,
     Pagination,
     Popup,
@@ -194,6 +203,7 @@ export {
     DataTable,
     _Grid as Grid,
     HeaderCell,
+    isHighContrastModeActive,
     _Options as Options,
     Pagination,
     Popup,
@@ -208,7 +218,6 @@ export const {
     defaultOptions,
     grid,
     grids,
-    isHighContrastModeActive,
     product,
     setOptions,
     version,

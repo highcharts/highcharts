@@ -252,7 +252,7 @@ export interface MarkerClusterMarkerOptions extends PointMarkerOptions {
     /** @default 0 */
     lineWidth?: PointMarkerOptions['lineWidth'];
 
-    /** @default ${palette.backgroundColor} */
+    /** @default 'var(--highcharts-background-color)' */
     lineColor?: PointMarkerOptions['lineColor'];
 
     /** @default 15 */
