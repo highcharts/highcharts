@@ -349,6 +349,10 @@ when generating references and leave it unset when comparing candidates.
 4. **BrowserStack** - Removed. Playwright's built-in Chromium, Firefox, and
    WebKit browsers provide cross-browser coverage.
 
+5. **S3 reference management** - Removed the reference reset and result upload
+   tasks. PR references are generated from master. Nightly references advance
+   after each successful run through the Visual Review API.
+
 ### Shared Karma Compatibility Files
 
 The visual runner still uses the shared exclusions and compatibility helpers in
