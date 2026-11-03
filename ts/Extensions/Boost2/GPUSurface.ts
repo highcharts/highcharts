@@ -30,8 +30,13 @@ const { doc, win } = H;
  * */
 
 /**
- * One canvas per series, held by a `foreignObject` inside the series group,
- * which gives it the group's transform, clip and z-order.
+ * A canvas held by a `foreignObject` inside one of the series groups, from
+ * which it takes the transform, the z-order, the clip and the entrance
+ * animation.
+ *
+ * The split follows the SVG one: the graph belongs in `group`, which is
+ * clipped to the plot box, and markers in `markerGroup`, which is not, so
+ * that a marker on the edge is drawn whole.
  *
  * @internal
  */
@@ -43,7 +48,7 @@ class GPUSurface {
      *
      * */
 
-    public constructor(series: Series) {
+    public constructor(series: Series, parent: SVGElement) {
         this.series = series;
 
         this.canvas = doc.createElement('canvas');
@@ -52,9 +57,8 @@ class GPUSurface {
 
         this.foreignObject = series.chart.renderer
             .createElement('foreignObject')
-            .attr({ x: 0, y: 0 })
             .css({ pointerEvents: 'none' })
-            .add(series.group);
+            .add(parent);
 
         this.foreignObject.element.appendChild(this.canvas);
 
@@ -87,6 +91,13 @@ class GPUSurface {
     /** @internal */
     public height = 0;
 
+    /**
+     * Margin around the plot box, in device pixels. Markers whose centre
+     * is inside the plot area may reach beyond it.
+     * @internal
+     */
+    public pad = 0;
+
     /** @internal */
     private series: Series;
 
@@ -100,17 +111,25 @@ class GPUSurface {
      * */
 
     /**
-     * Fit the canvas to the plot area. The series group already carries the
-     * plot box transform, so the `foreignObject` stays at the origin.
+     * Cover the plot box, extended by `overflow` on each side so that a
+     * shape anchored on the edge is not cut off. The group origin is the
+     * plot box origin, so the rectangle starts `overflow` before it.
      * @internal
      */
-    public layout(): void {
+    public layout(overflow: number): void {
         const { xAxis, yAxis } = this.series,
             ratio = win.devicePixelRatio || 1,
-            cssWidth = Math.max(1, Math.round(xAxis.len)),
-            cssHeight = Math.max(1, Math.round(yAxis.len));
+            cssWidth = Math.max(1, Math.round(xAxis.len) + 2 * overflow),
+            cssHeight = Math.max(1, Math.round(yAxis.len) + 2 * overflow);
 
-        this.foreignObject.attr({ width: cssWidth, height: cssHeight });
+        this.pad = Math.round(overflow * ratio);
+
+        this.foreignObject.attr({
+            x: -overflow,
+            y: -overflow,
+            width: cssWidth,
+            height: cssHeight
+        });
 
         this.canvas.style.width = cssWidth + 'px';
         this.canvas.style.height = cssHeight + 'px';

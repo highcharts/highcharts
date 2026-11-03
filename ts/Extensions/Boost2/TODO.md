@@ -34,6 +34,9 @@ or a guard.
 - `dataLabels` - `drawDataLabels` iterates `series.points`, which is
   empty, so no labels appear.
 - `linecap` - caps and joins are butt and miter regardless of the option.
+- `clip: false` applies to the graph, which inherits the series group
+  clip, but not to markers, which are drawn whole or not at all by their
+  own coordinate.
 - Ordinal axes. The shader maps x linearly between `xAxis.min` and
   `xAxis.max`, while an ordinal axis spaces points by index, so positions
   would diverge wherever the data has gaps. Needs a guard at least.

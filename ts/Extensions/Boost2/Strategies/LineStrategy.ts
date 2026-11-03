@@ -16,6 +16,7 @@
  *
  * */
 
+import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
 import type Point from '../../../Core/Series/Point';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type Series from '../../../Core/Series/Series';
@@ -40,6 +41,16 @@ import { isNumber } from '../../../Shared/Utilities.js';
  * marker radius, padded to the 16 byte struct alignment.
  */
 const UNIFORM_BYTES = 64;
+
+/**
+ * Rows per entry of the min/max index, as a shift. Range queries read one
+ * entry per block instead of every row it covers.
+ * @internal
+ */
+const BLOCK_SHIFT = 10;
+
+/** @internal */
+const BLOCK = 1 << BLOCK_SHIFT;
 
 /**
  * Resolved color expressions, keyed by color scheme and expression. The same
@@ -117,6 +128,40 @@ function markersEnabled(series: Series): boolean {
         (rangePx >= (marker.enabledThreshold ?? 2) * (marker.radius as number));
 }
 
+/** First index whose x is not below `value`. @internal */
+function lowerBound(xData: Array<number>, value: number): number {
+    let low = 0,
+        high = xData.length;
+
+    while (low < high) {
+        const mid = (low + high) >> 1;
+
+        if (xData[mid] < value) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    return low;
+}
+
+/** Last index whose x is not above `value`. @internal */
+function upperBound(xData: Array<number>, value: number): number {
+    let low = 0,
+        high = xData.length;
+
+    while (low < high) {
+        const mid = (low + high) >> 1;
+
+        if (xData[mid] <= value) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    return low - 1;
+}
+
 /** @internal */
 function buildPipeline(
     device: GPUDevice,
@@ -191,8 +236,11 @@ class LineStrategy {
      */
     public stats = { uploads: 0, draws: 0, buildMs: 0, drawMs: 0 };
 
-    /** @internal */
+    /** Graph, in the clipped and animated series group. @internal */
     private surface?: GPUSurface;
+
+    /** Markers, in the unclipped marker group. @internal */
+    private markerSurface?: GPUSurface;
 
     /** @internal */
     private buffer?: GPUBuffer;
@@ -229,6 +277,15 @@ class LineStrategy {
     private sourceY?: Array<number>;
 
     /**
+     * Lowest and highest y of each block of rows, built with the buffer.
+     * @internal
+     */
+    private blockMin = new Float64Array(0);
+
+    /** @internal */
+    private blockMax = new Float64Array(0);
+
+    /**
      * Domain origin, kept in f64 and subtracted before conversion to f32.
      * A raw timestamp exceeds f32 precision; `x - xOrigin` does not.
      * @internal
@@ -261,13 +318,32 @@ class LineStrategy {
         this.xOrigin = length ? xData[0] : 0;
 
         const flat = new Float32Array(length * 2),
-            xOrigin = this.xOrigin;
+            xOrigin = this.xOrigin,
+            blocks = Math.ceil(length / BLOCK),
+            blockMin = new Float64Array(blocks).fill(Infinity),
+            blockMax = new Float64Array(blocks).fill(-Infinity);
 
         for (let i = 0, j = 0; i < length; i++) {
+            const value = yData[i];
+
             flat[j++] = xData[i] - xOrigin;
             // Null and undefined become NaN, which drops the segment.
-            flat[j++] = yData[i] ?? NaN;
+            flat[j++] = value ?? NaN;
+
+            if (isNumber(value)) {
+                const b = i >> BLOCK_SHIFT;
+
+                if (value < blockMin[b]) {
+                    blockMin[b] = value;
+                }
+                if (value > blockMax[b]) {
+                    blockMax[b] = value;
+                }
+            }
         }
+
+        this.blockMin = blockMin;
+        this.blockMax = blockMax;
 
         const bytes = Math.max(32, flat.byteLength);
 
@@ -343,7 +419,12 @@ class LineStrategy {
             options = series.options,
             lineWidth = options.lineWidth ?? 2,
             hairline = options.boostHairline === true,
-            markers = markersEnabled(series);
+            markers = markersEnabled(series),
+            // How far a shape may reach past the plot box: a marker
+            // centred on the edge, and nothing else.
+            overflow = markers ?
+                Math.ceil((options.marker?.radius ?? 4) + 1) :
+                0;
 
         // Nothing to draw. A surface is still needed if one exists, so
         // that output from an earlier width is cleared.
@@ -351,8 +432,19 @@ class LineStrategy {
             return;
         }
 
-        this.surface ||= new GPUSurface(series);
-        this.surface.layout();
+        this.surface ||= new GPUSurface(series, series.group!);
+        this.surface.layout(overflow);
+
+        // Markers leave the marker group empty again when they turn off,
+        // which is what the core reads to detect a series without them.
+        if (markers) {
+            this.markerSurface ||= new GPUSurface(series, series.markerGroup!);
+            this.markerSurface.layout(overflow);
+        } else if (this.markerSurface) {
+            this.markerSurface.destroy();
+            this.markerSurface = void 0;
+        }
+
         this.ensureResources(hairline, markers);
 
         const { xAxis, yAxis } = series,
@@ -374,6 +466,7 @@ class LineStrategy {
         uniforms[10] = lineWidth * ratio / 2;
         uniforms[11] = this.count;
         uniforms[12] = (options.marker?.radius ?? 4) * ratio;
+        uniforms[13] = this.surface.pad;
 
         const device = GPUContext.device!;
         device.queue.writeBuffer(this.uniformBuffer!, 0, uniforms);
@@ -388,18 +481,93 @@ class LineStrategy {
             pass.draw(hairline ? this.count : this.count * 4);
         }
 
-        // Markers last, so they sit on top of the graph as in SVG.
-        if (markers) {
-            pass.setPipeline(this.markerPipeline!);
-            pass.draw(4, this.count);
-        }
-
         pass.end();
+
+        if (this.markerSurface) {
+            const markerPass = this.markerSurface.beginPass(encoder);
+
+            markerPass.setBindGroup(0, this.bindGroup!);
+            markerPass.setPipeline(this.markerPipeline!);
+            markerPass.draw(4, this.count);
+            markerPass.end();
+        }
 
         device.queue.submit([encoder.finish()]);
 
         this.stats.draws++;
         this.stats.drawMs = performance.now() - start;
+    }
+
+    /**
+     * Lowest and highest y over the rows the core would scan.
+     *
+     * The rows in view form one range of the sorted x column, so its ends
+     * come from a binary search and the inside is read one block at a
+     * time. A cropped table is already that range, offset by `cropStart`.
+     *
+     * The core keeps one point beyond each edge, which the range mirrors.
+     * @internal
+     */
+    public extremes(): DataExtremesObject {
+        const series = this.series,
+            xAxis = series.xAxis,
+            xData = series.getColumn('x'),
+            yData = series.getColumn('y'),
+            cropStart = series.cropped ? (series.cropStart || 0) : 0,
+            rowCount = series.dataTable.getModified().rowCount;
+
+        let lo = cropStart,
+            hi = cropStart + rowCount - 1;
+
+        if (!series.cropped && xAxis) {
+            const { min, max } = xAxis.getExtremes();
+
+            lo = Math.max(0, lowerBound(xData, min) - 1);
+            hi = Math.min(xData.length - 1, upperBound(xData, max) + 1);
+        }
+
+        let dataMin = Infinity,
+            dataMax = -Infinity;
+
+        const scan = (from: number, to: number): void => {
+            for (let i = from; i <= to; i++) {
+                const value = yData[i];
+
+                if (isNumber(value)) {
+                    if (value < dataMin) {
+                        dataMin = value;
+                    }
+                    if (value > dataMax) {
+                        dataMax = value;
+                    }
+                }
+            }
+        };
+
+        const firstWhole = Math.ceil(lo / BLOCK),
+            lastWhole = Math.floor((hi + 1) / BLOCK) - 1;
+
+        if (lastWhole < firstWhole) {
+            scan(lo, hi);
+        } else {
+            scan(lo, firstWhole * BLOCK - 1);
+
+            for (let b = firstWhole; b <= lastWhole; b++) {
+                if (this.blockMin[b] < dataMin) {
+                    dataMin = this.blockMin[b];
+                }
+                if (this.blockMax[b] > dataMax) {
+                    dataMax = this.blockMax[b];
+                }
+            }
+
+            scan((lastWhole + 1) * BLOCK, hi);
+        }
+
+        return {
+            dataMin: dataMin === Infinity ? void 0 : dataMin,
+            dataMax: dataMax === -Infinity ? void 0 : dataMax
+        };
     }
 
     /**
@@ -482,9 +650,10 @@ class LineStrategy {
         this.buffer?.destroy();
         this.uniformBuffer?.destroy();
         this.surface?.destroy();
+        this.markerSurface?.destroy();
         this.buffer = this.uniformBuffer = void 0;
         this.bindGroup = void 0;
-        this.surface = void 0;
+        this.surface = this.markerSurface = void 0;
     }
 
 }

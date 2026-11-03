@@ -42,16 +42,27 @@ struct U {
     count     : f32,
     // Marker radius, in device pixels
     radius    : f32,
+    // Margin between the canvas edge and the plot box, in device pixels
+    pad       : f32,
 };
 
 @group(0) @binding(0) var<uniform> u : U;
 @group(0) @binding(1) var<storage, read> pts : array<vec2f>;
 
+// The canvas may be larger than the plot box, so that a marker at the
+// edge is not cut off; the domain maps to the inset box.
 fn toPixels(p : vec2f) -> vec2f {
-    return vec2f(
+    return u.pad + vec2f(
         (p.x - u.domain.x) / (u.domain.y - u.domain.x),
         (p.y - u.domain.z) / (u.domain.w - u.domain.z)
-    ) * u.viewport;
+    ) * (u.viewport - 2.0 * u.pad);
+}
+
+// A point is in the plot area when its own coordinate is, regardless of
+// how far the shape drawn at it reaches.
+fn inPlotArea(p : vec2f) -> bool {
+    return p.x >= u.domain.x && p.x <= u.domain.y &&
+        p.y >= u.domain.z && p.y <= u.domain.w;
 }
 
 fn toClip(px : vec2f) -> vec4f {

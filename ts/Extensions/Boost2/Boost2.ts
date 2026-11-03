@@ -27,12 +27,7 @@ import GPUContext from './GPUContext.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import LineStrategy, { markersEnabled } from './Strategies/LineStrategy.js';
-import {
-    fireEvent,
-    isNumber,
-    pushUnique,
-    wrap
-} from '../../Shared/Utilities.js';
+import { fireEvent, pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -308,8 +303,8 @@ function compose(
         return proceed.apply(this, [].slice.call(arguments, 1));
     });
 
-    // --- 6. getExtremes(): the same scan as the core, but tracking both
-    //        extremes inline instead of filling an array first.
+    // --- 6. getExtremes(): answered from the block index instead of a
+    //        scan of every row in view.
     wrap(seriesProto, 'getExtremes', function (
         this: Series,
         proceed: Function,
@@ -325,54 +320,9 @@ function compose(
             return proceed.apply(this, [].slice.call(arguments, 1));
         }
 
-        const series = this,
-            { xAxis, yAxis } = series,
-            table = series.dataTable.getModified(),
-            rowCount = table.rowCount,
-            xData = series.getColumn('x', true),
-            values = series.getColumn('y', true),
-            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
-            // Keep the first point outside the view, like the core does.
-            shoulder = series.requireSorting && !series.is('column') ? 1 : 0,
-            doAll = series.cropped || !xAxis;
+        const dataExtremes = this.gpu.extremes();
 
-        let xMin = 0,
-            xMax = 0;
-
-        if (xAxis) {
-            const extremes = xAxis.getExtremes();
-            xMin = extremes.min;
-            xMax = extremes.max;
-        }
-
-        let dataMin: number|undefined,
-            dataMax: number|undefined;
-
-        for (let i = 0; i < rowCount; i++) {
-            const x = xData[i];
-
-            if (
-                doAll || (
-                    (xData[i + shoulder] || x) >= xMin &&
-                    (xData[i - shoulder] || x) <= xMax
-                )
-            ) {
-                const val = values[i];
-
-                if (isNumber(val) && (val > 0 || !positiveValuesOnly)) {
-                    if (typeof dataMin === 'undefined' || val < dataMin) {
-                        dataMin = val;
-                    }
-                    if (typeof dataMax === 'undefined' || val > dataMax) {
-                        dataMax = val;
-                    }
-                }
-            }
-        }
-
-        const dataExtremes: DataExtremesObject = { dataMin, dataMax };
-
-        fireEvent(series, 'afterGetExtremes', { dataExtremes });
+        fireEvent(this, 'afterGetExtremes', { dataExtremes });
 
         return dataExtremes;
     });
