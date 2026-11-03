@@ -21,10 +21,6 @@ or a guard.
 
 - `step` - steps are ignored; segments are drawn straight.
 - `connectNulls` - a null always breaks the strip.
-- `negativeColor` - the whole series takes one color. `setOptions` turns
-  it into an entry of `series.zones`, while `isSupported` guards on
-  `options.zones`, which stays empty. Guarding on `series.zones` instead
-  would cover both.
 - `dataLabels` - `drawDataLabels` iterates `series.points`, which is
   empty, so no labels appear.
 - `linecap` - caps and joins are butt and miter regardless of the option.
@@ -43,7 +39,10 @@ path does not yet draw.
 - Series types other than `line`; `area` and `column` are the next ones.
 - `dashStyle`
 - `stacking`
-- `zones`
+- Zones carrying more than a color: a `fillColor` or a `dashStyle` of
+  their own, and styled mode, where the color lives in a class. Any
+  number of y zones is drawn; `zoneAxis: 'x'` falls back, since zone
+  values would have to be shifted by the buffer origin.
 - Markers: any symbol other than `circle`, `marker.fillColor`,
   `marker.lineWidth`. The guard follows the automatic enabling rule, so
   such a series stays on the GPU while its markers are hidden and falls
@@ -73,6 +72,14 @@ path does not yet draw.
   new one, so the whole series is uploaded again on the way back. The
   dirty check lives on the strategy, which no longer exists at that
   point. Caching the buffer across a detach would avoid it.
+
+## Accepted differences
+
+- A series with more than one zone blends source-over rather than with
+  `max`, because the latter mixes channels where two colors overlap and
+  produced a color belonging to neither. Dense zoned data therefore
+  carries the overlap of its own antialiased edges, measured at 8% above
+  SVG on an unzoned series before the switch.
 
 ## Unmeasured
 

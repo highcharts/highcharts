@@ -37,7 +37,7 @@ import Prelude from './Prelude.js';
  *
  * The offset is taken in device pixels: the domain mapping is anisotropic,
  * so a normal from data space would vary the width with the slope.
- * Neighbours come from the same storage buffer, so no extra vertex data.
+ * Neighbors come from the same storage buffer, so no extra vertex data.
  *
  * @internal
  */
@@ -49,17 +49,20 @@ const EPS = 1e-6;
 // Reciprocal of the SVG default stroke-miterlimit of 4.
 const MITER_LIMIT = 0.25;
 
-// One vertex per point, for line-strip topology.
-@vertex
-fn vsHairline(@builtin(vertex_index) vi : u32) -> @builtin(position) vec4f {
-    return toClip(toPixels(pts[vi]));
-}
-
 struct LineOut {
     @builtin(position) pos : vec4f,
-    // Signed distance from the centreline, in device pixels
+    // Signed distance from the centerline, in device pixels
     @location(0)       off : f32,
 };
+
+// One vertex per point, for line-strip topology.
+@vertex
+fn vsHairline(@builtin(vertex_index) vi : u32) -> LineOut {
+    var out : LineOut;
+    out.pos = toClip(toPixels(pts[vi]));
+    out.off = 0.0;
+    return out;
+}
 
 @vertex
 fn vsLine(@builtin(vertex_index) vi : u32) -> LineOut {
@@ -126,17 +129,20 @@ fn vsLine(@builtin(vertex_index) vi : u32) -> LineOut {
 
 // Hairlines are a single pixel of the primitive, with nothing to fade.
 @fragment
-fn fs() -> @location(0) vec4f {
+fn fs(in : LineOut) -> @location(0) vec4f {
+    let color = tint(fragValue(in.pos));
+
     // Target alphaMode is 'premultiplied'.
-    return vec4f(u.color.rgb * u.color.a, u.color.a);
+    return vec4f(color.rgb * color.a, color.a);
 }
 
 @fragment
 fn fsLine(in : LineOut) -> @location(0) vec4f {
-    let alpha = u.color.a * coverage(abs(in.off) - u.halfWidth);
+    let color = tint(fragValue(in.pos));
+    let alpha = color.a * coverage(abs(in.off) - u.halfWidth);
 
     // Target alphaMode is 'premultiplied'.
-    return vec4f(u.color.rgb * alpha, alpha);
+    return vec4f(color.rgb * alpha, alpha);
 }
 
 `;

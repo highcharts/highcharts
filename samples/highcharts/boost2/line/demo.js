@@ -27,6 +27,19 @@ Highcharts.chart('container', {
         type: 'line',
         boostThreshold: 1,
         name: 'Measurement',
+        marker: { radius: 2 },
+        zones: [{
+            value: -200,
+            color: '#fa4b42'
+        }, {
+            value: 0,
+            color: '#fe6a35'
+        }, {
+            value: 200,
+            color: '#2caffe'
+        }, {
+            color: '#00e272'
+        }],
         dataTable: {
             columns: { x: x, y: y }
         }

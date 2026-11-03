@@ -28,7 +28,7 @@ import H from '../../../Core/Globals.js';
 const { doc, win } = H;
 import LineShader from '../Shaders/LineShader.js';
 import MarkerShader from '../Shaders/MarkerShader.js';
-import { isNumber } from '../../../Shared/Utilities.js';
+import { defined, isNumber } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -37,10 +37,14 @@ import { isNumber } from '../../../Shared/Utilities.js';
  * */
 
 /**
- * Uniform buffer size: two vec4f, then viewport, half width, count and
- * marker radius, padded to the 16 byte struct alignment.
+ * Uniform buffer size: the domain, then viewport, half width, point
+ * count, marker radius, margin and zone count, padded to the 16 byte
+ * struct alignment. Colors live in the zone buffer.
  */
-const UNIFORM_BYTES = 64;
+const UNIFORM_BYTES = 48;
+
+/** Bytes per zone: a vec4f color and a value, at vec4f alignment. */
+const ZONE_BYTES = 32;
 
 /**
  * Rows per entry of the min/max index, as a shift. Range queries read one
@@ -128,6 +132,31 @@ function markersEnabled(series: Series): boolean {
         (rangePx >= (marker.enabledThreshold ?? 2) * (marker.radius as number));
 }
 
+/**
+ * Whether the zones of a series are ones this module can draw: bands of
+ * the y domain carrying nothing but a color. The last one stands for
+ * everything above the rest and needs no value of its own.
+ *
+ * @internal
+ */
+function zonesSupported(series: Series): boolean {
+    const zones = series.zones;
+
+    return series.zoneAxis === 'y' && zones.every(
+        (zone, i): boolean => (
+            (i === zones.length - 1 || isNumber(zone.value)) &&
+            // The last zone carries no color when it stands for the
+            // color of the series, which is how `negativeColor` arrives.
+            (
+                typeof zone.color === 'string' ||
+                (i === zones.length - 1 && !defined(zone.color))
+            ) &&
+            !zone.dashStyle &&
+            !zone.fillColor
+        )
+    );
+}
+
 /** First index whose x is not below `value`. @internal */
 function lowerBound(xData: Array<number>, value: number): number {
     let low = 0,
@@ -162,7 +191,13 @@ function upperBound(xData: Array<number>, value: number): number {
     return low - 1;
 }
 
-/** @internal */
+/**
+ * `max` composes overlapping coverage of one color without the fringes
+ * adding up, but it mixes channels where two colors meet, so a zoned
+ * series falls back to ordinary source-over blending.
+ *
+ * @internal
+ */
 function buildPipeline(
     device: GPUDevice,
     format: GPUTextureFormat,
@@ -170,14 +205,13 @@ function buildPipeline(
     code: string,
     vertexEntry: string,
     fragmentEntry: string,
-    topology: GPUPrimitiveTopology
+    topology: GPUPrimitiveTopology,
+    zoned: boolean
 ): GPURenderPipeline {
     const module = device.createShaderModule({ code }),
-        blendComponent: GPUBlendComponent = {
-            srcFactor: 'one',
-            dstFactor: 'one',
-            operation: 'max'
-        };
+        blendComponent: GPUBlendComponent = zoned ?
+            { srcFactor: 'one', dstFactor: 'one-minus-src-alpha' } :
+            { srcFactor: 'one', dstFactor: 'one', operation: 'max' };
 
     return device.createRenderPipeline({
         layout,
@@ -285,6 +319,12 @@ class LineStrategy {
     /** @internal */
     private blockMax = new Float64Array(0);
 
+    /** @internal */
+    private zoneBuffer?: GPUBuffer;
+
+    /** @internal */
+    private zoneCount = 0;
+
     /**
      * Domain origin, kept in f64 and subtracted before conversion to f32.
      * A raw timestamp exceeds f32 precision; `x - xOrigin` does not.
@@ -363,26 +403,76 @@ class LineStrategy {
         this.stats.buildMs = performance.now() - start;
     }
 
+    /**
+     * Upload the zones, always at least one: the last stands for the
+     * color of the series and has no bound, so an unzoned series needs
+     * no case of its own. Reports whether more than one color applies.
+     * @internal
+     */
+    private buildZones(): boolean {
+        const series = this.series,
+            container = series.chart.container,
+            zones = series.zones,
+            count = Math.max(1, zones.length),
+            data = new Float32Array(count * ZONE_BYTES / 4);
+
+        for (let i = 0; i < count; i++) {
+            const zone = zones[i],
+                rgba = resolveColor(
+                    (zone?.color as string) || series.color as string,
+                    container
+                ),
+                at = i * ZONE_BYTES / 4;
+
+            data[at] = rgba[0] / 255;
+            data[at + 1] = rgba[1] / 255;
+            data[at + 2] = rgba[2] / 255;
+            data[at + 3] = rgba[3];
+            // The last zone is never compared against its value.
+            data[at + 4] = isNumber(zone?.value) ? zone.value : Infinity;
+        }
+
+        if (this.zoneCount !== count) {
+            this.zoneBuffer?.destroy();
+            this.zoneBuffer = GPUContext.createStorageBuffer(
+                count * ZONE_BYTES
+            );
+            this.zoneCount = count;
+            this.bindGroup = void 0;
+        }
+
+        GPUContext.device!.queue.writeBuffer(this.zoneBuffer!, 0, data);
+
+        return count > 1;
+    }
+
     /** @internal */
-    private ensureResources(hairline: boolean, markers: boolean): void {
+    private ensureResources(
+        hairline: boolean,
+        markers: boolean,
+        zoned: boolean
+    ): void {
+        const suffix = zoned ? '-zoned' : '';
+
         // The pipelines share one bind group layout, so switching between
         // them leaves the bind group valid.
         this.pipeline = GPUContext.pipeline(
-            hairline ? 'boost2-hairline' : 'boost2-line',
+            (hairline ? 'boost2-hairline' : 'boost2-line') + suffix,
             (device, format, layout): GPURenderPipeline => buildPipeline(
                 device, format, layout, LineShader,
                 hairline ? 'vsHairline' : 'vsLine',
                 hairline ? 'fs' : 'fsLine',
-                hairline ? 'line-strip' : 'triangle-strip'
+                hairline ? 'line-strip' : 'triangle-strip',
+                zoned
             )
         );
 
         if (markers) {
             this.markerPipeline = GPUContext.pipeline(
-                'boost2-marker',
+                'boost2-marker' + suffix,
                 (device, format, layout): GPURenderPipeline => buildPipeline(
                     device, format, layout, MarkerShader,
-                    'vsMarker', 'fsMarker', 'triangle-strip'
+                    'vsMarker', 'fsMarker', 'triangle-strip', zoned
                 )
             );
         }
@@ -396,7 +486,8 @@ class LineStrategy {
                 layout: GPUContext.bindGroupLayout(),
                 entries: [
                     { binding: 0, resource: { buffer: this.uniformBuffer } },
-                    { binding: 1, resource: { buffer: this.buffer! } }
+                    { binding: 1, resource: { buffer: this.buffer! } },
+                    { binding: 2, resource: { buffer: this.zoneBuffer! } }
                 ]
             });
         }
@@ -415,13 +506,12 @@ class LineStrategy {
 
         const start = performance.now(),
             series = this.series,
-            chart = series.chart,
             options = series.options,
             lineWidth = options.lineWidth ?? 2,
             hairline = options.boostHairline === true,
             markers = markersEnabled(series),
             // How far a shape may reach past the plot box: a marker
-            // centred on the edge, and nothing else.
+            // centerd on the edge, and nothing else.
             overflow = markers ?
                 Math.ceil((options.marker?.radius ?? 4) + 1) :
                 0;
@@ -445,28 +535,26 @@ class LineStrategy {
             this.markerSurface = void 0;
         }
 
-        this.ensureResources(hairline, markers);
+        const zoned = this.buildZones();
+
+        this.ensureResources(hairline, markers, zoned);
 
         const { xAxis, yAxis } = series,
-            rgba = resolveColor(series.color as string, chart.container),
             uniforms = this.uniformData;
 
         uniforms[0] = (xAxis.min as number) - this.xOrigin;
         uniforms[1] = (xAxis.max as number) - this.xOrigin;
         uniforms[2] = yAxis.min as number;
         uniforms[3] = yAxis.max as number;
-        uniforms[4] = rgba[0] / 255;
-        uniforms[5] = rgba[1] / 255;
-        uniforms[6] = rgba[2] / 255;
-        uniforms[7] = rgba[3];
-        uniforms[8] = this.surface.width;
-        uniforms[9] = this.surface.height;
+        uniforms[4] = this.surface.width;
+        uniforms[5] = this.surface.height;
         const ratio = win.devicePixelRatio || 1;
 
-        uniforms[10] = lineWidth * ratio / 2;
-        uniforms[11] = this.count;
-        uniforms[12] = (options.marker?.radius ?? 4) * ratio;
-        uniforms[13] = this.surface.pad;
+        uniforms[6] = lineWidth * ratio / 2;
+        uniforms[7] = this.count;
+        uniforms[8] = (options.marker?.radius ?? 4) * ratio;
+        uniforms[9] = this.surface.pad;
+        uniforms[10] = this.zoneCount;
 
         const device = GPUContext.device!;
         device.queue.writeBuffer(this.uniformBuffer!, 0, uniforms);
@@ -745,9 +833,10 @@ class LineStrategy {
     public destroy(): void {
         this.buffer?.destroy();
         this.uniformBuffer?.destroy();
+        this.zoneBuffer?.destroy();
         this.surface?.destroy();
         this.markerSurface?.destroy();
-        this.buffer = this.uniformBuffer = void 0;
+        this.buffer = this.uniformBuffer = this.zoneBuffer = void 0;
         this.bindGroup = void 0;
         this.surface = this.markerSurface = void 0;
     }
@@ -761,5 +850,5 @@ class LineStrategy {
  * */
 
 /** @internal */
-export { markersEnabled };
+export { markersEnabled, zonesSupported };
 export default LineStrategy;

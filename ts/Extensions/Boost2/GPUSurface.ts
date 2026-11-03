@@ -92,7 +92,7 @@ class GPUSurface {
     public height = 0;
 
     /**
-     * Margin around the plot box, in device pixels. Markers whose centre
+     * Margin around the plot box, in device pixels. Markers whose center
      * is inside the plot area may reach beyond it.
      * @internal
      */

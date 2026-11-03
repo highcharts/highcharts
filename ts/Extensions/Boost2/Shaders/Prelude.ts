@@ -33,7 +33,6 @@ const Prelude: string = `
 struct U {
     // xMin, xMax, yMin, yMax, in the origin-shifted domain
     domain    : vec4f,
-    color     : vec4f,
     // Canvas size in device pixels
     viewport  : vec2f,
     // Half the stroke width, in device pixels
@@ -44,10 +43,21 @@ struct U {
     radius    : f32,
     // Margin between the canvas edge and the plot box, in device pixels
     pad       : f32,
+    // Number of entries in the zone buffer, never below one
+    zoneCount : f32,
+};
+
+// A band of the y domain, up to its value. The last one has no bound and
+// carries the color of the series, so an unzoned series is just that one
+// entry and needs no case of its own.
+struct Zone {
+    color : vec4f,
+    value : f32,
 };
 
 @group(0) @binding(0) var<uniform> u : U;
 @group(0) @binding(1) var<storage, read> pts : array<vec2f>;
+@group(0) @binding(2) var<storage, read> zones : array<Zone>;
 
 // The canvas may be larger than the plot box, so that a marker at the
 // edge is not cut off; the domain maps to the inset box.
@@ -67,6 +77,25 @@ fn inPlotArea(p : vec2f) -> bool {
 
 fn toClip(px : vec2f) -> vec4f {
     return vec4f(px / u.viewport * 2.0 - 1.0, 0.0, 1.0);
+}
+
+// The first zone the value falls below, as Point.getZone decides.
+fn tint(value : f32) -> vec4f {
+    let last = u32(u.zoneCount) - 1u;
+
+    for (var i = 0u; i < last; i++) {
+        if (value < zones[i].value) {
+            return zones[i].color;
+        }
+    }
+    return zones[last].color;
+}
+
+// Data y of a fragment, from where it sits in the attachment. Fragment
+// coordinates run down from the top, the domain runs up from the bottom.
+fn fragValue(pos : vec4f) -> f32 {
+    let row = (u.viewport.y - pos.y - u.pad) / (u.viewport.y - 2.0 * u.pad);
+    return u.domain.z + row * (u.domain.w - u.domain.z);
 }
 
 // Device pixels a shape is grown by, to leave room for its own fringe.

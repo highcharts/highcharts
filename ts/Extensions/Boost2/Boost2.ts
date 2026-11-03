@@ -26,7 +26,10 @@ import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import GPUContext from './GPUContext.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import LineStrategy, { markersEnabled } from './Strategies/LineStrategy.js';
+import LineStrategy, {
+    markersEnabled,
+    zonesSupported
+} from './Strategies/LineStrategy.js';
 import { fireEvent, pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
@@ -103,7 +106,8 @@ function isSupported(series: Series): boolean {
         series.type !== 'line' ||
         options.dashStyle ||
         options.stacking ||
-        options.zones?.length ||
+        // `negativeColor` arrives here as a pair of zones too.
+        !zonesSupported(series) ||
         // Only circles in the series color are drawn, and the automatic
         // rule decides by zoom whether markers appear at all.
         (markersEnabled(series) && (

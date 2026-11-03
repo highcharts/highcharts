@@ -28,7 +28,7 @@ import Prelude from './Prelude.js';
  * One instanced quad per point, four vertices on `triangle-strip`.
  * Instancing keeps the quads apart; a single strip would join them.
  *
- * The quad carries its offset from the centre in device pixels, so the
+ * The quad carries its offset from the center in device pixels, so the
  * fragment shader covers boundary pixels by their distance to the circle
  * edge. It reaches one pixel past the radius, so that fringe is not cut.
  *
@@ -42,8 +42,10 @@ const MarkerShader: string = Prelude + `
 
 struct MarkerOut {
     @builtin(position) pos    : vec4f,
-    // Offset from the centre of the marker, in device pixels
+    // Offset from the center of the marker, in device pixels
     @location(0)       offset : vec2f,
+    // Data y of the point, which colors the marker as a whole
+    @location(1)       value  : f32,
 };
 
 @vertex
@@ -52,8 +54,8 @@ fn vsMarker(
     @builtin(instance_index) ii : u32
 ) -> MarkerOut {
     let p      = pts[ii];
-    let centre = toPixels(p);
-    // Collapsing the quad to its centre leaves it with no area, which
+    let center = toPixels(p);
+    // Collapsing the quad to its center leaves it with no area, which
     // drops the marker whole rather than clipping it.
     let reach  = select(0.0, u.radius + AA_PAD, inPlotArea(p));
     let corner = vec2f(
@@ -62,17 +64,21 @@ fn vsMarker(
     ) * reach;
 
     var out : MarkerOut;
-    out.pos = toClip(centre + corner);
+    out.pos = toClip(center + corner);
     out.offset = corner;
+    out.value = p.y;
     return out;
 }
 
 @fragment
 fn fsMarker(in : MarkerOut) -> @location(0) vec4f {
-    let alpha = u.color.a * coverage(length(in.offset) - u.radius);
+    // A marker takes one color whole, from its own value, as the zone of
+    // a point does in SVG.
+    let color = tint(in.value);
+    let alpha = color.a * coverage(length(in.offset) - u.radius);
 
     // Target alphaMode is 'premultiplied'.
-    return vec4f(u.color.rgb * alpha, alpha);
+    return vec4f(color.rgb * alpha, alpha);
 }
 
 `;
