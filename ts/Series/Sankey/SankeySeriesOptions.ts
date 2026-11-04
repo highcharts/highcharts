@@ -280,14 +280,18 @@ export interface SankeySeriesNodeOptions {
  */
 export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.SeriesCompositionOptions {
 
+    /** @default 0 */
     borderWidth?: number;
 
+    /** @default true */
     colorByPoint?: boolean;
 
     /**
      * Higher numbers makes the links in a sankey diagram or dependency
      * wheel render more curved. A `curveFactor` of 0 makes the lines
      * straight.
+     *
+     * @default 0.33
      */
     curveFactor?: number;
 
@@ -381,11 +385,15 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      *
      * @sample highcharts/series-sankey/link-color-mode
      *         Sankey diagram with gradients and explanation
+     *
+     * @default 'from'
      */
     linkColorMode?: ('from'|'gradient'|'to');
 
     /**
      * Opacity for the links between nodes in the sankey diagram.
+     *
+     * @default 0.5
      */
     linkOpacity?: number;
 
@@ -409,6 +417,8 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      *
      * @sample highcharts/plotoptions/sankey-nodealignment
      *         Node alignment demonstrated
+     *
+     * @default 'center'
      */
     nodeAlignment?: ('top'|'center'|'bottom');
 
@@ -433,6 +443,8 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      *
      * @sample highcharts/series-organization/node-distance
      *         Organization chart with node distance of 50%
+     *
+     * @default 30
      */
     nodeDistance?: (number|string);
 
@@ -445,6 +457,8 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      * If the number of nodes is so great that it is impossible to lay them out
      * within the plot area with the given `nodePadding`, they will be rendered
      * with a smaller padding as a strategy to avoid overflow.
+     *
+     * @default 10
      */
     nodePadding?: number;
 
@@ -479,14 +493,19 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      *
      * @sample highcharts/series-organization/node-distance
      *         Organization chart with node distance of 50%
+     *
+     * @default 20
      */
     nodeWidth?: number|string;
 
     /**
      * Opacity for the nodes in the sankey diagram.
+     *
+     * @default 1
      */
     opacity?: number;
 
+    /** @default false */
     showInLegend?: boolean;
 
     states?: SankeySeriesStatesOptions;
@@ -604,6 +623,8 @@ export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {
      * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
      * specifying what to show for _nodes_ in tooltip of a diagram
      * series, as opposed to links.
+     *
+     * @default '{point.name}: <b>{point.sum}</b><br/>'
      */
     nodeFormat?: string;
 

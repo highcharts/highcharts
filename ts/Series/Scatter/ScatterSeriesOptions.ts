@@ -68,11 +68,15 @@ export interface ScatterSeriesJitterOptions {
 
     /**
      * The maximal X offset for the random jitter effect.
+     *
+     * @default 0
      */
     x?: number;
 
     /**
      * The maximal Y offset for the random jitter effect.
+     *
+     * @default 0
      */
     y?: number;
 
@@ -217,6 +221,8 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
      *         1px
      *
      * @product highcharts highstock
+     *
+     * @default 0
      */
     lineWidth?: number;
 

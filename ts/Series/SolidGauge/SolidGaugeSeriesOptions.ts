@@ -64,6 +64,8 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
 
     /**
      * Whether to give each point an individual color.
+     *
+     * @default true
      */
     colorByPoint?: boolean;
 

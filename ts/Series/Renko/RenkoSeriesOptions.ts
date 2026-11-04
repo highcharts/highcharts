@@ -131,6 +131,8 @@ export interface RenkoSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * @internal
+     *
+     * @default 'transparent'
      */
     fillColor?: ColorType;
 
@@ -145,6 +147,8 @@ export interface RenkoSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * @internal
+     *
+     * @default 0
      */
     lineWidth?: number;
 
@@ -159,6 +163,8 @@ export interface RenkoSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * @internal
+     *
+     * @default true
      */
     stickyTracking?: boolean;
 
