@@ -375,16 +375,14 @@ export namespace ColorAxisComposition {
                     !!(point.visible || point.hiddenInDataClass);
 
             if (item) {
-                // Hidden points are not drawn, so showing them needs a redraw
-                item.drawnHidden = hidden;
+                item.isDirtyPoints = hidden;
             }
 
             if (point.visible !== visible) {
                 point.hiddenInDataClass = hidden;
-                // Leave the graphics to drawPoints, avoid rebuilding the
-                // k-d tree for each point
                 point.visible = point.options.visible = visible;
                 if (visible) {
+                    // Hidden by a legend click, drawPoints won't show it
                     point.graphic?.show();
                 }
             }
