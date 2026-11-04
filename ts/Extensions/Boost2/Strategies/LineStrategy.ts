@@ -311,6 +311,14 @@ class LineStrategy {
     private sourceY?: Array<number>;
 
     /**
+     * Whether the uploaded buffer had its nulls dropped. Toggling the
+     * option leaves the columns untouched, so identity alone would miss
+     * the change.
+     * @internal
+     */
+    private sourceConnect?: boolean;
+
+    /**
      * Lowest and highest y of each block of rows, built with the buffer.
      * @internal
      */
@@ -350,7 +358,15 @@ class LineStrategy {
             yData = series.getColumn('y'),
             length = Math.min(xData.length, yData.length);
 
-        if (xData === this.sourceX && yData === this.sourceY) {
+        // Nulls are dropped rather than uploaded, which closes the gap
+        // they would otherwise leave in the strip.
+        const connect = !!series.options.connectNulls;
+
+        if (
+            xData === this.sourceX &&
+            yData === this.sourceY &&
+            connect === this.sourceConnect
+        ) {
             this.stats.buildMs = performance.now() - start;
             return;
         }
@@ -363,13 +379,13 @@ class LineStrategy {
             blockMin = new Float64Array(blocks).fill(Infinity),
             blockMax = new Float64Array(blocks).fill(-Infinity);
 
-        for (let i = 0, j = 0; i < length; i++) {
+        let written = 0;
+
+        for (let i = 0; i < length; i++) {
             const value = yData[i];
 
-            flat[j++] = xData[i] - xOrigin;
-            // Null and undefined become NaN, which drops the segment.
-            flat[j++] = value ?? NaN;
-
+            // The index stays in step with the rows of the series, which
+            // is what the extremes and the hit test are expressed in.
             if (isNumber(value)) {
                 const b = i >> BLOCK_SHIFT;
 
@@ -379,13 +395,20 @@ class LineStrategy {
                 if (value > blockMax[b]) {
                     blockMax[b] = value;
                 }
+            } else if (connect) {
+                continue;
             }
+
+            flat[written * 2] = xData[i] - xOrigin;
+            // Null and undefined become NaN, which breaks the strip.
+            flat[written * 2 + 1] = value ?? NaN;
+            written++;
         }
 
         this.blockMin = blockMin;
         this.blockMax = blockMax;
 
-        const bytes = Math.max(32, flat.byteLength);
+        const bytes = Math.max(32, written * 8);
 
         if (!this.buffer || this.capacity < bytes) {
             this.buffer?.destroy();
@@ -394,11 +417,14 @@ class LineStrategy {
             this.bindGroup = void 0;
         }
 
-        GPUContext.device!.queue.writeBuffer(this.buffer, 0, flat);
+        GPUContext.device!.queue.writeBuffer(
+            this.buffer, 0, flat.subarray(0, written * 2)
+        );
 
-        this.count = length;
+        this.count = written;
         this.sourceX = xData;
         this.sourceY = yData;
+        this.sourceConnect = connect;
         this.stats.uploads++;
         this.stats.buildMs = performance.now() - start;
     }
@@ -697,10 +723,53 @@ class LineStrategy {
             low--;
         }
 
+        if (!series.options.nullInteraction) {
+            low = this.firstValid(low, value);
+        }
+
         return this.materialize(
             compareX ? low : this.nearest(low, e),
             e
         );
+    }
+
+    /**
+     * The row nearest to `from` that carries a value, since the k-d tree
+     * of the core is built from valid points alone.
+     * @internal
+     */
+    private firstValid(from: number, value: number): number {
+        const series = this.series,
+            xData = series.getColumn('x'),
+            yData = series.getColumn('y'),
+            last = xData.length - 1;
+
+        if (isNumber(yData[from])) {
+            return from;
+        }
+
+        for (let step = 1; step <= last; step++) {
+            const low = from - step,
+                high = from + step,
+                lowOk = low >= 0 && isNumber(yData[low]),
+                highOk = high <= last && isNumber(yData[high]);
+
+            if (lowOk && highOk) {
+                return Math.abs(xData[low] - value) <=
+                    Math.abs(xData[high] - value) ? low : high;
+            }
+            if (lowOk) {
+                return low;
+            }
+            if (highOk) {
+                return high;
+            }
+            if (low < 0 && high > last) {
+                break;
+            }
+        }
+
+        return from;
     }
 
     /**

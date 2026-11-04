@@ -7,7 +7,8 @@ let value = 0;
 for (let i = 0; i < n; i++) {
     x[i] = start + i * 60000;
     value += Math.sin(i / 1500) * 0.05 + (Math.random() - 0.5);
-    y[i] = value;
+    // Gaps for `connectNulls` demo
+    y[i] = (i + 125000) % 250000 < 20000 ? NaN : value;
 }
 
 Highcharts.chart('container', {
@@ -28,6 +29,7 @@ Highcharts.chart('container', {
         boostThreshold: 1,
         name: 'Measurement',
         marker: { radius: 2 },
+        connectNulls: true,
         zones: [{
             value: -200,
             color: '#fa4b42'

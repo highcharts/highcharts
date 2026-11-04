@@ -20,7 +20,6 @@ without them rather than falling back to SVG. Each needs either support
 or a guard.
 
 - `step` - steps are ignored; segments are drawn straight.
-- `connectNulls` - a null always breaks the strip.
 - `dataLabels` - `drawDataLabels` iterates `series.points`, which is
   empty, so no labels appear.
 - `linecap` - caps and joins are butt and miter regardless of the option.
@@ -57,8 +56,6 @@ path does not yet draw.
 
 ## Unverified
 
-- Null gaps. A NaN point discards the triangles around it, so the gap may
-  be a few pixels wider than the SVG one. Not measured.
 - `hitAt` searches every point, while the core k-d tree is built from
   `series.points`, the cropped set. A point just outside the view can
   therefore win here and not there, though the distance bound keeps the
@@ -74,6 +71,11 @@ path does not yet draw.
   point. Caching the buffer across a detach would avoid it.
 
 ## Accepted differences
+
+- A gap left by nulls is about two pixels wider than the SVG one, since
+  a NaN vertex discards every triangle that touches it. Measured on a run
+  of ten nulls at four hundred points across a 660 pixel plot: 17 empty
+  columns against 15.
 
 - A series with more than one zone blends source-over rather than with
   `max`, because the latter mixes channels where two colors overlap and
