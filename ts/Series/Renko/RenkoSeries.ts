@@ -53,7 +53,6 @@ interface RenkoData {
 /**
  * The renko series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.renko
  *

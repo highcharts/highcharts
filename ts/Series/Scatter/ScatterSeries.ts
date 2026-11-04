@@ -52,8 +52,6 @@ declare module '../../Core/Series/SeriesBase' {
 
 /**
  * Scatter series type.
- *
- * @private
  */
 class ScatterSeries extends LineSeries {
 

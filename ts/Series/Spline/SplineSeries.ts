@@ -35,8 +35,6 @@ import { merge } from '../../Shared/Utilities.js';
 
 /**
  * Spline series type.
- *
- * @private
  */
 class SplineSeries extends LineSeries {
 

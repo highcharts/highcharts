@@ -65,7 +65,6 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.sankey
  *

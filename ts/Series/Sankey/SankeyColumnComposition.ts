@@ -225,7 +225,7 @@ namespace SankeyColumnComposition {
         /**
          * Flow-axis room this column's nodes reserve for self-link laps.
          * #8218
-         * @private
+         * @internal
          */
         public lapSum(): number {
             return this.points.reduce((

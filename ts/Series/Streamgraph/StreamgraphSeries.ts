@@ -31,7 +31,6 @@ import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 /**
  * Streamgraph series type
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.streamgraph
  *
