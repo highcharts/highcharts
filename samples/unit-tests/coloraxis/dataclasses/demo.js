@@ -171,8 +171,21 @@ QUnit.test('Data classes - visibility after setData (#25083)', function (
         ]
     });
 
-    const high = chart.legend.allItems.find(item => item.name === 'high'),
+    const low = chart.legend.allItems.find(item => item.name === 'low'),
+        high = chart.legend.allItems.find(item => item.name === 'high'),
         highPoints = () => chart.series[0].points.filter(point => point.y >= 5);
+
+    let redraws = 0;
+    Highcharts.addEvent(chart, 'redraw', () => redraws++);
+
+    low.setVisible(); // Hide
+    low.setVisible(); // Show again
+
+    assert.strictEqual(
+        redraws,
+        0,
+        'Toggling a data class should not redraw the chart'
+    );
 
     high.setVisible(); // Hide
 
@@ -180,13 +193,20 @@ QUnit.test('Data classes - visibility after setData (#25083)', function (
         { x: 0, y: 2 },
         { x: 0, y: 8 },
         { x: 1, y: 4 },
-        { x: 1, y: 6 }
+        { x: 1, y: 3 },
+        { x: 2, y: 6 }
     ]);
 
     assert.ok(
         highPoints().every(point => !point.visible),
         'Points created by setData should be hidden while their data class ' +
         'is toggled off'
+    );
+
+    assert.ok(
+        chart.series[0].points[3].visible &&
+        chart.series[0].points[3].graphic.visibility !== 'hidden',
+        'A point moved out of the hidden data class should be shown'
     );
 
     high.setVisible(); // Show again
