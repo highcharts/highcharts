@@ -204,7 +204,7 @@ See the [Loader API documentation](https://api.highcharts.com/class-reference/Hi
 
 The CDN is useful for demos, prototypes, JSFiddle, CodePen, and simple static pages. For production applications, npm or self-hosted files are usually a better long-term choice.
 
-If you use files from `code.highcharts.com`, make sure your usage complies with the [Acceptable Use Policy](https://shop.highcharts.com/license-eula-1.0#2).
+If you use files from `code.highcharts.com`, make sure your usage complies with the [Acceptable Use Policy](https://shop.highcharts.com/license-eula#2).
 
 ## AMD and CommonJS
 
