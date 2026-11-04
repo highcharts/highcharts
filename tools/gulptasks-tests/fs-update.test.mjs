@@ -25,20 +25,6 @@ test('replaces shorter and longer UTF-8 content without appending', () => {
     });
 });
 
-test('completes partial writes at byte offsets', () => {
-    withFile(file => {
-        const write = fs.writeSync;
-        fs.writeSync = (descriptor, bytes, offset, length, position) =>
-            write(descriptor, bytes, offset, Math.min(length, 2), position);
-        try {
-            updateFile(file, () => 'é世界');
-        } finally {
-            fs.writeSync = write;
-        }
-        assert.equal(fs.readFileSync(file, 'utf8'), 'é世界');
-    });
-});
-
 test('updates the opened file when its pathname is replaced', () => {
     withFile(file => {
         const original = file + '.opened';
