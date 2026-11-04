@@ -214,13 +214,7 @@ export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelOptions {
  *
  * @extends series,plotOptions.sunburst
  *
- * @excluding allAreas, clip, colorAxis, colorKey, compare, compareBase,
- *            dataGrouping, depth, dragDrop, endAngle, gapSize, gapUnit,
- *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
- *            minSize, navigatorOptions, pointRange
- *
- * @excluding stack, dataSorting, boostThreshold,
- *            boostBlending
+ * @excluding allAreas, clip, endAngle, innerSize, minSize
  *
  * @product highcharts
  *

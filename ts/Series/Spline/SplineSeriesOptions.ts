@@ -44,13 +44,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @excluding step, boostThreshold, boostBlending
  *
- * @excluding step, boostThreshold, boostBlending
- *
  * @product highcharts highstock
- *
- * @optionparent plotOptions.spline
- *
- * @optionparent series.spline
  */
 export interface SplineSeriesOptions extends LineSeriesOptions {
     states?: SeriesStatesOptions<SplineSeriesOptions>;

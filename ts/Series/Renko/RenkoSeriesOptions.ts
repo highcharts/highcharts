@@ -46,14 +46,7 @@ import type ColorType from '../../Core/Color/ColorType';
  *
  * @extends series,plotOptions.renko
  *
- * @excluding boost, boostBlending, boostThreshold, centerInCategory,
- * cumulative, cumulativeStart, dashStyle, dragDrop, dataSorting, edgeColor,
- * stacking, getExtremesFromAll, clip, colorByPoint, compare, compareBase,
- * compareStart, compareTo, dataGrouping, edgeWidth, lineColor, linkedTo,
- * pointPadding, pointPlacement, pointRange, pointStart, pointWidth
- *
- * @excluding boost, compare, compareStart, connectNulls, cumulative,
- * cumulativeStart, dataGrouping, dataSorting, dragDrop, marker, step
+ * @excluding boost, compareTo, pointPadding
  *
  * @product highstock
  *

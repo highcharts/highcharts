@@ -46,11 +46,6 @@ import type {
  *
  * @extends series,plotOptions.scatter3d
  *
- * @excluding boostThreshold, boostBlending, cluster, dragDrop,
- *            legendSymbolColor
- *
- * @excluding boostThreshold, boostBlending
- *
  * @product highcharts
  *
  * @requires highcharts-3d

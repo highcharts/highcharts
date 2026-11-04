@@ -96,8 +96,6 @@ export interface ScatterSeriesJitterOptions {
  * @excluding cropThreshold, legendSymbolColor, pointPlacement, shadow,
  *            useOhlcData
  *
- * @excluding cropThreshold, useOhlcData
- *
  * @product highcharts highstock
  */
 export interface ScatterSeriesOptions extends LineSeriesOptions {

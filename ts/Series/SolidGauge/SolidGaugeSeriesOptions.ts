@@ -42,14 +42,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends series,plotOptions.solidgauge
  *
- * @excluding dial, pivot, wrap
- *
- * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
- *            cropThreshold, dashStyle, dial,
- *            findNearestPointBy, getExtremesFromAll, marker, negativeColor,
- *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
- *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones,
- *            dataSorting, boostBlending
+ * @excluding dial, pivot, marker, states, threshold
  *
  * @product highcharts
  *
