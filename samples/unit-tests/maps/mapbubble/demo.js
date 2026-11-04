@@ -69,7 +69,7 @@ QUnit.test('MapBubble', function (assert) {
         assert.strictEqual(
             chart.tooltip.label.text.element.textContent
                 .replace(/[\s\u200B]/g, ''),
-            'GreenGreen:3',
+            'Green●Series2:3',
             'The tooltip should contain the correct capital information ' +
             '(#20086).'
         );

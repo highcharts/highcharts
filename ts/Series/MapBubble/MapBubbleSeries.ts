@@ -242,7 +242,8 @@ class MapBubbleSeries extends BubbleSeries {
          */
         joinBy: 'hc-key',
         tooltip: {
-            pointFormat: '{point.name}: {point.z}'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.z}</b><br/>'
         },
         stickyTracking: true
     } as MapBubbleSeriesOptions);

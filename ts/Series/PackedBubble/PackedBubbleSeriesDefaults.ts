@@ -77,7 +77,7 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
     crisp: false,
 
     tooltip: {
-        pointFormat: 'Value: {point.value}'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b><br/>'
     },
 
     /**

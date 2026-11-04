@@ -148,7 +148,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
 
     tooltip: {
 
-        pointFormat: '{point.name}: {point.value}'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b><br/>'
 
     },
 
