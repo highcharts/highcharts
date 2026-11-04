@@ -179,9 +179,6 @@ class StackItem {
     public stack?: string|number;
 
     /** @internal */
-    public textAlign: AlignValue;
-
-    /** @internal */
     public tip?: string;
 
     /**

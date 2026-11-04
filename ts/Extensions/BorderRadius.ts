@@ -413,7 +413,7 @@ function seriesOnAfterColumnTranslate(
                                 ?.find((p): boolean => p.x === x)
                                 ?.shapeArgs || {},
                             // Use the pre-translated position (#24454)
-                            stackTip = stackItem.isNegative ?
+                            stackTip = (stackItem.total || 0) < 0 ?
                                 y + height :
                                 y || 0,
 
