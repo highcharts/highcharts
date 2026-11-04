@@ -1458,6 +1458,10 @@ class WGLRenderer {
                 fillColor: ColorType|undefined,
                 scolor = [];
 
+            // Reported before the early return below, so that a series
+            // without drawable data does not keep a stale symbol (#24307)
+            s.series.syncLegendSymbol(showMarkers);
+
             if (
                 s.segments.length === 0 ||
                 s.segments[0].from === s.segments[0].to

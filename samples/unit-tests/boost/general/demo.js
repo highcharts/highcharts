@@ -1337,3 +1337,25 @@ QUnit.skip(
         );
     }
 );
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Legend symbol follows boosted markers (#24307)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 600
+            },
+            series: [{
+                boostThreshold: 1,
+                data: Array.from({ length: 200 }, (value, i) => i % 50)
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].legendItem.symbol.element
+                .getAttribute('visibility'),
+            'hidden',
+            'Markers auto disabled in boost should be hidden in the legend'
+        );
+    }
+);

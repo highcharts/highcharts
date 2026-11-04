@@ -254,6 +254,19 @@ QUnit.test(
             'Turning the last point marker off should hide the legend marker'
         );
 
+        chart.series[0].points[10].update({
+            y: null,
+            marker: {
+                enabled: true
+            }
+        });
+
+        assert.strictEqual(
+            symbolVisibility(chart.series[0]),
+            'hidden',
+            'A marker on a null point should not show in the legend'
+        );
+
         chart.series[0].update({
             type: 'column'
         });

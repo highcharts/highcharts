@@ -1113,7 +1113,8 @@ class Series {
     }
 
     /**
-     * Whether any individual point enables its own marker. The
+     * Whether any individual point enables a marker that is actually
+     * drawn, mirroring the point conditions in `drawPoints`. The
      * `_hasPointMarkers` flag is checked first, so the point loop is
      * skipped for series without point level marker options.
      *
@@ -1121,10 +1122,32 @@ class Series {
      * @function Highcharts.Series#hasEnabledPointMarkers
      */
     public hasEnabledPointMarkers(): boolean {
+        const nullInteraction = this.options.nullInteraction;
+
         return !!(
             this._hasPointMarkers &&
-            this.points?.some((point): boolean => !!point.marker?.enabled)
+            this.points?.some((point): boolean => !!(
+                point.marker?.enabled &&
+                (!point.isNull || nullInteraction) &&
+                point.visible !== false
+            ))
         );
+    }
+
+    /**
+     * Mirror the plot area markers in the legend symbol (#24307). Each
+     * renderer passes its own decision, as SVG and boost resolve marker
+     * visibility independently.
+     *
+     * @internal
+     * @function Highcharts.Series#syncLegendSymbol
+     */
+    public syncLegendSymbol(hasMarkers: boolean): void {
+        const symbol = this.legendItem?.symbol;
+
+        if (symbol?.isMarker) {
+            symbol[hasMarkers ? 'show' : 'hide']();
+        }
     }
 
     /**
@@ -3991,17 +4014,10 @@ class Series {
             series.drawPoints();
         }
 
-        // Mirror the plot area markers in the legend symbol (#24307). Outside
-        // the `visible` check, as a hidden series still has a legend item.
-        const markerSymbol = series.legendItem?.symbol;
-
-        if (markerSymbol?.isMarker) {
-            markerSymbol[
-                series.hasEnabledMarkers() || series.hasEnabledPointMarkers() ?
-                    'show' :
-                    'hide'
-            ]();
-        }
+        // Outside the `visible` check, a hidden series still has a legend item
+        series.syncLegendSymbol(
+            series.hasEnabledMarkers() || series.hasEnabledPointMarkers()
+        );
 
         // Draw the data labels
         series.drawDataLabels?.();
