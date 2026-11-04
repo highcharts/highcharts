@@ -69,16 +69,15 @@ function arc(
             innerRadius = options.innerR,
             clockwise = options.clockwise ?? 1;
 
-        // A single arc can't end where it starts, so draw full circles
-        // with the circle symbol, the inner one in the opposite direction
-        // to leave a hole (#25600).
+        // A single arc can't end where it starts, so draw full circles with the
+        // circle symbol, the inner one in the opposite direction to leave a
+        // hole (#25600).
         if (Math.abs(end - start - 2 * Math.PI) < proximity) {
             const path = circle(
                 cx - rx,
                 cy - ry,
                 2 * rx,
-                2 * ry,
-                { clockwise }
+                2 * ry
             );
 
             return innerRadius ? path.concat(circle(
@@ -86,7 +85,7 @@ function arc(
                 cy - innerRadius,
                 2 * innerRadius,
                 2 * innerRadius,
-                { clockwise: clockwise ? 0 : 1 }
+                { clockwise: 0 }
             )) : path;
         }
 
