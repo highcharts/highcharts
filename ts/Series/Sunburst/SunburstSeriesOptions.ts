@@ -43,6 +43,7 @@ import type {
  * @declare Highcharts.SeriesSunburstDataLabelsOptionsObject
  */
 export interface SunburstDataLabelOptions extends DataLabelOptions {
+    /** @default true */
     allowOverlap?: boolean;
 
     /**
@@ -62,6 +63,8 @@ export interface SunburstDataLabelOptions extends DataLabelOptions {
      *         Circular rotation mode
      *
      * @since 6.0.0
+     *
+     * @default 'circular'
      */
     rotationMode?: SunburstDataLabelRotationValue;
 
@@ -121,6 +124,8 @@ export interface SunburstSeriesLevelSizeOptions {
      *         Sunburst with various sizes per level
      *
      * @validvalue ["percentage", "pixels", "weight"]
+     *
+     * @default 'weight'
      */
     unit?: string;
 
@@ -130,13 +135,12 @@ export interface SunburstSeriesLevelSizeOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
      *         Sunburst with various sizes per level
+     *
+     * @default 1
      */
     value?: number;
 }
 
-/**
- * @optionparent plotOptions.sunburst.levels
- */
 export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelOptions {
 
     /**
@@ -258,7 +262,7 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/pie-center/
      *         Centered at 100, 100
      *
-     * @default ["50%", "50%"]
+     * @default ['50%', '50%']
      *
      * @product highcharts
      */
@@ -266,9 +270,12 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
 
     /**
      * @product highcharts
+     *
+     * @default false
      */
     clip?: boolean;
 
+    /** @default false */
     colorByPoint?: boolean;
 
     /**
@@ -285,6 +292,8 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * set to false the first level visible when drilling is considered
      * to be level one. Otherwise the level will be the same as the tree
      * structure.
+     *
+     * @default true
      */
     levelIsConstant?: boolean;
 
@@ -312,6 +321,8 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
 
     /**
      * Which point to use as a root in the visualization.
+     *
+     * @default undefined
      */
     rootId?: string;
 
@@ -323,6 +334,8 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      *         Sliced sunburst
      *
      * @since 6.0.4
+     *
+     * @default 10
      */
     slicedOffset?: number;
 
@@ -337,8 +350,6 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * @deprecated 9.3.3
      *
      * @since 6.0.0
-     *
-     * @apioption plotOptions.sunburst.traverseUpButton
      */
     traverseUpButton?: TreemapSeriesUpButtonOptions;
 
@@ -346,6 +357,8 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * Disable inherited opacity from Treemap series.
      *
      * @ignore-option
+     *
+     * @default 1
      */
     opacity?: number;
 
