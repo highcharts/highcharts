@@ -12,6 +12,7 @@ import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
 import { getDataTableOptions } from './utils';
 
+// Prepare the data
 const dataTable = new Highcharts.DataTable(getDataTableOptions(1000000));
 
 export default function ScatterBoostChart() {
@@ -39,7 +40,7 @@ export default function ScatterBoostChart() {
             />
             <Title align="left">Scatter chart with 1 million points</Title>
             <Legend enabled={false} />
-            <Boost useGPUTranslations={true} usePreallocated={true} />
+            <Boost useGPUTranslations usePreallocated />
             <Exporting />
             <Accessibility
                 screenReaderSection={{

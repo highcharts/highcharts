@@ -1,6 +1,6 @@
-// Prepare the data
+import type { DataTableOptionsObject } from 'highcharts';
 
-export function getDataTableOptions(n: number) {
+export function getDataTableOptions(n: number): DataTableOptionsObject {
     const xColumn = new Float64Array(n),
         yColumn = new Float64Array(n);
 

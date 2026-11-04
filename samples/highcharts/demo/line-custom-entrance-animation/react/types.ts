@@ -1,36 +1,30 @@
-import type Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
+import type {
+    AnimationOptionsObject,
+    Axis,
+    PlotLineOrBand,
+    Series,
+    SVGElement,
+    SVGRenderer,
+    YAxisPlotLinesOptions
+} from 'highcharts';
 
-export type AnimatedPlotLineOptions = Highcharts.AxisPlotLinesOptions & {
-    animation?: Partial<Highcharts.AnimationOptionsObject>;
+// Plot line options extended with the custom animation option
+export type AnimatedPlotLineOptions = YAxisPlotLinesOptions & {
+    animation?: AnimationOptionsObject;
 };
 
-export type LineSeriesInstance = Omit<Highcharts.Series, 'options'> & {
-    options: Highcharts.SeriesLineOptions;
-    graph: Highcharts.SVGElement;
+// Internal members the entrance animations read, missing from the
+// declarations
+export type AxisWithGroups = Axis & {
+    axisGroup: SVGElement;
+    labelGroup: SVGElement;
+    plotLines: Array<PlotLineOrBand>;
 };
 
-export type AxisInstance = Highcharts.Axis & {
-    chart: Highcharts.Chart & {
-        renderer: Highcharts.SVGRenderer & {
-            globalAnimation: Partial<Highcharts.AnimationOptionsObject>;
-        };
-    };
-    axisGroup: Highcharts.SVGElement;
-    labelGroup: Highcharts.SVGElement;
-    horiz: boolean;
-    plotLines: Array<
-        Highcharts.PlotLineOrBand & {
-            options: AnimatedPlotLineOptions;
-        }
-    >;
+export type SeriesWithGraph = Series & {
+    graph: SVGElement;
 };
 
-export type HighchartsWithLineSeries = typeof Highcharts & {
-    seriesTypes: {
-        line: {
-            prototype: {
-                animate: (this: LineSeriesInstance, init?: boolean) => void;
-            };
-        };
-    };
+export type RendererWithGlobalAnimation = SVGRenderer & {
+    globalAnimation?: boolean | AnimationOptionsObject;
 };

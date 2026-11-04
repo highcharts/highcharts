@@ -53,10 +53,6 @@ body {
     background: var(--highcharts-neutral-color-3, #f7f7f7);
 }
 
-#csv {
-    display: none;
-}
-
 .highcharts-description {
     background: light-dark(#f2f6f2, #323232);
     border-radius: 0 4px 4px 0;

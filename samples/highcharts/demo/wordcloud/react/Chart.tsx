@@ -2,7 +2,7 @@ import { Chart, Highcharts, Title, Subtitle, Tooltip } from '@highcharts/react';
 import { WordcloudSeries } from '@highcharts/react/series/Wordcloud';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-import type { Word } from './types';
+import type { WordcloudPoint } from './types';
 
 import 'highcharts/es-modules/masters/modules/non-cartesian-zoom.src.js';
 
@@ -20,9 +20,12 @@ const text =
         'worth the trouble of getting up and picking ' +
         'the daisies, when suddenly a White Rabbit with pink eyes ran close ' +
         'by her.',
-    lines = text.replace(/[():'?0-9]+/g, '').split(/[,\. ]+/g),
-    data = lines.reduce((arr: Word[], word) => {
-        let obj = Highcharts.find(arr, (obj: Word) => obj.name === word);
+    lines = text.replace(/[():'?0-9]+/g, '').split(/[,. ]+/g),
+    data = lines.reduce((arr, word) => {
+        let obj: WordcloudPoint | undefined = Highcharts.find(
+            arr,
+            (obj: WordcloudPoint) => obj.name === word
+        );
         if (obj) {
             obj.weight += 1;
         } else {
@@ -33,7 +36,7 @@ const text =
             arr.push(obj);
         }
         return arr;
-    }, []);
+    }, [] as Array<WordcloudPoint>);
 
 export default function WordcloudChart() {
     return (

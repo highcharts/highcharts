@@ -100,7 +100,7 @@ export default function ComboMultiAxesChart() {
         >
             <Title>Average Monthly Weather Data for Tokyo</Title>
             <Subtitle>Source: WorldClimate.com</Subtitle>
-            <XAxis type="category" crosshair={true} />
+            <XAxis type="category" crosshair />
             {/* Primary yAxis */}
             <YAxis
                 labels={{
@@ -114,7 +114,7 @@ export default function ComboMultiAxesChart() {
                         color: 'var(--highcharts-color-2)'
                     }
                 }}
-                opposite={true}
+                opposite
             >
                 Temperature
             </YAxis>
@@ -149,18 +149,18 @@ export default function ComboMultiAxesChart() {
                         color: 'var(--highcharts-color-1)'
                     }
                 }}
-                opposite={true}
+                opposite
             >
                 Sea-Level Pressure
             </YAxis>
-            <Tooltip shared={true} />
+            <Tooltip shared />
             <Legend
                 layout="vertical"
                 align="left"
                 x={80}
                 verticalAlign="top"
                 y={55}
-                floating={true}
+                floating
                 backgroundColor={`color-mix(
                     var(--highcharts-neutral-color-40) 25%,
                     transparent

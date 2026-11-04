@@ -1,23 +1,36 @@
-import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
-import { Chart, Title, Subtitle, YAxis, PlotOptions } from '@highcharts/react';
+import {
+    Chart,
+    Highcharts,
+    Title,
+    Subtitle,
+    YAxis,
+    PlotOptions
+} from '@highcharts/react';
 import { SplineSeries } from '@highcharts/react/series/Spline';
 import { Data } from '@highcharts/react/modules/Data';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
+import type {
+    AnimationOptionsObject,
+    Axis,
+    SeriesLineOptions,
+    SVGElement
+} from 'highcharts';
 import { csv } from './data';
 import type {
     AnimatedPlotLineOptions,
-    AxisInstance,
-    HighchartsWithLineSeries
+    AxisWithGroups,
+    SeriesWithGraph,
+    RendererWithGlobalAnimation
 } from './types';
 
-(function (H: HighchartsWithLineSeries) {
+(({ addEvent, animObject, Axis, Series }) => {
     const animateSVGPath = (
-        svgElem: Highcharts.SVGElement,
-        animation: Partial<Highcharts.AnimationOptionsObject>,
-        callback: (() => void) | undefined = void 0
+        svgElem: SVGElement,
+        animation: AnimationOptionsObject,
+        callback?: Function
     ) => {
-        const length = (svgElem.element as SVGGeometryElement).getTotalLength();
+        const length = (svgElem.element as SVGPathElement).getTotalLength();
         svgElem.attr({
             'stroke-dasharray': length,
             'stroke-dashoffset': length,
@@ -32,20 +45,22 @@ import type {
         );
     };
 
-    H.seriesTypes.line.prototype.animate = function (init) {
-        const series = this,
-            animation = H.animObject(series.options.animation);
+    Series.types.line.prototype.animate = function (init) {
+        const animation = animObject(
+            (this.options as SeriesLineOptions).animation
+        );
         if (!init) {
-            animateSVGPath(series.graph, animation);
+            animateSVGPath((this as SeriesWithGraph).graph, animation);
         }
     };
 
-    H.addEvent(H.Axis, 'afterRender', function (this: Highcharts.Axis) {
-        const axis = this as AxisInstance,
-            chart = axis.chart,
-            animation = H.animObject(chart.renderer.globalAnimation);
+    addEvent(Axis, 'afterRender', function (this: Axis) {
+        const chart = this.chart,
+            animation = animObject(
+                (chart.renderer as RendererWithGlobalAnimation).globalAnimation
+            );
 
-        axis.axisGroup
+        (this as AxisWithGroups).axisGroup
             // Init
             .attr({
                 opacity: 0,
@@ -62,8 +77,8 @@ import type {
                 },
                 animation
             );
-        if (axis.horiz) {
-            axis.labelGroup
+        if (this.horiz) {
+            (this as AxisWithGroups).labelGroup
                 // Init
                 .attr({
                     opacity: 0,
@@ -81,7 +96,7 @@ import type {
                     animation
                 );
         } else {
-            axis.labelGroup
+            (this as AxisWithGroups).labelGroup
                 // Init
                 .attr({
                     opacity: 0,
@@ -100,8 +115,10 @@ import type {
                 );
         }
 
-        axis.plotLines.forEach((plotLine) => {
-            const animation = H.animObject(plotLine.options.animation);
+        (this as AxisWithGroups).plotLines.forEach((plotLine) => {
+            const animation = animObject(
+                (plotLine.options as AnimatedPlotLineOptions).animation
+            );
 
             // Animate
             animateSVGPath(plotLine.svgElem, animation, () => {
@@ -111,26 +128,7 @@ import type {
             });
         });
     });
-})(Highcharts as HighchartsWithLineSeries);
-
-const plotLine: AnimatedPlotLineOptions = {
-    color: 'var(--highcharts-neutral-color-100, black)',
-    width: 2,
-    value: 13.5492019749684,
-    animation: {
-        duration: 1000,
-        defer: 4000
-    },
-    label: {
-        text: 'Max Inflation',
-        align: 'right',
-        x: -20,
-        style: {
-            opacity: 0,
-            transition: 'opacity 0.5s ease-in-out'
-        }
-    }
-};
+})(Highcharts);
 
 export default function LineCustomEntranceAnimationChart() {
     return (
@@ -186,7 +184,31 @@ export default function LineCustomEntranceAnimationChart() {
                 Source:{' '}
                 <a href="https://www.worldbank.org/en/home">The World Bank</a>
             </Subtitle>
-            <YAxis plotLines={[plotLine]}>Inflation</YAxis>
+            <Data csv={csv} />
+            <YAxis
+                plotLines={[
+                    {
+                        color: 'var(--highcharts-neutral-color-100, black)',
+                        width: 2,
+                        value: 13.5492019749684,
+                        animation: {
+                            duration: 1000,
+                            defer: 4000
+                        },
+                        label: {
+                            text: 'Max Inflation',
+                            align: 'right',
+                            x: -20,
+                            style: {
+                                opacity: 0,
+                                transition: 'opacity 0.5s ease-in-out'
+                            }
+                        }
+                    } as AnimatedPlotLineOptions
+                ]}
+            >
+                Inflation
+            </YAxis>
             <YAxis>Claims on central government, etc.</YAxis>
             <YAxis opposite>Net foreign assets</YAxis>
             <YAxis opposite>Net domestic credit</YAxis>
@@ -201,7 +223,6 @@ export default function LineCustomEntranceAnimationChart() {
                     lineWidth: 2
                 }}
             />
-            <Data csv={csv} />
             <Exporting />
             <Accessibility />
             <SplineSeries
