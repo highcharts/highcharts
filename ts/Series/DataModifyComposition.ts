@@ -254,6 +254,8 @@ namespace DataModifyComposition {
             axisProto.setCumulative = axisSetCumulative;
 
             pointProto.tooltipFormatter = tooltipFormatter;
+
+            addEvent(AxisClass, 'postProcessData', postProcessData);
         }
 
         return SeriesClass as (typeof SeriesComposition&T);
@@ -458,15 +460,11 @@ namespace DataModifyComposition {
 
     /**
      * Set the series compare base by finding the first non-zero value in the
-     * visible x range and storing it on `dataModify.compareValue`. When the
-     * processed data is grouped, also mark
-     * `dataModify.isGroupCompareValue`.
+     * visible x range and storing it on `dataModify.compareValue`.
      *
      * @ignore
-     * @param {boolean} [hasGroupedData]
-     * Whether current processed data is grouped.
      */
-    function updateCompareValue(this: Series, hasGroupedData?: boolean): void {
+    function updateCompareValue(this: Series): void {
         const series = this,
 
             // For series with more than one value (range, OHLC etc), compare
@@ -494,11 +492,43 @@ namespace DataModifyComposition {
                     compareValue !== 0 &&
                     processedXData[i + compareStart] >= (series.xAxis.min || 0)
                 ) {
-                    series.dataModify.isGroupCompareValue =
-                        hasGroupedData === true;
                     series.dataModify.compareValue = compareValue;
                     break;
                 }
+            }
+        }
+    }
+
+    /**
+     * Recalculate compareValue for a series, then for its linkedSeries
+     * (parent before children, so compareToMain can copy a fresh base).
+     */
+    function recalculateCompareValueTree(series: Series): void {
+        if (series.dataModify) {
+            const parentModify = series.linkedParent?.dataModify,
+                compareToMain = 'compareToMain' in series.options &&
+                    !!series.options.compareToMain;
+
+            if (compareToMain && parentModify?.compareValue) {
+                series.dataModify.compareValue = parentModify.compareValue;
+            } else if (!compareToMain && series.hasGroupedData) {
+                updateCompareValue.call(series);
+            }
+
+            for (const linkedSeries of series.linkedSeries) {
+                recalculateCompareValueTree(linkedSeries);
+            }
+        }
+    }
+
+    /**
+     * After data grouping, refresh compareValue on each unlinked grouped
+     * series and its linked descendants (#25538).
+     */
+    function postProcessData(this: Axis): void {
+        for (const series of this.series) {
+            if (!series.linkedParent && series.hasGroupedData) {
+                recalculateCompareValueTree(series);
             }
         }
     }
@@ -641,11 +671,6 @@ namespace DataModifyComposition {
         public series: SeriesComposition;
         public compare?: 'percent'|'value'|null;
         public compareValue?: number;
-        /**
-         * Whether `compareValue` was calculated from grouped data.
-         * @internal
-         */
-        public isGroupCompareValue?: boolean;
 
         public modifyValue(
             value?: number|null,
@@ -692,41 +717,6 @@ namespace DataModifyComposition {
         }
 
         /**
-         * Recalculate `compareValue` after data grouping. For
-         * `compareToMain` series, copy the base (and grouped flag) from the
-         * linked parent, otherwise update from the series grouped data.
-         *
-         * @internal
-         */
-        public recalculateCompareValue(): number | undefined {
-            const series = this.series,
-                hasGroupedData = series.hasGroupedData,
-                compareToMain = 'compareToMain' in series.options &&
-                    !!series.options.compareToMain,
-                linkedParent = series.linkedParent;
-
-            if (
-                linkedParent &&
-                compareToMain &&
-                series.dataModify &&
-                linkedParent.hasGroupedData &&
-                linkedParent.dataModify?.compareValue &&
-                linkedParent.dataModify.isGroupCompareValue
-            ) {
-                // Reuse the parent's grouped base when
-                // series is comparing to the main series.
-                this.compareValue = linkedParent.dataModify.compareValue;
-                this.isGroupCompareValue =
-                    linkedParent.dataModify.isGroupCompareValue;
-            } else if (!this.isGroupCompareValue && hasGroupedData) {
-                // Recompute compareValue from grouped points.
-                updateCompareValue.call(this.series, hasGroupedData);
-            }
-
-            return this.compareValue;
-        }
-
-        /**
          * @ignore
          * @function Highcharts.Series#initCompare
          *
@@ -743,8 +733,7 @@ namespace DataModifyComposition {
                     value = 0;
                 }
 
-                // Recalculate compareValue when data is grouped (#25538)
-                const compareValue = this.recalculateCompareValue();
+                const compareValue = this.compareValue;
 
                 if (
                     typeof value !== 'undefined' &&
