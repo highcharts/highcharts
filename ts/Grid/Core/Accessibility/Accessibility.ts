@@ -26,7 +26,9 @@
 
 import type Grid from '../Grid';
 import type { ColumnSortingOrder, FilteringCondition } from '../Options';
-import whcm from '../../../Accessibility/HighContrastMode.js';
+import {
+    isHighContrastModeActive
+} from '../../../Accessibility/HighContrastMode.js';
 
 import {
     hasDataTableProvider
@@ -35,14 +37,15 @@ import Globals from '../Globals.js';
 import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
-import HTMLU from '../../../Accessibility/Utils/HTMLUtilities.js';
+import {
+    getHeadingTagNameForElement
+} from '../../../Accessibility/Utils/HTMLUtilities.js';
 import {
     internalClearTimeout,
     replaceNested
 } from '../../../Shared/Utilities.js';
 
 const { formatText } = GridUtils;
-const { getHeadingTagNameForElement } = HTMLU;
 
 
 /**
@@ -287,7 +290,7 @@ class Accessibility {
 
         if (
             highContrastMode !== false && (
-                whcm.isHighContrastModeActive() ||
+                isHighContrastModeActive() ||
                 highContrastMode === true
             )
         ) {

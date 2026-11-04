@@ -1,7 +1,24 @@
 import { describe, it } from 'node:test';
-import { strictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual } from 'node:assert';
 
+import AST from '../../../../ts/Core/Renderer/HTML/AST.js';
 import { isDeepEqual } from '../../../../ts/Grid/Core/GridUtils.js';
+
+describe('GridUtils module', () => {
+    it('does not extend the shared AST allow-lists on import (#25576)', () => {
+        strictEqual(AST.allowedTags.includes('picture'), false);
+        strictEqual(AST.allowedTags.includes('source'), false);
+
+        // Same filtering as before Grid was imported
+        deepStrictEqual(
+            AST.filterUserAttributes({
+                srcset: 'https://example.com/a.png 1x',
+                media: 'all'
+            }),
+            {}
+        );
+    });
+});
 
 describe('GridUtils.isDeepEqual', () => {
     it('returns true for equal nested values, regexes and shared function references', () => {

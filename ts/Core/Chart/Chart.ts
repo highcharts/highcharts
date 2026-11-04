@@ -59,10 +59,7 @@ import {
     setAnimation
 } from '../Animation/AnimationUtilities.js';
 import Axis from '../Axis/Axis.js';
-import D from '../Defaults.js';
-const {
-    defaultOptions
-} = D;
+import { defaultOptions } from '../Defaults.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import Templating from '../Templating.js';

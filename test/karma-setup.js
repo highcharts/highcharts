@@ -1,10 +1,10 @@
 /* eslint-env browser */
 /* eslint-disable */
-/* global __karma__, Highcharts, Promise, QUnit */
+/* global Highcharts, Promise, QUnit */
 
 
 /**
- * This file runs in the browser as setup for the karma tests.
+ * This file runs in the browser as setup for the QUnit tests.
  */
 
 var VERBOSE = false;
@@ -589,119 +589,6 @@ if (window.QUnit) {
                 });
             }
         }
-    });
-}
-
-/**
- * Vanilla request for fetching an url using GET.
- * @param {String} url to fetch
- * @param {Function} callback to call when done.
- */
-function xhrLoad(url, callback) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            callback(xhr);
-        }
-    };
-    xhr.open('GET', url, true);
-    xhr.send();
-}
-
-function loadReferenceSVG(path) {
-    return new Promise(function (resolve, reject) {
-        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
-        // Handle reference, load SVG from bucket or file
-        var url = 'base/samples/' + path + '/reference.svg';
-        if (remotelocation) {
-            url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/visualtests/reference/latest/' + path + '/reference.svg';
-        }
-        xhrLoad(url, function onXHRDone(xhr) {
-            if (xhr.status === 200) {
-                var svg = xhr.responseText;
-                resolve(svg);
-            } else {
-                var errMsg = 'Unable to load svg for test ' + path + ' found. Skipping comparison.'
-                    + ' Status returned is ' + xhr.status + ' ' + xhr.statusText + '.';
-                reject(new Error(errMsg));
-            }
-        });
-    })
-}
-
-/**
- *  Creates a SVG snapshot of the chart and sends to karma for storage.
- *
- * @param  {string} svg The chart svg
- * @param  {string} path of the sample/test
- */
-function saveSVGSnapshot(svg, path) {
-    if (svg) {
-        __karma__.info({
-            filename: './samples/' + path,
-            data: svg
-        });
-    }
-}
-
-/**
- * Get a PNG image or image data from the chart SVG
- * and compares it with a reference svg already stored on the system.
- *
- * @param  {Object} chart The chart instance
- * @param  {String} path  The sample path
- * @return {String}       The image data
- */
-function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
-    return new Promise(function (resolve, reject) {
-
-        var candidateSVG = VisualComparator.getSVG(chart);
-        if (!candidateSVG || !path) {
-            reject(new Error('No candidate SVG found for path: ' + path));
-        }
-
-        var referenceCanvas = VisualComparator.createCanvas('reference');
-        var candidateCanvas = VisualComparator.createCanvas('candidate');
-        var candidatePixels = VisualComparator.svgToPixels(
-            candidateSVG,
-            candidateCanvas
-        );
-
-        loadReferenceSVG(path)
-            .then(function (referenceSVG) {
-                return Promise
-                    .all([
-                        VisualComparator.svgToPixels(referenceSVG, referenceCanvas),
-                        candidatePixels
-                    ])
-                    .catch(function (err) {
-                        reject(err);
-                    });
-            })
-            .then(function (pixelsInFile) {
-                var referencePixels = pixelsInFile[0];
-                var candidatePixels = pixelsInFile[1];
-                var diff = VisualComparator.compare(
-                    referencePixels,
-                    candidatePixels
-                );
-
-                if (diff !== 0) {
-                    saveSVGSnapshot(candidateSVG, path + '/candidate.svg');
-
-                    __karma__.info({
-                        filename: './samples/' + path + '/diff.gif',
-                        canvasWidth: VisualComparator.CANVAS_WIDTH,
-                        canvasHeight: VisualComparator.CANVAS_HEIGHT,
-                        frames: [
-                            referencePixels,
-                            candidatePixels
-                        ]
-                    });
-                }
-                resolve(diff);
-            })
     });
 }
 
