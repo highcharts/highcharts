@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -15,10 +16,14 @@
  * */
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
-import type AxisOptions from '../AxisOptions';
+import type {
+    AxisOptions,
+    AxisTitleOptions
+} from '../AxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type GradientColor from '../../Color/GradientColor';
 import type LegendOptions from '../../Legend/LegendOptions';
+import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -142,11 +147,48 @@ export interface ColorAxisMarkerOptions {
     animation?: (boolean|Partial<AnimationOptions>);
 
     /**
-     * The color of the marker.
+     * Whether to clip the marker within the plot area. Always false for the
+     * color axis marker.
      *
+     * @internal
+     * */
+    clip?: boolean;
+
+    /**
+     * The fill color of the marker.
+     *
+     * @sample highcharts/coloraxis/marker
+     *         Marker symbol options
      * @product highcharts highstock highmaps
      */
     color?: ColorType;
+
+    /**
+     * The color of the marker's outline.
+     *
+     * @sample highcharts/coloraxis/marker
+     *         Marker symbol options
+     * @since 13.0.0
+     */
+    lineColor?: ColorType;
+
+    /**
+     * The width of the marker's outline.
+     *
+     * @since 13.0.0
+     * @product highcharts highstock highmaps
+     */
+    lineWidth?: number;
+
+    /**
+     * The symbol of the marker. Can be one of the predefined symbols ('circle',
+     * 'square', 'diamond', 'triangle', 'triangle-down') or a custom symbol URL.
+     *
+     * @sample highcharts/coloraxis/marker
+     *         Marker symbol options
+     * @since 13.0.0
+     */
+    symbol?: SymbolKey;
 
     /**
      * Maps to stroke-width because marker options are passed as crosshair.
@@ -157,6 +199,11 @@ export interface ColorAxisMarkerOptions {
      */
     width?: number;
 
+}
+
+export interface ColorAxisTitleOptions extends AxisTitleOptions {
+    /** @default 5 */
+    margin?: AxisTitleOptions['margin'];
 }
 
 /**
@@ -373,7 +420,7 @@ export interface ColorAxisOptions extends AxisOptions {
      *
      * @product highcharts highstock highmaps
      */
-    title: AxisOptions['title'];
+    title: ColorAxisTitleOptions;
 
     /**
      * The type of interpolation to use for the color axis. Can be

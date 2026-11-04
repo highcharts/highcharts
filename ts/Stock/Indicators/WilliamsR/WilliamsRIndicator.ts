@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,8 +25,8 @@ import type {
 import type WilliamsRPoint from './WilliamsRPoint';
 
 import AU from '../ArrayUtilities.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -37,7 +38,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Williams %R series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.williamsr
  *
@@ -64,9 +64,10 @@ class WilliamsRIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/williams-r
+     * @requires     indicators/indicators
+     * @requires     indicators/williams-r
      * @optionparent plotOptions.williamsr
+     * @internal
      */
     public static defaultOptions: WilliamsROptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -98,6 +99,7 @@ class WilliamsRIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         this: WilliamsRIndicator,
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
@@ -166,7 +168,6 @@ class WilliamsRIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface WilliamsRIndicator {
     nameBase: string;
     pointClass: typeof WilliamsRPoint;
@@ -181,7 +182,6 @@ extend(WilliamsRIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         williamsr: typeof WilliamsRIndicator;
@@ -196,7 +196,6 @@ SeriesRegistry.registerSeriesType('williamsr', WilliamsRIndicator);
  *
  * */
 
-/** @internal */
 export default WilliamsRIndicator;
 
 /* *
@@ -212,11 +211,11 @@ export default WilliamsRIndicator;
  * @extends   series,plotOptions.williamsr
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/williams-r
+ * @requires  indicators/indicators
+ * @requires  indicators/williams-r
  * @apioption series.williamsr
  */
 

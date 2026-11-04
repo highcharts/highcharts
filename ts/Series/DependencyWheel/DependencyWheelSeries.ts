@@ -5,8 +5,9 @@
  *  (c) 2018-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,18 +22,16 @@
 
 import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import DependencyWheelPoint from './DependencyWheelPoint.js';
 import DependencyWheelSeriesDefaults from './DependencyWheelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
+import PieSeries from '../Pie/PieSeries.js';
+import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: PieSeries,
-    sankey: SankeySeries
-} = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import { composeTextPath } from '../../Extensions/TextPath.js';
 import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
@@ -45,7 +44,6 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.dependencywheel
  *
@@ -59,6 +57,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DependencyWheelSeriesOptions = merge(
         SankeySeries.defaultOptions,
         DependencyWheelSeriesDefaults
@@ -74,8 +73,10 @@ class DependencyWheelSeries extends SankeySeries {
 
     public options!: DependencyWheelSeriesOptions;
 
+    /** @internal */
     public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>>;
 
+    /** @internal */
     public nodes!: Array<DependencyWheelPoint>;
 
     public points!: Array<DependencyWheelPoint>;
@@ -86,6 +87,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public animate(init?: boolean): void {
         const series = this;
 
@@ -123,27 +125,30 @@ class DependencyWheelSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public createNode(id: string): DependencyWheelPoint {
         const node = super.createNode(id) as DependencyWheelPoint;
 
         /**
          * Return the sum of incoming and outgoing links.
-         * @private
+         * @internal
          */
-        node.getSum = (): number => (
-            node.linksFrom
-                .concat(node.linksTo)
-                .reduce((
-                    acc: number,
-                    link: DependencyWheelPoint
-                ): number => (
-                    acc + (link.weight as any)
-                ), 0)
-        );
+        node.getSum = (): number => {
+            let sum = 0;
+
+            for (const link of node.linksFrom) {
+                sum += link.weight || 0;
+            }
+            for (const link of node.linksTo) {
+                sum += link.weightTo || link.weight || 0;
+            }
+
+            return sum;
+        };
 
         /**
          * Get the offset in weight values of a point/link.
-         * @private
+         * @internal
          */
         node.offset = (
             point: DependencyWheelPoint
@@ -184,7 +189,11 @@ class DependencyWheelSeries extends SankeySeries {
                 if (links[i] === point) {
                     return offset;
                 }
-                offset += links[i].weight as any;
+
+                const baseWeight = links[i].weight || 0;
+                offset += links[i].to === node.id ?
+                    links[i].weightTo || baseWeight :
+                    baseWeight;
             }
         };
 
@@ -193,7 +202,7 @@ class DependencyWheelSeries extends SankeySeries {
 
     /**
      * Dependency wheel has only one column, it runs along the perimeter.
-     * @private
+     * @internal
      */
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition> {
         const series = this,
@@ -209,7 +218,7 @@ class DependencyWheelSeries extends SankeySeries {
 
     /**
      * Translate from vertical pixels to perimeter.
-     * @private
+     * @internal
      */
     public getNodePadding(): number {
         return (this.options.nodePadding as any) / Math.PI;
@@ -226,10 +235,10 @@ class DependencyWheelSeries extends SankeySeries {
             factor = 2 * Math.PI /
                 (series.chart.plotHeight + series.getNodePadding()),
             center = series.getCenter(),
-            startAngle = ((options.startAngle as any) - 90) * deg2rad,
-            brOption = options.borderRadius,
-            borderRadius = typeof brOption === 'object' ?
-                brOption.radius : brOption;
+            startAngle = ((options.startAngle || 0) - 90) * deg2rad,
+            borderRadius = borderRadiusObject(
+                options.borderRadius
+            ).radius;
 
         super.translate();
 
@@ -343,6 +352,38 @@ class DependencyWheelSeries extends SankeySeries {
         }
     }
 
+    /**
+     * Run translation operations for one link.
+     * @internal
+     */
+    public translateLink(point: DependencyWheelPoint): void {
+        const linkToHeight = Math.max(
+            (point.weightTo || point.weight || 0) * this.translationFactor,
+            this.options.minLinkWidth || 0
+        );
+        const linkToY = this.getY(point, point.toNode, 'linksTo', linkToHeight);
+
+        // Translate the link
+        super.translateLink(point, linkToY);
+
+        // Override the last linkBase value
+        point.linkBase[3] = linkToY + linkToHeight;
+    }
+
+    /**
+     * Run translation operations for one node.
+     * @internal
+     */
+    public translateNode(
+        node: DependencyWheelPoint,
+        column: SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>
+    ): void {
+        super.translateNode(node, column);
+
+        // Calculate the sum of incoming links weight and
+        // outgoing links weightTo.
+        node.sumTo = node.getSumTo();
+    }
 }
 
 /* *
@@ -352,13 +393,18 @@ class DependencyWheelSeries extends SankeySeries {
  * */
 
 interface DependencyWheelSeries {
+    /** @internal */
     getCenter: typeof PieSeries.prototype.getCenter;
+    /** @internal */
     orderNodes: boolean;
+    /** @internal */
     pointClass: typeof DependencyWheelPoint;
 }
 extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
-    getCenter: PieSeries.prototype.getCenter
+    pointArrayMap: ['from', 'to', 'weight', 'weightTo'],
+    getCenter: PieSeries.prototype.getCenter,
+    useCircularLayout: false
 });
 
 /* *

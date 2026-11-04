@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -25,6 +26,7 @@
 import type { CreditsOptions } from './Options';
 import type Grid from './Grid';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
 
@@ -141,7 +143,7 @@ class Credits {
             setHTMLContent(this.textElement, text);
         }
         if (href) {
-            this.textElement.setAttribute('href', href || '');
+            this.setHref(href);
         }
 
         if (grid.descriptionElement) {
@@ -151,6 +153,23 @@ class Credits {
             );
         } else {
             contentWrapper?.appendChild(this.containerElement);
+        }
+    }
+
+    /**
+     * Set the anchor's href, dropping URLs that are not allowed references.
+     *
+     * @param href
+     * The href to set on the anchor element. If undefined or unsafe, the href
+     * attribute will be removed.
+     */
+    protected setHref(href?: string): void {
+        const filtered = href && AST.filterUserAttributes({ href }).href;
+
+        if (filtered) {
+            this.textElement.setAttribute('href', filtered);
+        } else {
+            this.textElement.removeAttribute('href');
         }
     }
 

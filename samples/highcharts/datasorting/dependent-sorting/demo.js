@@ -67,13 +67,10 @@ const chart = Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            keys: ['y', 'value'],
             dataLabels: {
                 enabled: true,
                 color: '#000000',
-                formatter: function () {
-                    return Highcharts.numberFormat(this.point.value, 1);
-                }
+                format: '{value:.1f}'
             }
         }
     },
@@ -91,16 +88,19 @@ const chart = Highcharts.chart('container', {
         borderWidth: 1,
         linkedTo: 'mainSeries',
         data: getRandomData(1),
+        keys: ['y', 'value'],
         colorAxis: 1
     }, {
         borderWidth: 1,
         linkedTo: 'mainSeries',
         data: getRandomData(2),
+        keys: ['y', 'value'],
         colorAxis: 2
     }, {
         borderWidth: 1,
         linkedTo: 'mainSeries',
         data: getRandomData(3),
+        keys: ['y', 'value'],
         colorAxis: 3
     }]
 

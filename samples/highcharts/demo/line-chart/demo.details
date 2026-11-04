@@ -4,11 +4,14 @@ authors:
   - Torstein Hønsi
 js_wrap: b
 alt_text: >-
-  Highcharts basic line chart JavaScript example displays graph plot of solar
-  employment growth areas over time.
+  Highcharts basic line chart JavaScript example displays graph plot of
+  an application users over last 24 hours.
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Basics:
+      priority: 1
   - Line charts:
       priority: 1
 ...

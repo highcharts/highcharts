@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,6 +25,7 @@ import type Annotation from './Annotation';
 import type {
     AnnotationMockPointOptionsObject
 } from './AnnotationMockPointOptionsObject';
+import type { AnnotationPointType } from './AnnotationSeries';
 import type AST from '../../Core/Renderer/HTML/AST';
 import type ColorType from '../../Core/Color/ColorType';
 import type Controllable from './Controllables/Controllable';
@@ -324,7 +326,7 @@ export interface AnnotationLabelOptionsOptions {
      * @sample highcharts/annotations/label-presentation/
      *         Set labels graphic options
      *
-     * @default ${palette.neutralColor100}
+     * @default var(--highcharts-neutral-color-100)
      */
     borderColor?: ColorType;
 
@@ -533,6 +535,13 @@ export interface AnnotationLabelOptionsOptions {
 }
 
 export interface AnnotationLabelOptions extends AnnotationLabelOptionsOptions {
+
+
+    /**
+     * An id for later identification of the annotation label.
+     */
+    id?: string;
+
     /* *
     *
     *  Excluded properties. Not omitted for ancestor type matching.
@@ -574,6 +583,12 @@ export interface AnnotationLabelOptions extends AnnotationLabelOptionsOptions {
  *
  * Internally, this can also be a point or a mock point.
  *
+ * @typedef {
+ *          string|
+ *          Highcharts.AnnotationMockPointOptionsObject|
+ *          Highcharts.AnnotationMockPointFunction
+ *     } Highcharts.AnnotationMockPointOptions
+ *
  * @requires modules/annotations
  */
 export type AnnotationMockPointOptions = (
@@ -590,13 +605,14 @@ export type AnnotationMockPointOptions = (
  *
  * @return {
  *     Highcharts.AnnotationMockPointOptionsObject |
+ *     Highcharts.AnnotationMockPoint |
  *     Highcharts.Point
  * }
  *         Annotations shape point or it's options.
  */
 export interface AnnotationMockPointFunction {
     (controllable: Controllable):
-        AnnotationMockPointOptionsObject | Point;
+        AnnotationMockPointOptionsObject | AnnotationPointType;
 }
 
 export interface AnnotationShapeOptionsOptions {
@@ -758,10 +774,11 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
     controlPoints?: Array<ControlPointOptions>;
 
     /**
-     * Id of the marker which will be drawn at the final vertex of
-     * the path. Custom markers can be defined in defs property.
+     * Id of the marker which will be drawn at the final vertex of the path. The
+     * `arrow` and `reverse-arrow` markers are available by default; custom
+     * markers can be defined in the [defs](#defs) option.
      *
-     * @see [defs.markers](#defs.markers)
+     * @see [defs](#defs)
      *
      * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
@@ -769,12 +786,13 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
     markerEnd?: string;
 
     /**
-     * Id of the marker which will be drawn at the first vertex of
-     * the path. Custom markers can be defined in defs property.
+     * Id of the marker which will be drawn at the first vertex of the path. The
+     * `arrow` and `reverse-arrow` markers are available by default; custom
+     * markers can be defined in the [defs](#defs) option.
      *
-     * @see [defs.markers](#defs.markers)
+     * @see [defs](#defs)
      *
-     * @sample {highcharts} highcharts/annotations/custom-markers/
+     * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
      */
     markerStart?: string;
@@ -788,7 +806,6 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
      * @sample highcharts/annotations/mock-points/
      *         Attach annotation to a mock point with different ways
      *
-     * @type      {Highcharts.AnnotationMockPointOptions}
      * @extends   annotations.labels.point
      * @requires  modules/annotations
      * @apioption annotations.shapes.point
@@ -805,7 +822,6 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
      *
      * @see [annotations.shapes.point](#annotations.shapes.point)
      *
-     * @type      {Array<Highcharts.AnnotationMockPointOptions>}
      * @extends   annotations.labels.point
      * @apioption annotations.shapes.points
      */
@@ -843,7 +859,6 @@ export interface AnnotationTypeOptions {
      * point's id - or a new point with defined x, y properties
      * and optionally axes.
      *
-     * @type {string | Highcharts.AnnotationMockPointOptionsObject}
      * @apioption annotations.typeOptions.point
      */
     point?: (string | AnnotationMockPointOptionsObject);
@@ -854,7 +869,6 @@ export interface AnnotationTypeOptions {
      * point's id - or a new point with defined x, y properties
      * and optionally axes.
      *
-     * @type {Array<(string | Highcharts.AnnotationMockPointOptionsObject)>}
      * @apioption annotations.typeOptions.points
      */
     points?: Array<(string | AnnotationMockPointOptionsObject)>;
@@ -868,24 +882,24 @@ export interface AnnotationTypeOptions {
     type?: string;
 
     /**
-     * This number defines which `xAxis` the point is connected to.
+     * This option defines which `xAxis` the point is connected to.
      * It refers to either the axis id or the index of the axis
      * in the `xAxis` array.
      *
-     * @type {number}
+     * @type {number|string}
      * @apioption annotations.typeOptions.xAxis
      */
-    xAxis?: number;
+    xAxis?: (number|string);
 
     /**
-     * This number defines which `yAxis` the point is connected to.
+     * This option defines which `yAxis` the point is connected to.
      * It refers to either the axis id or the index of the axis
      * in the `yAxis` array.
      *
-     * @type {number}
+     * @type {number|string}
      * @apioption annotations.typeOptions.yAxis
      */
-    yAxis?: number;
+    yAxis?: (number|string);
 
     /** @internal */
     yOffset?: number;

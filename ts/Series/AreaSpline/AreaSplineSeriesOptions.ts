@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,7 +29,7 @@ import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
  * The area spline series is an area series where the graph between the points
  * is smoothed into a spline.
  *
- * A `areaspline` series. If the [type](#series.areaspline.type) option is not
+ * An `areaspline` series. If the [type](#series.areaspline.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @sample {highcharts} highcharts/demo/areaspline/
@@ -37,19 +38,8 @@ import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
  * @sample {highstock} stock/demo/areaspline/
  *         Area spline chart
  *
- * @extends plotOptions.area
- *
- * @extends series,plotOptions.areaspline
- *
  * @excluding step, boostThreshold, boostBlending
- *
- * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
- *
  * @product highcharts highstock
- *
- * @optionparent plotOptions.areaspline
- *
- * @optionparent series.areaspline
  */
 export interface AreaSplineSeriesOptions extends AreaSeriesOptions {
     states?: SeriesStatesOptions<AreaSplineSeriesOptions>;

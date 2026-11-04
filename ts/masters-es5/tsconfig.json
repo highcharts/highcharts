@@ -4,10 +4,10 @@
         "composite": false,
         "declaration": false,
         "module": "es6",
-        "moduleResolution": "node",
         "outDir": "../../code/es5/es-modules/",
         "rootDir": "../",
         "target": "es5",
+        "ignoreDeprecations": "6.0",
         "lib": [
             "DOM",
             "ES5",
@@ -23,7 +23,9 @@
     },
     "exclude": [
         "../Dashboards/**/*.ts",
+        "../Extensions/Autoload/Loader.ts",
         "../Grid/**/*.ts",
+        "../masters/highcharts-autoload.src.ts",
         "../masters-dashboards/**/*.ts",
         "../masters-grid/**/*.ts"
     ],

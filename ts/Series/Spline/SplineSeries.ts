@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,11 +22,9 @@ import type SplinePoint from './SplinePoint';
 import type SplineSeriesOptions from './SplineSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
-import { merge, pick } from '../../Shared/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -239,10 +238,10 @@ class SplineSeries extends LineSeries {
 
         const ret: SVGPath.CurveTo = [
             'C',
-            pick(lastPoint.rightContX, lastPoint.plotX, 0),
-            pick(lastPoint.rightContY, lastPoint.plotY, 0),
-            pick(leftContX, plotX, 0),
-            pick(leftContY, plotY, 0),
+            (lastPoint.rightContX ?? lastPoint.plotX ?? 0),
+            (lastPoint.rightContY ?? lastPoint.plotY ?? 0),
+            (leftContX ?? plotX ?? 0),
+            (leftContY ?? plotY ?? 0),
             plotX,
             plotY
         ];
@@ -298,7 +297,7 @@ export default SplineSeries;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.spline
- * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
+ * @excluding step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption series.spline
  */

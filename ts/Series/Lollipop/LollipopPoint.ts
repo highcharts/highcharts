@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,27 +22,20 @@ import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    },
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        },
-        dumbbell: {
-            prototype: {
-                pointClass: DumbbellPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const Point = Series.prototype.pointClass;
+const ScatterPoint = ScatterSeries.prototype.pointClass;
+const DumbbellPoint = DumbbellSeries.prototype.pointClass;
 
 /* *
  *
@@ -57,10 +51,14 @@ class LollipopPoint extends Point {
      *
      * */
 
+    /** @internal */
     public connector?: SVGElement;
     public options!: LollipopPointOptions;
+    /** @internal */
     public series!: LollipopSeries;
+    /** @internal */
     public plotX!: number;
+    /** @internal */
     public pointWidth!: number;
 }
 

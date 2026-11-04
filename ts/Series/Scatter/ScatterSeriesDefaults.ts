@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -141,7 +142,7 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.scatter
- * @excluding cropThreshold, dataParser, dataURL, useOhlcData
+ * @excluding cropThreshold, useOhlcData
  * @product   highcharts highstock
  * @apioption series.scatter
  */
@@ -197,6 +198,8 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
  *         Arrays of datetime x and y
  * @sample {highcharts} highcharts/series/data-array-of-name-value/
  *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series-scatter/scatter-cluster/
+ *         Computed clusters
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *

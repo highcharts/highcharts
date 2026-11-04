@@ -1,0 +1,71 @@
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+    margin: 0;
+    padding: 0 1em;
+}
+
+.highcharts-figure {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1em 0 2em;
+}
+
+.demo-title {
+    text-align: center;
+    font-size: 2em;
+    margin: 0.5em 0 0.1em;
+    font-weight: 700;
+    color: var(--highcharts-neutral-color-100);
+}
+
+.demo-subtitle {
+    text-align: center;
+    color: var(--highcharts-neutral-color-60, #666);
+    margin: 0 0 1.5em;
+    font-size: 1em;
+}
+
+.gauge-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+/* Mobile: exactly 2 per row */
+.gauge-cell {
+    flex: 1 1 calc(50% - 0.5em);
+    min-width: calc(50% - 0.5em);
+    box-sizing: border-box;
+}
+
+/* Tablet: 3 per row */
+@media (min-width: 600px) {
+    .gauge-cell {
+        flex: 1 1 calc(33.333% - 0.667em);
+        min-width: calc(33.333% - 0.667em);
+    }
+}
+
+/* Desktop: 4 per row */
+@media (min-width: 900px) {
+    .gauge-cell {
+        flex: 1 1 calc(25% - 0.75em);
+        min-width: calc(25% - 0.75em);
+    }
+}
+
+.highcharts-description {
+    margin: 2em 0 0;
+    font-size: 0.9em;
+    color: var(--highcharts-neutral-color-60, #666);
+    line-height: 1.6;
+}

@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -238,7 +239,7 @@ function addFlagFromForm(
                 ): void {
                     navigation.fieldsToOptions(
                         data.fields,
-                        (seriesOptions.data as any)[0]
+                        seriesOptions.data?.[0]
                     );
                     chart.addSeries(seriesOptions);
                 }
@@ -287,7 +288,7 @@ function attractToPoint(
         }
     });
 
-    if (closestPoint && closestPoint.x && closestPoint.y) {
+    if (closestPoint && isNumber(closestPoint.y)) {
         return {
             x: closestPoint.x,
             y: closestPoint.y,

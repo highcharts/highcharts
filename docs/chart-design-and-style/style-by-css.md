@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable styled mode and load the Highcharts stylesheet to control chart
+  appearance with CSS. Learn which classes and color variables to customize
+  and which layout settings still require JavaScript options.
+---
+
 Style by CSS
 ===
 

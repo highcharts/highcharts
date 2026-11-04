@@ -2,8 +2,9 @@
  *
  *  (c) 2010-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -38,8 +39,8 @@ import type {
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/dpo
+ * @requires     indicators/indicators
+ * @requires     indicators/dpo
  * @interface Highcharts.DPOOptions
  */
 export interface DPOOptions extends SMAOptions {

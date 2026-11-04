@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,13 +32,12 @@ import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import ColorMapComposition from '../ColorMapComposition.js';
 import MU from '../../Maps/MapUtilities.js';
 const { boundsFromPath } = MU;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 import {
     extend,
     internalClearTimeout,
-    isNumber,
-    pick
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -58,6 +58,7 @@ class MapPoint extends ScatterPoint {
      * Get the projected path based on the geometry. May also be called on
      * mapData options (not point instances), hence static.
      * @private
+     * @internal
      */
     public static getProjectedPath(
         point: MapPoint,
@@ -85,30 +86,39 @@ class MapPoint extends ScatterPoint {
      *
      * */
 
+    /** @internal */
     public bounds?: MapBounds;
 
+    /** @internal */
     public colorInterval?: number;
 
+    /** @internal */
     public geometry?: GeoJSONGeometryMultiPoint;
 
+    /** @internal */
     public group?: SVGElement;
 
+    /** @internal */
     public insetIndex?: number;
 
-    public labelrank?: number;
-
+    /** @internal */
     public middleX?: number;
 
+    /** @internal */
     public middleY?: number;
 
     public options!: MapPointOptions;
 
+    /** @internal */
     public path!: SVGPath;
 
+    /** @internal */
     public projectedPath?: SVGPath;
 
+    /** @internal */
     public properties?: Record<string, (number|string)>;
 
+    /** @internal */
     public series!: MapSeries;
 
     /* *
@@ -123,11 +133,12 @@ class MapPoint extends ScatterPoint {
      */
     public applyOptions(
         options: (MapPointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): MapPoint {
 
         const series = this.series,
-            point = super.applyOptions(options, x) as MapPoint,
+            point = super.applyOptions(options, x, isMock) as MapPoint,
             joinBy = series.joinBy;
 
         if (series.mapData && series.mapMap) {
@@ -153,6 +164,7 @@ class MapPoint extends ScatterPoint {
     /**
      * Get the bounds in terms of projected units
      * @private
+     * @internal
      */
     public getProjectedBounds(
         projection: Projection
@@ -180,16 +192,14 @@ class MapPoint extends ScatterPoint {
                     propMiddleY = properties?.['hc-middle-y'];
 
                 bounds.midX = (
-                    bounds.x1 + (bounds.x2 - bounds.x1) * pick(
-                        this.middleX,
-                        isNumber(propMiddleX) ? propMiddleX : 0.5
+                    bounds.x1 + (bounds.x2 - bounds.x1) * (
+                        this.middleX ??
+                        (isNumber(propMiddleX) ? propMiddleX : 0.5)
                     )
                 );
 
-                let middleYFraction = pick(
-                    this.middleY,
-                    isNumber(propMiddleY) ? propMiddleY : 0.5
-                );
+                let middleYFraction = this.middleY ??
+                    (isNumber(propMiddleY) ? propMiddleY : 0.5);
                 // No geographic geometry, only path given => flip
                 if (!this.geometry) {
                     middleYFraction = 1 - middleYFraction;
@@ -224,6 +234,7 @@ class MapPoint extends ScatterPoint {
         }
     }
 
+    /** @internal */
     public setVisible(
         vis?: boolean
     ): void {
@@ -311,8 +322,11 @@ class MapPoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 interface MapPoint extends ColorMapComposition.PointComposition {
+    /** @internal */
     value: ColorMapComposition.PointComposition['value'];
+    /** @internal */
     isValid: ColorMapComposition.PointComposition['isValid'];
 }
 extend(MapPoint.prototype, {

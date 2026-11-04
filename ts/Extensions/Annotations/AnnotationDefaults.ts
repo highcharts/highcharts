@@ -8,7 +8,6 @@ import type { AnnotationOptions, AnnotationTypeOptions } from './AnnotationOptio
 import type { AnnotationPoint } from './AnnotationSeries';
 import type ControlPointOptions from './ControlPointOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
 import { defined } from '../../Shared/Utilities.js';
 
 /* *
@@ -180,7 +179,7 @@ const AnnotationDefaults: AnnotationOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: Palette.neutralColor100,
+        borderColor: 'var(--highcharts-neutral-color-100)',
 
         /**
          * The border radius in pixels for the annotation's label.
@@ -408,6 +407,13 @@ const AnnotationDefaults: AnnotationOptions = {
      */
 
     /**
+     * An id for later identification of the annotation label.
+     *
+     * @type {string}
+     * @apioption annotations.labels.id
+     */
+
+    /**
      * This option defines the point to which the label will be
      * connected. It can be either the point which exists in the
      * series - it is referenced by the point's id - or a new point
@@ -475,10 +481,11 @@ const AnnotationDefaults: AnnotationOptions = {
      */
 
     /**
-     * Id of the marker which will be drawn at the final vertex of
-     * the path. Custom markers can be defined in defs property.
+     * Id of the marker which will be drawn at the final vertex of the path. The
+     * `arrow` and `reverse-arrow` markers are available by default; custom
+     * markers can be defined in the [defs](#defs) option.
      *
-     * @see [defs.markers](#defs.markers)
+     * @see [defs](#defs)
      *
      * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
@@ -488,12 +495,13 @@ const AnnotationDefaults: AnnotationOptions = {
      */
 
     /**
-     * Id of the marker which will be drawn at the first vertex of
-     * the path. Custom markers can be defined in defs property.
+     * Id of the marker which will be drawn at the first vertex of the path. The
+     * `arrow` and `reverse-arrow` markers are available by default; custom
+     * markers can be defined in the [defs](#defs) option.
      *
-     * @see [defs.markers](#defs.markers)
+     * @see [defs](#defs)
      *
-     * @sample {highcharts} highcharts/annotations/custom-markers/
+     * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
      *
      * @type      {string}
@@ -688,8 +696,8 @@ const AnnotationDefaults: AnnotationOptions = {
          */
         style: {
             cursor: 'pointer',
-            fill: Palette.backgroundColor,
-            stroke: Palette.neutralColor100,
+            fill: 'var(--highcharts-background-color)',
+            stroke: 'var(--highcharts-neutral-color-100)',
             'stroke-width': 2
         },
 
@@ -808,20 +816,20 @@ const AnnotationDefaults: AnnotationOptions = {
          */
 
         /**
-         * This number defines which `xAxis` the point is connected to.
+         * This option defines which `xAxis` the point is connected to.
          * It refers to either the axis id or the index of the axis
          * in the `xAxis` array.
          *
-         * @type {number}
+         * @type {number|string}
          * @apioption annotations.typeOptions.xAxis
          */
 
         /**
-         * This number defines which `yAxis` the point is connected to.
+         * This option defines which `yAxis` the point is connected to.
          * It refers to either the axis id or the index of the axis
          * in the `yAxis` array.
          *
-         * @type {number}
+         * @type {number|string}
          * @apioption annotations.typeOptions.yAxis
          */
 

@@ -6,8 +6,9 @@
  *
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,13 +23,8 @@
 
 import type Funnel3DPointOptions from './Funnel3DPointOptions';
 import type Funnel3DSeries from './Funnel3DSeries';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
 
 /* *
  *
@@ -44,12 +40,15 @@ class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public dlBoxRaw!: Record<string, number>;
 
     public options!: Funnel3DPointOptions;
 
+    /** @internal */
     public series!: Funnel3DSeries;
 
+    /** @internal */
     public y!: number;
 
 }
@@ -61,6 +60,7 @@ class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
  * */
 
 interface Funnel3DPoint {
+    /** @internal */
     shapeType: string;
 }
 extend(Funnel3DPoint.prototype, {

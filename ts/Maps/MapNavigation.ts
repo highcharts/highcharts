@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -41,7 +42,6 @@ import {
     extend,
     objectEach,
     merge,
-    pick,
     pushUnique,
     addEvent
 } from '../Shared/Utilities.js';
@@ -194,7 +194,7 @@ class MapNavigation {
 
         if (
             !chart.renderer.forExport &&
-            pick(navOptions.enableButtons, navOptions.enabled)
+            (navOptions.enableButtons ?? navOptions.enabled)
         ) {
             if (!mapNav.navButtonsGroup) {
                 mapNav.navButtonsGroup = chart.renderer.g()
@@ -384,7 +384,7 @@ class MapNavigation {
 
         // Add the double click event
         if (
-            pick(options.enableDoubleClickZoom, options.enabled) ||
+            (options.enableDoubleClickZoom ?? options.enabled) ||
             options.enableDoubleClickZoomTo
         ) {
             this.unbindDblClick = this.unbindDblClick || addEvent(
@@ -400,7 +400,7 @@ class MapNavigation {
         }
 
         // Add the mousewheel event
-        if (pick(options.enableMouseWheelZoom, options.enabled)) {
+        if (options.enableMouseWheelZoom ?? options.enabled) {
             this.unbindMouseWheel = this.unbindMouseWheel || addEvent(
                 chart.container,
                 'wheel',

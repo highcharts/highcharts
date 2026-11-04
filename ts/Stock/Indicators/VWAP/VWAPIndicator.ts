@@ -5,8 +5,9 @@
  *
  *  Volume Weighted Average Price (VWAP) indicator for Highcharts Stock
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,8 +30,8 @@ import type {
 } from './VWAPOptions';
 import type VWAPPoint from './VWAPPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { isArray, merge } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -43,7 +44,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The Volume Weighted Average Price (VWAP) series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.vwap
  *
@@ -68,9 +68,10 @@ class VWAPIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/vwap
+     * @requires     indicators/indicators
+     * @requires     indicators/vwap
      * @optionparent plotOptions.vwap
+     * @internal
      */
     public static defaultOptions: VWAPOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -104,6 +105,7 @@ class VWAPIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: VWAPParamsOptions
@@ -172,6 +174,7 @@ class VWAPIndicator extends SMAIndicator {
      * @return {Object}
      * Object contains computed VWAP
      **/
+    /** @internal */
     public calculateVWAPValues<TLinkedSeries extends LineSeries>(
         isOHLC: boolean,
         xValues: Array<number>,
@@ -246,7 +249,6 @@ class VWAPIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface VWAPIndicator {
     pointClass: typeof VWAPPoint;
 }
@@ -257,7 +259,6 @@ interface VWAPIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vwap: typeof VWAPIndicator;
@@ -272,7 +273,6 @@ SeriesRegistry.registerSeriesType('vwap', VWAPIndicator);
  *
  * */
 
-/** @internal */
 export default VWAPIndicator;
 
 /* *
@@ -289,9 +289,8 @@ export default VWAPIndicator;
  * @extends   series,plotOptions.vwap
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/vwap
+ * @requires  indicators/indicators
+ * @requires  indicators/vwap
  * @apioption series.vwap
  */
 

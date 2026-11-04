@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import { deepStrictEqual, strictEqual, notStrictEqual } from 'node:assert';
 
-import { merge } from '../../../ts/Shared/Utilities.js';
+import { extend, merge } from '../../../ts/Shared/Utilities.js';
 
 describe('merge function', () => {
 
@@ -114,5 +114,61 @@ describe('merge function', () => {
                 }
             }
         });
+    });
+});
+
+describe('extend function', () => {
+
+    it('should copy own properties onto the target object', () => {
+        const target = { a: 1 };
+        const result = extend(target, { b: 2 });
+
+        strictEqual(result, target); // The target object is modified
+        deepStrictEqual(target, { a: 1, b: 2 });
+    });
+
+    it('should create a new object when the target is undefined', () => {
+        deepStrictEqual(extend(void 0, { a: 1 }), { a: 1 });
+    });
+
+    it('should not mutate the prototype of the target object', () => {
+        // `JSON.parse` keeps `__proto__` as an own, enumerable key, unlike an
+        // object literal where it is intercepted by the parser
+        const maliciousPayload = JSON.parse(
+            '{"y":5,"__proto__":{"polluted":"yes"}}'
+        );
+        const target: Record<string, unknown> = {};
+
+        extend(target, maliciousPayload);
+
+        strictEqual(target.y, 5, 'Regular keys should still be copied');
+        strictEqual(
+            Object.getPrototypeOf(target),
+            Object.prototype,
+            'The prototype of the target should be unchanged'
+        );
+        strictEqual(
+            target.polluted,
+            void 0,
+            'The target should not inherit properties from the payload'
+        );
+        strictEqual(
+            ({} as Record<string, unknown>).polluted,
+            void 0,
+            'The object prototype should not be polluted'
+        );
+    });
+
+    it('should not overwrite the constructor of the target object', () => {
+        const maliciousPayload = JSON.parse('{"constructor":"hacked"}');
+        const target = {};
+
+        extend(target, maliciousPayload);
+
+        strictEqual(
+            target.constructor,
+            Object,
+            'The constructor of the target should be unchanged'
+        );
     });
 });

@@ -34,25 +34,32 @@ QUnit.test(
             seriesPosColor,
             pointColor;
 
-        var sColumn = chart.series[1];
+        const sColumn = chart.series[1],
+            brightness = sColumn.options.states.hover.brightness;
         seriesNegColor = Highcharts.color(sColumn.options.negativeColor)
-            .brighten(0.1)
+            .brighten(brightness)
             .get();
         seriesPosColor = Highcharts.color(sColumn.options.color)
-            .brighten(0.1)
+            .brighten(brightness)
             .get();
         $.each(sColumn.points, function (j, point) {
             point.setState('hover');
             pointColor = Highcharts.color(point.graphic.attr('fill'))
                 .brighten(sColumn.options.brightness)
                 .get();
-            assert.strictEqual(
-                point.y <= 0 ?
-                    pointColor === seriesNegColor :
-                    pointColor === seriesPosColor,
-                true,
-                'Color matched with options (column)'
-            );
+            if (point.y <= 0) {
+                assert.strictEqual(
+                    pointColor,
+                    seriesNegColor,
+                    'Color matched with options (negative column)'
+                );
+            } else {
+                assert.strictEqual(
+                    pointColor,
+                    seriesPosColor,
+                    'Color matched with options (positive column)'
+                );
+            }
         });
 
         var sLine = chart.series[0];
@@ -61,13 +68,19 @@ QUnit.test(
         $.each(sLine.points, function (j, point) {
             point.setState('hover');
             pointColor = Highcharts.color(point.graphic.attr('fill')).get();
-            assert.strictEqual(
-                point.y <= 0 ?
-                    pointColor === seriesNegColor :
-                    pointColor === seriesPosColor,
-                true,
-                'Color matched with options (series with marker)'
-            );
+            if (point.y <= 0) {
+                assert.strictEqual(
+                    pointColor,
+                    seriesNegColor,
+                    'Color matched with options (line with negative color)'
+                );
+            } else {
+                assert.strictEqual(
+                    pointColor,
+                    seriesPosColor,
+                    'Color matched with options (line with positive color)'
+                );
+            }
         });
 
         // Higher priority for states.fillColor than series.negativeColor

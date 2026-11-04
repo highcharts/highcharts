@@ -5,8 +5,9 @@
  *
  *  Scatter 3D series.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,8 +23,7 @@
 import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
-import Math3D from '../../Core/Math3D.js';
-const { pointCameraDistance } = Math3D;
+import { pointCameraDistance } from '../../Core/Math3D.js';
 import Scatter3DPoint from './Scatter3DPoint.js';
 import Scatter3DSeriesDefaults from './Scatter3DSeriesDefaults.js';
 import ScatterSeries from '../Scatter/ScatterSeries.js';
@@ -51,6 +51,7 @@ class Scatter3DSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: Scatter3DSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         Scatter3DSeriesDefaults
@@ -74,6 +75,7 @@ class Scatter3DSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public pointAttribs(point: Scatter3DPoint): SVGAttributes {
         const attribs = super.pointAttribs.apply(this, arguments);
 
@@ -94,6 +96,7 @@ class Scatter3DSeries extends ScatterSeries {
  * */
 
 interface Scatter3DSeries {
+    /** @internal */
     pointClass: typeof Scatter3DPoint;
 }
 

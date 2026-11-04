@@ -44,7 +44,11 @@ const GRID_KEY_DOC = 'https://www.highcharts.com/docs/grid/grid-key';
 /** Hostnames (exact or `*.domain`) where a Grid Key is not required. */
 const GRID_KEY_WILDCARD_DOMAINS = [
     'highcharts.com',
+    'codepen.io',
+    'cdpn.io',
     'jsfiddle.net',
+    'jshell.net',
+    'fiddle.jshell.net',
     'stackblitz.com',
     'highcharts.com.cn'
 ] as const;
@@ -261,7 +265,26 @@ function getPageHostname(): string | undefined {
     if (!defined(win.location)) {
         return void 0;
     }
-    return win.location.hostname.toLowerCase();
+    const normalize = (host: string): string => host
+        .toLowerCase()
+        // Defensive: strip trailing dot(s) (rare, but possible).
+        .replace(/\.+$/, '');
+
+    const hostname = normalize(win.location.hostname);
+
+    // Some sandboxes run code inside an `about:srcdoc`/`about:blank` iframe
+    // where `location.hostname` is empty. When available, fall back to the
+    // referrer hostname, which should be the sandbox domain.
+    if (
+        !hostname &&
+        defined(win.document) &&
+        isString(win.document.referrer) &&
+        win.document.referrer
+    ) {
+        return normalize(new URL(win.document.referrer).hostname);
+    }
+
+    return hostname;
 }
 
 /**

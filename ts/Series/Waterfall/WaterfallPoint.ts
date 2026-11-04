@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,18 +38,24 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public below?: boolean;
 
+    /** @internal */
     public box?: BBoxObject;
 
+    /** @internal */
     public isIntermediateSum?: boolean;
 
+    /** @internal */
     public isSum?: boolean;
 
+    /** @internal */
     public minPointLengthOffset?: number;
 
     public options!: WaterfallPointOptions;
 
+    /** @internal */
     public series!: WaterfallSeries;
 
     /* *
@@ -57,6 +64,7 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public getClassName(): string {
         let className = Point.prototype.getClassName.call(this);
 
@@ -70,6 +78,7 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
     }
 
     // Pass the null test in ColumnSeries.translate.
+    /** @internal */
     public isValid(): boolean {
         return (
             isNumber(this.y) ||

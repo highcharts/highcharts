@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,23 +36,10 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * @sample {highstock} stock/demo/areasplinerange/
  *         Area spline range
  *
- * @extends plotOptions.arearange
- *
- * @extends series,plotOptions.areasplinerange
- *
  * @excluding step, boostThreshold, boostBlending
- *
- * @excluding dataParser, dataURL, stack, step, boostThreshold, boostBlending
- *
  * @since 2.3.0
- *
  * @product highcharts highstock
- *
  * @requires highcharts-more
- *
- * @optionparent plotOptions.areasplinerange
- *
- * @optionparent series.areasplinerange
  */
 export interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
     states?: SeriesStatesOptions<AreaSplineRangeSeriesOptions>;

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -384,7 +385,7 @@ export interface PointMarkerOptions {
      * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
      * Inherit from series color (undefined)
      *
-     * @default ${palette.backgroundColor}
+     * @default 'var(--highcharts-background-color)'
      */
     lineColor?: ColorType;
 
@@ -667,10 +668,7 @@ export interface PointMarkerStateHoverOptions extends StateHoverOptions {
     /**
      * The additional line width for a hovered point.
      *
-     * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
-     * 2 pixels wider on hover
-     *
-     * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
+     * @sample {highcharts|highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
      * 2 pixels wider on hover
      *
      * @since 4.0.3
@@ -764,7 +762,7 @@ export interface PointMarkerStateSelectOptions extends StateSelectOptions {
      * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
      * Solid red discs for selected points
      *
-     * @default ${palette.neutralColor20}
+     * @default 'var(--highcharts-neutral-color-20)'
      */
     fillColor?: ColorType;
 
@@ -775,7 +773,7 @@ export interface PointMarkerStateSelectOptions extends StateSelectOptions {
      * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
      * Red line color for selected points
      *
-     * @default ${palette.neutralColor100}
+     * @default 'var(--highcharts-neutral-color-100)'
      */
     lineColor?: ColorType;
 

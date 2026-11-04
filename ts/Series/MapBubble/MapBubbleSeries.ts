@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,17 +24,9 @@ import type PointerEvent from '../../Core/PointerEvent';
 
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
+import MapPointSeries from '../MapPoint/MapPointSeries.js';
+import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        map: {
-            prototype: mapProto
-        },
-        mappoint: {
-            prototype: mapPointProto
-        }
-    }
-} = SeriesRegistry;
 import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -266,8 +259,9 @@ class MapBubbleSeries extends BubbleSeries {
 
     public points!: Array<MapBubblePoint>;
 
-    public clearBounds = mapProto.clearBounds;
+    public clearBounds = MapSeries.prototype.clearBounds;
 
+    /** @internal */
     public searchPoint(
         e: PointerEvent,
         compareX?: boolean
@@ -278,8 +272,9 @@ class MapBubbleSeries extends BubbleSeries {
         }, compareX, e);
     }
 
+    /** @internal */
     translate(): void {
-        mapPointProto.translate.call(this);
+        MapPointSeries.prototype.translate.call(this);
         this.getRadii();
         this.translateBubble();
     }
@@ -293,15 +288,23 @@ class MapBubbleSeries extends BubbleSeries {
  * */
 
 interface MapBubbleSeries {
+    /** @internal */
     type: string;
-    getProjectedBounds: typeof mapProto.getProjectedBounds;
+    /** @internal */
+    getProjectedBounds: typeof MapSeries.prototype.getProjectedBounds;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof MapBubblePoint;
-    setData: typeof mapProto.setData;
-    processData: typeof mapProto.processData;
-    projectPoint: typeof mapPointProto.projectPoint;
-    setOptions: typeof mapProto.setOptions;
-    updateData: typeof mapProto.updateData;
+    /** @internal */
+    setData: typeof MapSeries.prototype.setData;
+    /** @internal */
+    processData: typeof MapSeries.prototype.processData;
+    /** @internal */
+    projectPoint: typeof MapPointSeries.prototype.projectPoint;
+    /** @internal */
+    setOptions: typeof MapSeries.prototype.setOptions;
+    /** @internal */
     xyFromShape: boolean;
 }
 extend(MapBubbleSeries.prototype, {
@@ -309,7 +312,7 @@ extend(MapBubbleSeries.prototype, {
 
     axisTypes: ['colorAxis'],
 
-    getProjectedBounds: mapProto.getProjectedBounds,
+    getProjectedBounds: MapSeries.prototype.getProjectedBounds,
 
     isCartesian: false,
 
@@ -318,17 +321,15 @@ extend(MapBubbleSeries.prototype, {
 
     pointClass: MapBubblePoint,
 
-    processData: mapProto.processData,
+    processData: MapSeries.prototype.processData,
 
-    projectPoint: mapPointProto.projectPoint,
+    projectPoint: MapPointSeries.prototype.projectPoint,
 
     kdAxisArray: ['plotX', 'plotY'],
 
-    setData: mapProto.setData,
+    setData: MapSeries.prototype.setData,
 
-    setOptions: mapProto.setOptions,
-
-    updateData: mapProto.updateData,
+    setOptions: MapSeries.prototype.setOptions,
 
     useMapGeometry: true,
 
@@ -367,7 +368,6 @@ export default MapBubbleSeries;
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.mapbubble
- * @excluding dataParser, dataURL
  * @product   highmaps
  * @apioption series.mapbubble
  */

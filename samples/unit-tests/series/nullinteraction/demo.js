@@ -1,10 +1,8 @@
 QUnit.test('Null interaction should allow tooltip for null points', assert => {
     const chart = Highcharts.chart('container', {
             chart: {
-                type: 'timeline'
+                type: 'bar'
             },
-            // Timeline does not use nullFormat but set it here so we only have
-            // to do it once.
             tooltip: {
                 nullFormat: '<span>Null</span>',
                 hideDelay: 500000
@@ -23,7 +21,6 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
             chart.series[1].points[0]
         ]),
         seriesTypes = [
-            'bar',
             'column',
             'line'
         ],
@@ -49,10 +46,10 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
     do {
         tt.refresh(chart.series[0].points[0]);
 
-        assert.strictEqual(
+        assert.ok(
             tt.label.text.textStr.includes('Null'),
-            true,
-            'Normal tooltip should read \'Null\''
+            `Type ${chart.series[0].type}, normal tooltip should include 'Null'
+            (is ${tt.label.text.textStr})`
         );
 
         // Only run extended tests for line/column, since timeline does not

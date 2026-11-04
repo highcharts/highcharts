@@ -2,8 +2,9 @@
  *
  *  (c) 2010-2026 Torstein Honsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -364,7 +365,7 @@ export interface RangeSelectorOptions {
      * Deprecated. The height of the range selector. Currently it is
      * calculated dynamically.
      *
-     * @deprecated
+     * @deprecated 6.0.0
      * @since 2.1.9
      */
     height?: number;
@@ -375,7 +376,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
      *
-     * @default none
+     * @default 'none'
      * @since     1.3.7
      */
     inputBoxBorderColor: ColorString;
@@ -416,7 +417,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector
      *
-     * @default   %e %b %Y
+     * @default   '%[ebY]'
      */
     inputDateFormat: Time.DateTimeFormat;
 
@@ -450,7 +451,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector
      *
-     * @default   %Y-%m-%d
+     * @default   '%Y-%m-%d'
      */
     inputEditDateFormat: string;
 
@@ -521,7 +522,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/vertical-align-bottom/
      *         Bottom
      *
-     * @default top
+     * @default 'top'
      * @since 6.0.0
      */
     verticalAlign: VerticalAlignValue;

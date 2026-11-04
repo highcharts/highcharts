@@ -1,0 +1,15 @@
+---
+name: Cell editing accessibility
+authors:
+  - Dawid Draguła
+js_wrap: b
+alt_text: >-
+  Editable data grid with screen reader announcements for cell editing
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 85
+use_png_thumbnail: true
+is_pro: true
+...

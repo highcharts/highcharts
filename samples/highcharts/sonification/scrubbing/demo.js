@@ -23,6 +23,9 @@ const chart = Highcharts.chart('container', {
     legend: {
         enabled: false
     },
+    tooltip: {
+        valueDecimals: 2
+    },
     series: [{
         data: data
     }]

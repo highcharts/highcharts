@@ -11,6 +11,8 @@ export interface ControlOptions {
     max?: number;
     /** The minimum value for number controls */
     min?: number;
+    /** Whether the control value can be set to null */
+    nullable?: boolean;
     /** The option valid values for select controls */
     options?: Array<string>;
     /**
@@ -88,6 +90,12 @@ export interface SampleGeneratorConfig {
      */
     chartOptionsExtra?: Options;
     /**
+     * Preliminary code path to use instead of the default
+     * `https://code.highcharts.com` when generating the sample. This can be
+     * useful for testing beta versions or custom builds.
+     */
+    codePath?: string;
+    /**
      * Controls to generate for this sample
      */
     controls?: ControlOptions[];
@@ -132,6 +140,7 @@ export interface SampleGeneratorConfig {
         'categories-12' |
         'column' |
         'datetime' |
+        'gauge' |
         'linear-12'
     )[];
 }

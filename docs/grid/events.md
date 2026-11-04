@@ -1,5 +1,9 @@
 ---
 tags: ["grid-pro"]
+description: >-
+  Locate Grid Pro event options for grid lifecycle, columns, cells, headers,
+  pagination, and row pinning; review event names, callback context,
+  cancellation, and configuration examples for common interactions.
 ---
 
 # Events
@@ -131,6 +135,7 @@ Row pinning events are configured in `rendering.rows.pinning.events`:
     rendering: {
         rows: {
             pinning: {
+                enabled: false,
                 events: {
                     beforeRowPin: function (event) {
                         console.log(

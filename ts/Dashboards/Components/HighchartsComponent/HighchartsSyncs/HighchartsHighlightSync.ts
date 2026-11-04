@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -425,7 +426,8 @@ const syncPair: SyncPair = {
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.getTable();
+                const connectorId = connectorHandlers[i]?.options.id;
+                const table = this.getDataTable(connectorId);
                 if (!table) {
                     continue;
                 }

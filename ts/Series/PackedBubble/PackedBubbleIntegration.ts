@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -32,7 +33,7 @@ import VerletIntegration from '../Networkgraph/VerletIntegration.js';
  * */
 
 /**
- * @private
+ * @internal
  */
 function barycenter(this: PackedBubbleLayout): void {
     const layout = this,
@@ -91,7 +92,7 @@ function barycenter(this: PackedBubbleLayout): void {
 }
 
 /**
- * @private
+ * @internal
  */
 function repulsive(
     this: PackedBubbleLayout,
@@ -118,7 +119,7 @@ function repulsive(
 }
 
 /**
- * @private
+ * @internal
  */
 function repulsiveForceFunction(
     d: number,

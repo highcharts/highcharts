@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -17,9 +18,10 @@
 import type SMAPointType from '../SMA/SMAPoint';
 import type PivotPointsIndicator from './PivotPointsIndicator';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const SMAPoint: typeof SMAPointType =
-    SeriesRegistry.seriesTypes.sma.prototype.pointClass;
+    SMAIndicator.prototype.pointClass;
 
 /* *
  *
@@ -56,7 +58,6 @@ function destroyExtraLabels(
  *
  * */
 
-/** @internal */
 class PivotPointsPoint extends SMAPoint {
 
     /* *
@@ -65,8 +66,11 @@ class PivotPointsPoint extends SMAPoint {
      *
      * */
 
+    /** @internal */
     public P!: number;
+    /** @internal */
     public pivotLine!: string;
+    /** @internal */
     public series!: PivotPointsIndicator;
 
     /* *
@@ -75,6 +79,7 @@ class PivotPointsPoint extends SMAPoint {
      *
      * */
 
+    /** @internal */
     public destroyElements(
         this: PivotPointsPoint
     ): void {
@@ -82,6 +87,7 @@ class PivotPointsPoint extends SMAPoint {
     }
 
     // This method is called when removing points, e.g. series.update()
+    /** @internal */
     public destroy(
         this: PivotPointsPoint
     ): void {
@@ -96,5 +102,4 @@ class PivotPointsPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default PivotPointsPoint;

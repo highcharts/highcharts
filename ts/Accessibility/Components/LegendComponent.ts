@@ -5,8 +5,9 @@
  *
  *  Accessibility component for chart legend.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,8 +29,7 @@ import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
@@ -44,7 +44,6 @@ import {
     addEvent,
     fireEvent,
     isNumber,
-    pick,
     syncTimeout
 } from '../../Shared/Utilities.js';
 const {
@@ -61,18 +60,21 @@ const {
  * */
 
 
+/** @internal */
 declare module '../../Core/Legend/LegendItem' {
     interface LegendItem {
         a11yProxyElement?: ProxyElement;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         a11yProxyElement?: ProxyElement;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         a11yProxyElement?: ProxyElement;
@@ -87,9 +89,7 @@ declare module '../../Core/Series/SeriesBase' {
  * */
 
 
-/**
- * @private
- */
+/** @internal */
 function scrollLegendToItem(legend: Legend, itemIx: number): void {
     const itemPage = (legend.allItems[itemIx].legendItem || {}).pageIx,
         curPage: number = legend.currentPage as any;
@@ -100,14 +100,10 @@ function scrollLegendToItem(legend: Legend, itemIx: number): void {
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function shouldDoLegendA11y(chart: Chart): boolean {
     const items = chart.legend && chart.legend.allItems,
-        legendA11yOptions: LegendAccessibilityOptions = (
-            (chart.options.legend as any).accessibility || {}
-        ),
+        legendA11yOptions = chart.options.legend?.accessibility,
         unsupportedColorAxis = chart.colorAxis && chart.colorAxis.some(
             (c): boolean => !c.dataClasses || !c.dataClasses.length
         );
@@ -115,14 +111,12 @@ function shouldDoLegendA11y(chart: Chart): boolean {
     return !!(
         items && items.length &&
         !unsupportedColorAxis &&
-        legendA11yOptions.enabled !== false
+        legendA11yOptions?.enabled !== false
     );
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function setLegendItemHoverState(
     hoverActive: boolean,
     item: Legend.Item
@@ -151,9 +145,10 @@ function setLegendItemHoverState(
 /**
  * The LegendComponent class
  *
- * @private
  * @class
  * @name Highcharts.LegendComponent
+ *
+ * @internal
  */
 class LegendComponent extends AccessibilityComponent {
 
@@ -177,7 +172,8 @@ class LegendComponent extends AccessibilityComponent {
 
     /**
      * Init the component
-     * @private
+     *
+     * @internal
      */
     public init(): void {
         const component = this;
@@ -221,7 +217,7 @@ class LegendComponent extends AccessibilityComponent {
                     (): void => component.proxyProvider
                         .updateGroupProxyElementPositions('legend'),
                     animObject(
-                        pick(this.chart.renderer.globalAnimation, true)
+                        (this.chart.renderer.globalAnimation ?? true)
                     ).duration
                 );
             }
@@ -231,7 +227,8 @@ class LegendComponent extends AccessibilityComponent {
 
     /**
      * Update visibility of legend items when using paged legend
-     * @private
+     *
+     * @internal
      */
     public updateLegendItemProxyVisibility(): void {
         const chart = this.chart;
@@ -276,9 +273,7 @@ class LegendComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public onChartRender(): void {
         if (!shouldDoLegendA11y(this.chart)) {
             this.removeProxies();
@@ -286,9 +281,7 @@ class LegendComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public highlightAdjacentLegendPage(direction: number): void {
         const chart = this.chart;
         const legend = chart.legend;
@@ -312,9 +305,7 @@ class LegendComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public updateProxyPositionForItem(
         item: Legend.Item
     ): void {
@@ -327,7 +318,8 @@ class LegendComponent extends AccessibilityComponent {
     /**
      * Returns false if legend a11y is disabled and proxies were not created,
      * true otherwise.
-     * @private
+     *
+     * @internal
      */
     public recreateProxies(): boolean {
         const focusedElement = doc.activeElement;
@@ -352,17 +344,13 @@ class LegendComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public removeProxies(): void {
         this.proxyProvider.removeGroup('legend');
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public updateLegendTitle(): void {
         const chart = this.chart;
         const legendTitle = stripHTMLTags(
@@ -389,9 +377,7 @@ class LegendComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public addLegendProxyGroup(): void {
         const a11yOptions = this.chart.options.accessibility;
         const groupRole = a11yOptions.landmarkVerbosity === 'all' ?
@@ -406,9 +392,7 @@ class LegendComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public proxyLegendItems(): void {
         const component = this,
             items = (this.chart.legend || {}).allItems || [];
@@ -424,10 +408,7 @@ class LegendComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
-     */
+    /** @internal */
     public proxyLegendItem(
         item: Legend.Item
     ): void {
@@ -482,7 +463,8 @@ class LegendComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @private
+     *
+     * @internal
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes,
@@ -542,7 +524,8 @@ class LegendComponent extends AccessibilityComponent {
 
     /**
      * Arrow key navigation
-     * @private
+     *
+     * @internal
      */
     public onKbdArrowKey(
         keyboardNavigationHandler: KeyboardNavigationHandler,
@@ -570,9 +553,9 @@ class LegendComponent extends AccessibilityComponent {
     }
 
     /**
-     * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
      * @return {number} Response code
+     *
+     * @internal
      */
     public onKbdClick(
         keyboardNavigationHandler: KeyboardNavigationHandler
@@ -589,9 +572,7 @@ class LegendComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public shouldHaveLegendNavigation(): boolean {
         if (!shouldDoLegendA11y(this.chart)) {
             return false;
@@ -615,7 +596,8 @@ class LegendComponent extends AccessibilityComponent {
 
     /**
      * Clean up
-     * @private
+     *
+     * @internal
      */
     public destroy(): void {
         this.removeProxies();
@@ -630,6 +612,7 @@ class LegendComponent extends AccessibilityComponent {
  * */
 
 
+/** @internal */
 interface LegendComponent {
     chart: LegendComponent.ChartComposition;
 }
@@ -642,6 +625,7 @@ interface LegendComponent {
  * */
 
 
+/** @internal */
 namespace LegendComponent {
 
 
@@ -652,12 +636,14 @@ namespace LegendComponent {
      * */
 
 
+    /** @internal */
     export declare class ChartComposition extends Accessibility.ChartComposition {
         highlightedLegendItemIx?: number;
         /** @requires modules/accessibility */
         highlightLegendItem(ix: number): boolean;
     }
 
+    /** @internal */
     export declare class LegendComposition extends Legend {
         chart: ChartComposition;
     }
@@ -672,7 +658,8 @@ namespace LegendComponent {
 
     /**
      * Highlight legend item by index.
-     * @private
+     *
+     * @internal
      */
     function chartHighlightLegendItem(
         this: ChartComposition,
@@ -707,9 +694,7 @@ namespace LegendComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart,
         LegendClass: typeof Legend
@@ -731,7 +716,8 @@ namespace LegendComponent {
 
     /**
      * Keep track of pressed state for legend items.
-     * @private
+     *
+     * @internal
      */
     function legendOnAfterColorizeItem(
         this: LegendComposition,
@@ -761,4 +747,5 @@ namespace LegendComponent {
  * */
 
 
+/** @internal */
 export default LegendComponent;

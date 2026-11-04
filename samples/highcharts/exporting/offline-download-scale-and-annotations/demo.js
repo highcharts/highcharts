@@ -41,6 +41,7 @@ Highcharts.chart('container', {
 
     exporting: {
         scale: 2,
+        libURL: 'https://code.highcharts.com/lib/',
         buttons: {
             contextButton: {
                 menuItems: [

@@ -2,8 +2,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -25,9 +26,15 @@ import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 import type Grid from '../Core/Grid';
+import type { ProcessUpdateDiffEvent } from '../Core/Grid';
 
 import Globals from '../../Core/Globals.js';
-import { addEvent, fireEvent, pushUnique } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    fireEvent,
+    isObject,
+    pushUnique
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -98,6 +105,12 @@ function compose(
         });
     });
 
+    addEvent(GridClass, 'processUpdateDiff', (
+        e: GridEvent<Grid> & ProcessUpdateDiffEvent
+    ): void => {
+        stripEventsFromDiff(e.diff);
+    });
+
     ([ // TableCell Events
         'mouseOver',
         'mouseOut',
@@ -138,6 +151,33 @@ function compose(
             }
         );
     });
+}
+
+/**
+ * Removes every `events` group from an update diff (in place), pruning
+ * containers it empties. Event callbacks are read live, so they need no
+ * re-render.
+ *
+ * @param diff
+ * The update diff, stripped in place.
+ */
+function stripEventsFromDiff(diff: AnyRecord): void {
+    for (const key of Object.keys(diff)) {
+        if (key === 'events') {
+            delete diff[key];
+            continue;
+        }
+
+        const value = diff[key];
+
+        // Recurse into plain option objects only, never class instances.
+        if (isObject(value, true) && value.constructor === Object) {
+            stripEventsFromDiff(value);
+            if (Object.keys(value).length === 0) {
+                delete diff[key];
+            }
+        }
+    }
 }
 
 

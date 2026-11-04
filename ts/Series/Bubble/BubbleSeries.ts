@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,6 +27,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type KDPointSearchObjectBase from '../../Core/Series/KDPointSearchObjectBase';
 import type PointerEvent from '../../Core/PointerEvent';
+
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import H from '../../Core/Globals.js';
@@ -33,24 +35,20 @@ const {
     composed,
     noop
 } = H;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: { prototype: columnProto },
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
 import {
     addEvent,
     arrayMax,
     arrayMin,
     clamp,
+    correctFloat,
     defined,
     extend,
     isNumber,
     merge,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -168,8 +166,8 @@ function onAxisFoundExtremes(
             ] as Array<[string, string, number]>
         ).forEach((keys: [string, string, number]): void => {
             if (
-                typeof pick(
-                    (this.options as any)[keys[0]],
+                typeof (
+                    (this.options as any)[keys[0]] ??
                     (this as any)[keys[1]]
                 ) === 'undefined'
             ) {
@@ -178,6 +176,126 @@ function onAxisFoundExtremes(
         });
     }
 
+}
+
+/**
+ * The padding above is applied before the tick positions are known, and the
+ * extremes shift again while they are computed, which can leave bubbles
+ * outside the plot area. Run it again against the final extremes, and repeat,
+ * since padding one end moves every bubble. #24039
+ */
+function onAxisAfterSetTickPositions(
+    this: Axis
+): void {
+    const paddedMin = this.min,
+        paddedMax = this.max,
+        { options, tickInterval, tickPositions } = this;
+
+    if (!isNumber(paddedMin) || !isNumber(paddedMax)) {
+        return;
+    }
+
+    // Growing by whole ticks keeps `startOnTick` and `endOnTick` true, but
+    // only where they are evenly spaced and no tick count has been settled on
+    const firstTick = tickPositions[0],
+        lastTick = tickPositions[tickPositions.length - 1],
+        canSnap = (
+            tickInterval > 0 &&
+            tickPositions.length > 0 &&
+            !this.tickAmount &&
+            !this.categories &&
+            !this.dateTime &&
+            // Custom positions are not laid out on the tick interval, and
+            // ticks inside a break are filtered out by the broken axis
+            !options.tickPositions &&
+            !options.tickPositioner &&
+            !this.brokenAxis?.hasBreaks
+        ),
+        snapStart = canSnap && options.startOnTick,
+        snapEnd = canSnap && options.endOnTick,
+        tickSteps = (value: number, atEnd: boolean): number => Math.max(
+            Math.ceil(
+                correctFloat(
+                    (atEnd ? value - lastTick : firstTick - value) /
+                    tickInterval
+                )
+            ),
+            0
+        );
+
+    // The overflow halves with each pass rather than clearing at once, so
+    // bubbles a third of the axis wide settle a couple of pixels out. Beyond
+    // five the axis has widened past the give-up threshold below anyway
+    let passes = 5;
+
+    while (passes--) {
+        const { min, max } = this;
+
+        onAxisFoundExtremes.call(this);
+
+        // Rounding out moves every bubble too, so it belongs in the loop.
+        // Only where the padding moved something, or an axis with no bubbles
+        // to seat would lose the tick positions it settled on
+        if (this.min !== min || this.max !== max) {
+            const stepsMin = snapStart ? tickSteps(this.min || 0, false) : 0,
+                stepsMax = snapEnd ? tickSteps(this.max || 0, true) : 0;
+
+            if (stepsMin) {
+                this.min = correctFloat(firstTick - stepsMin * tickInterval);
+            }
+            if (stepsMax) {
+                this.max = correctFloat(lastTick + stepsMax * tickInterval);
+            }
+        }
+
+        // Bubbles near the width of the plot area are only seated by zooming
+        // far out. Rather than do that, give up past double the padded range
+        if ((this.max || 0) - (this.min || 0) > (paddedMax - paddedMin) * 2) {
+            this.min = paddedMin;
+            this.max = paddedMax;
+            break;
+        }
+
+        if (this.min === min && this.max === max) {
+            break;
+        }
+    }
+
+    // Leave a chart whose bubbles already fit exactly as it was, rather than
+    // nudging every bubble chart by a fraction of a pixel
+    const transA = this.len / ((paddedMax - paddedMin) || 1);
+
+    if (
+        Math.abs((this.min || 0) - paddedMin) * transA < 1 &&
+        Math.abs((this.max || 0) - paddedMax) * transA < 1
+    ) {
+        this.min = paddedMin;
+        this.max = paddedMax;
+        return;
+    }
+
+    for (const atEnd of [false, true]) {
+        if (
+            !(atEnd ? snapEnd : snapStart) ||
+            (atEnd ? this.max === paddedMax : this.min === paddedMin)
+        ) {
+            continue;
+        }
+        const steps = tickSteps((atEnd ? this.max : this.min) || 0, atEnd);
+
+        for (let i = 1; i <= steps; i++) {
+            const tick = correctFloat(
+                (atEnd ? lastTick : firstTick) +
+                (atEnd ? i : -i) * tickInterval
+            );
+
+            if (atEnd) {
+                tickPositions.push(tick);
+            } else {
+                tickPositions.unshift(tick);
+            }
+        }
+    }
 }
 
 /**
@@ -223,7 +341,6 @@ function onAxisAfterRender(this: Axis): void {
  * */
 
 /**
- * @internal
  */
 class BubbleSeries extends ScatterSeries {
 
@@ -247,6 +364,7 @@ class BubbleSeries extends ScatterSeries {
      * @product      highcharts highstock
      * @requires     highcharts-more
      * @optionparent plotOptions.bubble
+     * @internal
      */
     public static defaultOptions: BubbleSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
@@ -271,6 +389,22 @@ class BubbleSeries extends ScatterSeries {
          * @since 6.1.0
          */
         animationLimit: 250,
+
+        /**
+         * When using automatic point colors pulled from the global
+         * [colors](colors) or series-specific
+         * [plotOptions.bubble.colors](series.colors) collections, this option
+         * determines whether the chart should receive one color per series or
+         * one color per point.
+         *
+         * In styled mode, the `colors` or `series.colors` arrays are not
+         * supported, and instead this option gives the points individual color
+         * class names on the form `highcharts-color-{n}`.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @apioption plotOptions.bubble.colorByPoint
+         */
 
         /**
          * Whether to display negative sized bubbles. The threshold is given
@@ -504,6 +638,7 @@ class BubbleSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -513,6 +648,11 @@ class BubbleSeries extends ScatterSeries {
 
         if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
+            addEvent(
+                AxisClass,
+                'afterSetTickPositions',
+                onAxisAfterSetTickPositions
+            );
             addEvent(
                 AxisClass,
                 'afterRender',
@@ -530,24 +670,32 @@ class BubbleSeries extends ScatterSeries {
 
     public data!: Array<BubblePoint>;
 
+    /** @internal */
     public displayNegative: BubbleSeriesOptions['displayNegative'];
 
+    /** @internal */
     public maxPxSize!: number;
 
+    /** @internal */
     public minPxSize!: number;
 
     public options!: BubbleSeriesOptions;
 
     public points!: Array<BubblePoint>;
 
+    /** @internal */
     public radii!: Array<(number|null)>;
 
+    /** @internal */
     public yData!: Array<(number|null)>;
 
+    /** @internal */
     public zData!: Array<(number|null)>;
 
+    /** @internal */
     public zMax: BubbleSeriesOptions['zMax'];
 
+    /** @internal */
     public zMin: BubbleSeriesOptions['zMin'];
 
     /* *
@@ -596,7 +744,7 @@ class BubbleSeries extends ScatterSeries {
      * @internal
      */
     public getRadii(): void {
-        const zData = this.getColumn('z'),
+        const zData = [...this.getColumn('z', false, true)],
             yData = this.getColumn('y'),
             radii = [] as Array<(number|null)>;
 
@@ -621,14 +769,16 @@ class BubbleSeries extends ScatterSeries {
                     ).getZExtremes();
 
                     if (zExtremes) {
-                        // Changed '||' to 'pick' because min or max can be 0.
+                        // Use nullish coalescing because min or max can be 0.
                         // #17280
                         zMin = Math.min(
-                            pick(zMin, zExtremes.zMin),
+                            (
+                                zMin ?? zExtremes.zMin),
                             zExtremes.zMin
                         );
                         zMax = Math.max(
-                            pick(zMax, zExtremes.zMax),
+                            (
+                                zMax ?? zExtremes.zMax),
                             zExtremes.zMax
                         );
                         valid = true;
@@ -770,16 +920,18 @@ class BubbleSeries extends ScatterSeries {
         this.translateBubble();
     }
 
+    /** @internal */
     public translateBubble(): void {
-        const { data, options, radii } = this,
+        const { options, radii } = this,
             { minPxSize } = this.getPxExtremes();
 
-        // Set the shape type and arguments to be picked up in drawPoints
-        let i = data.length;
-
-        while (i--) {
-            const point = data[i],
-                radius = radii ? radii[i] : 0; // #1737
+        this.data.concat(
+            this.condemnedPoints as BubblePoint[]
+        ).forEach((point, i): void => {
+            const { plotX = 0, plotY = 0 } = point,
+                radius = point.condemned ?
+                    (point.marker?.radius || 0) :
+                    (radii ? radii[i] : 0); // #1737
 
             // Negative points means negative z values (#9728)
             if (this.zoneAxis === 'z') {
@@ -793,25 +945,31 @@ class BubbleSeries extends ScatterSeries {
                     width: 2 * radius,
                     height: 2 * radius
                 });
+
+                // Rank data labels by the bubble size. The point's `y` is a
+                // position, and the radius accounts for `sizeBy`,
+                // `zThreshold` and the size limits (#23585).
+                point.labelrank = point.options.labelrank ?? radius;
             }
 
             if (isNumber(radius) && radius >= minPxSize / 2) {
                 // Alignment box for the data label
                 point.dlBox = {
-                    x: (point.plotX as any) - radius,
-                    y: (point.plotY as any) - radius,
+                    x: plotX - radius,
+                    y: plotY - radius,
                     width: 2 * radius,
                     height: 2 * radius
                 };
-            } else { // Below zThreshold
-                // #1691
+
+            } else {
+                // Below zThreshold, #1691
                 point.shapeArgs = point.plotY = point.dlBox = void 0;
                 point.isInside = false; // #17281
             }
-        }
-
+        });
     }
 
+    /** @internal */
     public getPxExtremes(): BubblePxExtremes {
         const smallestSize = Math.min(
             this.chart.plotWidth,
@@ -828,31 +986,32 @@ class BubbleSeries extends ScatterSeries {
             return isPercent ? smallestSize * length / 100 : length;
         };
 
-        const minPxSize = getPxSize(pick(this.options.minSize, 8));
+        const minPxSize = getPxSize(this.options.minSize ?? 8);
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
         const maxPxSize = Math.max(
-            getPxSize(pick(this.options.maxSize, '20%')),
+            getPxSize(this.options.maxSize ?? '20%'),
             minPxSize
         );
 
         return { minPxSize, maxPxSize };
     }
 
+    /** @internal */
     public getZExtremes(): BubbleZExtremes|undefined {
 
         const options = this.options,
             zData = this.getColumn('z').filter(isNumber);
 
         if (zData.length) {
-            const zMin = pick(options.zMin, clamp(
+            const zMin = (options.zMin ?? clamp(
                 arrayMin(zData),
                 options.displayNegative === false ?
                     (options.zThreshold || 0) :
                     -Number.MAX_VALUE,
                 Number.MAX_VALUE
             ));
-            const zMax = pick(options.zMax, arrayMax(zData));
+            const zMax = (options.zMax ?? arrayMax(zData));
 
             if (isNumber(zMin) && isNumber(zMax)) {
                 return { zMin, zMax };
@@ -921,9 +1080,9 @@ class BubbleSeries extends ScatterSeries {
  *
  * */
 
-/** @internal */
 interface BubbleSeries {
-    alignDataLabel: typeof columnProto.alignDataLabel;
+    /** @internal */
+    alignDataLabel: typeof ColumnSeries.prototype.alignDataLabel;
     bubblePadding: boolean;
     isBubble: true;
     pointClass: typeof BubblePoint;
@@ -931,7 +1090,7 @@ interface BubbleSeries {
 }
 
 extend(BubbleSeries.prototype, {
-    alignDataLabel: columnProto.alignDataLabel,
+    alignDataLabel: ColumnSeries.prototype.alignDataLabel,
     applyZones: noop,
     bubblePadding: true,
     isBubble: true,
@@ -970,7 +1129,6 @@ addEvent(BubbleSeries, 'update', (e): void => {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bubble: typeof BubbleSeries;
@@ -984,7 +1142,6 @@ SeriesRegistry.registerSeriesType('bubble', BubbleSeries);
  *
  * */
 
-/** @internal */
 export default BubbleSeries;
 
 /* *
@@ -1010,7 +1167,7 @@ export default BubbleSeries;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.bubble
- * @excluding dataParser, dataURL, legendSymbolColor, stack
+ * @excluding legendSymbolColor, stack
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.bubble

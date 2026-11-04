@@ -5,14 +5,15 @@
  *
  *  Dot plot series type for Highcharts
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
 
 /**
- * @private
+ * @internal
  * @todo
  * - Check update, remove etc.
  * - Custom icons like persons, carts etc. Either as images, font icons or
@@ -33,11 +34,9 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import DotPlotSeriesDefaults from './DotPlotSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
-import { extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
+import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -46,7 +45,6 @@ import { extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.dotplot
  *
@@ -60,6 +58,7 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DotPlotSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         DotPlotSeriesDefaults
@@ -83,6 +82,7 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             options = series.options,
@@ -125,10 +125,9 @@ class DotPlotSeries extends ColumnSeries {
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions as any).symbol
                 ),
-                radius = pick(
-                    pointMarkerOptions.radius,
-                    (seriesMarkerOptions as any).radius
-                ),
+                radius =
+                    pointMarkerOptions.radius ??
+                    (seriesMarkerOptions as any).radius,
                 isSquare = symbol !== 'rect',
                 width = isSquare ? height : slotWidth,
                 shapeArgs = point.shapeArgs || {},
@@ -223,7 +222,9 @@ class DotPlotSeries extends ColumnSeries {
  * */
 
 interface DotPlotSeries {
+    /** @internal */
     pointAttr?: SVGAttributes;
+    /** @internal */
     pointClass: typeof DotPlotPoint;
 }
 

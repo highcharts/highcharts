@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,8 +27,8 @@ import type {
 } from './WMAOptions';
 import type WMAPoint from './WMAPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -97,7 +98,6 @@ function populateAverage(
 /**
  * The SMA series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.wma
  *
@@ -121,9 +121,10 @@ class WMAIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/wma
+     * @requires     indicators/indicators
+     * @requires     indicators/wma
      * @optionparent plotOptions.wma
+     * @internal
      */
     public static defaultOptions: WMAOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -148,6 +149,7 @@ class WMAIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: WMAParamsOptions
@@ -217,7 +219,6 @@ class WMAIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface WMAIndicator {
     pointClass: typeof WMAPoint;
 }
@@ -228,7 +229,6 @@ interface WMAIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wma: typeof WMAIndicator;
@@ -243,7 +243,6 @@ SeriesRegistry.registerSeriesType('wma', WMAIndicator);
  *
  * */
 
-/** @internal */
 export default WMAIndicator;
 
 /* *
@@ -259,9 +258,8 @@ export default WMAIndicator;
  * @extends   series,plotOptions.wma
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/wma
+ * @requires  indicators/indicators
+ * @requires  indicators/wma
  * @apioption series.wma
  */
 

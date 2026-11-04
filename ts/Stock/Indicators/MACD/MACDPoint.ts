@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,13 +22,18 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class MACDPoint extends SMAPoint {
+    /** @internal */
     public series: MACDIndicator;
+    /** @internal */
     public signal: number;
+    /** @internal */
     public MACD: number;
+    /** @internal */
     public y: number;
+    /** @internal */
     public plotMACD?: number;
+    /** @internal */
     public plotSignal?: number;
 }
 
@@ -37,5 +43,4 @@ declare class MACDPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default MACDPoint;

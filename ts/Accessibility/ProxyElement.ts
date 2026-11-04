@@ -9,8 +9,9 @@
  *  The ProxyElement class represents such an element, and deals with
  *  overlay positioning and mirroring events for the target.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,6 +38,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 type Nullable<T> = {
     [P in keyof T]: T[P] | null;
 };
+/** @internal */
 export type NullableHTMLAttributes = Nullable<HTMLAttributes>;
 
 import H from '../Core/Globals.js';
@@ -64,8 +66,9 @@ const {
  * Represents a proxy element that overlays a target and relays events
  * to its target.
  *
- * @private
  * @class
+ *
+ * @internal
  */
 class ProxyElement {
 
@@ -284,6 +287,7 @@ class ProxyElement {
             margin: 0,
             display: 'block',
             position: 'absolute',
+            'pointer-events': 'none',
             '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)'
         });
     }
@@ -345,6 +349,7 @@ class ProxyElement {
  *
  * */
 
+/** @internal */
 namespace ProxyElement {
 
     /* *
@@ -353,6 +358,7 @@ namespace ProxyElement {
      *
      * */
 
+    /** @internal */
     export interface Target {
         click: (DOMElementType|SVGElement|HTMLElement);
         visual?: DOMElementType;
@@ -366,4 +372,5 @@ namespace ProxyElement {
  *
  * */
 
+/** @internal */
 export default ProxyElement;

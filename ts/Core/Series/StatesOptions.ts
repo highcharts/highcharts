@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,7 +20,11 @@ import type ColorType from '../Color/ColorType';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type { DeepPartial } from '../../Shared/Types';
 import type { PointMarkerOptions } from './PointOptions';
-import type SeriesOptions from './SeriesOptions';
+import type {
+    SeriesOptions,
+    SeriesStateHoverHaloOptions
+} from './SeriesOptions';
+import type { AnimationOptions } from '../Animation/AnimationOptions';
 
 /* *
  *
@@ -30,28 +35,36 @@ import type SeriesOptions from './SeriesOptions';
 export interface StateClassWithOptions {}
 
 export type StateGenericOptions<T extends SeriesOptions | PointMarkerOptions> = (
-    DeepPartial<Omit<T, ('states'|'data')>>
+    DeepPartial<Omit<T, ('states'|'data'|'nodes'| keyof StateOptionsBase)>>
 );
 
-export interface StateHoverOptions {
+// Internal notes: Used to ensure ColorType doesn't get loosened by DeepPartial,
+// and all shared options.
+export interface StateOptionsBase {
+    animation?: (boolean|DeepPartial<AnimationOptions>);
+    borderColor?: ColorType;
     color?: ColorType;
     dashStyle?: DashStyleValue;
+    enabled?: boolean;
+    fillColor?: ColorType;
+    halo?: (boolean|SeriesStateHoverHaloOptions);
+    lineColor?: ColorType;
+    lineWidthPlus?: number;
 }
 
-export interface StateInactiveOptions {
-    color?: ColorType;
-    dashStyle?: DashStyleValue;
+export interface StateHoverOptions extends StateOptionsBase {}
+
+export interface StateInactiveOptions extends StateOptionsBase {}
+
+export interface StateNormalOptions extends StateOptionsBase {
+    /**
+     * General point marker's state options can also be disabled through
+     * series.options.marker.enabled.
+     */
+    enabled?: StateOptionsBase['enabled'];
 }
 
-export interface StateNormalOptions {
-    color?: ColorType;
-    dashStyle?: DashStyleValue;
-}
-
-export interface StateSelectOptions extends StateHoverOptions {
-    color?: ColorType;
-    dashStyle?: DashStyleValue;
-}
+export interface StateSelectOptions extends StateHoverOptions {}
 
 export interface StatesOptions {
     hover?: StateHoverOptions;

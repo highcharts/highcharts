@@ -2,8 +2,9 @@
  *
  *  (c) 2010-2026 Torstein Honsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -137,7 +138,7 @@ export interface ScrollbarOptions {
     enabled?: boolean;
 
     /**
-     * The height of the scrollbar. If `buttonsEnabled` is true , the height
+     * The height of the scrollbar. If `buttonsEnabled` is true, the height
      * also applies to the width of the scroll arrows so that they are always
      * squares.
      *
@@ -152,12 +153,13 @@ export interface ScrollbarOptions {
     /**
      * Whether to redraw the main chart as the scrollbar or the navigator
      * zoomed window is moved. Defaults to `true` for modern browsers and
-     * `false` for legacy IE browsers as well as mobile devices.
+     * `false` for mobile devices. This option works regardless of whether the
+     * scrollbar is enabled or not.
      *
      * @sample stock/scrollbar/liveredraw
      *         Setting live redraw to false
      *
-     * @default true
+     * @default undefined
      * @since 1.3
      */
     liveRedraw?: boolean;
@@ -260,6 +262,34 @@ export interface ScrollbarOptions {
      * @default 3
      */
     zIndex?: number;
+}
+
+/**
+ * Options for a scrollbar applied directly to an axis. Shared between the
+ * X and Y axis variants, it only differs from the base
+ * [scrollbar](#scrollbar) options in the default of `enabled`.
+ */
+export interface AxisScrollbarOptions extends ScrollbarOptions {
+
+    /**
+     * @default false
+     */
+    enabled?: boolean;
+
+}
+
+/**
+ * Options for a scrollbar applied to an X axis.
+ */
+export interface XAxisScrollbarOptions extends AxisScrollbarOptions {
+    // Nothing here yet
+}
+
+/**
+ * Options for a scrollbar applied to a Y axis.
+ */
+export interface YAxisScrollbarOptions extends AxisScrollbarOptions {
+    // Nothing here yet
 }
 
 /* *

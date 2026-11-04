@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -151,7 +152,7 @@ export interface ExportingOptions {
      * support it. This also applies to downloaded SVG that you want to
      * open in a desktop client.
      *
-     * @default false
+     * @default true
      * @since   4.1.8
      */
     allowHTML?: boolean;
@@ -224,6 +225,13 @@ export interface ExportingOptions {
      * exception is thrown instead. Receives two parameters, the exporting
      * options, and the error from the module.
      *
+     * Since v13, PDF client-side export dependencies are opt-in. If `jsPDF` and
+     * `svg2pdf` are not present on `window` and `exporting.libURL` is not
+     * defined, a console warning is emitted on chart load. When fallback is
+     * disabled and no `exporting.error` handler is defined, the thrown error
+     * will use the underlying error message when available (for example,
+     * missing `jsPDF`/`svg2pdf`) instead of always throwing error `#28`.
+     *
      * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
      *
      * @since     5.0.0
@@ -242,6 +250,13 @@ export interface ExportingOptions {
      * It is recommended to define the [exporting.error](#exporting.error)
      * handler if disabling fallback, in order to notify users in case export
      * fails.
+     *
+     * Since v13, PDF client-side export dependencies are not auto-loaded unless
+     * `exporting.libURL` is defined (or the scripts are already present on
+     * the page). If dependencies are missing and no `exporting.libURL` is
+     * configured, a console warning is emitted on chart load. Disabling
+     * fallback without defining `exporting.error` will throw the underlying
+     * error message when available.
      *
      * @default  true
      * @since    4.1.8
@@ -297,8 +312,10 @@ export interface ExportingOptions {
      * [jsPDF](https://github.com/parallax/jsPDF) and
      * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
      * side export in certain browsers.
+     * Since v13, this option has no default and must be configured explicitly.
+     * To load dependencies from the Highcharts CDN, set it to
+     * `https://code.highcharts.com/{version}/lib/`.
      *
-     * @default https://code.highcharts.com/{version}/lib
      * @since   5.0.0
      */
     libURL?: string;
@@ -442,17 +459,19 @@ export interface ExportingOptions {
     url?: string;
 
     /**
-     * The pixel width of charts exported to PNG or JPG. As of Highcharts
-     * 3.0, the default pixel width is a function of the [chart.width](
-     * #chart.width) or [exporting.sourceWidth](#exporting.sourceWidth) and the
-     * [exporting.scale](#exporting.scale).
+     * The pixel width of charts exported to PNG or JPG. Deprecated and
+     * without effect, as the option is no longer forwarded to the export
+     * server. The same result is achieved with [exporting.sourceWidth](
+     * #exporting.sourceWidth) combined with [exporting.scale](
+     * #exporting.scale).
      *
      * @sample {highcharts} highcharts/exporting/width/
      *         Export to 200px wide images
      * @sample {highstock} highcharts/exporting/width/
      *         Export to 200px wide images
      *
-     * @since 2.0
+     * @deprecated next
+     * @since      2.0
      */
     width?: number;
 }
@@ -636,7 +655,7 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-symbolfill/
      *         Blue symbol stroke for one of the buttons
      *
-     * @default ${palette.neutralColor60}
+     * @default 'var(--highcharts-neutral-color-60)'
      * @since 2.0
      */
     symbolFill?: ColorString;

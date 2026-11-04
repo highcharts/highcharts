@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,7 +31,6 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type Series from '../../Core/Series/Series';
 import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type { TypedArray } from '../../Shared/Types';
@@ -40,19 +40,13 @@ import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: seriesProto
-    }
-} = SeriesRegistry;
+import Series from '../../Core/Series/Series.js';
 import {
     addEvent,
     defined,
     extend,
     isNumber,
     merge,
-    pick,
     splat
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
@@ -163,7 +157,7 @@ declare module '../../Core/Series/SeriesBase' {
         groupData(
             table: DataTableCore,
             groupPositions: Array<number>,
-            approximation: (string|Function)
+            approximation?: (ApproximationKeyValue|Function)
         ): DataGroupingResultObject;
     }
 }
@@ -209,7 +203,7 @@ export interface DataGroupingInfoObject {
 export interface DataGroupingResultObject {
     /**
      * @name Highcharts.DataGroupingResultObject#modified
-     * @type {Highcharts.DataTableCore}
+     * @type {Highcharts.DataTable}
      */
     modified: DataTableCore;
 
@@ -226,7 +220,7 @@ export interface DataGroupingResultObject {
  *
  * */
 
-const baseGeneratePoints = seriesProto.generatePoints;
+const baseGeneratePoints = Series.prototype.generatePoints;
 
 /* *
  *
@@ -395,7 +389,7 @@ function applyGrouping(
         options = series.options,
         dataGroupingOptions = options.dataGrouping,
         groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
-            pick(dataGroupingOptions.enabled, chart.options.isStock),
+            (dataGroupingOptions.enabled ?? chart.options.isStock),
         reserveSpace = series.reserveSpace(),
         lastDataGrouping = this.currentDataGrouping;
 
@@ -455,38 +449,59 @@ function applyGrouping(
 
         const xMin = extremes.min,
             xMax = extremes.max,
+            last = xData.length - 1,
+            { startOfWeek } = xAxis.options,
             groupIntervalFactor = (
                 ordinal &&
                 xAxis.ordinal &&
                 xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)
             ) || 1,
-            interval =
-            (groupPixelWidth * (xMax - xMin) / plotSizeX) *
-                groupIntervalFactor,
+            normalizedInterval = DateTimeAxis.Additions.prototype
+                .normalizeTimeTickInterval(
+                    Math.max(
+                        (groupPixelWidth * (xMax - xMin) / plotSizeX) *
+                            groupIntervalFactor,
+                        // Don't group far finer than the data (#23958)
+                        (series.basePointRange || 0) / 100
+                    ),
+                    dataGroupingOptions.units || DataGroupingDefaults.units
+                ),
+            // Processed data may extend beyond axis (#4907), but skip the gaps
+            // to the shoulder points (#23958)
             groupPositions = xAxis.getTimeTicks(
-                DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
-                    interval,
-                    (dataGroupingOptions as any).units ||
-                        DataGroupingDefaults.units
-                ),
-                // Processed data may extend beyond axis (#4907)
-                Math.min(xMin, xData[0]),
-                Math.max(
-                    xMax,
-                    xData[xData.length - 1]
-                ),
-                xAxis.options.startOfWeek,
+                normalizedInterval,
+                Math.min(xMin, xData[Math.min(1, last)]),
+                Math.max(xMax, xData[Math.max(last - 1, 0)]),
+                startOfWeek,
                 processedXData,
                 series.closestPointRange
             ),
-            groupedData = seriesProto.groupData.apply(
-                series,
-                [
-                    table,
-                    groupPositions,
-                    (dataGroupingOptions as any).approximation
-                ]
+            { info } = groupPositions,
+            getGroupStart = (x: number): number => chart.time.getTimeTicks(
+                normalizedInterval,
+                x,
+                x,
+                startOfWeek
+            )[0],
+            lastStart = getGroupStart(xData[last]),
+            leftShoulder = +(xData[0] < groupPositions[0]),
+            rightShoulder = +(
+                lastStart > groupPositions[groupPositions.length - 1]
             );
+
+        if (leftShoulder) {
+            groupPositions.unshift(getGroupStart(xData[0]));
+        }
+        if (rightShoulder) {
+            groupPositions.push(lastStart);
+        }
+
+        const groupedData = Series.prototype.groupData.call(
+            series,
+            table,
+            groupPositions,
+            dataGroupingOptions.approximation
+        );
 
         let modified = groupedData.modified,
             groupedXData = modified.getColumn('x', true) as
@@ -509,24 +524,24 @@ function applyGrouping(
         }
 
         // Record what data grouping values were used
-        for (i = 1; i < groupPositions.length; i++) {
+        for (
+            i = 1 + leftShoulder;
+            i < groupPositions.length - rightShoulder;
+            i++
+        ) {
             // The grouped gapSize needs to be the largest distance between
             // the group to capture varying group sizes like months or DST
             // crossing (#10000). Also check that the gap is not at the
             // start of a segment.
-            if (
-                !(groupPositions.info as any).segmentStarts ||
-                (groupPositions.info as any).segmentStarts.indexOf(i) === -1
-            ) {
+            if (!info?.segmentStarts?.includes(i - leftShoulder)) {
                 gapSize = Math.max(
                     groupPositions[i] - groupPositions[i - 1],
                     gapSize
                 );
             }
         }
-        currentDataGrouping = groupPositions.info;
-        (currentDataGrouping as any).gapSize = gapSize;
-        series.closestPointRange = (groupPositions.info as any).totalRange;
+        currentDataGrouping = extend(info, { gapSize });
+        series.closestPointRange = currentDataGrouping.totalRange;
         series.groupMap = groupedData.groupMap;
         series.currentDataGrouping = currentDataGrouping;
 
@@ -694,13 +709,19 @@ function groupData(
     this: Series,
     table: DataTableCore,
     groupPositions: Array<number>,
-    approximation: (ApproximationKeyValue|Function)
+    approximation?: (ApproximationKeyValue|Function)
 ): DataGroupingResultObject {
-    const xData = table.getColumn('x', true) as Array<number> || [],
+    const xData = (table === this.dataTable) ?
+            // If the table is the series dataTable, get the cached x data
+            // to avoid undefined x values from the data table.
+            this.getColumn('x') :
+            table.getColumn('x', true) as Array<number>,
         yData = table.getColumn('y', true) as Array<number>,
         series = this,
+        topTable = series.dataTable,
+        cropStart = series.cropStart || 0,
         data = series.data,
-        dataOptions = series.options && series.options.data,
+        dataOptions = series.options?.data,
         groupedXData = [],
         modified = new DataTableCore(),
         groupMap = [],
@@ -714,10 +735,7 @@ function groupData(
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
         // Data columns to be applied to the modified data table at the end
         valueColumns = (pointArrayMap || ['y']).map((): Array<number> => []),
-        groupAll = (
-            this.options.dataGrouping &&
-            this.options.dataGrouping.groupAll
-        );
+        groupAll = this.options.dataGrouping?.groupAll;
 
     let pointX,
         pointY,
@@ -779,15 +797,19 @@ function groupData(
             // `name` and `color` or custom properties. Implementers can
             // override this from the approximation function, where they can
             // write custom options to `this.dataGroupInfo.options`.
-            if (series.pointClass && !defined(series.dataGroupInfo.options)) {
+            if (
+                series.pointClass &&
+                !defined(series.dataGroupInfo.options) &&
+                dataOptions
+            ) {
                 // Convert numbers and arrays into objects
                 series.dataGroupInfo.options = merge(
                     series.pointClass.prototype
                         .optionsToObject.call(
-                            { series: series },
-                            (series.options.data as any)[
-                                (series.cropStart as any) + start
-                            ]
+                            { series },
+                            topTable.getRowObject(
+                                cropStart + start
+                            ) as unknown as PointOptions
                         )
                 );
 
@@ -838,7 +860,9 @@ function groupData(
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
-                    }, [(dataOptions as any)[index]]);
+                    }, [
+                        topTable.getRowObject(index) as unknown as PointOptions
+                    ]);
 
             let val;
 

@@ -2,8 +2,9 @@
  *
  *  (c) 2010-2026 Torstein Honsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -17,9 +18,9 @@ import type {
     AxisOptions,
     YAxisOptions
 } from '../../Core/Axis/AxisOptions';
-import type ChartOptions from '../../Core/Chart/ChartOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type { DeepPartial } from '../../Shared/Types';
+import type { Options } from '../../Core/Options';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type {
     SeriesTypeOptions,
@@ -79,7 +80,7 @@ declare module '../../Core/Series/SeriesOptions' {
          * @see [navigator.series](#navigator.series)
          *
          * @since     5.0.0
-         * @product   highstock
+         * @product   highstock gantt
          */
         navigatorOptions?: NavigatorSeriesOptions;
 
@@ -88,7 +89,7 @@ declare module '../../Core/Series/SeriesOptions' {
          * over [navigator.baseSeries](#navigator.baseSeries) if defined.
          *
          * @since     5.0.0
-         * @product   highstock
+         * @product   highstock gantt
          */
         showInNavigator?: boolean;
     }
@@ -192,7 +193,7 @@ export interface BaseNavigatorOptions {
     /**
      * The color of the mask covering the areas of the navigator series
      * that are currently not visible in the main series. The default
-     * color is bluish with an opacity of 0.3 to see the series below.
+     * color is semi-transparent to see the series below.
      *
      * @see In styled mode, the mask is styled with the
      *      `.highcharts-navigator-mask` and
@@ -201,7 +202,7 @@ export interface BaseNavigatorOptions {
      * @sample {highstock} stock/navigator/maskfill/
      *         Blue, semi transparent mask
      *
-     * @default rgba(102,133,194,0.3)
+     * @default color-mix(in srgb, var(--highcharts-highlight-color-60) 30%, transparent)
      */
     maskFill?: ColorType;
 
@@ -239,7 +240,7 @@ export interface BaseNavigatorOptions {
      * @sample {highstock} stock/navigator/outline/
      *         2px blue outline
      *
-     * @default #cccccc
+     * @default var(--highcharts-neutral-color-40)
      */
     outlineColor?: ColorType;
 
@@ -368,7 +369,7 @@ export interface NavigatorOptions extends BaseNavigatorOptions {
      *
      * @see [series.showInNavigator](#plotOptions.series.showInNavigator)
      *
-     * @deprecated
+     * @deprecated 5.0.0
      * @default   0
      */
     baseSeries?: (number|string);
@@ -427,9 +428,21 @@ export interface NavigatorOptions extends BaseNavigatorOptions {
 export interface StandaloneNavigatorOptions extends BaseNavigatorOptions {
 
     /**
-     * Chart configuration for the standalone navigator.
+     * Deprecated. Use [chartOptions](#chartOptions) instead.
+     *
+     * @deprecated 13.1.0
      */
-    chart: ChartOptions;
+    chart?: Partial<Options>;
+
+    /**
+     * Options for the underlying chart of the standalone navigator. For
+     * example, `chartOptions.chart.height` sets the height of the whole
+     * component, while the `height` option sets the height of the navigator
+     * itself.
+     *
+     * @since 13.1.0
+     */
+    chartOptions?: Partial<Options>;
 }
 
 /* *

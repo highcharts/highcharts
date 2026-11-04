@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -18,9 +19,12 @@ import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
+import type DataTableCore from '../Data/DataTableCore';
+import type { DataTableOptionsObject } from '../Data/DataTableOptions';
+import type PaletteOptions from './Color/PaletteOptions';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
-import type { LangOptionsCore } from '../Shared/LangOptionsCore';
+import type { LangOptions } from './LangOptions';
 
 /* *
  *
@@ -68,116 +72,7 @@ interface GlobalOptions {
     useUTC?: boolean;
 }
 
-/**
- * An object containing language-related strings and settings. A typical
- * setup uses `Highcharts.setOptions` to make the options apply to all
- * charts in the same page.
- *
- * Some language options, like `months` and `weekdays`, are only used
- * with non-locale-aware date formats.
- *
- * ```js
- * Highcharts.setOptions({
- *     lang: {
- *         locale: 'fr'
- *     }
- * });
- * ```
- */
-export interface LangOptions extends LangOptionsCore {
-    /**
-     * The default chart title.
-     *
-     * @since 12.2.0
-     */
-    chartTitle: string;
-    /**
-     * The loading text that appears when the chart is set into the loading
-     * state following a call to `chart.showLoading`.
-     *
-     * @default Loading...
-     */
-    loading: string;
-    /**
-     * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
-     * Use 10000 for Japanese, Korean and various Chinese locales, which
-     * use symbols for 10^4, 10^8 and 10^12.
-     *
-     * @sample highcharts/lang/numericsymbolmagnitude/
-     *         10000 magnitude for Japanese
-     *
-     * @default   1000
-     * @since     5.0.3
-     */
-    numericSymbolMagnitude?: number;
-    /**
-     * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
-     * to shorten high numbers in axis labels. Replacing any of the
-     * positions with `null` causes the full number to be written. Setting
-     * `numericSymbols` to `undefined` disables shortening altogether.
-     *
-     * @sample {highcharts} highcharts/lang/numericsymbols/
-     *         Replacing the symbols with text
-     * @sample {highstock} highcharts/lang/numericsymbols/
-     *         Replacing the symbols with text
-     *
-     * @default ["k", "M", "G", "T", "P", "E"]
-     * @since   2.3.0
-     */
-    numericSymbols: Array<string> | undefined;
-    /**
-     * The default name for a pie slice (point).
-     *
-     * @default Slice
-     * @since   12.2.0
-     */
-    pieSliceName: string;
-    /**
-     * The text for the label appearing when a chart is zoomed.
-     *
-     * @default Reset zoom
-     * @since   1.2.4
-     */
-    resetZoom: string;
-    /**
-     * The tooltip title for the label appearing when a chart is zoomed.
-     *
-     * @default Reset zoom level 1:1
-     * @since   1.2.4
-     */
-    resetZoomTitle: string;
-    /**
-     * [Format string](https://www.highcharts.com/docs/chart-concepts/templating)
-     * for the default series name.
-     *
-     * @default Series {add index 1}
-     * @since   12.2.0
-     */
-    seriesName: string;
-    /**
-     * The default title of the Y axis
-     *
-     * @default Values
-     * @since 12.2.0
-     */
-    yAxisTitle: string;
-    /**
-     * The title appearing on hovering the zoom in button. The text itself
-     * defaults to "+" and can be changed in the button options.
-     *
-     * @default   Zoom in
-     * @product   highmaps
-     */
-    zoomIn?: string;
-    /**
-     * The title appearing on hovering the zoom out button. The text itself
-     * defaults to "-" and can be changed in the button options.
-     *
-     * @default   Zoom out
-     * @product   highmaps
-     */
-    zoomOut?: string;
-}
+export type { LangOptions };
 
 /**
  * The loading options control the appearance of the loading screen
@@ -294,25 +189,62 @@ export interface Options {
      * are defined in CSS and applied either through series or point class
      * names, or through the [chart.colorCount](#chart.colorCount) option.
      *
+     * The defaults from v13 invoke CSS variables that are set by the `palette`
+     * option's light and dark themes.
+     *
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
      * @sample highcharts/members/theme-v10/
      *         Latest release styled like version 10
      *
      * @default [
-     *     "#2caffe",
-     *     "#544fc5",
-     *     "#00e272",
-     *     "#fe6a35",
-     *     "#6b8abc",
-     *     "#d568fb",
-     *     "#2ee0ca",
-     *     "#fa4b42",
-     *     "#feb56a",
-     *     "#91e8e1"
+     *     'var(--highcharts-color-0)',
+     *     'var(--highcharts-color-1)',
+     *     'var(--highcharts-color-2)',
+     *     'var(--highcharts-color-3)',
+     *     'var(--highcharts-color-4)',
+     *     'var(--highcharts-color-5)',
+     *     'var(--highcharts-color-6)',
+     *     'var(--highcharts-color-7)',
+     *     'var(--highcharts-color-8)',
+     *     'var(--highcharts-color-9)'
      * ]
      */
     colors?: Array<ColorString>;
+    /**
+     * Options for one or many chart-level data tables. The `dataTable` option,
+     * or its array members, can be either configuration objects or instances of
+     * the `DataTableCore` class. If a `DataTableCore` instance is passed, it
+     * will be used directly. If a configuration object is passed, a new
+     * `DataTableCore` instance will be created based on the provided
+     * configuration.
+     *
+     * The data table is mapped to the series data points based on the
+     * [series.dataMapping](#plotOptions.series.dataMapping) option, unless the
+     * column keys match the point property names (`x`, `y` etc.), in which case
+     * the mapping is automatic.
+     *
+     * @sample {highstock} stock/datatable/candlestick
+     *         Candlestick chart with data table
+     * @sample {highstock} stock/datatable/live-candlestick
+     *         Live candlestick
+     * @sample {highmaps} maps/datatable/chart-datatable
+     *         Map with data table and data mapping
+     * @sample {highmaps} maps/demo/basic-map
+     *         World map
+     * @sample {gantt} gantt/datatable/chart-datatable
+     *         Gantt chart with data table
+     *
+     * @sample highcharts/datatable/chart-datatable-single/
+     *         Chart with one data table as option
+     * @sample highcharts/datatable/chart-datatable-single/
+     *         Chart with one data table as instance
+     * @sample highcharts/datatable/chart-datatable-multiple/
+     *         Chart with two data tables
+     * @sample highcharts/data/getdatatable
+     *         Data table from CSV
+     */
+    dataTable?: DataTableOptionsObject|DataTableCore|Array<DataTableOptionsObject|DataTableCore>;
     /**
      * An object containing language-related strings and settings. A typical
      * setup uses `Highcharts.setOptions` to make the options apply to all
@@ -335,6 +267,10 @@ export interface Options {
      * state following a call to `chart.showLoading`.
      */
     loading?: LoadingOptions;
+    /**
+     * The color palette to use.
+     */
+    palette: PaletteOptions;
     /**
      * The plotOptions is a wrapper object for config objects for each series
      * type. The config objects for each series can also be overridden for

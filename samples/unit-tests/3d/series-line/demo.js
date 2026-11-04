@@ -58,6 +58,13 @@ QUnit.test('3D line series', function (assert) {
         -1,
         'The generated SVG should not contain paths starting with line segment'
     );
+
+    assert.ok(
+        chart.series[0].markerGroup.element.compareDocumentPosition(
+            chart.series[0].area.element
+        ) & 4,
+        'The 3D area should keep the marker group behind the area fill'
+    );
 });
 
 QUnit.test('3D line series with datagrouping (#24042)', function (assert) {

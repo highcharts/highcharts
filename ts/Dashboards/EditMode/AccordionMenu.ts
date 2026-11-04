@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -188,6 +189,13 @@ class AccordionMenu {
         propertyPath: Array<string>,
         value: boolean | string | number
     ): void {
+        // Reject paths that would allow prototype pollution
+        if (propertyPath.some((key): boolean => (
+            key === '__proto__' || key === 'constructor' || key === 'prototype'
+        ))) {
+            return;
+        }
+
         const pathLength = propertyPath.length - 1;
 
         let currentLevel = this.changedOptions as AnyRecord;
@@ -203,7 +211,9 @@ class AccordionMenu {
             } catch (e) {
                 // TODO: Handle the wrong config passed from the user.
                 error(
-                    `Dashboards Error: Wrong JSON config structure passed as a chart options. \n____________\n${e}`
+                    'Dashboards Error: Wrong JSON config structure passed ' +
+                    'as chart options. \n____________\n' +
+                    String(e)
                 );
             }
         }

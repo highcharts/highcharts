@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,6 +20,7 @@
  *
  * */
 
+import type Legend from '../../Core/Legend/Legend';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type OHLCSeriesOptions from './OHLCSeriesOptions';
 import type Series from '../../Core/Series/Series';
@@ -27,14 +29,13 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import FinancialSymbols from '../FinancialSymbols.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import OHLCPoint from './OHLCPoint.js';
 import OHLCSeriesDefaults from './OHLCSeriesDefaults.js';
+import HLCSeries from '../HLC/HLCSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    hlc: HLCSeries
-} = SeriesRegistry.seriesTypes;
 import {
     addEvent,
     crisp,
@@ -61,6 +62,7 @@ function onSeriesAfterSetOptions(
 
     if (
         dataGrouping &&
+        !dataGrouping.approximation &&
         options.useOhlcData &&
         options.id !== 'highcharts-navigator-series'
     ) {
@@ -116,6 +118,7 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: OHLCSeriesOptions = merge(
         HLCSeries.defaultOptions,
         OHLCSeriesDefaults
@@ -127,6 +130,7 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series,
         ..._args: Array<never>
@@ -147,6 +151,8 @@ class OHLCSeries extends HLCSeries {
 
     public data!: Array<OHLCPoint>;
 
+    public legendSymbolUp?: SVGElement;
+
     public options!: OHLCSeriesOptions;
 
     public points!: Array<OHLCPoint>;
@@ -157,9 +163,36 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
-    public getPointPath(point: OHLCPoint, graphic: SVGElement): SVGPath {
-        const path = super.getPointPath(point, graphic),
-            strokeWidth = graphic.strokeWidth(),
+    /**
+     * Pair the legend symbol, the down point, with an element for the up one.
+     * `FinancialSymbols` colors both (#24567).
+     *
+     * @internal
+     * @function Highcharts.seriesTypes.ohlc#drawLegendSymbol
+     */
+    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
+        super.drawLegendSymbol(legend, item);
+
+        const { group, symbol } = item.legendItem || {},
+            upPath = FinancialSymbols.upPaths[symbol?.symbolName || ''];
+
+        if (symbol && upPath) {
+            const { x = 0, y = 0, width = 0, height = 0 } = symbol;
+
+            symbol.addClass('highcharts-point-down');
+
+            this.legendSymbolUp = this.chart.renderer
+                .path(upPath(x, y, width, height))
+                .addClass('highcharts-point highcharts-point-up')
+                .attr({ zIndex: 3 })
+                .add(group);
+        }
+    }
+
+    /** @internal */
+    protected getPointPath(point: OHLCPoint): SVGPath {
+        const path = super.getPointPath(point),
+            strokeWidth = this.borderWidth,
             crispX = crisp(point.plotX || 0, strokeWidth),
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
 
@@ -176,12 +209,28 @@ class OHLCSeries extends HLCSeries {
     }
 
     /**
+     * Colors of the up glyph, as `pointAttribs` gives them to an up point.
+     * `pointAttribs` needs a point, which breaks on zoned series.
+     *
+     * @internal
+     * @function Highcharts.seriesTypes.ohlc#legendSymbolAttribs
+     */
+    public legendSymbolAttribs(): SVGAttributes {
+        const { legendSymbolColor, lineWidth, upColor } = this.options;
+
+        return {
+            stroke: upColor || legendSymbolColor || this.color,
+            'stroke-width': lineWidth
+        };
+    }
+
+    /**
      * Postprocess mapping between options and SVG attributes
      * @private
      */
     public pointAttribs(
-        point: OHLCPoint,
-        state: StatesOptionsKey
+        point?: OHLCPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(this, point, state),
             options = this.options;
@@ -189,9 +238,9 @@ class OHLCSeries extends HLCSeries {
         delete attribs.fill;
 
         if (
-            !point.options.color &&
+            !point?.options.color &&
             options.upColor &&
-            point.open < point.close
+            (point?.open || 0) < (point?.close || 0)
         ) {
             attribs.stroke = options.upColor;
         }
@@ -199,6 +248,7 @@ class OHLCSeries extends HLCSeries {
         return attribs;
     }
 
+    /** @internal */
     public toYData(point: OHLCPoint): Array<number> {
         // Return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];
@@ -213,8 +263,9 @@ class OHLCSeries extends HLCSeries {
  * */
 
 interface OHLCSeries {
+    /** @internal */
     pointClass: typeof OHLCPoint;
-    pointAttrToOptions: Record<string, string>;
+    /** @internal */
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {

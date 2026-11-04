@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,11 +24,9 @@ import type {
 } from './NATROptions';
 import type NATRPoint from './NATRPoint';
 
+import ATRIndicator from '../ATR/ATRIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import { merge } from '../../../Shared/Utilities.js';
-const {
-    atr: ATRIndicator
-} = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -38,7 +37,6 @@ const {
 /**
  * The NATR series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.natr
  *
@@ -63,9 +61,11 @@ class NATRIndicator extends ATRIndicator {
      * @extends      plotOptions.atr
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/natr
+     * @requires     indicators/indicators
+     * @requires     indicators/atr
+     * @requires     indicators/natr
      * @optionparent plotOptions.natr
+     * @internal
      */
     public static defaultOptions: NATROptions = merge(ATRIndicator.defaultOptions, {
         tooltip: {
@@ -89,6 +89,7 @@ class NATRIndicator extends ATRIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: NATRParamsOptions
@@ -126,7 +127,6 @@ class NATRIndicator extends ATRIndicator {
  *
  * */
 
-/** @internal */
 interface NATRIndicator {
     pointClass: typeof NATRPoint;
 }
@@ -137,7 +137,6 @@ interface NATRIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         natr: typeof NATRIndicator;
@@ -152,7 +151,6 @@ SeriesRegistry.registerSeriesType('natr', NATRIndicator);
  *
  * */
 
-/** @internal */
 export default NATRIndicator;
 
 /* *
@@ -168,10 +166,9 @@ export default NATRIndicator;
  * @extends   series,plotOptions.natr
  * @since     7.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/atr
- * @requires  stock/indicators/natr
+ * @requires  indicators/indicators
+ * @requires  indicators/atr
+ * @requires  indicators/natr
  * @apioption series.natr
  */
 

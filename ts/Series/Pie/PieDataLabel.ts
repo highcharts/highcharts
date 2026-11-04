@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,17 +30,14 @@ const {
     composed,
     noop
 } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
+import Series from '../../Core/Series/Series.js';
 import {
     arrayMax,
     clamp,
     defined,
     isNumber,
-    pick,
     pushUnique,
     relativeLength
 } from '../../Shared/Utilities.js';
@@ -96,7 +94,7 @@ namespace ColumnDataLabel {
             dataLabel: SVGElement
         ): number {
             const pos = dataLabel.dataLabelPosition;
-            return series.getX(
+            return series.getXPos(
                 y < (pos?.top || 0) + 2 || y > (pos?.bottom || 0) - 2 ?
                     naturalY :
                     y,
@@ -550,7 +548,7 @@ namespace ColumnDataLabel {
                         labelPosition.computed.y = y - topOffset;
 
                         // Detect overflowing data labels
-                        if (pick(dataLabelOptions.crop, true)) {
+                        if (dataLabelOptions.crop ?? true) {
                             dataLabelWidth = dataLabel.getBBox().width;
 
                             let sideOverflow: number|undefined;
@@ -660,7 +658,7 @@ namespace ColumnDataLabel {
                                     'stroke': (
                                         connectorColor ||
                                         point.color ||
-                                        Palette.neutralColor60
+                                        'var(--highcharts-neutral-color-60)'
                                     )
                                 });
                             }

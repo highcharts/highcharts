@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -25,6 +26,28 @@ import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
  *
  * */
 
+/**
+ * A contour plot is a graphical representation of three-dimensional data
+ * in two dimensions using contour lines or color-coded regions.
+ *
+ * A contour plot is a graphical representation of three-dimensional data
+ *
+ * @productdesc {highcharts}
+ * Requires `modules/contour`.
+ *
+ * @sample highcharts/demo/contour-mountain/
+ *         Simple contour
+ *
+ * @extends plotOptions.scatter
+ *
+ * @extends series,plotOptions.contour
+ *
+ * @product highcharts highmaps
+ *
+ * @requires modules/coloraxis
+ *
+ * @requires modules/contour
+ */
 export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     /**
      * Whether to use gradually transitioning color gradients between contour

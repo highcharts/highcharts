@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Kamil Kulig
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,10 +27,8 @@ import type {
 import type LinearRegressionPoint from './LinearRegressionPoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -41,7 +40,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * Linear regression series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.linearregression
  *
@@ -65,9 +63,10 @@ class LinearRegressionIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     indicators/indicators
+     * @requires     indicators/regressions
      * @optionparent plotOptions.linearregression
+     * @internal
      */
     public static defaultOptions: LinearRegressionOptions = merge(
         SMAIndicator.defaultOptions,
@@ -287,6 +286,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     }
 
     // Required to be implemented - starting point for indicator's logic
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         this: LinearRegressionIndicator,
         baseSeries: TLinkedSeries&IndicatorLinkedSeriesBase,
@@ -364,7 +364,6 @@ class LinearRegressionIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface LinearRegressionIndicator {
     pointClass: typeof LinearRegressionPoint;
     nameBase: string;
@@ -381,7 +380,6 @@ extend(LinearRegressionIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregression: typeof LinearRegressionIndicator;
@@ -406,7 +404,6 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
-/** @internal */
 export default LinearRegressionIndicator;
 
 /* *
@@ -423,9 +420,8 @@ export default LinearRegressionIndicator;
  * @extends   series,plotOptions.linearregression
  * @since     7.0.0
  * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  indicators/indicators
+ * @requires  indicators/regressions
  * @apioption series.linearregression
  */
 

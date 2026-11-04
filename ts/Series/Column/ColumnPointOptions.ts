@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,43 +29,36 @@ import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions';
 
 declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
+
+        /**
+         * The color of the border surrounding the column or bar.
+         *
+         * In styled mode, the border stroke can be set with the
+         * `.highcharts-point` rule.
+         *
+         * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
+         *         Dark gray border
+         *
+         * @product highcharts highstock
+         */
         borderColor?: ColorType;
+
+        /**
+         * The width of the border surrounding the column or bar.
+         *
+         * In styled mode, the stroke width can be set with the
+         * `.highcharts-point` rule.
+         *
+         * @sample {highcharts} highcharts/plotoptions/column-borderwidth/
+         *         2px black border
+         *
+         * @product highcharts highstock
+         */
+        borderWidth?: number;
     }
 }
 
 export interface ColumnPointOptions extends LinePointOptions {
-
-    /**
-     * The color of the border surrounding the column or bar.
-     *
-     * In styled mode, the border stroke can be set with the `.highcharts-point`
-     * rule.
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
-     *         Dark gray border
-     *
-     * @type {Highcharts.ColorType}
-     *
-     * @product highcharts highstock
-     *
-     * @apioption series.column.data.borderColor
-     */
-
-    /**
-     * The width of the border surrounding the column or bar.
-     *
-     * In styled mode, the stroke width can be set with the `.highcharts-point`
-     * rule.
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-borderwidth/
-     *         2px black border
-     *
-     * @type {number}
-     *
-     * @product highcharts highstock
-     *
-     * @apioption series.column.data.borderWidth
-     */
 
     /**
      * A name for the dash style to use for the column or bar. Overrides

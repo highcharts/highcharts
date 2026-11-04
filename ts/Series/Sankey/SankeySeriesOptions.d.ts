@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,8 +32,15 @@ import type {
     SankeyPointOptions,
     SankeyPointDataLabelOptions
 } from './SankeyPointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    SeriesStateHoverOptions,
+    SeriesStateInactiveOptions,
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 import type Templating from '../../Core/Templating';
+import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
+import type { AnyRecord, DeepPartial } from '../../Shared/Types';
+import { StateGenericOptions } from '../../Core/Series/StatesOptions';
 
 /* *
  *
@@ -101,6 +109,13 @@ export interface SankeySeriesLevelOptions {
 }
 
 export interface SankeySeriesNodeOptions {
+
+    /**
+     * A reserved subspace to store options and values for customized
+     * functionality. Here you can add additional data for your own event
+     * callbacks and formatter callbacks.
+     */
+    custom?: AnyRecord;
 
     /**
      * The color of the auto generated node.
@@ -201,7 +216,7 @@ export interface SankeySeriesNodeOptions {
      * If a percentage string is given, the node is offset by the percentage of
      * the node size plus `nodePadding`.
      *
-     * @deprecated
+     * @deprecated 9.3.0
      *
      * @default 0
      *
@@ -270,7 +285,7 @@ export interface SankeySeriesNodeOptions {
  *
  * @product highcharts
  *
- * @excluding animationLimit, boostThreshold, borderRadius,
+ * @excluding animationLimit, boostThreshold,
  *            crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
  *            edgeColor, edgeWidth, findNearestPointBy, grouping,
  *            groupPadding, groupZPadding, maxPointWidth, negativeColor,
@@ -280,13 +295,12 @@ export interface SankeySeriesNodeOptions {
  *            zones, minPointLength, dataSorting, boostBlending
  *
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderRadius, borderWidth, crisp, cropThreshold, dataParser,
- *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
- *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
- *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
- *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,
- *            pointStart, pointWidth, shadow, softThreshold, stacking,
- *            threshold, zoneAxis, zones, dataSorting
+ *            borderWidth, crisp, cropThreshold, depth, dragDrop, edgeColor,
+ *            edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
+ *            groupPadding, groupZPadding, label, maxPointWidth, negativeColor,
+ *            pointInterval, pointIntervalUnit, pointPadding, pointPlacement,
+ *            pointRange, pointStart, pointWidth, shadow, softThreshold,
+ *            stacking, threshold, zoneAxis, zones, dataSorting
  *
  * @requires modules/sankey
  */
@@ -471,8 +485,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
     /**
      * A collection of options for the individual nodes. The nodes in a sankey
      * diagram are auto-generated instances of `Highcharts.Point`, but options
-     *  can
-     * be applied here and linked by the `id`.
+     * can be applied here and linked by the `id`.
      *
      * @sample highcharts/css/sankey/
      *         Sankey diagram with node options
@@ -526,49 +539,62 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
 }
 
-export interface SankeySeriesStatesOptions extends SeriesStatesOptions<SankeySeriesOptions> {
-    hover?: SeriesStatesOptions<SankeySeriesOptions>['hover'] & {
-        /**
-         * Opacity for the links between nodes in the sankey diagram in
-         * hover mode.
-         *
-         * @default 1
-         */
-        linkOpacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['hover']['linkOpacity'];
 
-        /**
-         * Opacity for the nodes in the sankey diagram in hover mode.
-         *
-         * @default 1
-         */
-        opacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['hover']['opacity'];
-    };
+export interface SankeySeriesStatesOptions
+    extends SeriesStatesOptions<SankeySeriesOptions> {
+    hover?: (
+        SankeySeriesStatesHoverOptions &
+        StateGenericOptions<SankeySeriesOptions>
+    );
     /**
      * The opposite state of a hover for a single point node/link.
      */
-    inactive?: SeriesStatesOptions<SankeySeriesOptions>['inactive'] & {
-        /**
-         * Opacity for the links between nodes in the sankey diagram in
-         * inactive mode.
-         *
-         * @default 0.1
-         */
-        linkOpacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['linkOpacity'];
+    inactive?: (
+        SankeySeriesStatesInactiveOptions &
+        StateGenericOptions<SankeySeriesOptions>
+    );
+}
 
-        /**
-         * Opacity of the nodes in the sankey diagram in inactive mode.
-         *
-         * @default 0.1
-         */
-        opacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['opacity'];
+export interface SankeySeriesStatesHoverOptions
+    extends SeriesStateHoverOptions {
+    /**
+     * Opacity for the links between nodes in the sankey diagram in
+     * hover mode.
+     *
+     * @default 1
+     */
+    linkOpacity?: number;
 
-        /**
-         * Animation when not hovering over the marker.
-         *
-         * @default { duration: 50 }
-         */
-        animation?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['animation'];
-    };
+    /**
+     * Opacity for the nodes in the sankey diagram in hover mode.
+     *
+     * @default 1
+     */
+    opacity?: number;
+}
+export interface SankeySeriesStatesInactiveOptions
+    extends SeriesStateInactiveOptions {
+    /**
+     * Opacity for the links between nodes in the sankey diagram in
+     * inactive mode.
+     *
+     * @default 0.1
+     */
+    linkOpacity?: number;
+
+    /**
+     * Opacity of the nodes in the sankey diagram in inactive mode.
+     *
+     * @default 0.1
+     */
+    opacity?: number;
+
+    /**
+     * Animation when not hovering over the marker.
+     *
+     * @default { duration: 50 }
+     */
+    animation?: (boolean|DeepPartial<AnimationOptions>);
 }
 
 export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {

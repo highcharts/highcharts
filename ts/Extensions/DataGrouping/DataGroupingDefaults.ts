@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -17,6 +18,7 @@
  *
  * */
 
+import type DataGroupingOptions from './DataGroupingOptions';
 import type {
     SeriesTypePlotOptions
 } from '../../Core/Series/SeriesType';
@@ -75,9 +77,9 @@ const common = {
             '-%[BY]'
         ],
         year: [
-            '%Y',
-            '%Y',
-            '-%Y'
+            '%[Y]',
+            '%[Y]',
+            '-%[Y]'
         ]
     }
     /// smoothed = false, // enable this for navigator series only
@@ -119,7 +121,7 @@ const seriesSpecific = {
  * case of a user option.
  * @internal
  */
-const units = [
+const units: Required<DataGroupingOptions>['units'] = [
     [
         'millisecond', // Unit name
         [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // Allowed multiples

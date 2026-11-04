@@ -1,0 +1,199 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+@supports (color: light-dark(#fff, #000)) {
+    :root {
+        --component-a: light-dark(#c27d00, #ffb946);
+        --component-b: light-dark(#5c4bc0, #afa2f6);
+        --component-c: light-dark(#36abab, #3ecfcf);
+        --button-background:
+            light-dark(
+                linear-gradient(
+                    -45deg,
+                    var(--highcharts-neutral-color-20) 0%,
+                    var(--highcharts-neutral-color-3) 49%,
+                    var(--highcharts-neutral-color-20) 100%
+                ),
+                linear-gradient(
+                    -45deg,
+                    var(--highcharts-neutral-color-20) 0%,
+                    var(--highcharts-neutral-color-3) 49%,
+                    var(--highcharts-neutral-color-20) 100%
+                )
+            );
+    }
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    font-size: 1rem;
+}
+
+.chart-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+}
+
+#container {
+    width: 100%;
+    height: 600px;
+}
+
+/* ---- Steel filter UI ---- */
+
+#steel-filter {
+    width: 100%;
+    max-width: 780px;
+    margin-top: 20px;
+}
+
+.filter-presets {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    justify-content: center;
+}
+
+.filter-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--highcharts-neutral-color-60);
+    margin-right: 4px;
+}
+
+.button {
+    box-sizing: border-box;
+    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-80);
+    white-space: nowrap;
+    border: 1px solid var(--highcharts-neutral-color-20);
+    border-radius: 8px;
+    outline: none;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    text-decoration: none;
+    transition: transform 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+    display: inline-flex;
+    position: relative;
+    transform: translate(0);
+    height: 32px;
+    gap: 8px;
+    font-size: 0.875rem;
+}
+
+.button::before {
+    background: linear-gradient(0deg, transparent, hsla(0deg, 0%, 100%, 0.1)) border-box;
+    border: 1px solid transparent;
+    content: "";
+    inset: 0;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    position: absolute;
+}
+
+.button:hover,
+.steel-chips .button:hover {
+    transform: translate3d(0, -1px, 0);
+    background-color: var(--highcharts-neutral-color-5);
+    border-color: var(--highcharts-neutral-color-40);
+    cursor: pointer;
+}
+
+.button.active,
+.steel-chips .button.active {
+    background: var(--button-background);
+    border-color: var(--highcharts-neutral-color-40);
+}
+
+.button:focus-visible,
+.steel-chips .button:focus-visible {
+    outline: 2px solid #8791ff;
+    outline-offset: 2px;
+}
+
+/* Steel chips */
+
+.filters {
+    display: flex;
+    flex-direction: column;
+    background: var(--highcharts-neutral-color-3);
+    border: 1px solid var(--highcharts-neutral-color-20);
+    padding: 8px 12px;
+    border-radius: 16px;
+}
+
+.filter-description {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-top: 0;
+    padding: 4px 0;
+    display: block;
+}
+
+.steel-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.steel-chips .button {
+    background: transparent;
+}
+
+.axis-label {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.axis-label-a,
+.tooltip-color-a {
+    color: var(--component-a);
+    fill: var(--component-a);
+}
+
+.axis-label-b,
+.tooltip-color-b {
+    color: var(--component-b);
+    fill: var(--component-b);
+}
+
+.axis-label-c,
+.tooltip-color-c {
+    color: var(--component-c);
+    fill: var(--component-c);
+}
+
+.tooltip-color-total {
+    color: var(--highcharts-neutral-color-80);
+    fill: var(--highcharts-neutral-color-80);
+}
+
+.tooltip-header {
+    font-weight: 600;
+    font-size: 1em;
+}

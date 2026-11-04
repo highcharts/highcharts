@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -65,6 +66,14 @@ class TableRow extends Row {
      * The unique ID of the row.
      */
     public id?: RowId;
+
+    /**
+     * Body section the row belongs to, when it is rendered outside the main
+     * scrollable section. Rows of synthetic sections (a summary row) are not
+     * backed by a data row, so their `index` does not address the presentation
+     * table.
+     */
+    public bodySectionId?: string;
 
     /**
      * The vertical translation of the row.
@@ -141,6 +150,7 @@ class TableRow extends Row {
             await cell.setValue();
         }
 
+        await this.syncRenderedCells();
         this.reflow();
     }
 
@@ -149,11 +159,8 @@ class TableRow extends Row {
      *
      * @param index
      * The index of the row in the data table.
-     *
-     * @param doReflow
-     * Whether to reflow the row after updating the cells.
      */
-    public async reuse(index: number, doReflow: boolean = true): Promise<void> {
+    public async reuse(index: number): Promise<void> {
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             fireEvent(this.cells[i], 'outdate');
         }
@@ -178,9 +185,8 @@ class TableRow extends Row {
             await cell.setValue();
         }
 
-        if (doReflow) {
-            this.reflow();
-        }
+        await this.syncRenderedCells();
+        this.reflow();
     }
 
     /**
@@ -221,9 +227,14 @@ class TableRow extends Row {
     public setRowAttributes(): void {
         const idx = this.index;
         const el = this.htmlElement;
+        const rowsOptions = this.viewport.grid.options?.rendering?.rows;
 
         el.classList.add(Globals.getClassName('rowElement'));
         el.setAttribute('data-row-index', idx + '');
+
+        if (rowsOptions?.className) {
+            el.classList.add(...rowsOptions.className.split(/\s+/g));
+        }
 
         this.updateRowAttributes();
 
@@ -258,15 +269,27 @@ class TableRow extends Row {
      */
     protected updateParityClass(): void {
         const el = this.htmlElement;
+        const isEven = !!(this.index % 2);
+        const evenClassName =
+            this.viewport.grid.options?.rendering?.rows?.evenClassName;
+
         el.classList.remove(
             Globals.getClassName('rowEven'),
             Globals.getClassName('rowOdd')
         );
 
+        if (evenClassName) {
+            el.classList.remove(...evenClassName.split(/\s+/g));
+        }
+
         // Indexing from 0, so rows with even index are odd.
         el.classList.add(
-            Globals.getClassName(this.index % 2 ? 'rowEven' : 'rowOdd')
+            Globals.getClassName(isEven ? 'rowEven' : 'rowOdd')
         );
+
+        if (isEven && evenClassName) {
+            el.classList.add(...evenClassName.split(/\s+/g));
+        }
     }
 
     /**
@@ -286,6 +309,35 @@ class TableRow extends Row {
         if (this.viewport.grid.syncedRowIndex === this.index) {
             el.classList.add(Globals.getClassName('syncedRow'));
         }
+    }
+
+    /**
+     * Preserves logical focus when column virtualization detaches the active
+     * body cell.
+     *
+     * @param cell
+     * The cell that is about to be detached.
+     */
+    protected override onCellBeforeDetach(cell: Cell): void {
+        const activeElement = document.activeElement;
+        const columnIndex = cell.column?.index;
+        const { focusCursor } = this.viewport;
+
+        if (
+            columnIndex === void 0 ||
+            this.id === void 0 ||
+            !focusCursor ||
+            focusCursor.type === 'header' ||
+            focusCursor.bodySectionId ||
+            focusCursor.rowId !== this.id ||
+            focusCursor.columnIndex !== columnIndex ||
+            !(activeElement instanceof Element) ||
+            !cell.htmlElement.contains(activeElement)
+        ) {
+            return;
+        }
+
+        this.viewport.preserveFocusDuringDetach();
     }
 
     /**

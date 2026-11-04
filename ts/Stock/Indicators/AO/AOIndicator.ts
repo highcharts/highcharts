@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -19,16 +20,11 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import ColumnSeries from '../../../Series/Column/ColumnSeries.js';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../../Core/Color/Palettes.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    column: {
-        prototype: columnProto
-    },
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     correctFloat,
     extend,
@@ -45,7 +41,6 @@ import {
 /**
  * The AO series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ao
  *
@@ -72,9 +67,10 @@ class AOIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               params, pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ao
+     * @requires     indicators/indicators
+     * @requires     indicators/ao
      * @optionparent plotOptions.ao
+     * @internal
      */
     public static defaultOptions: AOOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -93,7 +89,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
-        greaterBarColor: Palette.positiveColor,
+        greaterBarColor: 'var(--highcharts-positive-color)',
         /**
          * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -105,7 +101,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
-        lowerBarColor: Palette.negativeColor,
+        lowerBarColor: 'var(--highcharts-negative-color)',
         threshold: 0,
         groupPadding: 0.2,
         pointPadding: 0.2,
@@ -135,6 +131,7 @@ class AOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public drawGraph(this: AOIndicator): void {
         const indicator = this,
             options = indicator.options,
@@ -162,6 +159,7 @@ class AOIndicator extends SMAIndicator {
         }
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -251,15 +249,16 @@ class AOIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
     pointClass: typeof AOPoint;
-    crispCol: typeof columnProto.crispCol;
-    drawPoints: typeof columnProto.drawPoints;
-    getColumnMetrics: typeof columnProto.getColumnMetrics;
-    translate: typeof columnProto.translate;
+    /** @internal */
+    crispCol: typeof ColumnSeries.prototype.crispCol;
+    drawPoints: typeof ColumnSeries.prototype.drawPoints;
+    /** @internal */
+    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
+    translate: typeof ColumnSeries.prototype.translate;
 }
 
 extend(AOIndicator.prototype, {
@@ -268,10 +267,10 @@ extend(AOIndicator.prototype, {
 
     // Columns support:
     markerAttribs: noop as any,
-    getColumnMetrics: columnProto.getColumnMetrics,
-    crispCol: columnProto.crispCol,
-    translate: columnProto.translate,
-    drawPoints: columnProto.drawPoints
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
+    crispCol: ColumnSeries.prototype.crispCol,
+    translate: ColumnSeries.prototype.translate,
+    drawPoints: ColumnSeries.prototype.drawPoints
 });
 
 /* *
@@ -280,7 +279,6 @@ extend(AOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ao: typeof AOIndicator;
@@ -295,7 +293,6 @@ SeriesRegistry.registerSeriesType('ao', AOIndicator);
  *
  * */
 
-/** @internal */
 export default AOIndicator;
 
 /* *
@@ -311,11 +308,11 @@ export default AOIndicator;
  * @extends   series,plotOptions.ao
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ao
+ * @requires  indicators/indicators
+ * @requires  indicators/ao
  * @apioption series.ao
  */
 

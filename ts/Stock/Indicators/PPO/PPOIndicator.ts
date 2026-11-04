@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,10 +23,8 @@ import type {
 } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
 
+import EMAIndicator from '../EMA/EMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    ema: EMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -38,7 +37,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The PPO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ppo
  *
@@ -66,9 +64,10 @@ class PPOIndicator extends EMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ppo
+     * @requires     indicators/indicators
+     * @requires     indicators/ppo
      * @optionparent plotOptions.ppo
+     * @internal
      */
     public static defaultOptions: PPOOptions = merge(EMAIndicator.defaultOptions, {
         /**
@@ -105,6 +104,7 @@ class PPOIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PPOParamsOptions
@@ -179,7 +179,6 @@ class PPOIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface PPOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -197,7 +196,6 @@ extend(PPOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ppo: typeof PPOIndicator;
@@ -212,7 +210,6 @@ SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
  *
  * */
 
-/** @internal */
 export default PPOIndicator;
 
 /* *
@@ -228,11 +225,11 @@ export default PPOIndicator;
  * @extends   series,plotOptions.ppo
  * @since        7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ppo
+ * @requires  indicators/indicators
+ * @requires  indicators/ppo
  * @apioption series.ppo
  */
 

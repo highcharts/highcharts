@@ -6,8 +6,9 @@
  *  Class that can keep track of elements added to DOM and clean them up on
  *  destroy.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,7 +35,10 @@ const { removeElement } = HU;
  * */
 
 /**
- * @private
+ * Class that can keep track of elements added to DOM and clean them up on
+ * destroy.
+ *
+ * @internal
  */
 class DOMElementProvider {
 
@@ -70,7 +74,8 @@ class DOMElementProvider {
     /**
      * Create an element and keep track of it for later removal.
      * Same args as document.createElement
-     * @private
+     *
+     * @internal
      */
     public createElement(): HTMLDOMElement {
         const el = doc.createElement.apply(doc, arguments);
@@ -80,7 +85,8 @@ class DOMElementProvider {
 
     /**
      * Destroy created element, removing it from the DOM.
-     * @private
+     *
+     * @internal
      */
     public removeElement(element: HTMLDOMElement): void {
         removeElement(element);
@@ -89,7 +95,8 @@ class DOMElementProvider {
 
     /**
      * Destroy all created elements, removing them from the DOM.
-     * @private
+     *
+     * @internal
      */
     public destroyCreatedElements(): void {
         this.elements.forEach(function (element: HTMLDOMElement): void {
@@ -106,4 +113,5 @@ class DOMElementProvider {
  *
  * */
 
+/** @internal */
 export default DOMElementProvider;

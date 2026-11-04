@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,6 +25,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type Tick from '../../Core/Axis/Tick';
+import type VariwideSeries from './VariwideSeries';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -153,17 +155,20 @@ function tickPostTranslate(
 ): void {
     const axis = this.axis;
 
-    let pos = xy[xOrY] - axis.pos;
+    if (axis.variwide) {
+        let pos = xy[xOrY] - axis.pos;
 
-    if (!axis.horiz) {
-        pos = axis.len - pos;
-    }
-    pos = (axis.series[0] as any).postTranslate(index, pos);
+        if (!axis.horiz) {
+            pos = axis.len - pos;
+        }
+        pos = (axis.series[0] as VariwideSeries|undefined)
+            ?.postTranslate?.(index, pos) ?? pos;
 
-    if (!axis.horiz) {
-        pos = axis.len - pos;
+        if (!axis.horiz) {
+            pos = axis.len - pos;
+        }
+        xy[xOrY] = axis.pos + pos;
     }
-    xy[xOrY] = axis.pos + pos;
 }
 
 /**

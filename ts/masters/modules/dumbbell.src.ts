@@ -3,12 +3,13 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/dumbbell
  * @requires highcharts
+ * @requires highcharts/highcharts-more
  *
  * (c) 2009-2026 Highsoft AS
  * Author: Sebastian Bochan, Rafał Sebestjański
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

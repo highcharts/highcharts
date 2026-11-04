@@ -26,6 +26,7 @@ Highcharts.chart('container', {
 
     exporting: {
         fallbackToExportServer: false,
+        libURL: 'https://code.highcharts.com/lib/',
         pdfFont: {
             normal: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Regular.ttf',
             bold: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Bold.ttf',

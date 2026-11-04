@@ -49,7 +49,7 @@ const externals = [];
  * @param  {...Array<string>} pathMembers
  * Path to resolve to.
  *
- * @returns 
+ * @returns
  * UMD configuration.
  */
 function createUMDConfig(namespace, ...pathMembers) {
@@ -96,6 +96,42 @@ function decorateImportPath(
     }
 
     return path;
+}
+
+/**
+ * Validates relative import specifiers for strict ESM compatibility (#24760).
+ *
+ * @param {string} request
+ * Import specifier to validate.
+ *
+ * @param {string} context
+ * File path of the importing module.
+ *
+ * @param {string} masterName
+ * Name of the master bundle currently being processed.
+ */
+function validateRelativeImportPath(
+    request,
+    context,
+    masterName
+) {
+    if (typeof request !== 'string') {
+        return;
+    }
+
+    if (!request.match(/^[.]{1,2}\//u)) {
+        return;
+    }
+
+    const requestPath = request.split(/[?#]/u, 1)[0];
+
+    if (!requestPath.match(/\.(?:js|mjs|cjs)$/u)) {
+        throw new Error(
+            'Missing file extension in relative import "' + request +
+            '" from "' + context + '" while bundling "' + masterName +
+            '". Relative imports must be fully specified (for example "./x.js").'
+        );
+    }
 }
 
 
@@ -239,6 +275,8 @@ export async function resolveExternals(
     externalsType = 'umd'
 ) {
 
+    validateRelativeImportPath(info.request, info.context, masterName);
+
     // Quick exit
     if (
         masterName === externalsProduct ||
@@ -273,7 +311,13 @@ export async function resolveExternals(
     for (const external of myExternals) {
         if (external.files.includes(path)) {
 
-            if (external.included.includes(masterName)) {
+            if (
+                external.included.includes(masterName) &&
+                !(
+                    externalsType === 'module-import' &&
+                    external.esmExcluded?.includes(masterName)
+                )
+            ) {
                 return void 0;
             }
 
@@ -336,6 +380,7 @@ export default {
  * @typedef ExternalsDefinition
  * @property {Array<string>} files
  * @property {Array<string>} included
+ * @property {Array<string>} [esmExcluded]
  * @property {string} namespacePath
  */
 

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,20 +20,15 @@
 
 import type HeikinAshiSeries from './HeikinAshiSeries';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    candlestick: {
-        prototype: {
-            pointClass: CandlestickPoint
-        }
-    },
-    hlc: {
-        prototype: {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            pointClass: HLCPoint
-        }
-    }
-} = SeriesRegistry.seriesTypes;
+import CandlestickSeries from '../Candlestick/CandlestickSeries.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const CandlestickPoint = CandlestickSeries.prototype.pointClass;
 
 /* *
  *

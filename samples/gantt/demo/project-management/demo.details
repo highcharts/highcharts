@@ -1,11 +1,14 @@
 ---
-name: Project Management
+name: Gantt chart
 js_wrap: b
 authors:
   - Jon Arild Nygård
 tags:
+  - Highcharts overview
   - Highcharts Gantt demo
 categories:
+  - Basics:
+      priority: 13
   - Highcharts Gantt:
       priority: 11
 ...

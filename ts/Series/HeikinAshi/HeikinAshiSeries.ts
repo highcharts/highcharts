@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,11 +26,21 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import HeikinAshiPoint from './HeikinAshiPoint.js';
 import HeikinAshiSeriesDefaults from './HeikinAshiSeriesDefaults.js';
+import CandlestickSeries from '../Candlestick/CandlestickSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    candlestick: CandlestickSeries
-} = SeriesRegistry.seriesTypes;
 import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+type OHLCObject = {
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+};
 
 /* *
  *
@@ -40,7 +51,7 @@ import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
 /**
  * After processing and grouping the data, calculate how the heikinashi data
  * set should look like.
- * @private
+ * @internal
  */
 function onAxisPostProcessData(
     this: Axis
@@ -58,7 +69,7 @@ function onAxisPostProcessData(
 
 /**
  * Assign heikinashi data into the points.
- * @private
+ * @internal
  * @todo move to HeikinAshiPoint class
  */
 function onHeikinAshiSeriesAfterTranslate(
@@ -84,7 +95,7 @@ function onHeikinAshiSeriesAfterTranslate(
 
 /**
  * Force to recalculate the heikinashi data set after updating data.
- * @private
+ * @internal
  */
 function onHeikinAshiSeriesUpdatedData(
     this: HeikinAshiSeries
@@ -102,11 +113,8 @@ function onHeikinAshiSeriesUpdatedData(
 /**
  * The Heikin Ashi series.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.heikinashi
- *
- * @augments Highcharts.Series
  */
 class HeikinAshiSeries extends CandlestickSeries {
 
@@ -116,6 +124,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: HeikinAshiSeriesOptions = merge(
         CandlestickSeries.defaultOptions,
         HeikinAshiSeriesDefaults
@@ -127,6 +136,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series,
         AxisClass: typeof Axis
@@ -158,14 +168,17 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public data!: Array<HeikinAshiPoint>;
 
+    /** @internal */
     public heikinashiData: Array<Array<number>> = [];
 
     public options!: HeikinAshiSeriesOptions;
 
     public points!: Array<HeikinAshiPoint>;
 
+    /** @internal */
     public yData!: Array<Array<number>>;
 
+    /** @internal */
     public processedYData!: Array<Array<(number|null)>>;
 
     /* *
@@ -176,7 +189,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     /**
      * Calculate data set for the heikinashi series before creating the points.
-     * @private
+     * @internal
      */
     public getHeikinashiData(): void {
         const series = this,
@@ -188,13 +201,13 @@ class HeikinAshiSeries extends CandlestickSeries {
 
             // Modify the first point.
             this.modifyFirstPointValue(
-                table.getRow(0, this.pointArrayMap) as Array<number>
+                table.getRowObject(0, this.pointArrayMap) as OHLCObject
             );
 
             // Modify other points.
             for (let i = 1; i < dataLength; i++) {
                 this.modifyDataPoint(
-                    table.getRow(i, this.pointArrayMap) as Array<number>,
+                    table.getRowObject(i, this.pointArrayMap) as OHLCObject,
                     heikinashiData[i - 1]
                 );
             }
@@ -202,9 +215,7 @@ class HeikinAshiSeries extends CandlestickSeries {
         series.heikinashiData = heikinashiData;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments as any);
 
@@ -213,43 +224,43 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     /**
      * Calculate and modify the first data point value.
-     * @private
-     * @param {Array<(number)>} dataPoint
+     * @internal
+     * @param {Object} dataPoint
      *        Current data point.
      */
-    public modifyFirstPointValue(dataPoint: Array<(number)>): void {
-        const open = (
-                dataPoint[0] +
-                dataPoint[1] +
-                dataPoint[2] +
-                dataPoint[3]
+    public modifyFirstPointValue(dataPoint: OHLCObject): void {
+        const avg = (
+                dataPoint.open +
+                dataPoint.high +
+                dataPoint.low +
+                dataPoint.close
             ) / 4,
-            close = (dataPoint[0] + dataPoint[3]) / 2;
+            close = (dataPoint.open + dataPoint.close) / 2;
 
-        this.heikinashiData.push([open, dataPoint[1], dataPoint[2], close]);
+        this.heikinashiData.push([avg, dataPoint.high, dataPoint.low, close]);
     }
 
     /**
      * Calculate and modify the data point's value.
-     * @private
-     * @param {Array<(number)>} dataPoint
+     * @internal
+     * @param {Object} dataPoint
      *        Current data point.
      * @param {Array<(number)>} previousDataPoint
      *        Previous data point.
      */
     public modifyDataPoint(
-        dataPoint: Array<(number)>,
+        dataPoint: OHLCObject,
         previousDataPoint: Array<(number)>
     ): void {
         const newOpen = (previousDataPoint[0] + previousDataPoint[3]) / 2,
             newClose = (
-                dataPoint[0] +
-                dataPoint[1] +
-                dataPoint[2] +
-                dataPoint[3]
+                dataPoint.open +
+                dataPoint.high +
+                dataPoint.low +
+                dataPoint.close
             ) / 4,
-            newHigh = Math.max(dataPoint[1], newClose, newOpen),
-            newLow = Math.min(dataPoint[2], newClose, newOpen);
+            newHigh = Math.max(dataPoint.high, newClose, newOpen),
+            newLow = Math.min(dataPoint.low, newClose, newOpen);
 
         // Add new points to the array in order to properly calculate extremes.
         this.heikinashiData.push([newOpen, newHigh, newLow, newClose]);

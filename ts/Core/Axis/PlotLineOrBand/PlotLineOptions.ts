@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -18,7 +19,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Renderer/AlignObject';
-import type ColorString from '../../Color/ColorString';
+import type { ColorType } from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type DashStyleValue from '../../Renderer/DashStyleValue';
 import type Templating from '../../Templating';
@@ -212,9 +213,9 @@ export interface PlotLineOptions {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @default ${palette.neutralColor40}
+     * @default var(--highcharts-neutral-color-40)
      */
-    color?: ColorString;
+    color?: ColorType;
 
     /**
      * The dashing or dot style for the plot line. For possible values see

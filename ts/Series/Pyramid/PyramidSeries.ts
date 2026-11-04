@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,7 +37,7 @@ import { merge } from '../../Shared/Utilities.js';
 /**
  * Pyramid series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pyramid
  *
@@ -87,6 +88,7 @@ class PyramidSeries extends FunnelSeries {
  *
  * */
 
+/** @internal */
 interface PyramidSeries {
     pointClass: typeof PyramidPoint;
 }

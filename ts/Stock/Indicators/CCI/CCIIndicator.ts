@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -22,10 +23,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -64,7 +63,6 @@ function meanDeviation(arr: Array<number>, sma: number): number {
 /**
  * The CCI series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.cci
  *
@@ -88,9 +86,10 @@ class CCIIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cci
+     * @requires     indicators/indicators
+     * @requires     indicators/cci
      * @optionparent plotOptions.cci
+     * @internal
      */
     public static defaultOptions: CCIOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -117,6 +116,7 @@ class CCIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: CCIParamsOptions
@@ -186,7 +186,6 @@ class CCIIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface CCIIndicator {
     pointClass: typeof CCIPoint;
 }
@@ -197,7 +196,6 @@ interface CCIIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cci: typeof CCIIndicator;
@@ -212,7 +210,6 @@ SeriesRegistry.registerSeriesType('cci', CCIIndicator);
  *
  * */
 
-/** @internal */
 export default CCIIndicator;
 
 /* *
@@ -227,10 +224,9 @@ export default CCIIndicator;
  *
  * @extends   series,plotOptions.cci
  * @since     6.0.0
- * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/cci
+ * @requires  indicators/indicators
+ * @requires  indicators/cci
  * @apioption series.cci
  */
 

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Kamil Kulig
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,10 +25,8 @@ import type {
 import type LinearRegressionInterceptPoint from
     './LinearRegressionInterceptPoint';
 
+import LinearRegressionIndicator from '../LinearRegression/LinearRegressionIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    linearregression: LinearRegressionIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -39,7 +38,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Linear Regression Intercept series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionIntercept
  *
@@ -63,9 +61,10 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     indicators/indicators
+     * @requires     indicators/regressions
      * @optionparent plotOptions.linearregressionintercept
+     * @internal
      */
     public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions
@@ -87,6 +86,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      *
      * */
 
+    /** @internal */
     public getEndPointY(
         lineParameters: RegressionLineParametersObject
     ): number {
@@ -100,7 +100,6 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
  *
  * */
 
-/** @internal */
 interface LinearRegressionInterceptIndicator {
     pointClass: typeof LinearRegressionInterceptPoint;
     nameBase: string;
@@ -116,7 +115,6 @@ extend(LinearRegressionInterceptIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregressionintercept: typeof LinearRegressionInterceptIndicator;
@@ -141,7 +139,6 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
-/** @internal */
 export default LinearRegressionInterceptIndicator;
 
 /* *
@@ -158,9 +155,8 @@ export default LinearRegressionInterceptIndicator;
  * @extends   series,plotOptions.linearregressionintercept
  * @since     7.0.0
  * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  indicators/indicators
+ * @requires  indicators/regressions
  * @apioption series.linearregressionintercept
  */
 

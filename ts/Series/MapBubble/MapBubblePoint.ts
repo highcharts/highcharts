@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,19 +19,16 @@
  * */
 
 import BubblePoint from '../Bubble/BubblePoint.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import MapSeries from '../Map/MapSeries.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    seriesTypes: {
-        map: {
-            prototype: {
-                pointClass: {
-                    prototype: mapPointProto
-                }
-            }
-        }
-    }
-} = SeriesRegistry;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const MapPoint = MapSeries.prototype.pointClass;
 
 /* *
  *
@@ -59,6 +57,7 @@ class MapBubblePoint extends BubblePoint {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return typeof this.z === 'number';
     }
@@ -72,12 +71,13 @@ class MapBubblePoint extends BubblePoint {
  * */
 
 interface MapBubblePoint {
-    getProjectedBounds: typeof mapPointProto.getProjectedBounds;
+    /** @internal */
+    getProjectedBounds: typeof MapPoint.prototype.getProjectedBounds;
 }
 
 extend(MapBubblePoint.prototype, {
-    applyOptions: mapPointProto.applyOptions,
-    getProjectedBounds: mapPointProto.getProjectedBounds
+    applyOptions: MapPoint.prototype.applyOptions,
+    getProjectedBounds: MapPoint.prototype.getProjectedBounds
 });
 
 /* *

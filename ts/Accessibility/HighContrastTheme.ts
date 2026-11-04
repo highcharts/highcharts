@@ -5,8 +5,9 @@
  *
  *  Default theme for Windows High Contrast Mode.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,6 +30,7 @@ import type Options from '../Core/Options';
  *
  * */
 
+/** @internal */
 declare module '../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {
         connectorColor?: ColorType;
@@ -41,8 +43,10 @@ declare module '../Core/Series/DataLabelOptions' {
  *
  * */
 
+/** @internal */
 export type HighContrastThemeOptions = DeepPartial<Options>;
 
+/** @internal */
 const theme: HighContrastThemeOptions = {
     chart: {
         backgroundColor: 'window'
@@ -244,4 +248,5 @@ const theme: HighContrastThemeOptions = {
  *
  * */
 
+/** @internal */
 export default theme;

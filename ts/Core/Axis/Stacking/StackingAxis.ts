@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,16 +20,12 @@
 
 import type Chart from '../../Chart/Chart';
 import type Point from '../../Series/Point';
-import type Series from '../../Series/Series';
 import type { StackOverflowValue } from './StackingOptions';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
-import type { YAxisOptions } from '../AxisOptions';
 
-import A from '../../Animation/AnimationUtilities.js';
-const { getDeferredAnimation } = A;
+import { getDeferredAnimation } from '../../Animation/AnimationUtilities.js';
 import Axis from '../Axis.js';
-import SeriesRegistry from '../../Series/SeriesRegistry.js';
-const { series: { prototype: seriesProto } } = SeriesRegistry;
+import Series from '../../Series/Series.js';
 import StackItem from './StackItem.js';
 import {
     addEvent,
@@ -37,8 +34,7 @@ import {
     destroyObjectProperties,
     fireEvent,
     isNumber,
-    objectEach,
-    pick
+    objectEach
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -150,7 +146,7 @@ function chartGetStacks(
         if (series.options.stacking && series.reserveSpace()) {
             series.stackKey = [
                 series.type,
-                pick(series.options.stack, ''),
+                (series.options.stack ?? ''),
                 inverted ? xAxisOptions.top : xAxisOptions.left,
                 inverted ? xAxisOptions.height : xAxisOptions.width
             ].join(',');
@@ -336,7 +332,7 @@ function seriesSetGroupedPoints(
             // With only one series, we don't need to consider centerInCategory
             this.chart.series.length > 1
         ) {
-            seriesProto.setStackedPoints.call(this, axis, 'group');
+            Series.prototype.setStackedPoints.call(this, axis, 'group');
 
         // After updating, if we now have proper stacks, we must delete the
         // group pseudo stacks (#14980)
@@ -428,7 +424,6 @@ function seriesSetStackedPoints(
             } else {
                 stacks[key][x] = new StackItem(
                     axis,
-                    (axis.options as YAxisOptions).stackLabels as any,
                     !!isNegative,
                     x,
                     stackOption
@@ -440,7 +435,7 @@ function seriesSetStackedPoints(
         stack = stacks[key][x];
         if (y !== null) {
             stack.values[pointKey] = stack.values[series.index] = [
-                pick(stack.cumulative, stackThreshold)
+                (stack.cumulative ?? stackThreshold)
             ];
 
             // Record the base of the stack
@@ -495,7 +490,7 @@ function seriesSetStackedPoints(
             stack.cumulative = (total || 1) - 1;
         } else {
             stack.cumulative = correctFloat(
-                pick(stack.cumulative, stackThreshold) + yNumber
+                (stack.cumulative ?? stackThreshold) + yNumber
             );
         }
         stack.total = total;
@@ -654,43 +649,56 @@ class AxisAdditions {
         });
     }
 
-    /** @internal */
+    /**
+     * Create the stack totals group and render the individual labels into it
+     * @internal
+     */
     public renderStackTotals(): void {
         const stacking = this,
             axis = stacking.axis,
             chart = axis.chart,
             renderer = chart.renderer,
             stacks = stacking.stacks,
-            stackLabelsAnim = axis.options.stackLabels?.animation,
+            { animation, enabled } = axis.options.stackLabels || {},
             animationConfig = getDeferredAnimation(
                 chart,
-                stackLabelsAnim || false
+                animation || false
             ),
             stackTotalGroup = stacking.stackTotalGroup = (
                 stacking.stackTotalGroup ||
-                renderer
-                    .g('stack-labels')
-                    .attr({
-                        zIndex: 6,
-                        opacity: 0
-                    })
-                    .add()
+                (
+                    enabled ?
+                        renderer
+                            .g('stack-labels')
+                            .attr({
+                                zIndex: 6,
+                                opacity: 0
+                            })
+                            .add() :
+                        void 0
+                )
             );
 
-        // The plotLeft/Top will change when y axis gets wider so we need to
-        // translate the stackTotalGroup at every render call. See bug #506
-        // and #516
-        stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
+        if (stackTotalGroup) {
+            // The plotLeft/Top will change when y axis gets wider so we need to
+            // translate the stackTotalGroup at every render call. See bug #506
+            // and #516
+            stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
 
-        // Render each stack total
-        objectEach(stacks, (type): void => {
-            objectEach(type, (stack): void => {
-                stack.render(stackTotalGroup);
+            // Render each stack total
+            objectEach(stacks, (type): void => {
+                objectEach(type, (stack): void => {
+                    if (enabled) {
+                        stack.render(stackTotalGroup);
+                    } else {
+                        stack.label = stack.label?.destroy();
+                    }
+                });
             });
-        });
-        stackTotalGroup.animate({
-            opacity: 1
-        }, animationConfig);
+            stackTotalGroup.animate({
+                opacity: 1
+            }, animationConfig);
+        }
     }
 
 }

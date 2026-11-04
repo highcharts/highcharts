@@ -9,8 +9,9 @@
  *  Layout algorithm by Ben Frederickson:
  *  https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,11 +27,16 @@
 import type VennPointOptions from './VennPointOptions';
 import type VennSeries from './VennSeries';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const {
-    scatter: { prototype: { pointClass: ScatterPoint } }
-} = SeriesRegistry.seriesTypes;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *
@@ -48,10 +54,13 @@ class VennPoint extends ScatterPoint {
 
     public options!: VennPointOptions;
 
+    /** @internal */
     public series!: VennSeries;
 
+    /** @internal */
     public sets?: Array<string>;
 
+    /** @internal */
     public value?: number;
 
     /* *
@@ -60,10 +69,12 @@ class VennPoint extends ScatterPoint {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return isNumber(this.value);
     }
 
+    /** @internal */
     public shouldDraw(): boolean {
         // Only draw points with single sets.
         return !!this.shapeArgs;

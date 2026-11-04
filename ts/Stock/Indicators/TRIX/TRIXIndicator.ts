@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,8 @@ import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
 import type { TRIXOptions } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
+import TEMAIndicator from '../TEMA/TEMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { tema: TEMAIndicator } = SeriesRegistry.seriesTypes;
 import { correctFloat, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -31,7 +32,6 @@ import { correctFloat, merge } from '../../../Shared/Utilities.js';
 /**
  * The TRIX series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.trix
  *
@@ -59,10 +59,11 @@ class TRIXIndicator extends TEMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/tema
-     * @requires     stock/indicators/trix
+     * @requires     indicators/indicators
+     * @requires     indicators/tema
+     * @requires     indicators/trix
      * @optionparent plotOptions.trix
+     * @internal
      */
     public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions);
 
@@ -83,6 +84,7 @@ class TRIXIndicator extends TEMAIndicator {
      * */
 
     // TRIX is calculated using TEMA so we just extend getTemaPoint method.
+    /** @internal */
     public getTemaPoint(
         xVal: Array<number>,
         tripledPeriod: number,
@@ -107,7 +109,6 @@ class TRIXIndicator extends TEMAIndicator {
  *
  * */
 
-/** @internal */
 interface TRIXIndicator {
     pointClass: typeof TRIXPoint;
 }
@@ -118,7 +119,6 @@ interface TRIXIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trix: typeof TRIXIndicator;
@@ -133,7 +133,6 @@ SeriesRegistry.registerSeriesType('trix', TRIXIndicator);
  *
  * */
 
-/** @internal */
 export default TRIXIndicator;
 
 /* *
@@ -149,11 +148,12 @@ export default TRIXIndicator;
  * @extends   series,plotOptions.trix
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/tema
+ * @requires  indicators/indicators
+ * @requires  indicators/tema
+ * @requires  indicators/trix
  * @apioption series.trix
  */
 

@@ -3,8 +3,9 @@
  *  (c) 2024-2026 Highsoft AS
  *  Author: Hubert Kozik
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -432,7 +433,7 @@ function onAfterSetChartSize(
  */
 function onInitDataLabelsGroup(
     this: Series,
-    { index, zIndex }: { index: number, zIndex: number }
+    { index, zIndex = 6 }: { index: number, zIndex?: number }
 ): void {
     if (this.hasDataLabels?.()) {
         this.dataLabelsParentGroups ||= [];

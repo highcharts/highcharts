@@ -1,0 +1,90 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+
+<div class="demo">
+    <div id="container"></div>
+    <div class="editor">
+        <h2>Options Editor</h2>
+        <div class="instructions">Text changes apply as you type. Use a screen reader to hear the editable hint
+            and edit lifecycle updates in real time.</div>
+        <form>
+            <details>
+                <summary>accessibility</summary>
+                <div class="option-group">
+                    <div class="option">
+                        <label for="a11y-enabled">enabled:</label>
+                        <input type="checkbox" id="a11y-enabled" name="accessibility.enabled" />
+                        <span class="description">[ Enable accessibility features for the Grid ]</span>
+                    </div>
+                    <details>
+                        <summary>announcements</summary>
+                        <div class="option-group">
+                            <div class="option">
+                                <label for="editing-enabled">cellEditing:</label>
+                                <input type="checkbox" id="editing-enabled"
+                                    name="accessibility.announcements.cellEditing" />
+                                <span class="description">[ Enable accessibility announcements for cell editing
+                                    ]</span>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+            <details>
+                <summary>lang.accessibility.cellEditing</summary>
+                <div class="option-group">
+                    <div class="option">
+                        <label for="editable">editable:</label>
+                        <input type="text" id="editable" name="lang.accessibility.cellEditing.editable" />
+                        <span class="description">[ An additional hint read by the voice over after an editable cell
+                            value ]</span>
+                    </div>
+                </div>
+                <details>
+                    <summary>announcements</summary>
+                    <div class="option-group">
+                        <div class="option">
+                            <label for="editing-started">started:</label>
+                            <input type="text" id="editing-started"
+                                name="lang.accessibility.cellEditing.announcements.started" />
+                            <span class="description">[ Announcement for starting editing ]</span>
+                        </div>
+                        <div class="option">
+                            <label for="editing-edited">edited:</label>
+                            <input type="text" id="editing-edited"
+                                name="lang.accessibility.cellEditing.announcements.edited" />
+                            <span class="description">[ Announcement for edited cell value ]</span>
+                        </div>
+                        <div class="option">
+                            <label for="editing-cancelled">cancelled:</label>
+                            <input type="text" id="editing-cancelled"
+                                name="lang.accessibility.cellEditing.announcements.cancelled" />
+                            <span class="description">[ Announcement for cancelled editing ]</span>
+                        </div>
+                        <div class="option">
+                            <label for="editing-not-valid">notValid:</label>
+                            <input type="text" id="editing-not-valid"
+                                name="lang.accessibility.cellEditing.announcements.notValid" />
+                            <span class="description">[ Announcement prefix for invalid values ]</span>
+                        </div>
+                    </div>
+                </details>
+            </details>
+        </form>
+    </div>
+    <div class="editor">
+        <h2>Edit log</h2>
+        <div id="changelog" aria-live="polite"></div>
+    </div>
+    <p class="highcharts-description">
+        Shows how editable cells work with accessibility support in Highcharts Grid Pro. Double-click
+        an editable cell or press <code>Enter</code> to start editing, then try typing an invalid <code>SKU</code>
+        like "apple" or a non-number in the <code>price</code> column to hear the validation
+        announcement.
+    </p>
+    <p class="highcharts-description">
+        For other accessibility features, see also the
+        <a href="https://www.highcharts.com/demo/grid/accessibility" target="_top">Grid Lite accessibility demo</a>.
+        For implementation guidance and additional details, refer to the
+        <a href="https://www.highcharts.com/docs/grid/accessibility" target="_top">accessibility documentation</a>.
+    </p>
+</div>

@@ -5,8 +5,9 @@
  *
  *  Item series type for Highcharts
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -134,7 +135,7 @@ const ItemSeriesDefaults: ItemSeriesOptions = {
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.item
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/item-series

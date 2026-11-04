@@ -104,11 +104,54 @@ for manual testing.
 are meant for education, where the actual feature is covered by other tests.
 
 
+Demo metadata for package example indexes
+-----------------------------------------
+
+The `gulp dist-examples` task generates static package example indexes from the
+local sample metadata. The generator lives in `tools/gulptasks/lib/demoIndex.js`
+and reads the product configuration in `samples/demo-config.js` together with
+per-demo `demo.details` files.
+
+For a public demo to appear in a package index, its `demo.details` file must
+have a non-empty `name`, at least one matching product `tags` entry and at least
+one category that is configured for that product in `samples/demo-config.js`.
+The category may be a string or an object with a `priority` value. Priority is
+used to sort demos inside a category; demos with the same priority are sorted by
+name.
+
+Categories that are present in `demo.details` but not configured for the product
+are ignored by the package index generator. Malformed YAML or malformed category
+metadata is treated as a build error.
+
+
 TypeScript
 ----------
 
 You can create demos with TypeScript-code, which comes with similar limitations
 as our official NPM packages.
+
+To typecheck `demo.ts` files in Highcharts, Stock, Maps and Gantt samples against
+the current API declarations, run from the repository root:
+
+```sh
+npx gulp jsdoc-dts
+npx gulp typecheck-samples
+```
+
+Rebuild the declarations after changing the API. To check a selection of demos,
+pass a file path or glob. Repeat `--path` for multiple selections:
+
+```sh
+npx gulp typecheck-samples --path "samples/stock/**/demo.ts"
+npx gulp typecheck-samples \
+    --path "samples/{maps,gantt}/**/demo.ts" \
+    --path samples/highcharts/demo/scatter/demo.ts
+```
+
+The task reports TypeScript errors without writing JavaScript, declarations or
+build-info files. Each demo is checked separately so variables and type extensions
+in unrelated demos do not conflict. Unit-test samples, Dashboards and Grid are
+outside this task's scope.
 
 **Note:** The `type` option in `Options.series` is not required in demos thanks
 to a experimental `UnknownSeriesOptions` type. This should not be mentioned in

@@ -11,3 +11,9 @@ body {
         "Segoe UI Symbol",
         sans-serif;
 }
+
+#container {
+    max-width: 500px;
+    height: 300px;
+    margin: 0 auto;
+}

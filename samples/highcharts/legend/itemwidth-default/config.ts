@@ -8,6 +8,10 @@ export default {
         value: 0,
         max: 150
     }, {
+        path: 'legend.itemDistance',
+        value: 40,
+        max: 100
+    }, {
         path: 'legend.alignColumns'
     }],
     templates: [],

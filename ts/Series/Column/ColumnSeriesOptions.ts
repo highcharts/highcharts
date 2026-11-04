@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,11 +37,17 @@ import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
  *
  * */
 
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        borderWidth?: number;
+    }
+}
+
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         borderColor?: ColorType;
         borderDashStyle?: DashStyleValue;
-        borderRadius?: (number|string|BorderRadiusOptionsObject);
+        borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
         borderWidth?: number;
         centerInCategory?: boolean;
         fillColor?: ColorType;
@@ -59,19 +66,18 @@ declare module '../../Core/Series/SeriesOptions' {
          */
         pointRange?: (number|null);
     }
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        borderDashStyle?: DashStyleValue;
-        borderRadius?: number;
-        borderWidth?: number;
-        brightness?: number;
-        color?: ColorType;
-        dashStyle?: DashStyleValue;
-    }
     interface SeriesZonesOptions {
         borderColor?: ColorType;
         borderWidth?: number;
         color?: ColorType;
+    }
+}
+
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
+        borderDashStyle?: DashStyleValue;
+        borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
+        borderWidth?: number;
     }
 }
 
@@ -91,7 +97,7 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * @extends series,plotOptions.column
  *
- * @excluding connectEnds, connectNulls, dataParser, dataURL, gapSize, gapUnit,
+ * @excluding connectEnds, connectNulls, gapSize, gapUnit,
  *            linecap, lineWidth, marker, step, useOhlcData
  *
  * @product highcharts highstock
@@ -107,7 +113,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
      *         Dark gray border
      *
-     * @default #ffffff
+     * @default 'var(--highcharts-background-color)'
      *
      * @product highcharts highstock gantt
      */
@@ -127,7 +133,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @product highcharts highstock gantt
      */
-    borderRadius?: (number|string|BorderRadiusOptionsObject);
+    borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
 
     /**
      * The width of the border surrounding each column or bar. Defaults to
@@ -157,44 +163,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @product highcharts highstock gantt
      */
     centerInCategory?: boolean;
-
-    /**
-     * When using automatic point colors pulled from the global
-     * [colors](colors) or series-specific
-     * [plotOptions.column.colors](series.colors) collections, this option
-     * determines whether the chart should receive one color per series or
-     * one color per point.
-     *
-     * In styled mode, the `colors` or `series.colors` arrays are not
-     * supported, and instead this option gives the points individual color
-     * class names on the form `highcharts-color-{n}`.
-     *
-     * @see [series colors](#plotOptions.column.colors)
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
-     *         False by default
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
-     *         True
-     *
-     * @default false
-     *
-     * @since 2.0
-     *
-     * @product highcharts highstock gantt
-     */
-    colorByPoint?: boolean;
-
-    /**
-     * A series specific or series type specific color set to apply instead
-     * of the global [colors](#colors) when [colorByPoint](
-     * #plotOptions.column.colorByPoint) is true.
-     *
-     * @since 3.0
-     *
-     * @product highcharts highstock gantt
-     */
-    colors?: Array<ColorType>;
 
     /**
      * When the series contains less points than the crop threshold, all
@@ -280,11 +248,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @excluding marker
      *
-     * @type {Array<number|Array<(number|string),(number|null)>|null|*>}
-     *
      * @product highcharts highstock
-     *
-     * @apioption series.column.data
      */
     data?: Array<(ColumnPointOptions|PointShortOptions)>;
 
@@ -348,14 +312,18 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * The minimal height for a column or width for a bar. By default,
      * 0 values are not shown. To visualize a 0 (or close to zero) point,
      * set the minimal point length to a pixel value like 3\. In stacked
-     * column charts, minPointLength might not be respected for tightly
-     * packed values.
+     * column charts, the length is applied to each point in isolation, so
+     * tightly packed values may overlap. See the stacked sample below for a
+     * plugin that lays out the stack as a whole instead.
      *
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength/
      *         Zero base value
      *
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/
      *         Positive and negative close to zero values
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-minpointlength-stacked/
+     *         Stack-aware minimum length
      *
      * @product highcharts highstock gantt
      */
@@ -372,6 +340,9 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
      *         0 for tightly packed columns
+     *
+     * @sample {highcharts} highcharts/plotoptions/pie-pointpadding/
+     *         Pie point padding plugin
      *
      * @product highcharts highstock gantt
      */
@@ -423,32 +394,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
     startFromThreshold?: boolean;
 
     states?: SeriesStatesOptions<ColumnSeriesOptions>;
-
-    /**
-     * Options for the hovered point. These settings override the normal
-     * state options when a point is moused over or touched.
-     *
-     * @extends plotOptions.series.states.hover
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock gantt
-     *
-     * @apioption series.column.states.hover
-     */
-
-    /**
-     * Options for the selected point. These settings override the
-     * normal state options when a point is selected.
-     *
-     * @extends plotOptions.series.states.select
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock gantt
-     *
-     * @apioption series.column.states.select
-     */
 
     /**
      * The Y axis value to serve as the base for the columns, for

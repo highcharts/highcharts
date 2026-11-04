@@ -12,12 +12,17 @@
  * */
 
 import type ColorType from '../../../Core/Color/ColorType';
+import type { AnnotationPointType } from '../AnnotationSeries';
+import type Controllable from '../Controllables/Controllable';
+import type {
+    AnnotationOptions,
+    AnnotationTypeOptions
+} from '../AnnotationOptions';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
-import { Palette } from '../../../Core/Color/Palettes';
 import { AnnotationLabelOptionsOptions } from '../AnnotationOptions';
 import { merge } from '../../../Shared/Utilities.js';
 
@@ -32,6 +37,7 @@ if (defaultOptions.annotations?.types) {
          *
          * @extends      annotations.types.crookedLine
          * @product      highstock
+         * @requires     modules/annotations-advanced
          * @optionparent annotations.types.elliottWave
          */
         {
@@ -61,7 +67,7 @@ if (defaultOptions.annotations?.types) {
                 borderWidth: 0,
                 y: -5,
                 style: {
-                    color: Palette.neutralColor80
+                    color: 'var(--highcharts-neutral-color-80)'
                 }
             }
         }
@@ -93,7 +99,9 @@ class ElliottWave extends CrookedLine {
                         point.label,
                         {
                             text: typeOptions.labels[i],
-                            point: function (target: any): any {
+                            point: function (
+                                target: Controllable
+                            ): AnnotationPointType {
                                 return target.annotation.points[i];
                             }
                         }
@@ -140,11 +148,11 @@ namespace ElliottWave {
      * @product      highstock
      * @optionparent annotations.types.elliottWave
      */
-    export interface Options extends CrookedLine.Options {
+    export interface Options extends AnnotationOptions {
         labelOptions: LabelOptions;
         typeOptions: TypeOptions;
     }
-    export interface TypeOptions extends CrookedLine.TypeOptions {
+    export interface TypeOptions extends AnnotationTypeOptions {
         /** @internal */
         labels: Array<string>;
     }

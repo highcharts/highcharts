@@ -259,6 +259,7 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         followTouchMove: false
     });
     swipe();
+
     assert.equal(
         chart.tooltip.label.element.textContent.indexOf('Bananas'),
         -1,

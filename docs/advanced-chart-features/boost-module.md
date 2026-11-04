@@ -1,3 +1,10 @@
+---
+description: >-
+  Set up WebGL rendering for large datasets with the Boost module. Learn how
+  to configure data and activation thresholds, understand feature limitations,
+  and measure rendering performance with built-in timing probes.
+---
+
 Boost module
 ============
 
@@ -34,6 +41,12 @@ The main boost configuration is set in the `boost` property in the chart options
 
 ```js
 {
+    dataTable: {
+        columns: {
+            x: new Uint8Array([0, 1, 3, 4]),
+            y: new Uint8Array([6, 4, 7, 3])
+        }
+    },
     boost: {
         useGPUTranslations: true,
         // Chart-level boost when there are more than 5 series in the chart
@@ -48,9 +61,8 @@ The main boost configuration is set in the `boost` property in the chart options
     },
 
     series: [{
-        boostThreshold: 1,  // Boost when there are more than 1
-                            // point in the series.
-        data: [ [0, 1], [1, 2], [2, 3] ]
+        // Boost when there is more than 1 point in the series
+        boostThreshold: 1
     }]
 };
 ```
@@ -59,8 +71,12 @@ _Configuration for a boosted line chart._
 
 Configuration Data Options
 --------------------------
+We recommend configuring data in a
+[DataTable](https://api.highcharts.com/highcharts/dataTable) with typed arrays
+as columns. This performs up to 20% faster than `series.data` options in a chart
+with 500k data points.
 
-In boost mode, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
+Should you choose to use `series.data` instead, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
 
 Note that when `dataGrouping` is enabled (default in `stockChart`), boost mode will not kick in.
 
@@ -85,7 +101,7 @@ The Boost module contains a WebGL renderer that replaces parts of the SVG render
 * Marker shapes, apart from circles, are not supported.
 * Dash style for lines is not supported.
 * Stacking, and negative colors are not supported.
-* Line width is supported, but handled globally. The `lineWidth` setting applies to all boosted line series and individual per-series values are not respected. For consistent behavior, it is recommended to set the width via `plotOptions.line.lineWidth` rather than per series.
+* Line width is supported, but handled globally. The `lineWidth` setting applies to all boosted line series and individual per-series values are not respected. For consistent behavior, it is recommended to set the width via `plotOptions.line.lineWidth` rather than per series. When a boosted line series shares its rendering target with a boosted non-line series (chart-level boosting mixed with e.g. `area` or `scatter`), the line width is limited to 1px to avoid degrading the other series.
 * [`stickyTracking`](https://api.highcharts.com/highcharts/plotOptions.series.stickyTracking) is forced.
 
 The intended way of using the module, is to set thresholds in such a way that the SVG-renderer “takes over” rendering when zooming in. This approach gives the expected interactivity when the points are less dense, coupled with high performance when the point density is high.

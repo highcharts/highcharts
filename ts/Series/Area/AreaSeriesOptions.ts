@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,7 +32,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 /**
  * The area series type.
  *
- * A `area` series. If the [type](#series.area.type) option is not
+ * An `area` series. If the [type](#series.area.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @sample {highcharts} highcharts/demo/area-chart/
@@ -40,19 +41,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * @sample {highstock} stock/demo/area/
  *         Area chart
  *
- * @extends plotOptions.line
- *
- * @extends series,plotOptions.area
- *
- * @excluding useOhlcData
- *
- * @excluding dataParser, dataURL, useOhlcData
- *
  * @product highcharts highstock
- *
- * @optionparent plotOptions.area
- *
- * @optionparent series.area
  */
 export interface AreaSeriesOptions extends LineSeriesOptions {
 
@@ -286,6 +275,13 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
      */
     color?: ColorType;
 
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    useOhlcData?: undefined;
 }
 
 /* *

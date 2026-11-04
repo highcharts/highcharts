@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -30,6 +31,7 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 import CellContentPro from '../CellContentPro.js';
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../../Core/Globals.js';
+import { setUserAttributes } from '../../../Core/GridUtils.js';
 
 
 /* *
@@ -103,11 +105,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
         select.name = cell.column.id + '-' + cell.row.id;
         select.classList.add(Globals.getClassName('input'));
 
-        if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]): void => {
-                select.setAttribute(key, value);
-            });
-        }
+        setUserAttributes(select, options.attributes);
 
         this.update();
 

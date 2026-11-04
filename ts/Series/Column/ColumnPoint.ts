@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,19 +28,27 @@ import Point from '../../Core/Series/Point.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
+        /** @internal */
         allowShadow?: boolean;
     }
 }
 
 export class ColumnPoint extends Point {
+    /** @internal */
     allowShadow?: boolean;
+    /** @internal */
     barX!: number;
+    /** @internal */
     group?: SVGElement;
+    /** @internal */
     opacity?: number;
     options!: ColumnPointOptions;
+    /** @internal */
     pointWidth?: number;
+    /** @internal */
     series!: ColumnSeries;
 }
 

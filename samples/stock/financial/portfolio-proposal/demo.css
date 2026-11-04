@@ -1,0 +1,191 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+:root {
+    color-scheme: light dark;
+
+    --page-background: light-dark(#f4f3ee, #1b1b1b);
+    --card-background: light-dark(#fff, #141414);
+    --card-border: light-dark(#dcdbd2, #2c2c2c);
+    --text-color: light-dark(#1e1e1e, #d0d0d0);
+    --muted-text-color: light-dark(#5a5d5c, #a1a1a1);
+    --card-shadow: light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    gap: 16px;
+    background-color: var(--page-background);
+    color: var(--text-color);
+    padding: 24px;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+header p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--muted-text-color);
+}
+
+.chart-row {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.chart-row div {
+    flex: 1 0 0;
+}
+
+#portfolio-grid .hcg-container div {
+    flex: none;
+}
+
+#stress-chart,
+#growth-chart,
+#risk-return-chart,
+#current-holdings-chart,
+#proposed-holdings-chart,
+#portfolio-chart,
+#map-chart {
+    min-height: 400px;
+}
+
+#portfolio-grid {
+    min-height: 400px !important;
+}
+
+.chart-container {
+    flex: 1;
+    background: var(--card-background);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    box-shadow: 0 2px 1px var(--card-shadow);
+    padding: 20px;
+}
+
+.chart-container.risk-return {
+    display: flex;
+    flex-direction: row;
+}
+
+.holdings-container {
+    display: flex;
+    min-width: 0;
+    flex: 1 0 0;
+}
+
+.holdings-container #current-holdings-chart {
+    min-width: 0;
+    flex: 1;
+}
+
+.theme-custom {
+    --hcg-font-size: 15px;
+    --hcg-color: var(--text-color);
+    --hcg-header-color: light-dark(#474554, #a1a1a1);
+    --hcg-header-padding: 14px;
+    --hcg-background: var(--card-background);
+    --hcg-padding: 10px;
+    --hcg-row-even-background: var(--card-background);
+    --hcg-cell-hovered-row-background: light-dark(#f2f3f4, #202020);
+    --hcg-border-width: 1px;
+    --hcg-border-color: light-dark(#adadad, #434343);
+    --hcg-header-background: light-dark(#f4f3ee, #202020);
+    --hcg-caption-font-size: 19px;
+    --hcg-caption-font-weight: bold;
+}
+
+.theme-custom .numeric-val-col {
+    text-align: right;
+}
+
+.highcharts-dashboards-cell > .highcharts-dashboards-component {
+    box-shadow: none;
+}
+
+/* Add styles for the loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+        visibility 0s,
+        opacity 0.3s;
+}
+
+.loading-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.loading-spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 900px) {
+    body {
+        padding: 16px;
+    }
+
+    .chart-row {
+        flex-direction: column;
+    }
+
+    .chart-container.risk-return {
+        flex-direction: column;
+    }
+
+    .holdings-container {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 560px) {
+    body {
+        gap: 4px;
+        padding: 0;
+    }
+
+    .chart-container {
+        padding: 0;
+    }
+}

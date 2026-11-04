@@ -3,6 +3,7 @@ let chart = null; // Chart is not created initially
 const activeCols = new Set();
 
 Grid.grid('grid', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             Year: [
@@ -33,6 +34,7 @@ Grid.grid('grid', {
     },
     columnDefaults: {
         cells: {
+            format: '{#if (ne value null)}{value:,.f}{else}-{/if}',
             events: {
                 click: function () {
                     const grid = this.row.viewport.grid;
@@ -44,10 +46,12 @@ Grid.grid('grid', {
                         return;
                     }
 
+                    // The original table is used, so that sorting the grid
+                    // does not reorder the chart data
+                    const table = grid.dataProvider.getDataTable();
+
                     // We get the x axis from the Year column
-                    const years = grid.dataProvider
-                        .getDataTable()
-                        .getColumn(yearColumnId);
+                    const years = table.getColumn(yearColumnId);
 
                     // Create chart if it doesn't exist
                     if (!chart) {
@@ -104,7 +108,7 @@ Grid.grid('grid', {
                         // Add new series to chart
                         chart.addSeries({
                             name: columnId,
-                            data: this.column.data
+                            data: table.getColumn(columnId)
                         });
 
                         // Accessibility
@@ -124,7 +128,10 @@ Grid.grid('grid', {
     },
     columns: [{
         id: 'Year',
-        width: 65
+        width: 65,
+        cells: {
+            format: '{value:.f}'
+        }
     }]
 });
 

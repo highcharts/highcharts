@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,8 +21,6 @@
  * */
 
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -123,19 +122,24 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
     reversed: false,
 
     /**
-     * To avoid adapting the data label size in Pie.drawDataLabels.
-     * @ignore-option
+     * @declare Highcharts.SeriesFunnelDataLabelsOptionsObject
+     * @extends plotOptions.pie.dataLabels
      */
-    size: true as any,
-
     dataLabels: {
+
+        /**
+         * Whether to render the data label inside the funnel item instead of
+         * outside, connected by a connector line.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @apioption plotOptions.funnel.dataLabels.inside
+         */
+
         connectorWidth: 1,
         verticalAlign: 'middle'
     },
 
-    /**
-     * Options for the series states.
-     */
     states: {
 
         /**
@@ -155,14 +159,14 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
              *
              * @type {Highcharts.ColorType}
              */
-            color: Palette.neutralColor20,
+            color: 'var(--highcharts-neutral-color-20)',
 
             /**
              * A specific border color for the selected point.
              *
              * @type {Highcharts.ColorString}
              */
-            borderColor: Palette.neutralColor100
+            borderColor: 'var(--highcharts-neutral-color-100)'
 
         }
 
@@ -175,7 +179,7 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.funnel
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostBlending, boostThreshold
  * @product   highcharts
  * @requires  modules/funnel
@@ -227,6 +231,13 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * @excluding sliced
  * @product   highcharts
  * @apioption series.funnel.data
+ */
+
+/**
+ * Options for a selected funnel item.
+ *
+ * @excluding halo, marker, lineWidth, lineWidthPlus
+ * @apioption series.funnel.states.select
  */
 
 ''; // Keeps doclets above separate

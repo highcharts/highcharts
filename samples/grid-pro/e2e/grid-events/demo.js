@@ -55,8 +55,10 @@ Grid.grid('container', {
 
     await grid.viewport.getColumn('weight').update({
         filtering: {
-            condition: 'greaterThan',
-            value: 50
+            rule: {
+                operator: 'greaterThan',
+                value: 50
+            }
         }
     });
 });

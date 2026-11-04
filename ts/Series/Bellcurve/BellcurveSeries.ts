@@ -4,8 +4,9 @@
  *
  *  Author: Sebastian Domas
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,8 +24,8 @@ import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
 
 import BellcurveSeriesDefaults from './BellcurveSeriesDefaults.js';
 import DerivedComposition from '../DerivedComposition.js';
+import AreaSplineSeries from '../AreaSpline/AreaSplineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { areaspline: AreaSplineSeries } = SeriesRegistry.seriesTypes;
 import AnimationOptions from '../../Core/Animation/AnimationOptions';
 import { correctFloat, isNumber, merge } from '../../Shared/Utilities.js';
 
@@ -37,7 +38,6 @@ import { correctFloat, isNumber, merge } from '../../Shared/Utilities.js';
 /**
  * Bell curve class
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.bellcurve
  *
@@ -51,6 +51,7 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: BellcurveSeriesOptions = merge(
         AreaSplineSeries.defaultOptions,
         BellcurveSeriesDefaults
@@ -113,12 +114,14 @@ class BellcurveSeries extends AreaSplineSeries {
 
     public data!: Array<BellcurvePoint>;
 
+    /** @internal */
     public mean?: number;
 
     public options!: BellcurveSeriesOptions;
 
     public points!: Array<BellcurvePoint>;
 
+    /** @internal */
     public standardDeviation?: number;
 
     /* *
@@ -127,13 +130,14 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
+    /** @internal */
     public setData(
         data: number[]|undefined,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
-        let alteredData;
+        let alteredData: Array<Array<number>> = [];
         if (typeof data !== 'undefined' && data.length > 0) {
             // Support data array of objects (#24073).
             data = data
@@ -145,10 +149,16 @@ class BellcurveSeries extends AreaSplineSeries {
                 .filter(isNumber);
             this.setMean(data);
             this.setStandardDeviation(data);
-            alteredData = this.derivedData(
-                this.mean || 0,
-                this.standardDeviation || 0
-            );
+            if (
+                isNumber(this.mean) &&
+                isNumber(this.standardDeviation) &&
+                this.standardDeviation > 0
+            ) {
+                alteredData = this.derivedData(
+                    this.mean,
+                    this.standardDeviation
+                );
+            }
         }
 
         super.setData.call(
@@ -160,6 +170,7 @@ class BellcurveSeries extends AreaSplineSeries {
         );
     }
 
+    /** @internal */
     public derivedData(
         mean: number,
         standardDeviation: number
@@ -183,6 +194,7 @@ class BellcurveSeries extends AreaSplineSeries {
         return data;
     }
 
+    /** @internal */
     public setDerivedData(): void {
         const series = this;
 
@@ -196,25 +208,21 @@ class BellcurveSeries extends AreaSplineSeries {
         }
     }
 
+    /** @internal */
     public setMean(data: number[]): void {
-        const series = this;
+        const mean = BellcurveSeries.mean(data || []);
 
-        series.mean = correctFloat(
-            BellcurveSeries.mean(
-                data || []
-            ) as any
-        );
+        this.mean = isNumber(mean) ? correctFloat(mean) : void 0;
     }
 
+    /** @internal */
     public setStandardDeviation(data: number[]): void {
-        const series = this;
-
-        series.standardDeviation = correctFloat(
-            BellcurveSeries.standardDeviation(
-                data || [],
-                series.mean as any
-            ) as any
+        const sd = BellcurveSeries.standardDeviation(
+            data || [],
+            this.mean
         );
+
+        this.standardDeviation = isNumber(sd) ? correctFloat(sd) : void 0;
     }
 
 }
@@ -238,7 +246,6 @@ DerivedComposition.compose(BellcurveSeries);
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bellcurve: typeof BellcurveSeries;
@@ -252,5 +259,4 @@ SeriesRegistry.registerSeriesType('bellcurve', BellcurveSeries);
  *
  * */
 
-/** @internal */
 export default BellcurveSeries;

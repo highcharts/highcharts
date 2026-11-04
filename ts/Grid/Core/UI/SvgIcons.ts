@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -246,6 +247,17 @@ export const pathDefaults: Partial<PathDefinition> = {
     'stroke-linejoin': 'round'
 };
 
+const allowedPathAttributes: Array<keyof PathDefinition> = [
+    'd',
+    'fill',
+    'opacity',
+    'stroke',
+    'stroke-width',
+    'stroke-linecap',
+    'stroke-linejoin',
+    'transform'
+];
+
 
 /* *
 *
@@ -258,11 +270,13 @@ export const pathDefaults: Partial<PathDefinition> = {
  */
 export interface PathDefinition {
     d: string;
+    fill?: string;
     stroke?: string;
     'stroke-width'?: number;
     'stroke-linecap'?: string;
     'stroke-linejoin'?: string;
     opacity?: number;
+    transform?: string;
 }
 
 /**
@@ -340,12 +354,7 @@ function createSvgFromDefinition(
     for (const childDefinition of children ?? []) {
         const path = createElement('path');
 
-        const attrKeys = new Set<keyof PathDefinition>([
-            ...Object.keys(childDefinition) as Array<keyof PathDefinition>,
-            ...Object.keys(pathDefaults) as Array<keyof PathDefinition>
-        ]);
-
-        for (const attr of attrKeys) {
+        for (const attr of allowedPathAttributes) {
             const value = childDefinition[attr] ?? pathDefaults[attr];
             if (value !== void 0) {
                 path.setAttribute(attr, value.toString());

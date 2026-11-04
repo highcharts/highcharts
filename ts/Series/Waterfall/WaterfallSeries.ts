@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,11 +27,9 @@ import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
@@ -42,9 +41,9 @@ import {
     crisp,
     extend,
     isNumber,
+    isObject,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -55,6 +54,7 @@ import {
 
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         showLine?: WaterfallSeries['showLine'];
     }
 }
@@ -98,11 +98,13 @@ class WaterfallSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: WaterfallSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         WaterfallSeriesDefaults
     );
 
+    /** @internal */
     public static compose = WaterfallAxis.compose;
 
     /* *
@@ -111,6 +113,7 @@ class WaterfallSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public chart!: WaterfallSeries.WaterfallChart;
 
     public data!: Array<WaterfallPoint>;
@@ -119,16 +122,22 @@ class WaterfallSeries extends ColumnSeries {
 
     public points!: Array<WaterfallPoint>;
 
+    /** @internal */
     public stackedYNeg!: Array<number>;
 
+    /** @internal */
     public stackedYPos!: Array<number>;
 
+    /** @internal */
     public stackKey!: 'waterfall';
 
+    /** @internal */
     public xData!: Array<number>;
 
+    /** @internal */
     public yAxis!: WaterfallAxis;
 
+    /** @internal */
     public yData!: Array<any>;
 
     /* *
@@ -138,6 +147,7 @@ class WaterfallSeries extends ColumnSeries {
      * */
 
     // After generating points, set y-values for all sums.
+    /** @internal */
     public generatePoints(): void {
 
         // Parent call:
@@ -159,6 +169,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // Call default processData then override yData to reflect waterfall's
     // extremes on yAxis
+    /** @internal */
     public processData(
         force?: boolean
     ): undefined {
@@ -166,13 +177,13 @@ class WaterfallSeries extends ColumnSeries {
             options = series.options,
             yData = series.getColumn('y') as
                 Array<number|'intermediateSum'|'sum'>,
+            isSumData = series.getColumn('isSum'),
+            isIntermediateSumData = series.getColumn('isIntermediateSum'),
             // #3710 Update point does not propagate to sum
-            points = options.data,
             dataLength = yData.length,
             threshold = options.threshold || 0;
 
-        let point,
-            subSum,
+        let subSum,
             sum,
             dataMin,
             dataMax,
@@ -182,13 +193,12 @@ class WaterfallSeries extends ColumnSeries {
 
         for (let i = 0; i < dataLength; i++) {
             y = yData[i];
-            point = points?.[i] || {};
 
-            if (y === 'sum' || (point as any).isSum) {
+            if (y === 'sum' || isSumData[i]) {
                 yData[i] = correctFloat(sum);
             } else if (
                 y === 'intermediateSum' ||
-                (point as any).isIntermediateSum
+                isIntermediateSumData[i]
             ) {
                 yData[i] = correctFloat(subSum);
                 subSum = 0;
@@ -213,6 +223,7 @@ class WaterfallSeries extends ColumnSeries {
 
 
     // Return y value or string if point is sum
+    /** @internal */
     public toYData(pt: WaterfallPoint): any {
         if (pt.isSum) {
             return 'sum';
@@ -224,15 +235,16 @@ class WaterfallSeries extends ColumnSeries {
     }
 
     // Postprocess mapping between options and SVG attributes
+    /** @internal */
     public pointAttribs(
-        point: WaterfallPoint,
-        state: StatesOptionsKey
+        point?: WaterfallPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
 
         const upColor = this.options.upColor;
 
         // Set or reset up color (#3710, update to negative)
-        if (upColor && !point.options.color && isNumber(point.y)) {
+        if (upColor && point && !point.options.color && isNumber(point.y)) {
             point.color = point.y > 0 ? upColor : void 0;
         }
 
@@ -251,6 +263,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // Return an empty path initially, because we need to know the stroke-width
     // in order to set the final path.
+    /** @internal */
     public getGraphPath(
         this: WaterfallSeries
     ): SVGPath {
@@ -258,6 +271,7 @@ class WaterfallSeries extends ColumnSeries {
     }
 
     // Draw columns' connector lines
+    /** @internal */
     public getCrispPath(
         this: WaterfallSeries
     ): SVGPath {
@@ -358,6 +372,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // The graph is initially drawn with an empty definition, then updated with
     // crisp rendering.
+    /** @internal */
     public drawGraph(): void {
         LineSeries.prototype.drawGraph.call(this);
         this.graph?.animate({
@@ -366,6 +381,7 @@ class WaterfallSeries extends ColumnSeries {
     }
 
     // Waterfall has stacking along the x-values too.
+    /** @internal */
     public setStackedPoints(axis: Axis): void {
         const series = this,
             options = series.options,
@@ -472,7 +488,7 @@ class WaterfallSeries extends ColumnSeries {
                         }
 
                         // Points do not exist yet, so raw data is used
-                        xPoint = (options.data as any)[i];
+                        xPoint = options.data?.[i];
 
                         posTotal = actualStackX.absolutePos =
                             actualStackX.posTotal;
@@ -481,7 +497,10 @@ class WaterfallSeries extends ColumnSeries {
                         actualStackX.stackTotal = posTotal + negTotal;
                         statesLen = actualStackX.stackState.length;
 
-                        if (xPoint?.isIntermediateSum) {
+                        if (
+                            isObject(xPoint, true) &&
+                            xPoint.isIntermediateSum
+                        ) {
                             calculateStackState(
                                 prevSum,
                                 actualSum,
@@ -496,7 +515,7 @@ class WaterfallSeries extends ColumnSeries {
                             stackThreshold ^= interSum;
                             interSum ^= stackThreshold;
                             stackThreshold ^= interSum;
-                        } else if (xPoint?.isSum) {
+                        } else if (isObject(xPoint, true) && xPoint.isSum) {
                             calculateStackState(
                                 seriesThreshold,
                                 totalYVal,
@@ -536,6 +555,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // Extremes for a non-stacked series are recorded in processData.
     // In case of stacking, use Series.stackedYData to calculate extremes.
+    /** @internal */
     public getExtremes(): DataExtremesObject {
         const stacking = this.options.stacking,
             yAxis = this.yAxis,
@@ -590,8 +610,11 @@ class WaterfallSeries extends ColumnSeries {
  * */
 
 interface WaterfallSeries {
+    /** @internal */
     pointClass: typeof WaterfallPoint;
+    /** @internal */
     pointValKey: string;
+    /** @internal */
     showLine: boolean;
 }
 
@@ -607,7 +630,7 @@ extend(WaterfallSeries.prototype, {
 addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
     const series = this,
         { options, points, yAxis } = series,
-        minPointLength = pick(options.minPointLength, 5),
+        minPointLength = (options.minPointLength ?? 5),
         halfMinPointLength = minPointLength / 2,
         threshold = options.threshold || 0,
         stacking = options.stacking,
@@ -895,6 +918,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
 
 namespace WaterfallSeries {
     export interface WaterfallChart extends Chart {
+        /** @internal */
         axes: Array<WaterfallAxis>;
     }
 }

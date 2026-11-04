@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,18 +27,13 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import AreaSeriesDefaults from './AreaSeriesDefaults.js';
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = SeriesRegistry;
 import {
     defined,
     extend,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -73,7 +69,6 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * Area series type.
  *
- * @internal
  * @class
  * @name AreaSeries
  *
@@ -87,6 +82,7 @@ class AreaSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: AreaSeriesOptions =
         merge(LineSeries.defaultOptions, AreaSeriesDefaults);
 
@@ -96,6 +92,7 @@ class AreaSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public areaPath?: SVGPath;
 
     public data!: Array<AreaPoint>;
@@ -189,9 +186,7 @@ class AreaSeries extends LineSeries {
         });
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
         const getGraphPath = LineSeries.prototype.getGraphPath,
             options = this.options,
@@ -205,10 +200,7 @@ class AreaSeries extends LineSeries {
             translatedThreshold = Math.round( // #10909
                 yAxis.getThreshold(options.threshold as any)
             ),
-            connectNulls = pick( // #10574
-                options.connectNulls,
-                stacking === 'percent'
-            ),
+            connectNulls = (options.connectNulls ?? stacking === 'percent'),
             // To display null points in underlying stacked series, this
             // series graph must be broken, and the area also fall down to
             // fill the gap left by the null point. #2069
@@ -287,9 +279,9 @@ class AreaSeries extends LineSeries {
             // Treat points with undefined plotY as null (e.g. non-positive
             // values on logarithmic axis, #18422)
             isNull = points[i].isNull || !defined(points[i].plotY);
-            plotX = pick(points[i].rectPlotX, points[i].plotX);
+            plotX = (points[i].rectPlotX ?? points[i].plotX);
             yBottom = stacking ?
-                pick(points[i].yBottom, translatedThreshold) :
+                (points[i].yBottom ?? translatedThreshold) :
                 translatedThreshold;
 
             if (!isNull || connectNulls) {
@@ -512,8 +504,8 @@ class AreaSeries extends LineSeries {
  *
  * */
 
-/** @internal */
 interface AreaSeries {
+    /** @internal */
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
@@ -526,7 +518,6 @@ extend(AreaSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         area: typeof AreaSeries;
@@ -540,5 +531,4 @@ SeriesRegistry.registerSeriesType('area', AreaSeries);
  *
  * */
 
-/** @internal */
 export default AreaSeries;

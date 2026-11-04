@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,8 +25,8 @@ import type {
 import type PriceEnvelopesPoint from './PriceEnvelopesPoint';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -37,7 +38,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Price Envelopes series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.priceenvelopes
  *
@@ -62,9 +62,10 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/price-envelopes
+     * @requires     indicators/indicators
+     * @requires     indicators/price-envelopes
      * @optionparent plotOptions.priceenvelopes
+     * @internal
      */
     public static defaultOptions: PriceEnvelopesOptions = merge(SMAIndicator.defaultOptions, {
         marker: {
@@ -86,6 +87,19 @@ class PriceEnvelopesIndicator extends SMAIndicator {
              */
             bottomBand: 0.1
         },
+
+        /**
+         * Option for fill color between lines in Price Envelopes Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      Background fill between lines.
+         *
+         * @type      {Highcharts.Color}
+         * @since 11.0.0
+         * @apioption plotOptions.priceenvelopes.fillColor
+         *
+         */
+
         /**
          * Bottom line options.
          */
@@ -118,17 +132,6 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-        /**
-         * Option for fill color between lines in Price Envelopes Indicator.
-         *
-         * @sample {highstock} stock/indicators/indicator-area-fill
-         *      Background fill between lines.
-         *
-         * @type      {Highcharts.Color}
-         * @since 11.0.0
-         * @apioption plotOptions.priceenvelopes.fillColor
-         *
-         */
     } as PriceEnvelopesOptions);
 
     /* *
@@ -147,6 +150,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
@@ -165,6 +169,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: PriceEnvelopesParamsOptions
@@ -264,7 +269,6 @@ MultipleLinesComposition.compose(PriceEnvelopesIndicator);
  *
  * */
 
-/** @internal */
 namespace PriceEnvelopesIndicator {
     export interface GappedExtensionObject {
         options?: GappedExtensionOptions;
@@ -280,7 +284,6 @@ namespace PriceEnvelopesIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         priceenvelopes: typeof PriceEnvelopesIndicator;
@@ -295,7 +298,6 @@ SeriesRegistry.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
  *
  * */
 
-/** @internal */
 export default PriceEnvelopesIndicator;
 
 /* *
@@ -310,10 +312,9 @@ export default PriceEnvelopesIndicator;
  *
  * @extends   series,plotOptions.priceenvelopes
  * @since     6.0.0
- * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/price-envelopes
+ * @requires  indicators/indicators
+ * @requires  indicators/price-envelopes
  * @apioption series.priceenvelopes
  */
 

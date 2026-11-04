@@ -4,8 +4,9 @@
  *
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Dynamic light/dark theme based on CSS variables
  *
@@ -351,7 +352,6 @@ namespace DynamicDefaultTheme {
                         borderColor: 'var(--highcharts-neutral-color-100)'
                     }
                 },
-                borderColor: 'var(--highcharts-background-color)',
                 lineColor: 'var(--highcharts-neutral-color-100)',
                 upColor: 'var(--highcharts-background-color)'
             },
@@ -461,8 +461,8 @@ namespace DynamicDefaultTheme {
                     borderColor: 'var(--highcharts-neutral-color-20)'
                 },
                 pivot: {
-                    borderColor: 'var(--highcharts-neutral-color-20)',
-                    backgroundColor: 'var(--highcharts-neutral-color-100)'
+                    borderColor: 'var(--highcharts-neutral-color-100)',
+                    backgroundColor: 'var(--highcharts-background-color)'
                 }
             },
             packedbubble: {
@@ -855,18 +855,7 @@ namespace DynamicDefaultTheme {
         pane: {
             background: {
                 borderColor: 'var(--highcharts-neutral-color-20)',
-                backgroundColor: {
-                    stops: [
-                        [
-                            0,
-                            'var(--highcharts-background-color)'
-                        ],
-                        [
-                            1,
-                            'var(--highcharts-neutral-color-10)'
-                        ]
-                    ]
-                }
+                backgroundColor: 'var(--highcharts-neutral-color-5)'
             }
         },
         zAxis: {
@@ -987,7 +976,7 @@ namespace DynamicDefaultTheme {
                                 color: 'var(--highcharts-neutral-color-60)'
                             }
                         }
-                    } as Measure.MeasureTypeOptions
+                    } as Measure.TypeOptions
                 }
             },
             shapeOptions: {

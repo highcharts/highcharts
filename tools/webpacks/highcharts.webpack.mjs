@@ -28,6 +28,7 @@ const __dirname = import.meta.dirname;
 
 const sourceFolder = Path.join('code', 'es-modules');
 const mastersFolder = Path.join(sourceFolder, 'masters');
+const mastersFolderPosix = FSLib.path([process.cwd(), mastersFolder], true);
 
 const esmTargetFolder = Path.join('code', 'esm');
 const umdTargetFolder = Path.join('code');
@@ -35,6 +36,7 @@ const umdTargetFolder = Path.join('code');
 const namespace = 'Highcharts';
 const productMasters = [
     'highcharts',
+    'highcharts-autoload',
     'highcharts-gantt',
     'highmaps',
     'highstock',
@@ -42,6 +44,15 @@ const productMasters = [
 ];
 
 loadExternalsJSON(FSLib.path([import.meta.dirname, 'externals.json']));
+
+/**
+ * Keep bare imports of defaults modules in place, so masters can bundle them
+ * next to related defaults for better gzip compression.
+ */
+const sideEffectsRule = {
+    test: /Defaults\.js$/u,
+    sideEffects: true
+};
 
 
 /* *
@@ -64,6 +75,9 @@ const umdWebpacks = FSLib
             // path to the main file
             entry: './' + masterFile.replaceAll(Path.sep, Path.posix.sep),
             mode: 'production',
+            module: {
+                rules: [sideEffectsRule]
+            },
             optimization: {
                 concatenateModules: true,
                 mangleExports: false,
@@ -125,6 +139,13 @@ const umdWebpacks = FSLib
                 // })
             ],
             resolve: {
+                byDependency: {
+                    esm: {
+                        // Imports need full .js extensions, otherwise custom
+                        // bundlers may fail (#24760)
+                        fullySpecified: true
+                    }
+                },
                 extensions: ['.js', '.ts']
             }
         };
@@ -159,6 +180,7 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
         externalsType: 'module-import',
         module: {
             rules: [
+                sideEffectsRule,
                 {
                     test: /\.src\.js$/u,
                     exclude: /node_modules/u,
@@ -175,6 +197,14 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
         },
         mode: 'production',
         optimization: umdWebpack.optimization,
+        resolve: {
+            byDependency: {
+                esm: {
+                    fullySpecified: true
+                }
+            },
+            extensions: ['.js', '.ts']
+        },
         output: {
             filename: masterPath,
             globalObject: 'this',
@@ -201,7 +231,7 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
                 const contextPath =
                     FSLib.path([info.context, info.request], true);
 
-                if (contextPath.includes(mastersFolder)) {
+                if (contextPath.startsWith(mastersFolderPosix)) {
                     return makeExternals(
                         info,
                         masterName,

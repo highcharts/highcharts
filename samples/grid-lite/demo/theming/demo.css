@@ -126,7 +126,7 @@ body {
         --code-border: #4a4a4a;
     }
 
-    .hcg-container {
+    .theme-base {
         --hcg-caption-color: #eee;
         --hcg-description-color: #eee;
     }
@@ -153,7 +153,7 @@ body {
     --code-border: #4a4a4a;
 }
 
-.highcharts-dark .hcg-container {
+.highcharts-dark .theme-base {
     --hcg-caption-color: #eee;
     --hcg-description-color: #eee;
 }

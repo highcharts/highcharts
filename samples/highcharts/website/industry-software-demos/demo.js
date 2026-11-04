@@ -153,12 +153,6 @@ function hero() {
             enabled: false
         },
         columns: [{
-            id: 'instanceId',
-            header: {
-                format: 'Instance ID'
-            },
-            width: 120
-        }, {
             id: 'running',
             header: {
                 format: 'Status'
@@ -242,12 +236,6 @@ function hero() {
                     }
                 }
             }
-        }, {
-            id: 'publicIP',
-            header: {
-                format: 'Public IP'
-            },
-            width: 150
         }, {
             id: 'diskOperationsIn',
             header: {
@@ -1595,7 +1583,7 @@ function activity() {
 
     (async () => {
         const weeks = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@4dc715c/samples/data/github-commit-activity.json'
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@35bdee444990708fba78f8eec2bc72b9f0a6c81e/samples/data/github-commit-activity.json'
 
 
         ).then(res => res.json());

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,9 +20,6 @@
 
 import type NavigatorOptions from './NavigatorOptions';
 
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
-import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 
@@ -66,7 +64,7 @@ const NavigatorDefaults: NavigatorOptions = {
      *
      * @see [series.showInNavigator](#plotOptions.series.showInNavigator)
      *
-     * @deprecated
+     * @deprecated 5.0.0
      * @type      {number|string}
      * @default   0
      * @apioption navigator.baseSeries
@@ -143,6 +141,7 @@ const NavigatorDefaults: NavigatorOptions = {
          * @sample {highstock} stock/navigator/handles-border-radius/
          *      Border radius on the navigator handles.
          *
+         * @type {number|string}
          * @since 11.4.2
          */
         borderRadius: 0,
@@ -201,20 +200,20 @@ const NavigatorDefaults: NavigatorOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        backgroundColor: Palette.neutralColor5,
+        backgroundColor: 'var(--highcharts-neutral-color-5)',
 
         /**
          * The stroke for the handle border and the stripes inside.
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: Palette.neutralColor40
+        borderColor: 'var(--highcharts-neutral-color-40)'
     },
 
     /**
      * The color of the mask covering the areas of the navigator series
      * that are currently not visible in the main series. The default
-     * color is bluish with an opacity of 0.3 to see the series below.
+     * color is semi-transparent to see the series below.
      *
      * @see In styled mode, the mask is styled with the
      *      `.highcharts-navigator-mask` and
@@ -224,9 +223,8 @@ const NavigatorDefaults: NavigatorOptions = {
      *         Blue, semi transparent mask
      *
      * @type    {Highcharts.ColorType}
-     * @default rgba(102,133,194,0.3)
      */
-    maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
+    maskFill: 'color-mix(in srgb, var(--highcharts-highlight-color-60) 30%, transparent)', // eslint-disable-line max-len
 
     /**
      * The color of the line marking the currently zoomed area in the
@@ -237,7 +235,7 @@ const NavigatorDefaults: NavigatorOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    outlineColor: Palette.neutralColor40,
+    outlineColor: 'var(--highcharts-neutral-color-40)',
 
     /**
      * The width of the line marking the currently zoomed area in the
@@ -381,10 +379,18 @@ const NavigatorDefaults: NavigatorOptions = {
         className: 'highcharts-navigator-series',
 
         /**
-         * Sets the fill color of the navigator series.
+         * Sets the color of the navigator series.
          *
          * @type      {Highcharts.ColorType}
          * @apioption navigator.series.color
+         */
+
+        /**
+         * Sets the fill color of the navigator series. Applies to series
+         * types with a filled area, like the default `areaspline`.
+         *
+         * @type      {Highcharts.ColorType}
+         * @apioption navigator.series.fillColor
          */
 
         /**
@@ -486,7 +492,7 @@ const NavigatorDefaults: NavigatorOptions = {
 
         lineWidth: 0,
 
-        gridLineColor: Palette.neutralColor10,
+        gridLineColor: 'var(--highcharts-neutral-color-10)',
 
         id: 'navigator-x-axis',
 
@@ -503,7 +509,7 @@ const NavigatorDefaults: NavigatorOptions = {
              */
             style: {
                 /** @ignore */
-                color: Palette.neutralColor100,
+                color: 'var(--highcharts-neutral-color-100)',
                 /** @ignore */
                 fontSize: '0.7em',
                 /** @ignore */

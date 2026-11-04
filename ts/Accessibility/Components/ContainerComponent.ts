@@ -5,8 +5,9 @@
  *
  *  Accessibility component for chart container.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,9 +40,10 @@ const { stripHTMLTagsFromString: stripHTMLTags } = HU;
 /**
  * The ContainerComponent class
  *
- * @private
  * @class
  * @name Highcharts.ContainerComponent
+ *
+ * @internal
  */
 class ContainerComponent extends AccessibilityComponent {
 
@@ -71,9 +73,7 @@ class ContainerComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public handleSVGTitleElement(): void {
         const chart = this.chart,
             titleId = 'highcharts-title-' + chart.index,
@@ -99,9 +99,7 @@ class ContainerComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setSVGContainerLabel(): void {
         const chart = this.chart,
             svgContainerLabel = chart.langFormat(
@@ -116,9 +114,7 @@ class ContainerComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setGraphicContainerAttrs(): void {
         const chart = this.chart,
             label = chart.langFormat('accessibility.graphicContainerLabel', {
@@ -133,7 +129,8 @@ class ContainerComponent extends AccessibilityComponent {
 
     /**
      * Set attributes on the chart container element.
-     * @private
+     *
+     * @internal
      */
     public setRenderToAttrs(): void {
         const chart = this.chart,
@@ -156,9 +153,7 @@ class ContainerComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public makeCreditsAccessible(): void {
         const chart = this.chart,
             credits = chart.credits;
@@ -185,7 +180,8 @@ class ContainerComponent extends AccessibilityComponent {
 
     /**
      * Empty handler to just set focus on chart
-     * @private
+     *
+     * @internal
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         const chart = this.chart;
@@ -223,4 +219,5 @@ class ContainerComponent extends AccessibilityComponent {
  * */
 
 
+/** @internal */
 export default ContainerComponent;

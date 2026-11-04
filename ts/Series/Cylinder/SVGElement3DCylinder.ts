@@ -6,8 +6,9 @@
  *
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,10 +25,7 @@ import type ColorType from '../../Core/Color/ColorType';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-const {
-    Element3D: SVGElement3D
-} = RendererRegistry.getRendererType().prototype;
+import SVGElement3D from '../../Core/Renderer/SVG/SVGElement3D.js';
 
 /* *
  *
@@ -35,6 +33,7 @@ const {
  *
  * */
 
+/** @internal */
 class SVGElement3DCylinder extends SVGElement3D {
 
     /* *
@@ -76,4 +75,5 @@ class SVGElement3DCylinder extends SVGElement3D {
  *
  * */
 
+/** @internal */
 export default SVGElement3DCylinder;

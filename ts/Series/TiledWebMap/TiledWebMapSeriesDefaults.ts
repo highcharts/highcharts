@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Hubert Kozik, Kamil Musiałowski
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,12 +39,13 @@ import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
  * @excluding    affectsMapView, allAreas, allowPointSelect, animation,
  * animationLimit, boostBlending, boostThreshold, borderColor, borderWidth,
  * clip, color, colorAxis, colorByPoint, colorIndex, colorKey, colors,
- * cursor, dashStyle, dataLabels, dataParser, dataURL, dragDrop,
+ * cursor, dashStyle, dataLabels, dragDrop,
  * enableMouseTracking, findNearestPointBy, joinBy, keys, marker,
  * negativeColor, nullColor, nullInteraction, onPoint, point,
  * pointDescriptionFormatter, selected, shadow, showCheckbox,
  * sonification, stickyTracking, tooltip, type
  * @product      highmaps
+ * @requires     modules/tiledwebmap
  * @optionparent plotOptions.tiledwebmap
  */
 const TiledWebMapSeriesDefaults: TiledWebMapSeriesOptions = {
@@ -73,11 +75,12 @@ const TiledWebMapSeriesDefaults: TiledWebMapSeriesOptions = {
  * @excluding affectsMapView, allAreas, allowPointSelect, animation,
  * animationLimit, boostBlending, boostThreshold, borderColor, borderWidth,
  * clip, color, colorAxis, colorByPoint, colorIndex, colorKey, colors, cursor,
- * dashStyle, dataLabels, dataParser, dataURL, dragDrop, enableMouseTracking,
+ * dashStyle, dataLabels, dragDrop, enableMouseTracking,
  * findNearestPointBy, joinBy, keys, marker, negativeColor, nullColor,
  * nullInteraction, onPoint, point, pointDescriptionFormatter, selected, shadow,
  * showCheckbox, stickyTracking, tooltip, type
  * @product   highmaps
+ * @requires  modules/tiledwebmap
  * @apioption series.tiledwebmap
  */
 

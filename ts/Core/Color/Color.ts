@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,8 +39,12 @@ import {
  *  Helpers
  *
  * */
-const colorMix = (color1: string, color2: string, weight: number): string =>
-    `color-mix(in srgb,${color1},${color2} ${weight * 100}%)`;
+const colorMix = (color1: string, color2: string, weight: number): string => (
+    weight === 0 ? color1 :
+        weight === 1 ? color2 :
+            `color-mix(in srgb,${color1},${color2} ${weight * 100}%)`
+);
+
 
 const isStringColor = (color: ColorType): color is ColorString =>
     isString(color) && !!color && color !== 'none';
@@ -181,6 +186,7 @@ class Color implements ColorBase {
     public constructor(
         input: ColorType
     ) {
+
         this.input = input;
 
         const GlobalColor = (H as AnyRecord).Color;
@@ -363,7 +369,13 @@ class Color implements ColorBase {
      *         Color with modifications.
      */
     public setOpacity(alpha: number): this {
-        this.rgba[3] = alpha;
+        if (isNumber(this.rgba[0])) {
+            this.rgba[3] = alpha;
+        } else if (Color.useColorMix && isStringColor(this.input)) {
+            this.output = colorMix(
+                this.input, '#0000', 1 - alpha
+            );
+        }
         return this;
     }
 
@@ -456,7 +468,9 @@ export default Color;
 
 /**
  * A valid color type than can be parsed and handled by Highcharts. It can be a
- * color string, a gradient object, or a pattern object.
+ * color string (including CSS expressions), a gradient object, or a pattern
+ * object. Read more about colors in the [Highcharts
+ * documentation](https://www.highcharts.com/docs/chart-design-and-style/colors).
  *
  * @typedef {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} Highcharts.ColorType
  */
@@ -518,21 +532,30 @@ export default Color;
  *
  * @interface Highcharts.LinearGradientColorObject
  *//**
- * Start horizontal position of the gradient. Float ranges 0-1.
+ * Units for the gradient. Can be either 'userSpaceOnUse' or
+ * 'objectBoundingBox'.
+ * @name Highcharts.LinearGradientColorObject#gradientUnits
+ * @type {'userSpaceOnUse'|'objectBoundingBox'|undefined}
+ *//**
+ * Start horizontal position of the gradient. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.LinearGradientColorObject#x1
- * @type {number}
+ * @type {number|string}
  *//**
- * End horizontal position of the gradient. Float ranges 0-1.
+ * End horizontal position of the gradient. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.LinearGradientColorObject#x2
- * @type {number}
+ * @type {number|string}
  *//**
- * Start vertical position of the gradient. Float ranges 0-1.
+ * Start vertical position of the gradient. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.LinearGradientColorObject#y1
- * @type {number}
+ * @type {number|string}
  *//**
- * End vertical position of the gradient. Float ranges 0-1.
+ * End vertical position of the gradient. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.LinearGradientColorObject#y2
- * @type {number}
+ * @type {number|string}
  */
 
 /**
@@ -540,17 +563,25 @@ export default Color;
  *
  * @interface Highcharts.RadialGradientColorObject
  *//**
- * Center horizontal position relative to the shape. Float ranges 0-1.
+ * Units for the gradient. Can be either 'userSpaceOnUse' or
+ * 'objectBoundingBox'.
+ * @name Highcharts.RadialGradientColorObject#gradientUnits
+ * @type {'userSpaceOnUse'|'objectBoundingBox'|undefined}
+ *//**
+ * Center horizontal position relative to the shape. Float ranges 0-1
+ * or percentage strings.
  * @name Highcharts.RadialGradientColorObject#cx
- * @type {number}
+ * @type {number|string}
  *//**
- * Center vertical position relative to the shape. Float ranges 0-1.
+ * Center vertical position relative to the shape. Float ranges 0-1 or
+ * percentage strings.
  * @name Highcharts.RadialGradientColorObject#cy
- * @type {number}
+ * @type {number|string}
  *//**
- * Radius relative to the shape. Float ranges 0-1.
+ * Radius relative to the shape. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.RadialGradientColorObject#r
- * @type {number}
+ * @type {number|string}
  */
 
 /**

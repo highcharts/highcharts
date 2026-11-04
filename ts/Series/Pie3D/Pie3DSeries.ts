@@ -5,8 +5,9 @@
  *
  *  3D pie series
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,11 +30,8 @@ const {
     deg2rad
 } = H;
 import Pie3DPoint from './Pie3DPoint.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
-import { extend, pick, pushUnique } from '../../Shared/Utilities.js';
+import PieSeries from '../Pie/PieSeries.js';
+import { extend, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,7 +41,7 @@ import { extend, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /**
  * Internal types
- * @private
+ * @internal
  */
 declare module '../Pie/PieSeriesOptions' {
     interface PieSeriesOptions {
@@ -67,6 +65,7 @@ class Pie3DSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series
     ): void {
@@ -84,7 +83,7 @@ class Pie3DSeries extends PieSeries {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public addPoint(): void {
         super.addPoint.apply(this, arguments);
@@ -95,7 +94,7 @@ class Pie3DSeries extends PieSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         if (!this.chart.is3d()) {
@@ -115,14 +114,12 @@ class Pie3DSeries extends PieSeries {
             if (init) {
 
                 // Scale down the group and place it in the center
-                (group as any).oldtranslateX = pick(
-                    (group as any).oldtranslateX,
-                    (group as any).translateX
-                );
-                (group as any).oldtranslateY = pick(
-                    (group as any).oldtranslateY,
-                    (group as any).translateY
-                );
+                (group as any).oldtranslateX =
+                    (group as any).oldtranslateX ??
+                    (group as any).translateX;
+                (group as any).oldtranslateY =
+                    (group as any).oldtranslateY ??
+                    (group as any).translateY;
                 attribs = {
                     translateX: center[0],
                     translateY: center[1],
@@ -156,7 +153,7 @@ class Pie3DSeries extends PieSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public getDataLabelPosition(
         point: Pie3DPoint,
@@ -198,7 +195,7 @@ class Pie3DSeries extends PieSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public pointAttribs(point: Pie3DPoint): SVGAttributes {
         const attr = super.pointAttribs.apply(this, arguments),
@@ -206,14 +203,14 @@ class Pie3DSeries extends PieSeries {
 
         if (this.chart.is3d() && !this.chart.styledMode) {
             attr.stroke = options.edgeColor || point.color || this.color;
-            attr['stroke-width'] = pick(options.edgeWidth, 1);
+            attr['stroke-width'] = (options.edgeWidth ?? 1);
         }
 
         return attr;
     }
 
     /**
-     * @private
+     * @internal
      */
     public translate(): void {
         super.translate.apply(this, arguments);
@@ -270,7 +267,7 @@ class Pie3DSeries extends PieSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public drawTracker(): void {
         super.drawTracker.apply(this, arguments);

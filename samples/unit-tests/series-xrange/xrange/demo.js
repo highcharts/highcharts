@@ -302,7 +302,8 @@ QUnit.test('X-Range', function (assert) {
 QUnit.test('Partial fill reversed', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
-            type: 'xrange'
+            type: 'xrange',
+            styledMode: true
         },
         xAxis: {
             type: 'datetime'
@@ -314,6 +315,7 @@ QUnit.test('Partial fill reversed', assert => {
                         x: Date.UTC(2019, 0, 1),
                         x2: Date.UTC(2019, 0, 2),
                         y: 1,
+                        colorIndex: 0,
                         partialFill: 0.5
                     }
                 ]
@@ -338,6 +340,30 @@ QUnit.test('Partial fill reversed', assert => {
         chart.series[0].points[0].graphic.partialClipRect.attr('width'),
         1,
         'Partial fill should be aligned left'
+    );
+
+    const graphic = chart.series[0].points[0].graphic;
+
+    chart.series[0].setData([
+        {
+            x: Date.UTC(2019, 0, 1),
+            x2: Date.UTC(2019, 0, 2),
+            y: 1,
+            colorIndex: 2,
+            partialFill: 0.25
+        }
+    ]);
+
+    assert.strictEqual(
+        graphic.element.classList.contains('highcharts-color-2'),
+        true,
+        'The reused point group color class was refreshed, #24547.'
+    );
+
+    assert.strictEqual(
+        graphic.rect.element.classList.contains('highcharts-color-2'),
+        true,
+        'The reused point rect color class was refreshed, #24547.'
     );
 });
 
@@ -1227,3 +1253,68 @@ QUnit.test('X-range zooming', assert => {
         'Points within the plot area (at least) should be kept (#21003)'
     );
 });
+
+QUnit.test(
+    'Equally sized bars should rank data labels equally (#23585)',
+    function (assert) {
+        var rows = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'
+        ];
+
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'xrange',
+                height: 200,
+                animation: false
+            },
+            title: {
+                text: undefined
+            },
+            legend: {
+                enabled: false
+            },
+            xAxis: {
+                visible: false
+            },
+            yAxis: {
+                categories: rows,
+                title: {
+                    text: null
+                },
+                gridLineWidth: 0
+            },
+            series: [
+                {
+                    pointWidth: 8,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.yCategory}',
+                        style: {
+                            fontSize: '20px'
+                        }
+                    },
+                    data: rows.map(function (name, y) {
+                        return { x: 0, x2: 10, y: y };
+                    })
+                }
+            ]
+        });
+
+        // The xrange series reuses the column translation and then replaces
+        // shapeArgs with its own geometry, so every bar ends up the same
+        // height. The ranking must follow the rendered shape, not a height
+        // left over from the column translation.
+        var ranks = chart.series[0].points.map(function (point) {
+            return point.dataLabels[0].labelrank;
+        });
+
+        assert.deepEqual(
+            ranks,
+            ranks.map(function () {
+                return ranks[0];
+            }),
+            'All equally sized bars should get the same labelrank, got ' +
+                ranks.join(', ')
+        );
+    }
+);

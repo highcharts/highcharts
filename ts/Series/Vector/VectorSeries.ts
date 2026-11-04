@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,19 +24,15 @@ import type VectorPoint from './VectorPoint';
 import type VectorSeriesOptions from './VectorSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import H from '../../Core/Globals.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
 import VectorSeriesDefaults from './VectorSeriesDefaults.js';
-import { arrayMax, extend, merge, pick } from '../../Shared/Utilities.js';
+import { arrayMax, extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -60,6 +57,7 @@ class VectorSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: VectorSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         VectorSeriesDefaults
@@ -73,8 +71,10 @@ class VectorSeries extends ScatterSeries {
 
     public data!: Array<VectorPoint>;
 
+    /** @internal */
     public lengthData?: Array<number>;
 
+    /** @internal */
     public lengthMax!: number;
 
     public options!: VectorSeriesOptions;
@@ -184,7 +184,7 @@ class VectorSeries extends ScatterSeries {
                         .addClass(
                             'highcharts-point ' +
                             'highcharts-color-' +
-                            pick(point.colorIndex, point.series.colorIndex)
+                            (point.colorIndex ?? point.series.colorIndex)
                         );
                 }
                 point.graphic
@@ -213,7 +213,7 @@ class VectorSeries extends ScatterSeries {
      */
     public pointAttribs(
         point?: VectorPoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options;
 
@@ -221,14 +221,13 @@ class VectorSeries extends ScatterSeries {
             strokeWidth = this.options.lineWidth;
 
         if (state) {
-            stroke = (options.states as any)[state].color || stroke;
-            strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+            stroke = options.states?.[state]?.color || stroke;
+            strokeWidth = (options.states?.[state]?.lineWidthPlus || 0) +
+                (options.states?.[state]?.lineWidth || strokeWidth || 0);
         }
 
         return {
-            'stroke': stroke,
+            stroke,
             'stroke-width': strokeWidth
         };
     }
@@ -259,19 +258,19 @@ interface VectorSeries {
 extend(VectorSeries.prototype, {
 
     /**
-     * @ignore
+     * @internal
      * @deprecated
      */
     drawGraph: H.noop,
 
     /**
-     * @ignore
+     * @internal
      * @deprecated
      */
     getSymbol: H.noop,
 
     /**
-     * @ignore
+     * @internal
      * @deprecated
      */
     markerAttribs: H.noop as any,

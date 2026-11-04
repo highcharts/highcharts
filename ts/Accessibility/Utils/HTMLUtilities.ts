@@ -5,8 +5,9 @@
  *
  *  Utility functions for accessibility module.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 const simulatedEventTarget = win.EventTarget && new win.EventTarget() || 'none';
 
 
@@ -47,12 +49,7 @@ const simulatedEventTarget = win.EventTarget && new win.EventTarget() || 'none';
  *
  * */
 
-/**
- * @private
- * @param {Highcharts.HTMLDOMElement} el
- * @param {string} className
- * @return {void}
- */
+/** @internal */
 function addClass(el: HTMLDOMElement, className: string): void {
     if (el.classList) {
         el.classList.add(className);
@@ -65,12 +62,7 @@ function addClass(el: HTMLDOMElement, className: string): void {
 }
 
 
-/**
- * @private
- * @param {Highcharts.HTMLDOMElement} el
- * @param {string} className
- * @return {void}
- */
+/** @internal */
 function removeClass(el: HTMLDOMElement, className: string): void {
     if (el.classList) {
         el.classList.remove(className);
@@ -84,7 +76,8 @@ function removeClass(el: HTMLDOMElement, className: string): void {
 
 /**
  * Utility function to clone a mouse event for re-dispatching.
- * @private
+ *
+ * @internal
  */
 function cloneMouseEvent(e: MouseEvent): MouseEvent {
     if (typeof win.MouseEvent === 'function') {
@@ -122,7 +115,8 @@ function cloneMouseEvent(e: MouseEvent): MouseEvent {
 
 /**
  * Utility function to clone a touch event for re-dispatching.
- * @private
+ *
+ * @internal
  */
 function cloneTouchEvent(e: TouchEvent): TouchEvent {
     const touchListToTouchArray = (l: TouchList): Touch[] => {
@@ -167,9 +161,7 @@ function cloneTouchEvent(e: TouchEvent): TouchEvent {
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function escapeStringForHTML(str: string): string {
     return str
         .replace(/&/g, '&amp;')
@@ -182,13 +174,28 @@ function escapeStringForHTML(str: string): string {
 
 
 /**
- * Get an element by ID
- * @private
+ * Get the shadow root the element lives in, if any. Lookups in the main
+ * document do not cross a shadow boundary. (#22682)
+ *
+ * @internal
+ */
+function getShadowRoot(el?: DOMElementType): (ShadowRoot|undefined) {
+    const root = el?.getRootNode() as ShadowRoot|undefined;
+
+    return root?.host ? root : void 0;
+}
+
+
+/**
+ * Get an element by ID, from the reference element's shadow root if it has one.
+ *
+ * @internal
  */
 function getElement(
-    id: string
+    id: string,
+    referenceElement?: DOMElementType
 ): (DOMElementType|null) {
-    return doc.getElementById(id);
+    return (getShadowRoot(referenceElement) || doc).getElementById(id);
 }
 
 
@@ -196,7 +203,8 @@ function getElement(
  * Get a fake mouse event of a given type. If relatedTarget is not given,
  * it will point to simulatedEventTarget, as an indicator that the event
  * is fake.
- * @private
+ *
+ * @internal
  */
 function getFakeMouseEvent(
     type: string,
@@ -266,12 +274,13 @@ function getFakeMouseEvent(
  * is ambiguous whether or not the nesting is for layout purposes or indicates a
  * separate section.
  *
- * @private
- * @param {Highcharts.HTMLDOMElement} [element]
- * @return {string} The heading tag name (h1, h2 etc).
+ * @return {string}
+ * The heading tag name (h1, h2 etc).
  * If no nearest heading is found, "p" is returned.
+ *
+ * @internal
  */
-function getHeadingTagNameForElement(element: HTMLDOMElement): string {
+export function getHeadingTagNameForElement(element: HTMLDOMElement): string {
     const getIncreasedHeadingLevel = (tagName: string): string => {
         const headingLevel = parseInt(tagName.slice(1), 10),
             newLevel = Math.min(6, headingLevel + 1);
@@ -314,9 +323,8 @@ function getHeadingTagNameForElement(element: HTMLDOMElement): string {
 
 /**
  * Remove an element from the DOM.
- * @private
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [element]
- * @return {void}
+ *
+ * @internal
  */
 function removeElement(element?: DOMElementType): void {
     if (element && element.parentNode) {
@@ -327,9 +335,8 @@ function removeElement(element?: DOMElementType): void {
 
 /**
  * Remove all child nodes from an element.
- * @private
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [element]
- * @return {void}
+ *
+ * @internal
  */
 function removeChildNodes(element: DOMElementType): void {
     while (element.lastChild) {
@@ -340,7 +347,8 @@ function removeChildNodes(element: DOMElementType): void {
 
 /**
  * Utility function. Reverses child nodes of a DOM element.
- * @private
+ *
+ * @internal
  */
 function reverseChildNodes(node: DOMElementType): void {
     let i = node.childNodes.length;
@@ -353,7 +361,8 @@ function reverseChildNodes(node: DOMElementType): void {
 /**
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
- * @private
+ *
+ * @internal
  */
 function stripHTMLTagsFromString(
     str: string,
@@ -369,7 +378,8 @@ function stripHTMLTagsFromString(
 /**
  * Utility function for hiding an element visually, but still keeping it
  * available to screen reader users.
- * @private
+ *
+ * @internal
  */
 function visuallyHideElement(element: HTMLDOMElement): void {
     css(element, {
@@ -393,6 +403,7 @@ function visuallyHideElement(element: HTMLDOMElement): void {
  *
  * */
 
+/** @internal */
 const HTMLUtilities = {
     addClass,
     cloneMouseEvent,
@@ -401,6 +412,7 @@ const HTMLUtilities = {
     getElement,
     getFakeMouseEvent,
     getHeadingTagNameForElement,
+    getShadowRoot,
     removeChildNodes,
     removeClass,
     removeElement,
@@ -410,4 +422,5 @@ const HTMLUtilities = {
     visuallyHideElement
 };
 
+/** @internal */
 export default HTMLUtilities;

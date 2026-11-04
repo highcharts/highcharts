@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,14 +25,18 @@ import type TilemapPointOptions from './TilemapPointOptions';
 import type TilemapSeries from './TilemapSeries';
 
 import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import HeatmapSeries from '../Heatmap/HeatmapSeries.js';
+import Series from '../../Core/Series/Series.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    series: { prototype: { pointClass: Point } },
-    seriesTypes: {
-        heatmap: { prototype: { pointClass: HeatmapPoint } }
-    }
-} = SeriesRegistry;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const Point = Series.prototype.pointClass;
+const HeatmapPoint = HeatmapSeries.prototype.pointClass;
 
 /* *
  *
@@ -49,12 +54,16 @@ class TilemapPoint extends HeatmapPoint {
 
     public options!: TilemapPointOptions;
 
+    /** @internal */
     public pointPadding?: number;
 
+    /** @internal */
     public radius!: number;
 
+    /** @internal */
     public series!: TilemapSeries;
 
+    /** @internal */
     public tileEdges!: Record<string, number>;
 
     /* *
@@ -64,7 +73,7 @@ class TilemapPoint extends HeatmapPoint {
      * */
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Point#haloPath
      */
     public haloPath(): SVGPath {

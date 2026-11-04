@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn how chart options use JavaScript objects and arrays, how to change
+  those objects programmatically, and how Highcharts.setOptions applies shared
+  settings across multiple charts on the same page.
+---
+
 How to set options
 ===
 
@@ -93,17 +100,18 @@ If you want to apply a set of options to all charts on the same page, use `Highc
 
 ```js
 Highcharts.setOptions({
-    chart: {
-        backgroundColor: {
-            linearGradient: [0, 0, 500, 500],
-            stops: [
-                [0, 'rgb(255, 255, 255)'],
-                [1, 'rgb(240, 240, 255)']
-            ]
+    palette: {
+        light: {
+            backgroundColor: '#f8f8ff'
         },
+        dark: {
+            backgroundColor: '#141424'
+        }
+    },
+    chart: {
         borderWidth: 2,
-        plotBackgroundColor: 'rgba(255, 255, 255, .9)',
-        plotShadow: true,
+        borderRadius: 5,
+        plotBackgroundColor: 'light-dark(#ffffff, #141414)',
         plotBorderWidth: 1
     }
 });

@@ -9,7 +9,9 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import type Symbols from '../../Core/Renderer/SVG/Symbols';
 
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import H from '../../Core/Globals.js';
+import { pushUnique } from '../../Shared/Utilities.js';
+const { composed } = H;
 
 /* *
  *
@@ -24,6 +26,8 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
         /** @requires Series/Flags */
         flag: SymbolFunction;
         /** @requires Series/Flags */
+        'flag-icon': SymbolFunction;
+        /** @requires Series/Flags */
         squarepin: SymbolFunction;
     }
 }
@@ -34,16 +38,8 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
  *
  * */
 
+/** @internal */
 namespace FlagsSymbols {
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    const modifiedMembers: Array<unknown> = [];
-
     /* *
      *
      *  Functions
@@ -52,37 +48,45 @@ namespace FlagsSymbols {
 
 
     /**
-     * @private
+     * @internal
      */
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
-
-        if (modifiedMembers.indexOf(SVGRendererClass) === -1) {
-            modifiedMembers.push(SVGRendererClass);
-
+        if (pushUnique(composed, 'Series.Flags')) {
             const symbols = SVGRendererClass.prototype.symbols;
 
             symbols.flag = flag;
             createPinSymbol(symbols, 'circle');
             createPinSymbol(symbols, 'square');
 
+            symbols['flag-icon'] = function (
+                this: typeof Symbols,
+                x: number,
+                y: number,
+                w: number,
+                h: number
+            ): SVGPath {
+                return flag.call(
+                    this,
+                    x,
+                    y,
+                    w,
+                    Math.round(h * 0.6),
+                    {
+                        anchorX: Math.round(x),
+                        anchorY: Math.round(y + h)
+                    }
+                );
+            };
+
         }
-
-        const RendererClass = RendererRegistry.getRendererType();
-
-        // The symbol callbacks are generated on the SVGRenderer object in all
-        // browsers.
-        if (modifiedMembers.indexOf(RendererClass)) {
-            modifiedMembers.push(RendererClass);
-        }
-
     }
 
 
     /**
      * Create the flag icon with anchor.
-     * @private
+     * @internal
      */
     function flag(
         this: typeof Symbols,
@@ -111,7 +115,7 @@ namespace FlagsSymbols {
 
     /**
      * Create the circlepin and squarepin icons with anchor.
-     * @private
+     * @internal
      */
     function createPinSymbol(
         symbols: typeof Symbols,
@@ -182,4 +186,5 @@ namespace FlagsSymbols {
  *
  * */
 
+/** @internal */
 export default FlagsSymbols;

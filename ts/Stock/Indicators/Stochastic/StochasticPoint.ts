@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,9 +22,10 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class StochasticPoint extends SMAPoint {
+    /** @internal */
     public series: StochasticIndicator;
+    /** @internal */
     public smoothed?: number;
 }
 
@@ -33,5 +35,4 @@ declare class StochasticPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default StochasticPoint;

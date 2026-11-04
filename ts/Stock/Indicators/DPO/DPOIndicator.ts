@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,15 +24,12 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     correctFloat,
     extend,
-    merge,
-    pick
+    merge
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -50,10 +48,8 @@ function accumulatePoints(
     index: number,
     subtract?: boolean
 ): number {
-    const price = pick<(number | undefined), number>(
-        (yVal[i] as any)[index], (yVal[i] as any
-    )
-    );
+    const price = ((yVal[i] as any)[index] ?? (yVal[i] as any
+    ));
 
     if (subtract) {
         return correctFloat(sum - price);
@@ -70,7 +66,6 @@ function accumulatePoints(
 /**
  * The DPO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dpo
  *
@@ -98,9 +93,10 @@ class DPOIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/dpo
+     * @requires     indicators/indicators
+     * @requires     indicators/dpo
      * @optionparent plotOptions.dpo
+     * @internal
      */
     public static defaultOptions: DPOOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -132,6 +128,7 @@ class DPOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DPOParamsOptions
@@ -174,10 +171,8 @@ class DPOIndicator extends SMAIndicator {
 
             // Adding the last period point
             sum = accumulatePoints(sum, yVal, periodIndex, index);
-            price = pick<(number | undefined), number>(
-                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any
-            )
-            );
+            price = (yVal[rangeIndex] as any)[index] ??
+                (yVal[rangeIndex] as any);
 
             oscillator = price - sum / period;
 
@@ -203,7 +198,6 @@ class DPOIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface DPOIndicator {
     nameBase: string;
 }
@@ -218,7 +212,6 @@ extend(DPOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dpo: typeof DPOIndicator;
@@ -233,7 +226,6 @@ SeriesRegistry.registerSeriesType('dpo', DPOIndicator);
  *
  * */
 
-/** @internal */
 export default DPOIndicator;
 
 /* *
@@ -249,11 +241,11 @@ export default DPOIndicator;
  * @extends   series,plotOptions.dpo
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/dpo
+ * @requires  indicators/indicators
+ * @requires  indicators/dpo
  * @apioption series.dpo
  */
 

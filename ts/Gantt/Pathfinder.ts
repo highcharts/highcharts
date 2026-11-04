@@ -3,8 +3,9 @@
  *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,7 +30,7 @@ import Chart from '../Core/Chart/Chart.js';
 import PathfinderAlgorithms from './PathfinderAlgorithms.js';
 import PathfinderComposition, { PointConnectOptionsObject } from './PathfinderComposition.js';
 import Point from '../Core/Series/Point.js';
-import { addEvent, defined, pick, splat } from '../Shared/Utilities.js';
+import { addEvent, defined, splat } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -112,7 +113,7 @@ function calculateObstacleDistance(
     bbMargin?: number
 ): number {
     // Count the distance even if we are slightly off
-    const margin = pick(bbMargin, 10),
+    const margin = (bbMargin ?? 10),
         yOverlap = a.yMax + margin > b.yMin - margin &&
                     a.yMin - margin < b.yMax + margin,
         xOverlap = a.xMax + margin > b.xMin - margin &&
@@ -448,7 +449,7 @@ class Pathfinder {
         options: { algorithmMargin?: number }
     ): Array<any> {
         const series = this.chart.series,
-            margin = pick(options.algorithmMargin, 0);
+            margin = (options.algorithmMargin ?? 0);
 
         let obstacles = [],
             calculatedMargin: number;

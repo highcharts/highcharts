@@ -147,6 +147,7 @@ const dataSource = {
 
 const initGrid = data => {
     Grid.grid('container', {
+        gridKey: 'YOUR-GRID-KEY-HERE',
         data: { dataTable: data },
         caption: {
             text: '🍔 Big Mac Index 2025'
@@ -172,7 +173,7 @@ const initGrid = data => {
         }, {
             id: 'dollarRate',
             header: {
-                format: 'USD exchange ratio'
+                format: 'USD Exchange Ratio'
             }
         }, {
             id: 'dollarPrice',
@@ -185,7 +186,7 @@ const initGrid = data => {
         }, {
             id: 'dollarValuation',
             header: {
-                format: 'Undervalued / overvalued'
+                format: 'Undervalued / Overvalued'
             },
             width: 350,
             cells: {

@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,11 +25,9 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
-import { extend, merge, pick } from '../../../Shared/Utilities.js';
+import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -67,7 +66,6 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
 /**
  * The Aroon series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.aroon
  *
@@ -95,9 +93,10 @@ class AroonIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/aroon
+     * @requires     indicators/indicators
+     * @requires     indicators/aroon
      * @optionparent plotOptions.aroon
+     * @internal
      */
     public static defaultOptions: AroonOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -159,6 +158,7 @@ class AroonIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: AroonParamsOptions
@@ -188,12 +188,12 @@ class AroonIndicator extends SMAIndicator {
 
             xLow = getExtremeIndexInArray(slicedY.map(
                 function (elem): number {
-                    return pick(elem[low], (elem as any));
+                    return (elem[low] ?? (elem as any));
                 }), 'min');
 
             xHigh = getExtremeIndexInArray(slicedY.map(
                 function (elem): number {
-                    return pick(elem[high], (elem as any));
+                    return (elem[high] ?? (elem as any));
                 }), 'max');
 
             aroonUp = (xHigh / period) * 100;
@@ -243,7 +243,6 @@ MultipleLinesComposition.compose(AroonIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroon: typeof AroonIndicator;
@@ -258,7 +257,6 @@ SeriesRegistry.registerSeriesType('aroon', AroonIndicator);
  *
  * */
 
-/** @internal */
 export default AroonIndicator;
 
 /* *
@@ -274,11 +272,11 @@ export default AroonIndicator;
  * @extends   series,plotOptions.aroon
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/aroon
+ * @requires  indicators/indicators
+ * @requires  indicators/aroon
  * @apioption series.aroon
  */
 

@@ -1,3 +1,11 @@
+---
+description: >-
+  Understand how DataPool, DataConnector, DataTable, DataModifier, and
+  DataCursor work together in Dashboards, including lazy connector loading,
+  table updates, source polling, modified table clones, and synchronized cell
+  states.
+---
+
 # Data Handling
 
 **Highcharts Dashboards** uses a dedicated set of elements for effective data management.

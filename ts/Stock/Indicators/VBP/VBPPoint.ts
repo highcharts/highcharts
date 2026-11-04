@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -14,15 +15,16 @@
  *
  * */
 
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: {
-        prototype: {
-            pointClass: SMAPoint
-        }
-    }
-} = SeriesRegistry.seriesTypes;
-import VBPIndicator from './VBPIndicator';
+import SMAIndicator from '../SMA/SMAIndicator.js';
+import type VBPIndicator from './VBPIndicator';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const SMAPoint = SMAIndicator.prototype.pointClass;
 
 /* *
  *
@@ -30,10 +32,10 @@ import VBPIndicator from './VBPIndicator';
  *
  * */
 
-/** @internal */
 class VBPPoint extends SMAPoint {
 
     // Required for destroying negative part of volume
+    /** @internal */
     public destroy(): void {
         // @todo: this.negativeGraphic doesn't seem to be used anywhere
         if (this.negativeGraphic) {
@@ -51,12 +53,19 @@ class VBPPoint extends SMAPoint {
 
 /** @internal */
 interface VBPPoint {
+    /** @internal */
     barX: number;
+    /** @internal */
     negativeGraphic: unknown;
+    /** @internal */
     pointWidth: number;
+    /** @internal */
     series: VBPIndicator;
+    /** @internal */
     volumeAll: number;
+    /** @internal */
     volumeNeg: number;
+    /** @internal */
     volumePos: number;
 }
 
@@ -66,5 +75,4 @@ interface VBPPoint {
  *
  * */
 
-/** @internal */
 export default VBPPoint;

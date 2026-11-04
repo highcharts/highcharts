@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -48,6 +49,16 @@ import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions';
 const Pyramid3DSeriesDefaults: Pyramid3DSeriesOptions = {
 
     /**
+     * The center of the series. By default, it is centered in the middle
+     * of the plot area, so it fills the plot area height.
+     *
+     * @type    {Array<number|string>}
+     * @default ["50%", "50%"]
+     * @since   7.1.0
+     */
+    center: ['50%', '50%'],
+
+    /**
      * A reversed pyramid3d is funnel3d, but the latter supports neck
      * related options: neckHeight and neckWidth
      *
@@ -79,7 +90,10 @@ const Pyramid3DSeriesDefaults: Pyramid3DSeriesOptions = {
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase,dataSorting
  * @product   highcharts
  * @sample    {highcharts} highcharts/demo/pyramid3d/ Pyramid3d
- * @requires  modules/pyramid3d
+ * @requires     highcharts-3d
+ * @requires     modules/cylinder
+ * @requires     modules/funnel3d
+ * @requires     modules/pyramid3d
  * @apioption series.pyramid3d
  */
 

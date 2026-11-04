@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -65,7 +66,18 @@ const {
 } = CU;
 
 import DU from '../Utilities.js';
-import { addEvent, createElement, diffObjects, fireEvent, getStyle, isArray, isFunction, merge, objectEach, removeEvent } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    createElement,
+    diffObjects,
+    fireEvent,
+    getStyle,
+    isArray,
+    isFunction,
+    merge,
+    objectEach,
+    removeEvent
+} from '../../Shared/Utilities.js';
 import { uniqueKey } from '../../Core/Utilities.js';
 const {
     deepClone
@@ -319,7 +331,11 @@ abstract class Component {
         const renderTo = options.renderTo;
         this.board = board || cell?.row?.layout?.board || {};
         this.parentElement =
-            cell?.container || document.querySelector('#' + renderTo);
+            cell?.container || (
+                renderTo ?
+                    document.querySelector('#' + CSS.escape(renderTo)) :
+                    null
+            );
         this.cell = cell;
 
         this.options = merge(
@@ -906,6 +922,9 @@ abstract class Component {
         /**
          * TODO: Should perhaps set an `isActive` flag to false.
          */
+
+        // Cancel pending resize timeouts e.g chart components.
+        this.resizeTimeouts.forEach(clearTimeout);
 
         if (this.sync.isSyncing) {
             this.sync.stop();

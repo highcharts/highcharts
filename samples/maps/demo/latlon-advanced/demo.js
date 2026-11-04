@@ -12,8 +12,6 @@
         p.z = p.population;
     });
 
-    const H = Highcharts;
-
     const chart = Highcharts.mapChart('container', {
         title: {
             text: 'Highcharts Maps lon/lat demo'
@@ -72,7 +70,7 @@
             name: 'State capital cities',
             data: data,
             maxSize: '12%',
-            color: H.getOptions().colors[0]
+            color: 'var(--highcharts-color-0)'
         }]
     });
 
@@ -84,7 +82,7 @@
                     zIndex: 5
                 })
                 .css({
-                    color: '#505050'
+                    color: 'var(--highcharts-neutral-color-60)'
                 })
                 .add();
         }

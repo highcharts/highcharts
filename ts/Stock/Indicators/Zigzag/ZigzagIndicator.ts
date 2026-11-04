@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,8 +27,8 @@ import type {
 } from './ZigzagOptions';
 import type ZigzagPoint from './ZigzagPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -39,7 +40,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Zig Zag series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.zigzag
  *
@@ -65,9 +65,10 @@ class ZigzagIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/zigzag
+     * @requires     indicators/indicators
+     * @requires     indicators/zigzag
      * @optionparent plotOptions.zigzag
+     * @internal
      */
     public static defaultOptions: ZigzagOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -119,6 +120,7 @@ class ZigzagIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ZigzagParamsOptions
@@ -265,7 +267,6 @@ class ZigzagIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ZigzagIndicator {
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
@@ -285,7 +286,6 @@ extend(ZigzagIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         zigzag: typeof ZigzagIndicator;
@@ -300,7 +300,6 @@ SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
  *
  * */
 
-/** @internal */
 export default ZigzagIndicator;
 
 /* *
@@ -316,9 +315,8 @@ export default ZigzagIndicator;
  * @extends   series,plotOptions.zigzag
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/zigzag
+ * @requires  indicators/indicators
+ * @requires  indicators/zigzag
  * @apioption series.zigzag
  */
 

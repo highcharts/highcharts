@@ -1,0 +1,69 @@
+// Create the chart
+Highcharts.stockChart('container', {
+
+    title: {
+        text: 'Cumulative Sum',
+        align: 'left'
+    },
+
+    subtitle: {
+        text: 'Displays the sum of all the previous values and the current ' +
+            'value (only within visible range)',
+        align: 'left'
+    },
+
+    dataTable: {
+        columns: {
+            Date: [
+                '2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04',
+                '2023-01-05', '2023-01-06', '2023-01-07', '2023-01-08',
+                '2023-01-09', '2023-01-10'
+            ],
+            'The Local Bakery': [
+                678.78, 545.33, 788.72, 406.2, 744.87, 466.03, 822.7, 337.52,
+                396.67, 470.89
+            ],
+            'The Local Fishmarket': [
+                1340.72, 982.43, 1437.99, 1476.2, 670.23, 429.58, 897.52,
+                845.11, 1275.79, 1843.01
+            ]
+        }
+    },
+
+    plotOptions: {
+        series: {
+            cumulative: true,
+            dataMapping: {
+                x: 'Date'
+            }
+        }
+    },
+
+    rangeSelector: {
+        enabled: false
+    },
+
+    tooltip: {
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>' +
+            ': <b>{point.y}</b> (${point.cumulativeSum})<br/>',
+        changeDecimals: 2,
+        valueDecimals: 2,
+        valuePrefix: '$',
+        valueSuffix: ' USD'
+    },
+
+    xAxis: {
+        minRange: 3 * 24 * 36e5,
+        max: '2023-01-06'
+    },
+
+    series: [{
+        dataMapping: {
+            y: 'The Local Bakery'
+        }
+    }, {
+        dataMapping: {
+            y: 'The Local Fishmarket'
+        }
+    }]
+});

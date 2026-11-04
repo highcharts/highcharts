@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,10 +25,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -63,7 +62,6 @@ function getPointLB(low: number, base: number): number {
 /**
  * The ABands series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.abands
  *
@@ -93,9 +91,10 @@ class ABandsIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking,
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/acceleration-bands
+     * @requires     indicators/indicators
+     * @requires     indicators/acceleration-bands
      * @optionparent plotOptions.abands
+     * @internal
      */
     public static defaultOptions: ABandsOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -159,6 +158,7 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         this: ABandsIndicator,
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
@@ -283,7 +283,6 @@ MultipleLinesComposition.compose(ABandsIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         abands: typeof ABandsIndicator;
@@ -297,7 +296,6 @@ SeriesRegistry.registerSeriesType('abands', ABandsIndicator);
  *
  * */
 
-/** @internal */
 export default ABandsIndicator;
 
 /* *
@@ -313,12 +311,12 @@ export default ABandsIndicator;
  * @extends   series,plotOptions.abands
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            stacking, showInNavigator,
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/acceleration-bands
+ * @requires  indicators/indicators
+ * @requires  indicators/acceleration-bands
  * @apioption series.abands
  */
 

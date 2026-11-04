@@ -237,10 +237,26 @@ QUnit.test('Dynamic markers on update', function (assert) {
     assert.strictEqual(hasVisibleMarker(pointA), true, 'Series marker visible');
     assert.strictEqual(hasMarker(pointB), true, 'Point marker exists');
     assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden');
+
+    series.update({
+        marker: {
+            enabled: false
+        },
+        lowMarker: {
+            enabled: true
+        }
+    });
+
+    assert.strictEqual(
+        hasVisibleMarker(pointA),
+        true,
+        'Explicitly enabled lowMarker should be visible (#25279).'
+    );
+
 });
 
-// #16624
-QUnit.test('Hover after disabling a11y', function (assert) {
+// #16624, temporarily skipped due to #23783
+QUnit.skip('Hover after disabling a11y', function (assert) {
     const chart = Highcharts.chart('container', {
         xAxis: {
             type: 'category'

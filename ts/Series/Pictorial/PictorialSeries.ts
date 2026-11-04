@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi, Magdalena Gut
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,15 +22,16 @@ import '../Column/ColumnSeries.js';
 import { composePatternFill } from '../../Extensions/PatternFill.js';
 
 import type ColorType from '../../Core/Color/ColorType.js';
-import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Chart from '../../Core/Chart/Chart.js';
 import PictorialPoint from './PictorialPoint.js';
+import PictorialSeriesDefaults from './PictorialSeriesDefaults.js';
 import PictorialUtilities from './PictorialUtilities.js';
 import Series from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -39,8 +41,7 @@ import {
     addEvent,
     defined,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -56,8 +57,6 @@ composePatternFill(Chart, Series, SVGRenderer);
  *  Constants
  *
  * */
-
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
 const {
     getStackMetrics,
@@ -99,7 +98,7 @@ declare module '../../Core/Axis/AxisOptions' {
 /**
  * The pictorial series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pictorial
  *
@@ -113,29 +112,10 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: PictorialSeriesOptions = merge(
         ColumnSeries.defaultOptions,
-        /**
-         * A pictorial chart uses vector images to represents the data.
-         * The shape of the data point is taken from the path parameter.
-         *
-         * @sample       {highcharts} highcharts/demo/pictorial/
-         *               Pictorial chart
-         *
-         * @extends      plotOptions.column
-         * @since 11.0.0
-         * @product      highcharts
-         * @excluding    allAreas, borderRadius,
-         *               centerInCategory, colorAxis, colorKey, connectEnds,
-         *               connectNulls, crisp, compare, compareBase, dataSorting,
-         *               dashStyle, dataAsColumns, linecap, lineWidth, shadow,
-         *               onPoint
-         * @requires     modules/pictorial
-         * @optionparent plotOptions.pictorial
-         */
-        {
-            borderWidth: 0
-        } as PictorialSeriesOptions
+        PictorialSeriesDefaults
     );
 
     /* *
@@ -144,6 +124,7 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public paths!: Array<PictorialPathOptions>;
 
     public data!: Array<PictorialPoint>;
@@ -211,9 +192,12 @@ class PictorialSeries extends ColumnSeries {
         }
     }
 
+    /** @internal */
     public animateDrilldown(): void {}
+    /** @internal */
     public animateDrillupFrom(): void {}
 
+    /** @internal */
     public pointAttribs(
         point?: PictorialPoint
     ): SVGAttributes {
@@ -373,9 +357,9 @@ function renderStackShadow(
             series.getColumnMetrics().width,
             { height, y } = getStackMetrics(series.yAxis, shape),
             shadowOptions = options.stackShadow,
-            strokeWidth = pick(
-                shadowOptions && shadowOptions.borderWidth,
-                series.options.borderWidth,
+            strokeWidth = (
+                (shadowOptions && shadowOptions.borderWidth) ??
+                series.options.borderWidth ??
                 1
             );
 
@@ -402,7 +386,7 @@ function renderStackShadow(
                             path: {
                                 d: shape.definition,
                                 fill: shadowOptions.color ||
-                                    '#dedede',
+                                    'var(--highcharts-neutral-color-20)',
                                 strokeWidth: strokeWidth,
                                 stroke: shadowOptions.borderColor ||
                                 'transparent'
@@ -413,7 +397,7 @@ function renderStackShadow(
                             height: height,
                             patternContentUnits: 'objectBoundingBox',
                             backgroundColor: 'none',
-                            color: '#dedede'
+                            color: 'var(--highcharts-neutral-color-20)'
                         }
                     }
                 })
@@ -570,6 +554,7 @@ addEvent(Chart, 'afterDrillUp', function (): void {
  *
  * */
 
+/** @internal */
 interface PictorialSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -606,15 +591,56 @@ export default PictorialSeries;
  * */
 
 /**
+ * The paths include options describing the series image. For further details on
+ * preparing the SVG image, please refer to the [pictorial
+ * documentation](https://www.highcharts.com/docs/chart-and-series-types/pictorial).
+ *
+ * @declare   Highcharts.SeriesPictorialPathsOptionsObject
+ * @type      {Array<*>}
+ *
+ * @sample    {highcharts} highcharts/demo/pictorial/
+ *            Pictorial chart
+ *
+ * @since     11.0.0
+ * @product   highcharts
+ * @apioption plotOptions.pictorial.paths
+ */
+
+/**
+ * The definition defines a path to be drawn. It corresponds `d` SVG attribute.
+ *
+ * @type      {string}
+ *
+ * @sample    {highcharts} highcharts/demo/pictorial/
+ *            Pictorial chart
+ *
+ * @product   highcharts
+ * @apioption plotOptions.pictorial.paths.definition
+ */
+
+/**
+ * The max option determines height of the image. It is the ratio of
+ * `yAxis.max` to the `paths.max`.
+ *
+ * @sample {highcharts} highcharts/series-pictorial/paths-max
+ *         Pictorial max option
+ *
+ * @type      {number}
+ * @default   yAxis.max
+ * @product   highcharts
+ * @apioption plotOptions.pictorial.paths.max
+ */
+
+/**
  * A `pictorial` series. If the [type](#series.pictorial.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pictorial
  * @since 11.0.0
  * @product   highcharts
- * @excluding dataParser, borderRadius, boostBlending, boostThreshold,
+ * @excluding borderRadius, boostBlending, boostThreshold,
  *            borderColor, borderWidth, centerInCategory, connectEnds,
- *            connectNulls, crisp, colorKey, dataURL, dataAsColumns, depth,
+ *            connectNulls, crisp, colorKey, dataAsColumns, depth,
  *            dragDrop, edgeColor, edgeWidth, linecap, lineWidth,  marker,
  *            dataSorting, dashStyle, onPoint, relativeXValue, shadow, zoneAxis,
  *            zones
@@ -678,47 +704,6 @@ export default PictorialSeries;
  */
 
 /**
- * The paths include options describing the series image. For further details on
- * preparing the SVG image, please refer to the [pictorial
- * documentation](https://www.highcharts.com/docs/chart-and-series-types/pictorial).
- *
- * @declare   Highcharts.SeriesPictorialPathsOptionsObject
- * @type      {Array<*>}
- *
- * @sample    {highcharts} highcharts/demo/pictorial/
- *            Pictorial chart
- *
- * @since     11.0.0
- * @product   highcharts
- * @apioption series.pictorial.paths
- */
-
-/**
- * The definition defines a path to be drawn. It corresponds `d` SVG attribute.
- *
- * @type      {string}
- *
- * @sample    {highcharts} highcharts/demo/pictorial/
- *            Pictorial chart
- *
- * @product   highcharts
- * @apioption series.pictorial.paths.definition
- */
-
-/**
- * The max option determines height of the image. It is the ratio of
- * `yAxis.max` to the `paths.max`.
- *
- * @sample {highcharts} highcharts/series-pictorial/paths-max
- *         Pictorial max option
- *
- * @type      {number}
- * @default   yAxis.max
- * @product   highcharts
- * @apioption series.pictorial.paths.max
- */
-
-/**
  * Relevant only for pictorial series. The `stackShadow` forms the background of
  * stacked points. Requires `series.stacking` to be defined.
  *
@@ -760,7 +745,7 @@ export default PictorialSeries;
  *
  * @declare   Highcharts.YAxisOptions
  * @type      {Highcharts.ColorType}
- * @default   #dedede
+ * @default   var(--highcharts-neutral-color-20)
  * @product   highcharts
  * @requires  modules/pictorial
  * @apioption yAxis.stackShadow.color
@@ -771,7 +756,7 @@ export default PictorialSeries;
  *
  * @declare   Highcharts.YAxisOptions
  * @type      {boolean}
- * @default   undefined
+ * @default   false
  * @product   highcharts
  * @requires  modules/pictorial
  * @apioption yAxis.stackShadow.enabled

@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,8 +36,7 @@ const {
 import {
     correctFloat,
     defined,
-    isNumber,
-    pick
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -262,10 +262,7 @@ function navigationGetYAxisResizers(
                 enabled: true,
                 controlledAxis: {
                     next: [
-                        pick(
-                            nextYAxis.options.id,
-                            nextYAxis.index
-                        )
+                        (nextYAxis.options.id ?? nextYAxis.index)
                     ]
                 }
             };

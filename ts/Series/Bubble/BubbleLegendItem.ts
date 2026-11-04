@@ -4,8 +4,9 @@
  *
  *  Author: Paweł Potaczek
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -44,7 +45,6 @@ import {
     arrayMin,
     isNumber,
     merge,
-    pick,
     stableSort
 } from '../../Shared/Utilities.js';
 
@@ -185,7 +185,7 @@ class BubbleLegendItem {
      *        Legend instance
      */
     public drawLegendSymbol(legend: Legend): void {
-        const itemDistance = pick(legend.options.itemDistance, 20),
+        const itemDistance = (legend.options.itemDistance ?? 20),
             legendItem = this.legendItem || {},
             options = this.options,
             ranges =
@@ -266,21 +266,17 @@ class BubbleLegendItem {
             i: number
         ): void {
             if (!styledMode) {
-                bubbleAttribs.stroke = pick(
-                    range.borderColor,
-                    options.borderColor,
-                    series.color
-                );
+                bubbleAttribs.stroke =
+                    range.borderColor ?? options.borderColor ?? series.color;
                 bubbleAttribs.fill = range.color || options.color;
                 if (!bubbleAttribs.fill) {
                     bubbleAttribs.fill = series.color;
                     bubbleAttribs['fill-opacity'] = fillOpacity ?? 1;
                 }
-                connectorAttribs.stroke = pick(
-                    range.connectorColor,
-                    options.connectorColor,
-                    series.color
-                );
+                connectorAttribs.stroke =
+                    range.connectorColor ??
+                    options.connectorColor ??
+                    series.color;
             }
 
             // Set options needed for rendering each range
@@ -594,7 +590,7 @@ class BubbleLegendItem {
                 zData = s.getColumn('z').filter(isNumber);
 
                 if (zData.length) {
-                    minZ = pick(s.options.zMin, Math.min(
+                    minZ = (s.options.zMin ?? Math.min(
                         minZ,
                         Math.max(
                             arrayMin(zData),
@@ -603,10 +599,7 @@ class BubbleLegendItem {
                                 -Number.MAX_VALUE
                         )
                     ));
-                    maxZ = pick(
-                        s.options.zMax,
-                        Math.max(maxZ, arrayMax(zData))
-                    );
+                    maxZ = (s.options.zMax ?? Math.max(maxZ, arrayMax(zData)));
                 }
             }
         });

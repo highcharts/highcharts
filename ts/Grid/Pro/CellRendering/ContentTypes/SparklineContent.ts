@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -29,6 +30,19 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';
 import { defined, merge } from '../../../../Shared/Utilities.js';
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Columns that have already reported an unparsable value, so that a column
+ * of them does not log once per rendered cell.
+ */
+const warnedColumns = new WeakSet<object>();
 
 
 /* *
@@ -225,9 +239,26 @@ class SparklineContent extends CellContentPro {
         }
 
         if (!options.series) {
-            options.series = [{
-                data: JSON.parse(trimmedValue)
-            }];
+            let data: unknown = [];
+
+            try {
+                data = JSON.parse(trimmedValue);
+            } catch {
+                const { column } = this.cell;
+
+                if (!warnedColumns.has(column)) {
+                    warnedColumns.add(column);
+
+                    // eslint-disable-next-line no-console
+                    console.warn(
+                        `Sparkline renderer: the column "${column.id}" has ` +
+                        'a value that is not a valid list of points. Such ' +
+                        'cells render an empty chart.'
+                    );
+                }
+            }
+
+            options.series = [{ data }];
         }
 
         return options;

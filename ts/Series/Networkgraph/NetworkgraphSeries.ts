@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,6 +26,7 @@ import type NetworkgraphChart from './NetworkgraphChart';
 import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DragNodesComposition from '../DragNodesComposition.js';
@@ -35,18 +37,10 @@ import NetworkgraphPoint from './NetworkgraphPoint.js';
 import NetworkgraphSeriesDefaults from './NetworkgraphSeriesDefaults.js';
 import NodesComposition from '../NodesComposition.js';
 import ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import LineSeries from '../Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: {
-            prototype: columnProto
-        },
-        line: {
-            prototype: lineProto
-        }
-    }
-} = SeriesRegistry;
 
 import D from '../SimulationSeriesUtilities.js';
 const {
@@ -59,8 +53,7 @@ import {
     addEvent,
     defined,
     extend,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 composeTextPath(SVGElement);
 
@@ -108,6 +101,7 @@ class NetworkgraphSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart
     ): void {
@@ -123,12 +117,14 @@ class NetworkgraphSeries extends Series {
 
     public data!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public nodes!: Array<NetworkgraphPoint>;
 
     public options!: NetworkgraphSeriesOptions;
 
     public points!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public deferDataLabels: boolean = true;
 
     /* *
@@ -273,9 +269,9 @@ class NetworkgraphSeries extends Series {
             node = this.nodes[i];
 
             node.degree = node.getDegree();
-            node.radius = pick(
-                node.marker && node.marker.radius,
-                this.options.marker && this.options.marker.radius,
+            node.radius = (
+                (node.marker && node.marker.radius) ??
+                (this.options.marker && this.options.marker.radius) ??
                 0
             );
             node.key = node.name;
@@ -389,7 +385,7 @@ class NetworkgraphSeries extends Series {
     ): SVGAttributes {
         // By default, only `selected` state is passed on
         const pointState = state || point && point.state || 'normal',
-            stateOptions = (this.options.states as any)[pointState];
+            stateOptions = this.options.states?.[pointState];
 
         let attribs = Series.prototype.pointAttribs.call(
             this,
@@ -399,18 +395,17 @@ class NetworkgraphSeries extends Series {
 
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
-            // For link, get prefixed names:
+            // For link, get nested names:
             if (stateOptions) {
                 attribs = {
-                    // TO DO: API?
-                    stroke: stateOptions.linkColor || attribs.stroke,
-                    dashstyle: (
-                        stateOptions.linkDashStyle || attribs.dashstyle
-                    ),
-                    opacity: pick(
-                        stateOptions.linkOpacity, attribs.opacity
-                    ),
-                    'stroke-width': stateOptions.linkColor ||
+                    stroke: stateOptions.link?.color || attribs.stroke,
+                    dashstyle: stateOptions.link?.dashStyle ||
+                        attribs.dashstyle,
+                    // Deprecated linkOpacity, but keep for backwards compat.
+                    opacity: (stateOptions as any).linkOpacity ??
+                        stateOptions.link?.opacity ??
+                        attribs.opacity,
+                    'stroke-width': stateOptions.link?.width ||
                         attribs['stroke-width']
                 };
             }
@@ -432,7 +427,7 @@ class NetworkgraphSeries extends Series {
 
         // Render markers:
         series.points = series.nodes;
-        lineProto.render.call(this);
+        LineSeries.prototype.render.call(this);
         series.points = points;
 
         points.forEach(function (
@@ -567,7 +562,7 @@ extend(NetworkgraphSeries.prototype, {
     initDataLabels: initDataLabels,
     buildKDTree: noop,
     createNode: NodesComposition.createNode,
-    drawTracker: columnProto.drawTracker,
+    drawTracker: ColumnSeries.prototype.drawTracker,
     onMouseDown: DragNodesComposition.onMouseDown,
     onMouseMove: DragNodesComposition.onMouseMove,
     onMouseUp: DragNodesComposition.onMouseUp,

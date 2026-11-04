@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,7 +29,11 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import H from '../Core/Globals.js';
 const { composed } = H;
-import { addEvent, pushUnique } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    isObject,
+    pushUnique
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -36,11 +41,13 @@ import { addEvent, pushUnique } from '../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 export interface DragNodesChart extends Chart {
     graphLayoutsLookup: Array<ReingoldFruchtermanLayout>;
     hoverPoint: DragNodesPoint;
 }
 
+/** @internal */
 export interface DragNodesPoint extends Point {
     fixedPosition?: Record<string, number>;
     hasDragged?: boolean;
@@ -48,6 +55,7 @@ export interface DragNodesPoint extends Point {
     series: DragNodesSeries;
 }
 
+/** @internal */
 export interface DragNodesSeries extends Series {
     chart: DragNodesChart;
     data: Array<DragNodesPoint>;
@@ -75,6 +83,7 @@ export interface DragNodesSeries extends Series {
     ): void;
 }
 
+/** @internal */
 export interface DragNodesSeriesOptions extends SeriesOptions {
     draggable?: boolean;
     fixedDraggable?: boolean;
@@ -87,7 +96,7 @@ export interface DragNodesSeriesOptions extends SeriesOptions {
  * */
 
 /**
- * @private
+ * @internal
  */
 function compose(
     ChartClass: typeof Chart
@@ -101,7 +110,7 @@ function compose(
 
 /**
  * Draggable mode:
- * @private
+ * @internal
  */
 function onChartLoad(
     this: Chart
@@ -169,7 +178,7 @@ function onChartLoad(
 /**
  * Mouse down action, initializing drag&drop mode.
  *
- * @private
+ * @internal
  * @param {Highcharts.Point} point
  *        The point that event occurred.
  * @param {Highcharts.PointerEventObject} event
@@ -202,7 +211,7 @@ function onMouseDown(
 /**
  * Mouse move action during drag&drop.
  *
- * @private
+ * @internal
  *
  * @param {Highcharts.Point} point
  *        The point that event occurred.
@@ -248,7 +257,7 @@ function onMouseMove(
 /**
  * Mouse up action, finalizing drag&drop.
  *
- * @private
+ * @internal
  * @param {Highcharts.Point} point
  *        The point that event occurred.
  */
@@ -274,7 +283,7 @@ function onMouseUp(
 /**
  * Redraw halo on mousemove during the drag&drop action.
  *
- * @private
+ * @internal
  * @param {Highcharts.Point} point
  *        The point that should show halo.
  */
@@ -285,8 +294,9 @@ function redrawHalo(
     if (point && this.halo) {
         this.halo.attr({
             d: point.haloPath(
-                (this.options.states as any).hover.halo.size
-            ) as any
+                isObject(this.options.states?.hover?.halo) &&
+                this.options.states?.hover?.halo.size || 0
+            )
         });
     }
 }
@@ -298,6 +308,7 @@ function redrawHalo(
  *
  * */
 
+/** @internal */
 const DragNodesComposition = {
     compose,
     onMouseDown,
@@ -306,4 +317,5 @@ const DragNodesComposition = {
     redrawHalo
 };
 
+/** @internal */
 export default DragNodesComposition;

@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,8 +24,8 @@ import type LinearRegressionPoint from
  *
  * */
 
-/** @internal */
 declare class LinearRegressionSlopesPoint extends LinearRegressionPoint {
+    /** @internal */
     public series: LinearRegressionSlopesIndicator;
 }
 
@@ -34,5 +35,4 @@ declare class LinearRegressionSlopesPoint extends LinearRegressionPoint {
  *
  * */
 
-/** @internal */
 export default LinearRegressionSlopesPoint;

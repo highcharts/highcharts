@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -11,7 +12,7 @@
  *
  * */
 
-import MFIIndicator from './MFIIndicator';
+import type MFIIndicator from './MFIIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *
@@ -20,8 +21,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class MFIPoint extends SMAPoint {
+    /** @internal */
     public series: MFIIndicator;
 }
 
@@ -31,5 +32,4 @@ declare class MFIPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default MFIPoint;

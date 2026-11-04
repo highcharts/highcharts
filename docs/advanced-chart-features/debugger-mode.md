@@ -1,3 +1,10 @@
+---
+description: >-
+  Load the Debugger module to display Highcharts error messages directly on a
+  chart, and learn how to turn those messages off using the
+  chart.displayErrors configuration option.
+---
+
 Debugger module
 ===
 

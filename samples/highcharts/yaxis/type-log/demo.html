@@ -1,6 +1,5 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.8.0" type="module"></script>
 
@@ -11,8 +10,8 @@
 <div class="highcharts-controls-wrapper">
   <highcharts-controls>
     <highcharts-group header="Update options">
-      <highcharts-control path="xAxis.type" value="logarithmic" options="linear,logarithmic"></highcharts-control>
-      <highcharts-control path="yAxis.type" value="logarithmic" options="linear,logarithmic"></highcharts-control>
+      <highcharts-control type="select" path="xAxis.type" value="logarithmic" options="linear,logarithmic"></highcharts-control>
+      <highcharts-control type="select" path="yAxis.type" value="logarithmic" options="linear,logarithmic"></highcharts-control>
     </highcharts-group>
   </highcharts-controls>
 </div>

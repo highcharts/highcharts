@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,11 +23,16 @@ import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    scatter: { prototype: { pointClass: ScatterPoint } }
-} = SeriesRegistry.seriesTypes;
-import { clamp, defined, extend, pick } from '../../Shared/Utilities.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import { clamp, defined, extend } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *
@@ -44,14 +50,19 @@ class HeatmapPoint extends ScatterPoint {
 
     public options!: HeatmapPointOptions;
 
+    /** @internal */
     public pointPadding?: number;
 
+    /** @internal */
     public series!: HeatmapSeries;
 
+    /** @internal */
     public value!: (number|null);
 
+    /** @internal */
     public x!: number;
 
+    /** @internal */
     public y!: number;
 
     /* *
@@ -60,7 +71,7 @@ class HeatmapPoint extends ScatterPoint {
      *
      * */
 
-    /** @private */
+    /** @internal */
     public applyOptions(
         options: HeatmapPointOptions,
         x?: number
@@ -78,7 +89,7 @@ class HeatmapPoint extends ScatterPoint {
         return this;
     }
 
-    /** @private */
+    /** @internal */
     public getCellAttributes(): HeatmapPoint.CellAttributes {
         const point = this,
             series = point.series,
@@ -89,9 +100,8 @@ class HeatmapPoint extends ScatterPoint {
             yAxis = series.yAxis,
             markerOptions = point.options.marker || series.options.marker,
             pointPlacement = series.pointPlacementToXValue(), // #7860
-            pointPadding = pick(
-                point.pointPadding, seriesOptions.pointPadding, 0
-            ),
+            pointPadding =
+                point.pointPadding ?? seriesOptions.pointPadding ?? 0,
             cellAttr: HeatmapPoint.CellAttributes = {
                 x1: clamp(
                     Math.round(
@@ -188,7 +198,7 @@ class HeatmapPoint extends ScatterPoint {
     }
 
     /**
-     * @private
+     * @internal
      */
     public haloPath(
         size: number
@@ -212,7 +222,7 @@ class HeatmapPoint extends ScatterPoint {
     /**
      * Color points have a value option that determines whether or not it is
      * a null point
-     * @private
+     * @internal
      */
     public isValid(): boolean {
         // Undefined is allowed
@@ -253,6 +263,9 @@ namespace HeatmapPoint {
      *
      * */
 
+    /**
+     * @internal
+     */
     export interface CellAttributes extends Record<string, number> {
         x1: number;
         x2: number;

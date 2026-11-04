@@ -260,6 +260,8 @@ export interface DataProviderOptions {
      * rendered in provider order, and custom configured columns are appended
      * at the end in their definition order.
      *
+     * @sample grid-lite/basic/autogenerate-columns-disabled Manual columns only
+     *
      * @default true
      */
     autogenerateColumns?: boolean;

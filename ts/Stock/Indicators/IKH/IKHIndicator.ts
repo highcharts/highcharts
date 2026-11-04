@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,8 +36,8 @@ import ApproximationRegistry from '../../../Extensions/DataGrouping/Approximatio
 import Axis from '../../../Core/Axis/Axis.js';
 import Color from '../../../Core/Color/Color.js';
 const { parse: color } = Color;
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import {
     defined,
     extend,
@@ -173,7 +174,6 @@ function ichimokuAverages(): Array<(number|null|undefined)> | undefined {
 /**
  * The IKH series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ikh
  *
@@ -201,9 +201,10 @@ class IKHIndicator extends SMAIndicator {
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ichimoku-kinko-hyo
+     * @requires     indicators/indicators
+     * @requires     indicators/ichimoku-kinko-hyo
      * @optionparent plotOptions.ikh
+     * @internal
      */
 
     public static defaultOptions: IKHOptions = merge(
@@ -357,7 +358,7 @@ class IKHIndicator extends SMAIndicator {
                     /**
                      * Color of the area between Senkou Span A and B.
                      *
-                     * @deprecated
+                     * @deprecated 7.0.0
                      * @type {Highcharts.ColorType}
                      */
                     fill: 'rgba(255, 0, 0, 0.5)'
@@ -377,9 +378,13 @@ class IKHIndicator extends SMAIndicator {
     public data: Array<IKHPoint> = [];
     public options: IKHOptions = {};
     public points: Array<IKHPoint> = [];
+    /** @internal */
     public graphCollection: Array<string> = [];
+    /** @internal */
     public graphsenkouSpan?: SVGElement;
+    /** @internal */
     public ikhMap?: Record<string, Array<IKHPoint>>;
+    /** @internal */
     public nextPoints?: Array<IKHPoint>;
 
     /* *
@@ -388,6 +393,7 @@ class IKHIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
@@ -431,6 +437,7 @@ class IKHIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public toYData(point: IKHPoint): Array<number> {
         return [
             point.tenkanSen,
@@ -441,6 +448,7 @@ class IKHIndicator extends SMAIndicator {
         ];
     }
 
+    /** @internal */
     public translate(): void {
         const indicator = this;
 
@@ -468,6 +476,7 @@ class IKHIndicator extends SMAIndicator {
         }
     }
 
+    /** @internal */
     public drawGraph(): void {
         const indicator = this,
             mainLinePoints: Array<IKHPoint> =
@@ -755,6 +764,7 @@ class IKHIndicator extends SMAIndicator {
         indicator.color = mainColor;
     }
 
+    /** @internal */
     public getGraphPath(points: Array<LinePoint>): SVGPath {
         const indicator = this;
 
@@ -792,6 +802,7 @@ class IKHIndicator extends SMAIndicator {
         return path;
     }
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: IKHParamsOptions
@@ -925,11 +936,14 @@ class IKHIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface IKHIndicator {
+    /** @internal */
     pointClass: typeof IKHPoint;
+    /** @internal */
     nameComponents: Array<string>;
+    /** @internal */
     pointValKey: string;
+    /** @internal */
     pointArrayMap: Array<keyof IKHPoint>;
 }
 
@@ -953,7 +967,6 @@ extend(IKHIndicator.prototype, {
 
 ApproximationRegistry['ichimoku-averages'] = ichimokuAverages;
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof IKHIndicator;
@@ -967,7 +980,6 @@ SeriesRegistry.registerSeriesType('ikh', IKHIndicator);
  *
  * */
 
-/** @internal */
 export default IKHIndicator;
 
 /* *
@@ -983,9 +995,8 @@ export default IKHIndicator;
  * @extends   series,plotOptions.ikh
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ichimoku-kinko-hyo
+ * @requires  indicators/indicators
+ * @requires  indicators/ichimoku-kinko-hyo
  * @apioption series.ikh
  */
 

@@ -3,15 +3,16 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
 
 'use strict';
 
-import { diffObjects, extend, find, merge, pick } from '../Shared/Utilities.js';
+import { diffObjects, extend, find, merge } from '../Shared/Utilities.js';
 /* *
  *
  *  Imports
@@ -254,16 +255,12 @@ namespace Responsive {
         const condition = rule.condition,
             fn = condition.callback || function (this: Chart): boolean {
                 return (
-                    this.chartWidth <= pick(
-                        condition.maxWidth,
-                        Number.MAX_VALUE
-                    ) &&
-                    this.chartHeight <= pick(
-                        condition.maxHeight,
-                        Number.MAX_VALUE
-                    ) &&
-                    this.chartWidth >= pick(condition.minWidth, 0) &&
-                    this.chartHeight >= pick(condition.minHeight, 0)
+                    this.chartWidth <=
+                        (condition.maxWidth ?? Number.MAX_VALUE) &&
+                    this.chartHeight <=
+                        (condition.maxHeight ?? Number.MAX_VALUE) &&
+                    this.chartWidth >= (condition.minWidth ?? 0) &&
+                    this.chartHeight >= (condition.minHeight ?? 0)
                 );
             };
 

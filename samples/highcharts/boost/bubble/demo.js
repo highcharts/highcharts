@@ -1,14 +1,22 @@
-// Prepare the data
-const data = [],
-    n = 50000;
-
-for (let i = 0; i < n; i += 1) {
-    data.push([
-        Math.pow(Math.random(), 2) * 100,
-        Math.pow(Math.random(), 2) * 100,
-        Math.pow(Math.random(), 2) * 100
-    ]);
+function getDataTableOptions(n) {
+    const xColumn = new Float64Array(n),
+        yColumn = new Float64Array(n),
+        zColumn = new Float64Array(n);
+    for (let i = 0; i < n; i += 1) {
+        xColumn[i] = Math.pow(Math.random(), 2) * 100;
+        yColumn[i] = Math.pow(Math.random(), 2) * 100;
+        zColumn[i] = Math.pow(Math.random(), 2) * 100;
+    }
+    return {
+        columns: {
+            x: xColumn,
+            y: yColumn,
+            z: zColumn
+        }
+    };
 }
+const n = 50000,
+    dataTable = getDataTableOptions(n);
 
 if (!Highcharts.Series.prototype.renderCanvas) {
     throw 'Module not loaded';
@@ -16,6 +24,8 @@ if (!Highcharts.Series.prototype.renderCanvas) {
 
 console.time('bubble');
 Highcharts.chart('container', {
+
+    dataTable,
 
     chart: {
         zooming: {
@@ -40,7 +50,7 @@ Highcharts.chart('container', {
 
     title: {
         text: 'Bubble chart with ' +
-            Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+            Highcharts.numberFormat(n, 0, ' ') + ' points'
     },
 
     legend: {
@@ -57,7 +67,6 @@ Highcharts.chart('container', {
         boostBlending: 'alpha',
         color: 'rgb(152, 0, 67)',
         fillOpacity: 0.1,
-        data: data,
         minSize: 1,
         maxSize: 10,
         tooltip: {

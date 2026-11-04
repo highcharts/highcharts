@@ -29,18 +29,18 @@ body {
     font-size: 12px;
     border-radius: 2px;
     border: 0;
-    background-color: #ddd;
+    background-color: var(--highcharts-neutral-color-20);
     padding: 13px 18px;
     transition: background-color 0.3s;
     cursor: pointer;
 }
 
 .main-container button:hover {
-    background-color: #ccc;
+    background-color: var(--highcharts-neutral-color-10);
 }
 
 .main-container button[disabled] {
-    color: silver;
+    color: var(--highcharts-neutral-color-40);
     cursor: not-allowed;
 }
 

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,11 +25,9 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import OHLCSeries from '../OHLC/OHLCSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    ohlc: OHLCSeries
-} = SeriesRegistry.seriesTypes;
 import { crisp, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -40,7 +39,6 @@ import { crisp, merge } from '../../Shared/Utilities.js';
 /**
  * The candlestick series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.candlestick
  *
@@ -54,6 +52,7 @@ class CandlestickSeries extends OHLCSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: CandlestickSeriesOptions = merge(
         OHLCSeries.defaultOptions,
         { tooltip: OHLCSeries.defaultOptions.tooltip },
@@ -79,13 +78,33 @@ class CandlestickSeries extends OHLCSeries {
      * */
 
     /**
+     * Colors of the up glyph, as `pointAttribs` gives them to an up point.
+     * `pointAttribs` needs a point, which breaks on zoned series.
+     *
+     * @internal
+     * @function Highcharts.seriesTypes.candlestick#legendSymbolAttribs
+     */
+    public legendSymbolAttribs(): SVGAttributes {
+        const {
+                legendSymbolColor, lineColor, lineWidth, upColor, upLineColor
+            } = this.options,
+            color = legendSymbolColor || this.color;
+
+        return {
+            fill: upColor || color,
+            stroke: upLineColor || lineColor || color,
+            'stroke-width': lineWidth
+        };
+    }
+
+    /**
      * Postprocess mapping between options and SVG attributes
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
      */
     public pointAttribs(
-        point: CandlestickPoint,
+        point?: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = ColumnSeries.prototype.pointAttribs.call(
@@ -94,142 +113,99 @@ class CandlestickSeries extends OHLCSeries {
                 state
             ),
             options = this.options,
-            isUp = point.open < point.close,
+            isUp = (point?.open || 0) < (point?.close || 0),
             stroke = options.lineColor || this.color,
-            color = point.color || this.color; // (#14826)
+            color = point?.color || this.color; // (#14826)
 
         attribs['stroke-width'] = options.lineWidth;
 
-        attribs.fill = point.options.color ||
+        attribs.fill = point?.options.color ||
             (isUp ? (options.upColor || color) : color);
-        attribs.stroke = point.options.lineColor ||
+        attribs.stroke = point?.options.lineColor ||
             (isUp ? (options.upLineColor || stroke) : stroke);
 
         // Select or hover states
         if (state) {
-            const stateOptions = (options.states as any)[state];
+            const stateOptions = options.states?.[state] || {};
             attribs.fill = stateOptions.color || attribs.fill;
             attribs.stroke = stateOptions.lineColor || attribs.stroke;
-            attribs['stroke-width'] =
-                stateOptions.lineWidth || attribs['stroke-width'];
+            attribs['stroke-width'] = stateOptions.lineWidth ||
+                attribs['stroke-width'];
         }
 
         return attribs;
     }
 
     /**
-     * Draw the data points.
-     *
-     * @private
-     * @function Highcharts.seriesTypes.candlestick#drawPoints
+     * Create the SVGPath of the point based on the plot positions
+     * @internal
      */
-    public drawPoints(): void {
-        const series = this,
-            points = series.points,
-            chart = series.chart,
-            reversedYAxis = series.yAxis.reversed;
+    protected getPointPath(point: CandlestickPoint): SVGPath {
+        // Crisp vector coordinates
+        const strokeWidth = this.borderWidth,
+            // #2596:
+            crispX = crisp(point.plotX || 0, strokeWidth),
+            plotOpen = point.plotOpen,
+            plotClose = point.plotClose,
+            topBoxFloat = Math.min(plotOpen, plotClose),
+            bottomBoxFloat = Math.max(plotOpen, plotClose),
+            halfWidth = Math.round((point.shapeArgs as any).width / 2),
+            reversedYAxis = this.yAxis.reversed,
+            hasTopWhisker = reversedYAxis ?
+                bottomBoxFloat !== point.yBottom :
+                Math.round(topBoxFloat) !==
+                Math.round(point.plotHigh || 0),
+            hasBottomWhisker = reversedYAxis ?
+                Math.round(topBoxFloat) !==
+                Math.round(point.plotHigh || 0) :
+                bottomBoxFloat !== point.yBottom,
+            topBox = crisp(topBoxFloat, strokeWidth),
+            bottomBox = crisp(bottomBoxFloat, strokeWidth);
 
-        for (const point of points) {
-            let graphic = point.graphic,
-                plotOpen,
-                plotClose,
-                topBox,
-                bottomBox,
-                hasTopWhisker,
-                hasBottomWhisker,
+        // Create the path. Due to a bug in Chrome 49, the path is
+        // first instantiated with no values, then the values
+        // pushed. For unknown reasons, instantiating the path array
+        // with all the values would lead to a crash when updating
+        // frequently (#5193).
+        const path: SVGPath = [];
+        path.push(
+            ['M', crispX - halfWidth, bottomBox],
+            ['L', crispX - halfWidth, topBox],
+            ['L', crispX + halfWidth, topBox],
+            ['L', crispX + halfWidth, bottomBox],
+            ['Z'], // Ensure a nice rectangle #2602
+            ['M', crispX, topBox],
+            [
+                'L',
+                // #460, #2094
                 crispX,
-                path: SVGPath,
-                halfWidth;
-
-            const isNew = !graphic;
-
-            if (typeof point.plotY !== 'undefined') {
-
-                if (!graphic) {
-                    point.graphic = graphic = chart.renderer.path()
-                        .add(series.group);
-                }
-
-                if (!series.chart.styledMode) {
-                    graphic
-                        .attr(
-                            series.pointAttribs(
-                                point,
-                                (point.selected && 'select') as any
-                            )
-                        ) // #3897
-                        .shadow(series.options.shadow);
-                }
-
-                // Crisp vector coordinates
-                const strokeWidth = graphic.strokeWidth();
-                // #2596:
-                crispX = crisp(point.plotX || 0, strokeWidth);
-                plotOpen = point.plotOpen;
-                plotClose = point.plotClose;
-                topBox = Math.min(plotOpen, plotClose);
-                bottomBox = Math.max(plotOpen, plotClose);
-                halfWidth = Math.round((point.shapeArgs as any).width / 2);
-                hasTopWhisker = reversedYAxis ?
-                    bottomBox !== point.yBottom :
-                    Math.round(topBox) !==
-                    Math.round(point.plotHigh || 0);
-                hasBottomWhisker = reversedYAxis ?
-                    Math.round(topBox) !==
-                    Math.round(point.plotHigh || 0) :
-                    bottomBox !== point.yBottom;
-                topBox = crisp(topBox, strokeWidth);
-                bottomBox = crisp(bottomBox, strokeWidth);
-
-                // Create the path. Due to a bug in Chrome 49, the path is
-                // first instantiated with no values, then the values
-                // pushed. For unknown reasons, instantiating the path array
-                // with all the values would lead to a crash when updating
-                // frequently (#5193).
-                path = [];
-                path.push(
-                    ['M', crispX - halfWidth, bottomBox],
-                    ['L', crispX - halfWidth, topBox],
-                    ['L', crispX + halfWidth, topBox],
-                    ['L', crispX + halfWidth, bottomBox],
-                    ['Z'], // Ensure a nice rectangle #2602
-                    ['M', crispX, topBox],
-                    [
-                        'L',
-                        // #460, #2094
-                        crispX,
-                        hasTopWhisker ?
-                            Math.round(
-                                reversedYAxis ?
-                                    point.yBottom :
-                                    (point.plotHigh as any)
-                            ) :
-                            topBox
-                    ],
-                    ['M', crispX, bottomBox],
-                    [
-                        'L',
-                        // #460, #2094
-                        crispX,
-                        hasBottomWhisker ?
-                            Math.round(
-                                reversedYAxis ?
-                                    (point.plotHigh as any) :
-                                    point.yBottom
-                            ) :
-                            bottomBox
-                    ]);
-
-                graphic[isNew ? 'attr' : 'animate']({ d: path })
-                    .addClass(point.getClassName(), true);
-
-            }
-        }
+                hasTopWhisker ?
+                    Math.round(
+                        reversedYAxis ?
+                            point.yBottom :
+                            (point.plotHigh as any)
+                    ) :
+                    topBox
+            ],
+            ['M', crispX, bottomBox],
+            [
+                'L',
+                // #460, #2094
+                crispX,
+                hasBottomWhisker ?
+                    Math.round(
+                        reversedYAxis ?
+                            (point.plotHigh as any) :
+                            point.yBottom
+                    ) :
+                    bottomBox
+            ]);
+        return path;
     }
 
 }
 
-interface CandlestickSeries{
+interface CandlestickSeries {
     pointClass: typeof CandlestickPoint;
 }
 
@@ -239,7 +215,7 @@ interface CandlestickSeries{
  *
  * */
 
-declare module '../../Core/Series/SeriesType'{
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         candlestick: typeof CandlestickSeries;
     }

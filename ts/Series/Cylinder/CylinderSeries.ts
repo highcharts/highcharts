@@ -6,8 +6,9 @@
  *
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,10 +26,8 @@ import type CylinderSeriesOptions from './CylinderSeriesOptions';
 import CylinderComposition from './CylinderComposition.js';
 import CylinderPoint from './CylinderPoint.js';
 import CylinderSeriesDefaults from './CylinderSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -43,7 +42,6 @@ import { extend, merge } from '../../Shared/Utilities.js';
  * @requires highcharts-3d
  * @requires modules/cylinder
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.cylinder
  *
@@ -57,8 +55,10 @@ class CylinderSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = CylinderComposition.compose;
 
+    /** @internal */
     public static defaultOptions: CylinderSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         CylinderSeriesDefaults

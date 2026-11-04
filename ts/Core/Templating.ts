@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,23 +21,20 @@
 import type TimeBase from '../Shared/TimeBase';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 
-import D from './Defaults.js';
-const {
-    defaultOptions,
-    defaultTime
-} = D;
+import langDefaults from './LangDefaults.js';
+import { defaultTime } from './TimeDefaults.js';
 import G from './Globals.js';
 const {
     pageLang
 } = G;
 import {
+    correctFloat,
     extend,
     getNestedProperty,
     isArray,
     isNumber,
     isObject,
     isString,
-    pick,
     ucfirst
 } from '../Shared/Utilities.js';
 
@@ -58,7 +56,8 @@ interface MatchObject {
 const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
-    divide: (a: number, b: number): number | string => (b !== 0 ? a / b : ''),
+    divide: (a: number, b: number): number | string =>
+        (b !== 0 ? correctFloat(a / b) : ''),
     // eslint-disable-next-line eqeqeq
     eq: (a: unknown, b: unknown): boolean => a == b,
     each: function (arr: string[] | object[] | undefined): string | false {
@@ -78,7 +77,7 @@ const helpers: Record<string, Function> = {
     'if': (condition: string[] | undefined): boolean => !!condition,
     le: (a: number, b: number): boolean => a <= b,
     lt: (a: number, b: number): boolean => a < b,
-    multiply: (a: number, b: number): number => a * b,
+    multiply: (a: number, b: number): number => correctFloat(a * b, 15),
     // eslint-disable-next-line eqeqeq
     ne: (a: unknown, b: unknown): boolean => a != b,
     subtract: (a: number, b: number): number => a - b,
@@ -187,23 +186,15 @@ function format(
     owner?: Templating.Owner
 ): string {
 
-    // eslint-disable-next-line prefer-regex-literals
-    const regex = new RegExp(
-            '\\{([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
-            'gu'
-        ),
+    const regex = /\{([^{}]+)\}/g,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        // eslint-disable-next-line prefer-regex-literals
-        subRegex = new RegExp(
-            '\\(([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
-            'gu'
-        ),
+        subRegex = /\(([^()]+)\)/g,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
-        lang = owner?.options?.lang || defaultOptions.lang,
+        lang = owner?.options?.lang || langDefaults,
         time = owner?.time || defaultTime,
         numberFormatter = owner?.numberFormatter || numberFormat.bind(owner);
 
@@ -412,7 +403,7 @@ function format(
                 replacement = `"${replacement}"`;
             }
         }
-        str = str.replace(match.find, pick(replacement, ''));
+        str = str.replace(match.find, (replacement ?? ''));
     });
     return hasSub ? format(str, ctx, owner) : str;
 }
@@ -457,7 +448,7 @@ function numberFormat(
         fractionDigits: number,
         [mantissa, exp] = number.toString().split('e').map(Number);
 
-    const lang = this?.options?.lang || defaultOptions.lang,
+    const lang = this?.options?.lang || langDefaults,
         origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
         firstDecimals = decimals,
         options: Intl.NumberFormatOptions = {};
@@ -591,9 +582,7 @@ export default Templating;
  * */
 
 /**
- * @interface Highcharts.Templating
- *
- * The Highcharts.Templating interface provides a structure for defining
+ * The Highcharts.TemplatingObject interface provides a structure for defining
  * helpers. Helpers can be used as conditional blocks or functions within
  * expressions. Highcharts includes several built-in helpers and supports
  * the addition of custom helpers.
@@ -601,6 +590,8 @@ export default Templating;
  * @see [More information](
  * https://www.highcharts.com/docs/chart-concepts/templating#helpers)
  *
+ * @interface Highcharts.TemplatingObject
+ *//**
  * @example
  * // Define a custom helper to return the absolute value of a number
  * Highcharts.Templating.helpers.abs = value => Math.abs(value);
@@ -608,8 +599,11 @@ export default Templating;
  * // Usage in a format string
  * format: 'Absolute value: {abs point.y}'
  *
- * @name Highcharts.Templating#helpers
+ * @name Highcharts.TemplatingObject#helpers
  * @type {Record<string, Function>}
+ *//**
+ * @name Highcharts.Templating
+ * @type {Highcharts.TemplatingObject}
  */
 
 (''); // Keeps doclets above in file

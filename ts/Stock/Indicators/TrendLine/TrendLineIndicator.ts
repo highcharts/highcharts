@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,8 +24,8 @@ import type {
 } from './TrendLineOptions';
 import type TrendLinePoint from './TrendLinePoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -36,7 +37,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Trend line series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.trendline
  *
@@ -61,9 +61,10 @@ class TrendLineIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        7.1.3
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/trendline
+     * @requires     indicators/indicators
+     * @requires     indicators/trendline
      * @optionparent plotOptions.trendline
+     * @internal
      */
     public static defaultOptions: TrendLineOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -91,6 +92,7 @@ class TrendLineIndicator extends SMAIndicator {
     public data!: Array<TrendLinePoint>;
     public options!: TrendLineOptions;
     public points!: Array<TrendLinePoint>;
+    /** @internal */
     public updateAllPoints?: boolean = true;
 
     /* *
@@ -99,6 +101,7 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: TrendLineParamsOptions
@@ -168,7 +171,6 @@ class TrendLineIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface TrendLineIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
@@ -186,7 +188,6 @@ extend(TrendLineIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trendline: typeof TrendLineIndicator;
@@ -201,7 +202,6 @@ SeriesRegistry.registerSeriesType('trendline', TrendLineIndicator);
  *
  * */
 
-/** @internal */
 export default TrendLineIndicator;
 
 /* *
@@ -217,9 +217,8 @@ export default TrendLineIndicator;
  * @extends   series,plotOptions.trendline
  * @since     7.1.3
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/trendline
+ * @requires  indicators/indicators
+ * @requires  indicators/trendline
  * @apioption series.trendline
  */
 

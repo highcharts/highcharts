@@ -1,3 +1,10 @@
+---
+description: >-
+  Find examples for connecting DataPool data and components, placing
+  components in built-in or custom layouts, synchronizing shared events,
+  styling responsive dashboards, and diagnosing chart series-name sync issues.
+---
+
 # Frequently asked questions
 
 ## How do you connect `DataPool` to the other components?

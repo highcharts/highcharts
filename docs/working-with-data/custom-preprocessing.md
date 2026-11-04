@@ -1,3 +1,10 @@
+---
+description: >-
+  Prepare chart data when the Data module does not match your source format.
+  Follow CSV, JSON, and XML examples that load external data, populate chart
+  options, and create the chart afterward.
+---
+
 Custom Preprocessing
 ====================
 
@@ -30,7 +37,7 @@ Janet,3,16,13,15
 ```js
 var options = {
     chart: {
-        defaultSeriesType: 'column'
+        type: 'column'
     },
     title: {
         text: 'Fruit Consumption'

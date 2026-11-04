@@ -7,9 +7,12 @@
  *  Variables
  *
  **/
-:root,
-.highcharts-light,
-.highcharts-dark {
+
+/* Qualified with `html`, so that the party colours outweigh the `:root`
+   palette of highcharts.css whichever stylesheet is applied last. */
+html:root,
+html.highcharts-light,
+html.highcharts-dark {
     /* Democrat */
     --highcharts-color-0: #4d8adb;
     --highcharts-color-0-light: #d7e3f3;
@@ -235,7 +238,13 @@ text.highcharts-data-label {
 }
 
 .highcharts-description {
-    padding: 0 20px;
+    background: light-dark(#f2f6f2, #323232);
+    border-radius: 0 4px 4px 0;
+    border-left: 2px solid light-dark(#1d6aff, #fff);
+    font-size: 0.8rem;
+    font-style: italic;
+    padding: 8px 16px;
+    margin: 2em 10px 1em;
 }
 
 /**
@@ -639,19 +648,27 @@ text.highcharts-data-label {
  *
  **/
 
-/* Styling of first row (national results) */
-#election-grid .highcharts-grid-row[data-row-index="0"] {
+/* Styling of the pinned national summary row */
+#election-grid .hcg-summary-row {
     font-weight: bold;
-    border-top: 1px solid #000;
-    border-bottom: 1px solid #000;
+}
+
+/* Winning party per column pair. Scoped to the grid, so that it outweighs
+   the cell colour coming from the Grid stylesheet. */
+#election-grid .hcg-cell.democrat {
+    color: var(--highcharts-color-0);
+}
+
+#election-grid .hcg-cell.republican {
+    color: var(--highcharts-color-1);
+}
+
+#election-grid .hcg-summary-row .hcg-cell {
+    height: 60px;
 }
 
 #election-grid .highcharts-grid-container {
     height: 400px;
-}
-
-.highcharts-grid-row[data-row-index="0"] td {
-    height: 60px;
 }
 
 /* Safari fix for manual dark mode */

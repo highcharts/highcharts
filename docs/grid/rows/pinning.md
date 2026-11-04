@@ -1,6 +1,10 @@
 ---
 sidebar_label: "Pinning"
 tags: ["grid-pro"]
+description: >-
+  Keep selected Grid Pro rows in top or bottom sections, configure or compute
+  pin state, update rows through the runtime API, handle events, and
+  understand sorting and filtering behavior.
 ---
 
 # Row pinning
@@ -8,25 +12,24 @@ tags: ["grid-pro"]
 Row pinning is available in Highcharts Grid Pro. It lets you keep selected rows
 visible at the top or bottom while the main rows scroll normally.
 
-Pinned rows are existing `data.dataTable` rows. They remain in the scrollable
-area and are also rendered in dedicated pinned sections.
+Pinned rows are existing data rows. They remain in the scrollable area and are
+also rendered in dedicated pinned sections.
 
 ## Basic configuration
 
 ```js
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                id: ['row-001', 'row-002', 'row-999'],
-                price: [1, 2, 999]
-            }
+        columns: {
+            id: ['row-001', 'row-002', 'row-999'],
+            price: [1, 2, 999]
         },
         idColumn: 'id'
     },
     rendering: {
         rows: {
             pinning: {
+                enabled: false,
                 topIds: ['row-001'],
                 bottomIds: ['row-999']
             }
@@ -35,34 +38,30 @@ Grid.grid('container', {
 });
 ```
 
-In Grid Pro, row pinning is enabled by default. Use `pinning.enabled: false` to
-disable row pinning UI:
+Built-in row pinning UI, including context menu actions, is optional. Set
+`pinning.enabled: true` to show it:
 
 ```js
 Grid.grid('container', {
     rendering: {
         rows: {
             pinning: {
-                enabled: false
+                enabled: true
             }
         }
     }
 });
 ```
 
-When disabled, Grid still applies row pinning config (`topIds`, `bottomIds`,
-`resolve`, etc.) and the runtime row pinning API continues to work. The
-setting only disables built-in row pinning affordances such as context menu
-actions.
+To use row pinning without built-in controls, set `enabled` to `false`.
+Pinned rows and the runtime row pinning API continue to work.
 
 ```js
 const grid = Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                id: ['row-001', 'row-002', 'row-003'],
-                priority: ['critical', 'normal', 'done']
-            }
+        columns: {
+            id: ['row-001', 'row-002', 'row-003'],
+            priority: ['critical', 'normal', 'done']
         },
         idColumn: 'id'
     },
@@ -101,6 +100,7 @@ Grid.grid('container', {
     rendering: {
         rows: {
             pinning: {
+                enabled: false,
                 resolve: function (row) {
                     if (row.priority === 'critical') {
                         return 'top';
@@ -145,6 +145,7 @@ Grid.grid('container', {
     rendering: {
         rows: {
             pinning: {
+                enabled: false,
                 events: {
                     beforeRowPin: function (event) {
                         console.log(
@@ -196,6 +197,27 @@ Available built-in actions are:
 For configuration and customization details, see
 [Cell context menu](https://www.highcharts.com/docs/grid/cell-context-menu).
 
+These actions appear in the default cell context menu when
+`pinning.enabled` is `true`. If you define custom `contextMenu.items`, add the
+built-in `'pinning'` group to include them:
+
+```js
+rendering: {
+    rows: {
+        pinning: {
+            enabled: true
+        }
+    }
+},
+columnDefaults: {
+    cells: {
+        contextMenu: {
+            items: ['pinning']
+        }
+    }
+}
+```
+
 ## Sorting and filtering behavior
 
 Pinned sections always render from the original data source and are not affected
@@ -225,6 +247,7 @@ the inserted row visible.
 rendering: {
     rows: {
         pinning: {
+            enabled: false,
             topIds: ['row-001', 'row-002', 'row-003'],
             bottomIds: ['row-998', 'row-999'],
             top: {
@@ -240,4 +263,4 @@ rendering: {
 
 ## Demo
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/row-pinning?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/demo/row-pinning?force-light-theme" allow="fullscreen"></iframe>

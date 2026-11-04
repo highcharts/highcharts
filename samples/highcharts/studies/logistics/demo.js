@@ -737,19 +737,20 @@ const newPointsColliding = function (newPoints, chart) {
     let y,
         collidePoint;
 
-    const pick = Highcharts.pick,
-        groupedPoints = chart.dragDropData && chart.dragDropData.groupedPoints,
+    const groupedPoints =
+            chart.dragDropData && chart.dragDropData.groupedPoints,
         minX = Object.keys(newPoints).reduce((acc, id) => {
-            y = pick(newPoints[id].newValues.y, newPoints[id].point.y);
+            y = newPoints[id].newValues.y ?? newPoints[id].point.y;
             return Math.min(
-                acc, pick(
-                    newPoints[id].newValues.start, newPoints[id].point.start
-                )
+                acc,
+                newPoints[id].newValues.start ??
+                    newPoints[id].point.start
             );
         }, Infinity),
         maxX = Object.keys(newPoints).reduce(function (acc, id) {
             return Math.max(
-                acc, pick(newPoints[id].newValues.end, newPoints[id].point.end)
+                acc,
+                newPoints[id].newValues.end ?? newPoints[id].point.end
             );
         }, -Infinity),
         newSeries = chart.get(y),

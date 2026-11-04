@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,14 +25,10 @@ import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import {
-    optionsToObject as borderRadiusOptionsToObject
-} from '../../Extensions/BorderRadius.js';
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
+import GaugeSeries from '../Gauge/GaugeSeries.js';
+import PieSeries from '../Pie/PieSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    gauge: GaugeSeries,
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import SolidGaugeSeriesDefaults from './SolidGaugeSeriesDefaults.js';
 import {
@@ -39,8 +36,7 @@ import {
     extend,
     isNumber,
     merge,
-    pInt,
-    pick
+    relativeLength
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -66,6 +62,7 @@ class SolidGaugeSeries extends GaugeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: SolidGaugeSeriesOptions = merge(
         GaugeSeries.defaultOptions,
         SolidGaugeSeriesDefaults
@@ -81,9 +78,13 @@ class SolidGaugeSeries extends GaugeSeries {
     public points!: Array<SolidGaugePoint>;
     public options!: SolidGaugeSeriesOptions;
 
+    /** @internal */
     public axis!: SolidGaugeAxis;
+    /** @internal */
     public yAxis!: SolidGaugeAxis;
+    /** @internal */
     public startAngleRad!: SolidGaugeSeries['thresholdAngleRad'];
+    /** @internal */
     public thresholdAngleRad!: number;
 
     /* *
@@ -94,6 +95,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
+    /** @internal */
     public translate(): void {
         const axis = this.yAxis;
 
@@ -110,6 +112,7 @@ class SolidGaugeSeries extends GaugeSeries {
     }
 
     // Draw the points where each point is one needle.
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             yAxis = series.yAxis,
@@ -117,7 +120,13 @@ class SolidGaugeSeries extends GaugeSeries {
             options = series.options,
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
-            rounded = options.rounded && options.borderRadius === void 0,
+            rounded = options.rounded,
+            borderRadius = borderRadiusObject(
+                rounded ? '50%' : (
+                    options.borderRadius ??
+                    yAxis.pane.options.borderRadius
+                )
+            ).radius,
             overshootVal = isNumber(overshoot) ?
                 overshoot / 180 * Math.PI :
                 0;
@@ -134,31 +143,33 @@ class SolidGaugeSeries extends GaugeSeries {
                 true
             );
         }
-        this.thresholdAngleRad = pick(
-            thresholdAngleRad, yAxis.startAngleRad
-        );
+        this.thresholdAngleRad = (thresholdAngleRad ?? yAxis.startAngleRad);
 
         for (const point of series.points) {
             // #10630 null point should not be draw
             if (!point.isNull) { // Condition like in pie chart
-                const radius = ((
-                        pInt(
-                            pick(
-                                point.options.radius,
-                                options.radius,
-                                100 // %
-                            )
-                        ) * center[2]
-                    ) / 200),
-                    innerRadius = ((
-                        pInt(
-                            pick(
-                                point.options.innerRadius,
-                                options.innerRadius,
-                                60 // %
-                            )
-                        ) * center[2]
-                    ) / 200),
+                const paneInnerSize = yAxis.pane.options.innerSize,
+                    radius = ((
+                        relativeLength(
+                            point.options.radius ??
+                                options.radius ??
+                                '100%',
+                            center[2] / 2
+                        )
+                    )),
+                    innerRadius = Math.min((
+                        relativeLength(
+                            point.options.innerRadius ??
+                                options.innerRadius ??
+                                (
+                                    isNumber(paneInnerSize) ?
+                                        paneInnerSize / 2 :
+                                        paneInnerSize
+                                ) ??
+                                0,
+                            center[2] / 2
+                        )
+                    ), radius),
                     axisMinAngle = Math.min(
                         yAxis.startAngleRad,
                         yAxis.endAngleRad
@@ -166,7 +177,8 @@ class SolidGaugeSeries extends GaugeSeries {
                     axisMaxAngle = Math.max(
                         yAxis.startAngleRad,
                         yAxis.endAngleRad
-                    );
+                    ),
+                    attribs: SVGAttributes = {};
 
                 let graphic = point.graphic,
                     rotation = (yAxis.startAngleRad +
@@ -212,14 +224,6 @@ class SolidGaugeSeries extends GaugeSeries {
                 if (end - start > 2 * Math.PI) {
                     end = start + 2 * Math.PI;
                 }
-
-                let borderRadius = rounded ? '50%' : 0;
-                if (options.borderRadius) {
-                    borderRadius = borderRadiusOptionsToObject(
-                        options.borderRadius
-                    ).radius;
-                }
-
                 point.shapeArgs = shapeArgs = {
                     x: center[0],
                     y: center[1],
@@ -231,22 +235,24 @@ class SolidGaugeSeries extends GaugeSeries {
                 };
                 point.startR = radius; // For PieSeries.animate
 
+                if (toColor !== 'none') {
+                    attribs.fill = toColor;
+                }
+
                 if (graphic) {
                     d = shapeArgs.d;
-                    graphic.animate(extend({ fill: toColor }, shapeArgs));
+                    graphic.animate(extend(attribs, shapeArgs));
                     if (d) {
                         shapeArgs.d = d; // Animate alters it
                     }
                 } else {
+                    attribs['sweep-flag'] = 0;
                     point.graphic = graphic = renderer.arc(shapeArgs)
-                        .attr({
-                            fill: toColor,
-                            'sweep-flag': 0
-                        })
+                        .attr(attribs)
                         .add(series.group);
                 }
 
-                if (!series.chart.styledMode) {
+                if (!renderer.styledMode) {
                     if (options.linecap !== 'square') {
                         graphic.attr({
                             'stroke-linecap': 'round',
@@ -266,11 +272,19 @@ class SolidGaugeSeries extends GaugeSeries {
                 if (graphic) {
                     graphic.addClass(className);
                 }
+
+                // Positions for the tooltip
+                const midRadius = innerRadius + (radius - innerRadius) * 0.5;
+                point.tooltipPos = [
+                    center[0] + Math.cos(rotation) * midRadius,
+                    center[1] + Math.sin(rotation) * midRadius
+                ];
             }
         }
     }
 
     // Extend the pie slice animation by animating from start angle and up.
+    /** @internal */
     public animate(init?: boolean): void {
         if (!init) {
             this.startAngleRad = this.thresholdAngleRad;
@@ -287,6 +301,7 @@ class SolidGaugeSeries extends GaugeSeries {
  * */
 
 interface SolidGaugeSeries {
+    /** @internal */
     pointClass: typeof SolidGaugePoint;
 }
 

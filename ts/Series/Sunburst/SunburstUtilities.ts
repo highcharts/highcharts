@@ -6,8 +6,9 @@
  *
  *  Authors: Jon Arild Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,12 +22,7 @@
  * */
 
 import type { SunburstSeriesLevelOptions } from './SunburstSeriesOptions';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        treemap: TreemapSeries
-    }
-} = SeriesRegistry;
+import TreemapSeries from '../Treemap/TreemapSeries.js';
 import type SunburstNode from './SunburstNode.js';
 import { isNumber, isObject, merge } from '../../Shared/Utilities.js';
 

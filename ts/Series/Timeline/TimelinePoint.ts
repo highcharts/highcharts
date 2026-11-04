@@ -6,8 +6,9 @@
  *
  *  Author: Daniel Studencki
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,19 +28,24 @@ import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeries from './TimelineSeries';
 
 import Point from '../../Core/Series/Point.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    line: { prototype: { pointClass: LinePoint } },
-    pie: { prototype: { pointClass: PiePoint } }
-} = SeriesRegistry.seriesTypes;
+import LineSeries from '../Line/LineSeries.js';
+import PieSeries from '../Pie/PieSeries.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import {
     defined,
     isNumber,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const LinePoint = LineSeries.prototype.pointClass;
+const PiePoint = PieSeries.prototype.pointClass;
 
 /* *
  *
@@ -55,12 +61,15 @@ class TimelinePoint extends LinePoint {
      *
      * */
 
+    /** @internal */
     public label?: string;
 
     public options!: TimelinePointOptions;
 
+    /** @internal */
     public series!: TimelineSeries;
 
+    /** @internal */
     public userDLOptions?: TimelineDataLabelOptions;
 
     /* *
@@ -69,6 +78,7 @@ class TimelinePoint extends LinePoint {
      *
      * */
 
+    /** @internal */
     public alignConnector(): void {
         const point = this,
             series = point.series,
@@ -112,6 +122,7 @@ class TimelinePoint extends LinePoint {
         }
     }
 
+    /** @internal */
     public drawConnector(): void {
         const point = this,
             { dataLabel, series } = point;
@@ -134,6 +145,7 @@ class TimelinePoint extends LinePoint {
         }
     }
 
+    /** @internal */
     public getConnectorPath(): SVGPath {
         const {
                 plotX = 0,
@@ -212,14 +224,12 @@ class TimelinePoint extends LinePoint {
         this.y = 1;
     }
 
+    /** @internal */
     public isValid(): boolean {
-        return (
-            this.options.y !== null ||
-            this.series.options.nullInteraction ||
-            true
-        );
+        return this.options.y !== null;
     }
 
+    /** @internal */
     public setState(): void {
         const proceed = super.setState;
 
@@ -229,6 +239,7 @@ class TimelinePoint extends LinePoint {
         }
     }
 
+    /** @internal */
     public setVisible(
         visible: boolean,
         redraw?: boolean
@@ -236,7 +247,7 @@ class TimelinePoint extends LinePoint {
         const point = this,
             series = point.series;
 
-        redraw = pick(redraw, series.options.ignoreHiddenPoint);
+        redraw = (redraw ?? series.options.ignoreHiddenPoint);
 
         PiePoint.prototype.setVisible.call(point, visible, false);
         // Process new data
@@ -247,16 +258,13 @@ class TimelinePoint extends LinePoint {
         }
     }
 
+    /** @internal */
     public applyOptions(
         options: (PointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): Point {
-        const isNull = (
-                this.isNull ||
-                options === null ||
-                (options as PointOptions).y === null
-            ),
-            series = this.series;
+        const series = this.series;
 
         if (!x && !(options as any)?.x) {
             if (isNumber(this.x)) {
@@ -269,16 +277,14 @@ class TimelinePoint extends LinePoint {
 
         options = Point.prototype.optionsToObject.call(
             this,
-            options ?? (
-                (series.options.nullInteraction && { y: 0 }) ||
-                    null
-            )
+            options
         );
 
-        const p = super.applyOptions(options, x);
+        const p = super.applyOptions(options, x, isMock);
 
-        this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
-        p.isNull = isNull;
+        if (!isMock) {
+            this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
+        }
 
         return p;
     }

@@ -6,8 +6,9 @@
  *  - Grzegorz Blachliński
  *  - Karol Kołodziej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -191,7 +192,7 @@ export interface BreadcrumbsButtonsFormatter {
  *
  * @callback Highcharts.BreadcrumbsClickCallbackFunction
  *
- * @param {Highcharts.Event} e
+ * @param {Event} e
  * Event.
  *
  * @param {Highcharts.BreadcrumbOptions} breadcrumb
@@ -290,7 +291,7 @@ export interface BreadcrumbsOptions {
      * `spacingBox`.
      *
      * @type    {Highcharts.ButtonRelativeToValue}
-     * @default plotBox
+     * @default 'plotBox'
      * @since   10.0.0
      * @product highcharts highmaps
      */

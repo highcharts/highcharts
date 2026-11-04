@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable screen reader announcements for new chart data and drilldown events.
+  Configure announcement content, frequency, and interruptions, or use a
+  formatter to choose which updates are announced.
+---
+
 Dynamic data and drilldown
 ===
 

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -53,7 +54,7 @@ import type { PointShortOptions } from '../../Core/Series/PointOptions';
  * @excluding allAreas, boostThreshold, colorAxis, compare, compareBase,
  *            dataSorting, boostBlending
  *
- * @excluding dataParser, dataURL, marker, boostThreshold,
+ * @excluding marker, boostThreshold,
  *            boostBlending
  *
  * @requires modules/bullet

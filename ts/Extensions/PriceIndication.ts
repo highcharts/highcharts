@@ -1,11 +1,13 @@
-/**
- * (c) 2018-2026 Highsoft AS
- * Author: Sebastian Bochan
+/* *
  *
- * Price indicator for Highcharts Stock
+ *  (c) 2018-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *  Price indicator for Highcharts Stock
  *
  */
 
@@ -23,7 +25,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import H from '../Core/Globals.js';
 const { composed } = H;
-import { addEvent, merge, pushUnique } from '../Shared/Utilities.js';
+import { addEvent, clamp, merge, pushUnique } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -158,7 +160,8 @@ function onSeriesAfterRender(
             dataLength = series.dataTable.rowCount,
             x = series.getColumn('x')[dataLength - 1],
             y = series.getColumn('y')[dataLength - 1] ??
-                series.getColumn('close')[dataLength - 1];
+                series.getColumn('close')[dataLength - 1],
+            modifiedY = series.dataModify?.modifyValue(y) ?? y;
 
         if (lastPrice?.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
@@ -185,8 +188,9 @@ function onSeriesAfterRender(
             yAxis.drawCrosshair(void 0, ({
                 x: x,
                 y,
-                plotX: xAxis.toPixels(x, true),
-                plotY: yAxis.toPixels(y, true)
+                series,
+                plotX: clamp(xAxis.toPixels(x, true), 0, xAxis.len),
+                plotY: yAxis.toPixels(modifiedY, true)
             }) as any);
 
             // Save price

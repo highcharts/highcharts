@@ -5,6 +5,8 @@
 const gulp = require('gulp');
 const path = require('path');
 
+require('./grid/deprecated-options');
+
 /* *
  *
  *  Constants
@@ -183,22 +185,26 @@ function task() {
                 fsLib.deleteDirectory('code');
             }
 
-            gulp.series(...(
-                argv.assembler ?
-                    [
-                        'scripts-ts',
-                        'scripts-es5',
-                        'scripts-js',
-                        'scripts-code',
-                        'scripts-css'
-                    ] :
-                    [
-                        'scripts-css',
-                        'scripts-ts',
-                        'scripts-webpack',
-                        'scripts-code'
-                    ]
-            ))(
+            const taskNames = argv.assembler ?
+                [
+                    'scripts-ts',
+                    'scripts-es5',
+                    'scripts-js',
+                    'scripts-code',
+                    'scripts-css'
+                ] :
+                [
+                    'scripts-css',
+                    'scripts-ts',
+                    'scripts-webpack',
+                    'scripts-code'
+                ];
+
+            if (argv.product === 'Grid') {
+                taskNames.unshift('grid/deprecated-options');
+            }
+
+            gulp.series(...taskNames)(
                 function (error) {
 
                     processLib.isRunning('scripts_incomplete', false, true);

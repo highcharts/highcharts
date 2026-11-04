@@ -1,3 +1,10 @@
+---
+description: >-
+  Choose axis types and configure ticks, labels, grid lines, and titles. Learn
+  how multiple axes align, how datetime values and time zones work, and when
+  category axes are appropriate.
+---
+
 Axes
 ====
 
@@ -228,6 +235,41 @@ By default, Highcharts uses UTC for all date-time axes. You can control how date
 Tip:​ For consistent behavior across all users and time zones, we recommend using ISO date strings (e.g., `2024-01-31`) or UTC timestamps (`Date.UTC(...)`). Avoid using local JavaScript `Date` objects (e.g., `new Date(2024, 0, 31)`) for axis values, as these depend on the user's local timezone and may produce unexpected results, especially near month boundaries.
 
 In Highcharts Stock the x-axis is always a datetime axis.
+
+#### Boundary ticks on datetime axis
+
+On datetime axes, Highcharts can mark specific ticks as boundaries (for example transitions to a new day, month or year). You can format the appearance of those labels in two ways:
+
+1. **Use boundary-specific date format options** See the boundary map in
+   [xAxis.dateTimeLabelFormats](https://api.highcharts.com/highcharts/xAxis.dateTimeLabelFormats)
+   API for how to format a boundary tick for a given base time unit.
+2. **Use axis label format strings** via [xAxis.labels.format](https://api.highcharts.com/highcharts/xAxis.labels.format), where `{boundary}` is available in the label context for boundary ticks.
+
+Example using `dateTimeLabelFormats`:
+
+```js
+xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: {
+        hour: { main: '%[HM]', boundary: '%[eb]' },
+        day: { main: '%[eb]', boundary: '%[eb]' },
+        month: { main: '%[b]', boundary: '%[b %Y]' },
+        year: { main: '%Y' }
+    }
+}
+```
+
+Example using axis label `format`:
+
+```js
+xAxis: {
+    type: 'datetime',
+    labels: {
+        format: `{#if (eq boundary "year")}Happy '{value: %y} Year!{/if}`
+        // Happy '25 Year!
+    }
+}
+```
 
 ### Categories
 

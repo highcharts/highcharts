@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -137,7 +138,7 @@ class Fullscreen {
         if (button && button.innerElement) {
             const lang = editMode.lang;
 
-            button.innerElement.innerHTML =
+            button.innerElement.textContent =
                 (this.isOpen ? lang.exitFullscreen : lang.viewFullscreen) || '';
         }
     }

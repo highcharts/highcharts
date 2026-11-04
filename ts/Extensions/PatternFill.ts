@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi, Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,7 +36,6 @@ import { animObject } from '../Core/Animation/AnimationUtilities.js';
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
-import { Palette } from '../Core/Color/Palettes';
 import {
     addEvent,
     defined,
@@ -43,7 +43,6 @@ import {
     extend,
     isObject,
     merge,
-    pick,
     removeEvent,
     wrap
 } from '../Shared/Utilities.js';
@@ -160,7 +159,7 @@ export interface PatternOptionsObject {
      * @sample highcharts/series/pattern-fill-anchor-to-point/
      *         Compare shared vs anchored pattern positioning
      *
-     * @since next
+     * @since 12.6.0
      * @default false
      */
     anchorToPoint?: boolean;
@@ -560,7 +559,7 @@ function onRendererComplexColor(
         chartIndex = (this.chartIndex || 0);
 
     let pattern = color.pattern,
-        value: string = Palette.neutralColor80;
+        value: string = 'var(--highcharts-neutral-color-80)';
 
     // Handle patternIndex
     if (typeof color.patternIndex !== 'undefined' && patterns) {
@@ -620,11 +619,14 @@ function onRendererComplexColor(
 
         // Add it. This function does nothing if an element with this ID
         // already exists.
-        this.addPattern(pattern, !this.forExport && pick(
-            (pattern as any).animation,
-            this.globalAnimation,
-            { duration: 100 }
-        ));
+        this.addPattern(
+            pattern,
+            !this.forExport && (
+                (pattern as any).animation ??
+                this.globalAnimation ??
+                { duration: 100 }
+            )
+        );
 
         value = `url(${this.url}#${pattern.id + (this.forExport ? '-export' : '')})`;
 
@@ -827,9 +829,10 @@ function rendererAddPattern(
     options: PatternOptionsObject,
     animation?: (boolean|Partial<AnimationOptions>)
 ): (SVGElement|undefined) {
-    const animate = pick(animation, true),
+    const animate = (animation ?? true),
         animationOptions = animObject(animate),
-        color: ColorString = options.color || Palette.neutralColor80,
+        color: ColorString = options.color ||
+            'var(--highcharts-neutral-color-80)',
         defaultSize = 32,
         height = options.height ||
             (typeof options._height === 'number' ? options._height : 0) ||
@@ -917,7 +920,7 @@ function rendererAddPattern(
         };
         if (!this.styledMode) {
             attribs.stroke = path.stroke || color;
-            attribs['stroke-width'] = pick(path.strokeWidth, 2);
+            attribs['stroke-width'] = (path.strokeWidth ?? 2);
             attribs.fill = path.fill || 'none';
         }
         if (path.transform) {
@@ -936,7 +939,7 @@ function rendererAddPattern(
                 ): void {
                     // Onload
                     this.animate({
-                        opacity: pick(options.opacity, 1)
+                        opacity: (options.opacity ?? 1)
                     }, animationOptions);
                     removeEvent(this.element, 'load');
                 }
@@ -1108,7 +1111,7 @@ declare module '../Core/Color/ColorType' {
  *         Compare shared vs anchored pattern positioning
  * @name Highcharts.PatternOptionsObject#anchorToPoint
  * @type {boolean|undefined}
- * @since next
+ * @since 12.6.0
  * @default false
  *//**
  * Background color for the pattern if a `path` is set (not images).

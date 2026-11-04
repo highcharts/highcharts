@@ -5,8 +5,9 @@
  *  (c) 2012-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,12 +29,14 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import { getOptions } from '../Core/Defaults.js';
+import DataTableCore from '../Data/DataTableCore.js';
 import G from '../Core/Globals.js';
 const { doc } = G;
 import { ajax } from '../Core/HttpUtilities.js';
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
+import Time from '../Core/Time.js';
 import {
     addEvent,
     defined,
@@ -449,7 +452,7 @@ interface DataOptions {
      *
      * @since 4.0
      */
-    parseDate?: DataParseDateCallbackFunction;
+    parseDate?: DataParseDateCallbackFunction|false;
 
     /**
      * The same as the columns input option, but defining rows instead of
@@ -773,6 +776,13 @@ class Data {
     public firstRowAsNames?: boolean;
 
     /**
+     * Whether the chart owning this data parser has been destroyed. Pending
+     * live data requests are ignored when it has.
+     * @internal
+     */
+    public destroyed?: boolean;
+
+    /**
      * The timeout id for fetching live data.
      * @internal
      */
@@ -859,9 +869,7 @@ class Data {
         );
 
         // Always stop old polling when we have new options
-        if (this.liveDataTimeout !== void 0) {
-            internalClearTimeout(this.liveDataTimeout);
-        }
+        this.stopPolling();
 
         // This is a two-dimensional array holding the raw, trimmed string
         // values with the same organization as the columns array. It makes it
@@ -1616,7 +1624,7 @@ class Data {
 
                             columns[colNo - startColumn][
                                 rowNo - startRow
-                            ] = item.innerHTML;
+                            ] = item.textContent;
 
                             // Loop over all previous indices and make sure
                             // they are nulls, not undefined.
@@ -1702,7 +1710,7 @@ class Data {
                 }
 
                 if (initialFetch) {
-                    internalClearTimeout(data.liveDataTimeout);
+                    data.stopPolling();
                     chart.liveDataURL = url;
                 }
 
@@ -1714,7 +1722,12 @@ class Data {
                 function poll(): void {
                     // Poll
                     if (pollingEnabled && chart.liveDataURL === url) {
-                        // We need to stop doing this if the URL has changed
+                        // We need to stop doing this if the URL has changed.
+                        // Updating the chart above re-enters `Data#init`,
+                        // which may have started a poller of its own. Drop it
+                        // so that a single pending timeout is left to keep
+                        // track of, and to clear on destroy (#25115).
+                        data.stopPolling();
                         data.liveDataTimeout =
                             setTimeout(performFetch, updateIntervalMs);
                     }
@@ -1726,6 +1739,13 @@ class Data {
                     success: function (
                         res: (string|JSON.Type)
                     ): void {
+                        if (data.destroyed) {
+                            // The chart was destroyed while the request was
+                            // in flight, so there is nothing left to update
+                            // (#25115)
+                            return;
+                        }
+
                         if (chart?.series) {
                             done(res);
                         }
@@ -1794,6 +1814,21 @@ class Data {
 
 
     /**
+     * Stop polling for live data, clearing the pending timeout if there is
+     * one.
+     *
+     * @function Highcharts.Data#stopPolling
+     * @internal
+     */
+    public stopPolling(): void {
+        if (this.liveDataTimeout !== void 0) {
+            internalClearTimeout(this.liveDataTimeout);
+            this.liveDataTimeout = void 0;
+        }
+    }
+
+
+    /**
      * Parse a Google spreadsheet.
      *
      * @function Highcharts.Data#parseGoogleSpreadsheet
@@ -1851,6 +1886,12 @@ class Data {
                 url,
                 dataType: 'json',
                 success: function (json: (string|JSON.Type)): void {
+                    if (data.destroyed) {
+                        // The chart was destroyed while the request was in
+                        // flight, so there is nothing left to update (#25115)
+                        return;
+                    }
+
                     fn(json);
 
                     if (options.enablePolling) {
@@ -2212,6 +2253,9 @@ class Data {
         if (parseDate) {
             ret = parseDate(val);
 
+        } else if (parseDate === false) {
+            ret = val;
+
         } else if (typeof val === 'string') {
             // Auto-detect the date format the first time
             if (!dateFormat) {
@@ -2243,33 +2287,7 @@ class Data {
             }
             // Fall back to Date.parse
             if (!match) {
-                if (val.match(/:.+(GMT|UTC|[Z+\-])/)) {
-                    val = val
-                        .replace(
-                            /\s*(?:GMT|UTC)?([+\-])(\d\d)(\d\d)$/,
-                            '$1$2:$3'
-                        )
-                        .replace(/(?:\s+|GMT|UTC)([+\-])/, '$1')
-                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
-                }
-                match = Date.parse(val);
-                // External tools like Date.js and MooTools extend Date object
-                // and return a date.
-                if (
-                    typeof match === 'object' &&
-                    match !== null &&
-                    (match as Date).getTime
-                ) {
-                    ret = (
-                        (match as Date).getTime() -
-                        (match as Date).getTimezoneOffset() *
-                        60000
-                    );
-
-                // Timestamp
-                } else if (isNumber(match)) {
-                    ret = match - (new Date(match)).getTimezoneOffset() * 60000;
-                }
+                ret = new Time().parse(val);
             }
         }
         return ret as any;
@@ -2293,6 +2311,40 @@ class Data {
         if (this.columns) {
             return this.rowsToColumns(this.columns)?.slice(1);
         }
+    }
+
+    /**
+     * Return a DataTable with the parsed data
+     *
+     * @example
+     * const csv = await fetch(
+     *   'https://www.example.com/sample-data.csv'
+     * ).then(result => result.text());
+     * const dataTable = new Highcharts.Data({ csv }).getDataTable();
+     *
+     * @sample highcharts/data/getdatatable
+     *
+     * @function Highcharts.Data#getDataTable
+     *
+     * @since 13.0.0
+     * @return {Highcharts.DataTable} DataTable with the parsed data
+     */
+    public getDataTable(): DataTableCore {
+        return new DataTableCore({
+            columns: Object.values(this.columns || [])
+                .reduce((dtColumns, dtColumn): DataTableCore['columns'] => {
+                    // To avoid shifting the original column, create a copy
+                    const column = dtColumn.slice(),
+                        columnId = column.shift();
+                    if (
+                        typeof columnId === 'string' ||
+                        typeof columnId === 'number'
+                    ) {
+                        dtColumns[columnId] = column;
+                    }
+                    return dtColumns;
+                }, {} as DataTableCore['columns'])
+        });
     }
 
     /**
@@ -2591,7 +2643,7 @@ class Data {
 // Fire 1st xAxis properties modifier after the options are set.
 addEvent(
     Axis,
-    'afterSetOptions',
+    'afterSetType',
     function (): void {
         // Target first xAxis only
         if (
@@ -2601,7 +2653,9 @@ addEvent(
         ) {
             this.chart.data?.xAxisUpdateHandler(this);
         }
-    }
+    },
+    // Do this before the DataTimeAxis composition is added
+    { order: 0 }
 );
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
@@ -2681,6 +2735,21 @@ addEvent(
             }), userOptions, chart);
 
             e.preventDefault();
+        }
+    }
+);
+
+// Stop live data polling when the chart goes away, so that no request is
+// fired and no response is handled after teardown (#25115).
+addEvent(
+    Chart,
+    'destroy',
+    function (): void {
+        const data = this.data;
+
+        if (data) {
+            data.destroyed = true;
+            data.stopPolling();
         }
     }
 );
@@ -3211,7 +3280,7 @@ export default Data;
  * the [googleSpreadsheetRange](#data.googleSpreadsheetRange) option to load a
  * specific sheet.
  *
- * @deprecated
+ * @deprecated 9.2.2
  * @type      {string}
  * @since     4.0
  * @apioption data.googleSpreadsheetWorksheet
@@ -3262,12 +3331,15 @@ export default Data;
  */
 
 /**
- * A callback function to parse string representations of dates into
- * JavaScript timestamps. Should return an integer timestamp on success.
+ * A callback function to parse string representations of dates into JavaScript
+ * timestamps. Should return an integer timestamp on success.
+ *
+ * Set `false` to disable date parsing. Highcharts supports internal date
+ * parsing as of v12.
  *
  * @see [dateFormat](#data.dateFormat)
  *
- * @type      {Highcharts.DataParseDateCallbackFunction}
+ * @type      {Highcharts.DataParseDateCallbackFunction|false}
  * @since     4.0
  * @apioption data.parseDate
  */

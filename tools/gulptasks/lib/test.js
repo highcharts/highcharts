@@ -212,12 +212,17 @@ function saveRun({
 
 function handleProductArgs() {
     const process = require('node:process');
-    const yargs = require('yargs/yargs');
-    const { argv } = yargs(process.argv);
+    const argv = require('yargs').argv;
     const log = require('../../libs/log');
 
     if (process.env.DEBUG) {
         log.message(argv);
+    }
+
+    // Override to run all tests
+    // $ TEST_ALL=1 git commit -am "My commit message"
+    if (process.env.TEST_ALL) {
+        return false;
     }
 
     if (argv.product) {

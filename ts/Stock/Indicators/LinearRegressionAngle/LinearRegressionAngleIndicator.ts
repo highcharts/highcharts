@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Kamil Kulig
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,10 +24,8 @@ import type {
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';
 
+import LinearRegressionIndicator from '../LinearRegression/LinearRegressionIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    linearregression: LinearRegressionIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -38,7 +37,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Linear Regression Angle series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionAngle
  *
@@ -62,9 +60,10 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     indicators/indicators
+     * @requires     indicators/regressions
      * @optionparent plotOptions.linearregressionangle
+     * @internal
      */
     public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions,
@@ -105,6 +104,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
         return Math.atan(slope) * (180 / Math.PI); // Rad to deg
     }
 
+    /** @internal */
     public getEndPointY(
         this: LinearRegressionAngleIndicator,
         lineParameters: RegressionLineParametersObject
@@ -119,7 +119,6 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
  *
  * */
 
-/** @internal */
 interface LinearRegressionAngleIndicator {
     pointClass: typeof LinearRegressionAnglePoint;
     nameBase: string;
@@ -135,7 +134,6 @@ extend(LinearRegressionAngleIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregressionangle: typeof LinearRegressionAngleIndicator;
@@ -160,7 +158,6 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
-/** @internal */
 export default LinearRegressionAngleIndicator;
 
 /**
@@ -171,9 +168,8 @@ export default LinearRegressionAngleIndicator;
  * @extends   series,plotOptions.linearregressionangle
  * @since     7.0.0
  * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  indicators/indicators
+ * @requires  indicators/regressions
  * @apioption series.linearregressionangle
  */
 

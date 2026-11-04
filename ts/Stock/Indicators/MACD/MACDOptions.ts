@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -48,8 +49,8 @@ export interface MACDGappedExtensionOptions {
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/macd
+ * @requires     indicators/indicators
+ * @requires     indicators/macd
  * @interface Highcharts.MACDOptions
  */
 export interface MACDOptions extends SMAOptions {

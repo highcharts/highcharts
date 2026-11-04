@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,9 +23,8 @@ import type MapPointSeries from './MapPointSeries';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type ScatterPoint from './../Scatter/ScatterPoint';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const { scatter: ScatterSeries } = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -40,12 +40,15 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public insetIndex?: number;
 
     public options!: MapPointPointOptions;
 
+    /** @internal */
     public properties?: AnyRecord;
 
+    /** @internal */
     public series!: MapPointSeries;
 
     /* *
@@ -54,6 +57,7 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return Boolean(
             this.options.geometry ||
@@ -71,6 +75,7 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
  * */
 
 interface MapPointPoint extends ScatterPoint {
+    /** @internal */
     bounds?: MapBounds;
 }
 

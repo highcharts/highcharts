@@ -1,0 +1,26 @@
+body {
+    background: #0d1117;
+    margin: 0;
+    padding: 20px;
+    font-family: "Courier New", monospace;
+    color: #e2e8f0;
+}
+
+.highcharts-figure {
+    min-width: 320px;
+    max-width: 1000px;
+    margin: 1em auto;
+}
+
+#container {
+    height: 520px;
+    border: 1px solid #1f2937;
+    border-radius: 8px;
+    background: #0d1117;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+    font-size: 11px;
+    color: #64748b;
+}

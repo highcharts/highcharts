@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -42,7 +43,7 @@ import DataTable, {
     type ColumnCollection as DataTableColumnCollection
 } from '../DataTable.js';
 import { DeepPartial } from '../../Shared/Types';
-import { addEvent, fireEvent, merge, pick } from '../../Shared/Utilities.js';
+import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -92,6 +93,27 @@ abstract class DataConnector implements DataEventEmitter<Event> {
             !DataConnector.types[key] &&
             !!(DataConnector.types[key] = DataConnectorClass)
         );
+    }
+
+    /**
+     * Converts a data refresh rate in seconds into a polling interval in
+     * milliseconds. Invalid values fall back to one second.
+     *
+     * @param {unknown} dataRefreshRate
+     * Data refresh rate in seconds.
+     *
+     * @return {number}
+     * Polling interval in milliseconds.
+     */
+    public static getPollingInterval(
+        dataRefreshRate: unknown
+    ): number {
+        const refreshSeconds = Number(dataRefreshRate);
+        return (
+            Number.isFinite(refreshSeconds) ?
+                Math.max(refreshSeconds, 1) :
+                1
+        ) * 1000;
     }
 
     /* *
@@ -259,7 +281,7 @@ abstract class DataConnector implements DataEventEmitter<Event> {
 
         if (names.length) {
             return names.sort((a, b): number => (
-                pick(columns[a].index, 0) - pick(columns[b].index, 0)
+                (columns[a].index ?? 0) - (columns[b].index ?? 0)
             ));
         }
     }
@@ -310,10 +332,11 @@ abstract class DataConnector implements DataEventEmitter<Event> {
             if ('enablePolling' in options && options.enablePolling) {
                 this.stopPolling();
                 this.startPolling(
-                    (
-                        'dataRefreshRate' in options &&
-                        typeof options.dataRefreshRate === 'number'
-                    ) ? Math.max(options.dataRefreshRate, 1) * 1000 : 1000
+                    DataConnector.getPollingInterval(
+                        'dataRefreshRate' in options ?
+                            options.dataRefreshRate :
+                            void 0
+                    )
                 );
             } else {
                 this.stopPolling();
@@ -354,6 +377,10 @@ abstract class DataConnector implements DataEventEmitter<Event> {
                 (dataTable): boolean => dataTable.key === key
             )?.dataModifier ?? this.options?.dataModifier;
 
+            if (!dataModifierOptions) {
+                continue;
+            }
+
             const ModifierClass = (
                 dataModifierOptions &&
                 DataModifier.types[dataModifierOptions.type]
@@ -379,6 +406,9 @@ abstract class DataConnector implements DataEventEmitter<Event> {
         refreshTime: number = 1000
     ): void {
         const connector = this;
+        const pollingInterval = Number.isFinite(refreshTime) ?
+            refreshTime :
+            1000;
 
         // Assign a new abort controller.
         this.pollingController = new AbortController();
@@ -397,10 +427,10 @@ abstract class DataConnector implements DataEventEmitter<Event> {
                 )
                 .then((): void => {
                     if (connector._polling) {
-                        connector.startPolling(refreshTime);
+                        connector.startPolling(pollingInterval);
                     }
                 })
-            , refreshTime
+            , pollingInterval
         );
     }
 

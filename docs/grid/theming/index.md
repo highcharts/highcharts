@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Overview"
+description: >-
+  Build Grid themes with CSS custom properties, inheritance, and reusable
+  classes; apply a theme through the API, decide when to extend the default
+  theme, and handle dark-mode colors.
 ---
 
 # Theming overview
@@ -71,6 +75,12 @@ To create a custom theme from scratch, exclude the default theme:
     }
 }
 ```
+
+Visual defaults for the grid (for example cell padding, borders, input chrome, button hover and selected states, and popup or menu chrome) live on `.hcg-theme-default`.
+
+Without that class, Grid still applies structural styles and CSS variable wiring. Table surface styles such as padding, border, background, and color apply under `.hcg-themed` (added by Core for any non-empty `theme`) when the matching `--hcg-*` tokens are defined. Other surfaces fall back to neutral values such as `transparent`, `inherit`, and `0`. Set `theme` to an empty string to skip table surface chrome and style cells with your own classes.
+
+A from-scratch theme should therefore define the `--hcg-*` tokens it needs, or extend `.hcg-theme-default` instead of replacing it.
 
 The theme class is appended to the `<div class="hcg-container theme-custom">` element, which wraps the `<table>` and other grid components.
 

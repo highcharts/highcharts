@@ -6,8 +6,9 @@
  *
  *  Author: Wojciech Chmiel
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -113,7 +114,7 @@ export interface MarkerClusterEventsOptions {
      * by calling `event.preventDefault()`.
      *
      * @product   highcharts highmaps
-     * @see [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
+     * @see       [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
      * @requires  modules/marker-clusters
      */
     drillToCluster: MarkerClusterDrillCallbackFunction;
@@ -251,7 +252,7 @@ export interface MarkerClusterMarkerOptions extends PointMarkerOptions {
     /** @default 0 */
     lineWidth?: PointMarkerOptions['lineWidth'];
 
-    /** @default ${palette.backgroundColor} */
+    /** @default 'var(--highcharts-background-color)' */
     lineColor?: PointMarkerOptions['lineColor'];
 
     /** @default 15 */

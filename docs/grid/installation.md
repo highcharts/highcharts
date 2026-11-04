@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Installation"
+description: >-
+  Choose Grid Lite or Grid Pro, install through npm, a CDN, or self-hosted
+  files, and follow framework setup examples; use Pro features with a valid
+  Grid Key.
 ---
 
 # Highcharts Grid installation
@@ -84,6 +88,13 @@ Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 </html>
 ```
 
+For Grid Pro, swap the filenames:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css" />
+```
+
 > **TIP:** Want to lock to a specific version? Use: `https://cdn.jsdelivr.net/npm/@highcharts/grid-lite@2.0.0/grid-lite.js`
 
 ---
@@ -113,6 +124,7 @@ For Grid Pro, swap the filenames:
 ## Use Grid Pro
 
 Switch to Grid Pro for editing, validation, sparklines, and advanced features.
+Note that [Grid Pro requires a Grid Key](https://www.highcharts.com/docs/grid/grid-key).
 
 ### Install Grid Pro
 
@@ -129,6 +141,7 @@ import '@highcharts/grid-pro/css/grid-pro.css';
 
 // Create grid with Pro features
 Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             product: ['Apple', 'Pear', 'Plum', 'Banana'],
@@ -169,33 +182,9 @@ npm install @highcharts/grid-lite-react
 npm install @highcharts/grid-pro-react
 ```
 
-The React package is self-contained, so a single install is enough to render the grid.
-Requires React 18 or higher.
-
-**App.tsx:**
-```tsx
-import { useState } from 'react';
-import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
-
-export default function App() {
-    const [options] = useState<GridOptions>({
-        data: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie', 'David'],
-                age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
-            }
-        }
-    });
-
-    return <Grid options={options} />;
-}
-```
-
-For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
-`<Grid options={options} />`.
-
-See [Highcharts Grid with React](https://www.highcharts.com/docs/grid/frameworks/react) for the full guide.
+The React package is self-contained and requires React 18 or higher. See
+[Highcharts Grid with React](https://www.highcharts.com/docs/grid/frameworks/react/getting-started)
+for how to start, including child components and the `options` object.
 
 ### Other Frameworks
 
@@ -208,7 +197,7 @@ See [Highcharts Grid with React](https://www.highcharts.com/docs/grid/frameworks
 
 Now that Grid is installed, explore what you can build:
 
-- **[Introduction guide](https://www.highcharts.com/docs/grid/general)** – Build more complex grids with real data
+- **[Introduction guide](https://www.highcharts.com/docs/grid/general)** – Build your first grid
 - **[Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid)** – Configure columns, data sources, and events
 - **[Theming guide](https://www.highcharts.com/docs/grid/theming/index)** – Customize the look and feel
 - **[API reference](https://api.highcharts.com/grid/)** – Complete options and methods documentation

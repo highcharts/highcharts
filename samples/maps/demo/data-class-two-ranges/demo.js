@@ -160,7 +160,9 @@
                             enabled: true,
                             color: '#FFFFFF',
                             format: '{point.postal-code}',
+                            backgroundColor: 'auto',
                             style: {
+                                textOutline: 'none',
                                 textTransform: 'uppercase'
                             }
                         },
@@ -183,7 +185,12 @@
                         accessibility: {
                             enabled: false
                         }
-                    }]
+                    }],
+                    credits: {
+                        position: {
+                            y: -5
+                        }
+                    }
                 };
             keys = keys.map(function (key) {
                 return key.toUpperCase();

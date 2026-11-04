@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -49,7 +50,7 @@ const chartDefaults: ParallelCoordinatesOptions = {
      */
     parallelCoordinates: false,
     /**
-     * Common options for all yAxes rendered in a parallel coordinates plot.
+     * Common options for all y axes rendered in a parallel coordinates plot.
      * This feature requires `modules/parallel-coordinates.js`.
      *
      * The default options are:
@@ -78,7 +79,7 @@ const chartDefaults: ParallelCoordinatesOptions = {
      * @since     6.0.0
      * @product   highcharts
      * @excluding alternateGridColor, breaks, id, gridLineColor,
-     *            gridLineDashStyle, gridLineWidth, minorGridLineColor,
+     *            gridLineDashStyle, minorGridLineColor,
      *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
      *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
      *            minColor, scrollbar, stackLabels, stops,

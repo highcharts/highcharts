@@ -418,4 +418,32 @@ describe('DataCursor', () => {
             );
         });
     });
+
+    describe('Prototype pollution', () => {
+        it('should not expose prototype members on ID-keyed maps', () => {
+            const cursor = new DataCursor();
+
+            strictEqual(
+                cursor.listenerMap['__proto__'],
+                void 0,
+                'The listener map should not expose `__proto__`.'
+            );
+            strictEqual(
+                cursor.listenerMap['constructor'],
+                void 0,
+                'The listener map should not expose `constructor`.'
+            );
+            strictEqual(
+                cursor.stateMap['__proto__'],
+                void 0,
+                'The state map should not expose `__proto__`.'
+            );
+            strictEqual(
+                cursor.stateMap['constructor'],
+                void 0,
+                'The state map should not expose `constructor`.'
+            );
+        });
+    });
+
 });

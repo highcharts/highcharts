@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,10 +24,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -90,7 +89,6 @@ function populateAverage(
 /**
  * The ATR series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.atr
  *
@@ -114,9 +112,10 @@ class ATRIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/atr
+     * @requires     indicators/indicators
+     * @requires     indicators/atr
      * @optionparent plotOptions.atr
+     * @internal
      */
     public static defaultOptions: ATROptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -143,6 +142,7 @@ class ATRIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ATRParamsOptions
@@ -216,7 +216,6 @@ class ATRIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ATRIndicator {
     pointClass: typeof ATRPoint;
 }
@@ -227,7 +226,6 @@ interface ATRIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         atr: typeof ATRIndicator;
@@ -242,7 +240,6 @@ SeriesRegistry.registerSeriesType('atr', ATRIndicator);
  *
  * */
 
-/** @internal */
 export default ATRIndicator;
 
 /* *
@@ -258,9 +255,8 @@ export default ATRIndicator;
  * @extends   series,plotOptions.atr
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/atr
+ * @requires  indicators/indicators
+ * @requires  indicators/atr
  * @apioption series.atr
  */
 

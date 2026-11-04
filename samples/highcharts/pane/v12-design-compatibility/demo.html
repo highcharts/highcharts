@@ -1,0 +1,83 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+
+<div class="outer-container">
+    <h1>Gauge Facelift for Highcharts v13 - What's Changed?</h1>
+    <p>With Highcharts v13, we have updated the default design and smart
+    defaults for gauge and solid gauge charts. The general look and feel of the
+    gauges has been refreshed, in addition to smarter defaults for pane and
+    axes. The goal is to reduce the amount for configuration needed to make
+    something that looks good, especially since configurations are often created
+    by AI agents.</p>
+
+    <p>As a consequence, there are some changes to be aware of when upgrading
+    to v13:</p>
+
+    <h3>Changes in behavior</h3>
+    <ul>
+        <li>The y-axis now does a best guess of the min and max values when none
+            are provided. This means you can create a gauge without specifying
+            an y-axis at all, however it doesn't necessarily provide the range
+            that you expect.
+        </li>
+        <li>The pane's start and end angles are now -135 and 135 degrees instead
+            of a full circle. This reflects a three-quarter arc layout that is
+        popular for dashboard KPIs.</li>
+        <li>The pane size is now automatically calculated to fit within the plot
+        area. Previously it was painful to set the right <code>pane.size</code>
+            and <code>pane.center</code> to manually fit it, especially if the
+            start and end values were non-default.</li>
+        <li>The pane now has <code>size</code> and <code>innerSize</code>
+        options, which are inherited by the pane background, axis plot bands, solid gauge series
+        and grid lines. Previously these elements had to be fitted individually.
+        </li>
+    </ul>
+
+    <h3>Changes in visual design</h3>
+    <ul>
+        <li>Circular panes now have a single, solid background</li>
+        <li>For gauges, the radial axis offset is now <code>-20%</code>, to
+        avoid the tick markers from interfering with the pane background and
+        plot bands.</li>
+        <li>Gauges and Solid Gauges now inherit the same <code>innerSize</code>
+        from the pane, 80%.</li>
+    </ul>
+
+    <h3>New or changed options in detail</h3>
+    <ul>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane.borderRadius"><code>pane.borderRadius</code></a>: 3 (new global)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane.innerSize"><code>pane.innerSize</code></a>: <code>'85%'</code> auto-applied for angular charts (before: no inner size)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane.background.shape"><code>pane.background.shape</code></a>: <code>'arc'</code> (was <code>'circle'</code>)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane.background.borderWidth"><code>pane.background.borderWidth</code></a>: 0 (was 1)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane.background.backgroundColor"><code>pane.background.backgroundColor</code></a>: neutralColor3 (was linear gradient)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane.background.outerRadius"><code>pane.background.outerRadius</code></a>: <code>'100%'</code> (was <code>'105%'</code>)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane.background.innerRadius"><code>pane.background.innerRadius</code></a>: now inherits from <code>innerSize</code> by default (was 0)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane.thickness"><code>pane.thickness</code></a>: new option, pixel-based ring thickness</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane.margin"><code>pane.margin</code></a>: new option for auto-fit margin</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.gauge.dial.baseLength"><code>dial.baseLength</code></a>: 0 (was <code>'70%'</code>), <a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.gauge.dial.baseWidth"><code>dial.baseWidth</code></a>: <code>'18%'</code> (was 3), <a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.gauge.dial.radius"><code>dial.radius</code></a>: <code>'70%'</code> (was <code>'80%'</code>)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.gauge.dial.borderRadius"><code>dial.borderRadius</code></a>: <code>'9%'</code> — new</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.gauge.dial.rearLength"><code>dial.rearLength</code></a>: <code>'9%'</code>, <a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.gauge.dial.topWidth"><code>dial.topWidth</code></a>: <code>'4%'</code>, <a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.gauge.pivot.radius"><code>pivot.radius</code></a>: <code>'4%'</code> (now all percentage-capable)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.gauge.pivot.backgroundColor"><code>pivot.backgroundColor</code></a>: Palette.backgroundColor (was neutralColor100)</li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.solidgauge.dataLabels.verticalAlign"><code>solidgauge.dataLabels.verticalAlign</code></a>: <code>'middle'</code> (was none)</li>
+        <li>Gauge data labels: no border, centered, fontSize: 1.4em</li>
+        <li>Radial axis defaults: <a target="_blank" href="https://api.highcharts.com/highcharts/yAxis.labels.distance"><code>labels.distance</code></a>: 15 (was -25),
+        <a target="_blank" href="https://api.highcharts.com/highcharts/yAxis.minorTicksPerMajor"><code>minorTicksPerMajor</code></a>: 10</li>
+    </ul>
+
+    <h2>Highcharts v13 styled as v12</h2>
+    <p>The demos below showcase the compatibility of v13 charts with the v12
+    design. View this sample's source in jsFiddle or CodePen to inspect the required configuration.</p>
+
+    <div id="container-1" class="container"></div>
+    <div id="container-2" class="container"></div>
+
+    <h2>API reference</h2>
+    <p>For more details and live samples, check out the API docs for:</p>
+    <ul>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/pane">Pane</a></li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.gauge">Gauge</a></li>
+        <li><a target="_blank" href="https://api.highcharts.com/highcharts/plotOptions.solidgauge">Solid Gauge</a></li>
+    </ul>
+
+</div>

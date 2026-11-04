@@ -91,11 +91,6 @@ QUnit.test('Testing exportChart', async function (assert) {
 });
 
 QUnit.test('webfont inlining', async function (assert) {
-    const linkElement = document.createElement('link');
-    linkElement.href = 'https://fonts.googleapis.com/css2?family=Roboto&display=swap';
-
-    document.body.append(linkElement);
-
     const originalInlineFonts = Highcharts.Exporting.inlineFonts;
     let inlineFontsCallCount = 0;
 
@@ -140,49 +135,125 @@ is set in exporting.chartConfig.`
     // Restore original functions
     Highcharts.Exporting.inlineFonts = originalInlineFonts;
 
-    const originalFetch = window.fetch;
-    let fetchAttemptedForCrossOrigin = false;
+    const originalFetch = window.fetch,
+        originalStyleSheets = Object.getOwnPropertyDescriptor(
+            document,
+            'styleSheets'
+        ),
+        stylesheetHref = 'https://fonts.example.com/mock.css',
+        fontHref = 'https://fonts.example.com/mock.woff2';
 
-    window.fetch = function (url) {
-        if (typeof url === 'string') {
-            try {
-                const base = window.location && window.location.href ?
-                    window.location.href :
-                    undefined;
-                const parsedUrl = new URL(url, base);
-                if (parsedUrl.hostname === 'fonts.googleapis.com') {
-                    fetchAttemptedForCrossOrigin = true;
-                }
-            } catch {
-                // Ignore invalid URLs; they are not relevant for this test.
-            }
+    let stylesheetFetchCount = 0,
+        fontFetchCount = 0;
+
+    const restoreMocks = function () {
+        window.fetch = originalFetch;
+        if (originalStyleSheets) {
+            Object.defineProperty(
+                document,
+                'styleSheets',
+                originalStyleSheets
+            );
+        } else {
+            delete document.styleSheets;
         }
-        return originalFetch.apply(this, arguments);
     };
 
-    try {
-        const dummySvg = document.createElementNS(
-            'http://www.w3.org/2000/svg', 'svg'
-        );
-        await Highcharts.Exporting.inlineFonts(dummySvg);
+    window.fetch = function (url) {
+        const parsedUrl = new URL(String(url), window.location.href);
 
-        assert.notOk(
-            fetchAttemptedForCrossOrigin,
-            'Should not attempt to fetch cross-origin stylesheets ' +
-            '(Origin Gate working).'
-        );
-        assert.ok(
-            true,
-            'inlineFonts completed successfully without a CORS SecurityError ' +
-            ' crash (#23589).'
-        );
-    } catch (e) {
-        assert.notOk(
-            true, 'inlineFonts threw an unexpected error: ' + e.message
-        );
-    } finally {
-        window.fetch = originalFetch;
-    }
+        if (parsedUrl.href === stylesheetHref) {
+            stylesheetFetchCount++;
+            return Promise.resolve(new Response(
+                '@font-face{font-family:"MockExportFont";' +
+                `src:url("${fontHref}") format("woff2");}`,
+                { headers: { 'Content-Type': 'text/css' } }
+            ));
+        }
 
-    linkElement.remove();
+        if (parsedUrl.href === fontHref) {
+            fontFetchCount++;
+            return Promise.resolve(new Response(
+                new Uint8Array([0, 1, 2]),
+                { headers: { 'Content-Type': 'font/woff2' } }
+            ));
+        }
+
+        return Promise.reject(
+            new Error('Unexpected fetch: ' + parsedUrl.href)
+        );
+    };
+
+    Object.defineProperty(document, 'styleSheets', {
+        configurable: true,
+        value: [{
+            href: stylesheetHref,
+            get cssRules() {
+                throw new DOMException(
+                    'Stylesheet rules are blocked by CORS',
+                    'SecurityError'
+                );
+            }
+        }]
+    });
+
+    const createDummySvg = function (fontOnRoot) {
+        const svg = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'svg'
+            ),
+            text = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'text'
+            );
+
+        text.textContent = 'Highcharts';
+
+        if (fontOnRoot) {
+            svg.setAttribute('style', 'font-family: MockExportFont');
+            text.setAttribute('style', 'font-family: OtherUsedFont');
+        } else {
+            text.setAttribute('style', 'font-family: MockExportFont');
+        }
+
+        svg.append(text);
+
+        return svg;
+    };
+
+    const elementSvg = createDummySvg(false);
+    await Highcharts.Exporting.inlineFonts(elementSvg);
+    const elementStyleText = elementSvg.querySelector('style').textContent;
+
+    assert.strictEqual(
+        stylesheetFetchCount,
+        1,
+        'Should fetch CORS-readable cross-origin stylesheets.'
+    );
+
+    assert.strictEqual(
+        fontFetchCount,
+        1,
+        'Should fetch font files referenced by fetched stylesheets.'
+    );
+
+    assert.ok(
+        elementStyleText.includes('@font-face') &&
+        elementStyleText.includes('MockExportFont') &&
+        elementStyleText.includes('data:font/woff2;base64,AAEC'),
+        'Should inline fonts from cross-origin stylesheets.'
+    );
+
+    const rootSvg = createDummySvg(true);
+    await Highcharts.Exporting.inlineFonts(rootSvg);
+    const rootStyleText = rootSvg.querySelector('style').textContent;
+    restoreMocks();
+
+    assert.ok(
+        rootStyleText.includes('@font-face') &&
+        rootStyleText.includes('MockExportFont') &&
+        rootStyleText.includes('data:font/woff2;base64,AAEC'),
+        'Should inline fonts declared chart-wide on the root SVG (#24722).'
+    );
+
 });

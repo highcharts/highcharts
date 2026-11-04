@@ -198,8 +198,19 @@ QUnit.test('Ordinal axis and lazy loading', function (assert) {
             'Tick ' + tick.label.textStr + ' rendered (#10290)'
         );
     });
-});
 
+    // Unrelated chart update should not trigger an axis render
+    let renderCount = 0;
+    Highcharts.addEvent(chart.xAxis[0], 'afterRender', () => {
+        renderCount++;
+    });
+    chart.update({
+        navigator: {
+            maskFill: '#00ff0011'
+        }
+    });
+    assert.strictEqual(renderCount, 0, 'Axis should not have rendered.');
+});
 
 QUnit.test(
     'Panning ordinal axis on mobile devices- lin2val calculation, ' +
@@ -1187,7 +1198,7 @@ QUnit.test('Ordinal axis + Scatter series #19243', function (assert) {
             series: [{
                 type: 'line',
                 data: linePoints,
-                pointInverval: 10
+                pointInterval: 10
             }, {
                 type: 'scatter',
                 data: scatterPoints,
@@ -1433,5 +1444,22 @@ QUnit.test('Zooming on ordinal axis, #21483', assert => {
         chart.xAxis[0].dataMax,
         chart.xAxis[0].max,
         'Chart should be zoomed out - max value.'
+    );
+
+    // #24545
+    chart.update({
+        xAxis: {
+            minRange: 24 * 3600 * 1000
+        }
+    });
+    // Emulate scrolling with mouse wheel to gradually zoom in, instead of
+    // calling one big mousewheel zoom in event
+    for (let i = 0; i < 40; i++) {
+        controller.mouseWheel(chart.plotWidth / 2, chart.plotHeight / 2, -100);
+    }
+    assert.strictEqual(
+        chart.xAxis[0].max - chart.xAxis[0].min,
+        24 * 3600 * 1000,
+        'Chart zoom-in on ordinal axis should work with minRange, #24545.'
     );
 });

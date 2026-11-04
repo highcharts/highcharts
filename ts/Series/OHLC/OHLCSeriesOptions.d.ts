@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -58,8 +59,6 @@ declare module '../../Core/Series/SeriesOptions' {
  * @extends plotOptions.hlc
  *
  * @extends series,plotOptions.ohlc
- *
- * @excluding dataParser, dataURL
  *
  * @product highstock
  */
@@ -126,6 +125,21 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
      * @product highstock
      */
     data?: Array<(OHLCPointOptions|PointShortOptions)>;
+
+    /**
+     * What type of legend symbol to render for this series. The default
+     * `ohlc` shows two stems, each with an open tick on the left and a close
+     * tick on the right. The first stands for a falling point, the second
+     * for a rising one.
+     *
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Financial series legend symbols
+     *
+     * @default ohlc
+     *
+     * @product highstock
+     */
+    legendSymbol?: string;
 
     /**
      * Determines which one of  `open`, `high`, `low`, `close` values should

@@ -3,8 +3,9 @@
  *  (c) 2016-2026 Highsoft AS
  *  Author: Torstein Hønsi, Lars Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,7 +20,6 @@
 
 import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
-import type Series from '../Core/Series/Series';
 
 import {
     addEvent,
@@ -154,18 +154,20 @@ function chartAdjustHeight(
 
                 // Make sure clip rects have the right height before initial
                 // animation.
-                axis.series.forEach(function (series: Series): void {
-                    const clipRect = series.sharedClipKey &&
-                        chart.sharedClips[series.sharedClipKey];
+                if (!chart.initiatedScale) {
+                    axis.series.forEach((series): void => {
+                        const clipRect = series.sharedClipKey &&
+                            chart.sharedClips[series.sharedClipKey];
 
-                    if (clipRect) {
-                        clipRect.attr(chart.inverted ? {
-                            width: chart.plotHeight
-                        } : {
-                            height: chart.plotHeight
-                        });
-                    }
-                });
+                        if (clipRect) {
+                            clipRect.attr(chart.inverted ? {
+                                width: chart.plotHeight
+                            } : {
+                                height: chart.plotHeight
+                            });
+                        }
+                    });
+                }
             }
         }
         this.initiatedScale = true;

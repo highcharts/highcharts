@@ -1,0 +1,7 @@
+---
+name: Region Breakdown Chart
+description: Compares regional exposure between two securities as a grouped column chart.
+tags:
+  - Morningstar
+js_wrap: b
+...

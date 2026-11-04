@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn how Highcharts supports keyboard navigation, screen readers, voice
+  input, and low vision, with examples of accessible chart interactions,
+  tactile export, audio charts, and translation options.
+---
+
 Accessibility module feature overview
 =======
 

@@ -1,0 +1,8 @@
+---
+name: Tailwind utility theme
+authors:
+  - Sebastian Bochan
+js_wrap: b
+applyCSP: false
+skipTest: true
+...

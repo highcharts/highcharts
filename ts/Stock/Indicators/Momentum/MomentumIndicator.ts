@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,8 +21,8 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import type MomentumOptions from './MomentumOptions';
 import type MomentumPoint from './MomentumPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -53,7 +54,6 @@ function populateAverage(
 /**
  * The Momentum series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.momentum
  *
@@ -76,9 +76,10 @@ class MomentumIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/momentum
+     * @requires     indicators/indicators
+     * @requires     indicators/momentum
      * @optionparent plotOptions.momentum
+     * @internal
      */
     public static defaultOptions: MomentumOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -102,6 +103,7 @@ class MomentumIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MomentumOptions
@@ -155,7 +157,6 @@ class MomentumIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface MomentumIndicator {
     pointClass: typeof MomentumPoint;
     nameBase: string;
@@ -170,7 +171,6 @@ extend(MomentumIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         momentum: typeof MomentumIndicator;
@@ -185,7 +185,6 @@ SeriesRegistry.registerSeriesType('momentum', MomentumIndicator);
  *
  * */
 
-/** @internal */
 export default MomentumIndicator;
 
 /* *
@@ -200,10 +199,9 @@ export default MomentumIndicator;
  *
  * @extends   series,plotOptions.momentum
  * @since     6.0.0
- * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/momentum
+ * @requires  indicators/indicators
+ * @requires  indicators/momentum
  * @apioption series.momentum
  */
 

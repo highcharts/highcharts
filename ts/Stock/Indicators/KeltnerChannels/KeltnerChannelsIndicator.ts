@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,10 +24,8 @@ import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -38,7 +37,6 @@ import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Keltner Channels series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.keltnerchannels
  *
@@ -67,9 +65,11 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart,showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/keltner-channels
+     * @requires     indicators/indicators
+     * @requires     indicators/atr
+     * @requires     indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
+     * @internal
      */
     public static defaultOptions: KeltnerChannelsOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -160,6 +160,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(this: KeltnerChannelsIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
@@ -177,6 +178,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: KeltnerChannelsParamsOptions
@@ -271,7 +273,6 @@ MultipleLinesComposition.compose(KeltnerChannelsIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
@@ -285,7 +286,6 @@ SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
  *
  * */
 
-/** @internal */
 export default KeltnerChannelsIndicator;
 
 /* *
@@ -301,12 +301,13 @@ export default KeltnerChannelsIndicator;
  * @extends      series,plotOptions.keltnerchannels
  * @since        7.0.0
  * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding    allAreas, colorAxis, compare, compareBase,
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               stacking, showInNavigator
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/keltner-channels
+ * @requires     indicators/indicators
+ * @requires     indicators/atr
+ * @requires     indicators/keltner-channels
  * @apioption    series.keltnerchannels
  */
 

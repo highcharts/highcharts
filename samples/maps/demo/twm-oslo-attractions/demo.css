@@ -8,3 +8,7 @@ body {
     min-width: 310px;
     margin: 0 auto;
 }
+
+.highcharts-dark .highcharts-tiledwebmap-series image {
+    filter: invert(100%) hue-rotate(180deg) brightness(90%) contrast(85%);
+}

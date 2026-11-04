@@ -15,13 +15,7 @@
     /* Chart background, point stroke for markers and columns etc */
     --highcharts-background-color: #fff;
 
-    /*
-    Neutral colors, grayscale by default. The default colors are defined by
-    mixing the background-color with neutral, with a weight corresponding to
-    the number in the name.
-
-    https://www.highcharts.com/samples/highcharts/css/palette-helper
-    */
+    /* Neutral colors */
 
     /* Strong text. */
     --highcharts-neutral-color-100: #000;
@@ -121,10 +115,7 @@
         /* UI colors */
         --highcharts-background-color: #141414;
 
-        /*
-            Neutral color variations
-            https://www.highcharts.com/samples/highcharts/css/palette-helper
-        */
+        /* Neutral color variations */
         --highcharts-neutral-color-100: #fff;
         --highcharts-neutral-color-80: #d0d0d0;
         --highcharts-neutral-color-60: #a1a1a1;

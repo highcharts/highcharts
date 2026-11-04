@@ -16,8 +16,10 @@ const createChart = (
 
         tooltip: {
             pointFormat: 'Season 21: used in deck by ' +
-                '<strong>{point.previous}</strong> of 1000 top players<br>' +
-                'Season 22: used in deck by <strong>{point.current}</strong> ' +
+                '<strong>{point.custom.previous}</strong> ' +
+                'of 1000 top players<br>' +
+                'Season 22: used in deck by ' +
+                '<strong>{point.custom.current}</strong> ' +
                 'of 1000 top players',
             shared: true
         },
@@ -59,7 +61,7 @@ const createChart = (
             type: 'dumbbell',
             name: 'Increase',
             data: increasingData,
-            color: Highcharts.getOptions().colors[2],
+            color: 'var(--highcharts-color-2)',
             marker: {
                 enabled: true,
                 symbol: 'triangleRight'
@@ -72,7 +74,7 @@ const createChart = (
             type: 'dumbbell',
             name: 'Decrease',
             data: decreasingData,
-            color: Highcharts.getOptions().colors[5],
+            color: 'var(--highcharts-color-5)',
             marker: {
                 enabled: false
             },

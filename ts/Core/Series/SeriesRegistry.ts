@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,8 +23,7 @@ import type { SeriesTypeRegistry } from './SeriesType';
 import type Series from './Series.js';
 
 import H from '../Globals.js';
-import D from '../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Defaults.js';
 import Point from './Point.js';
 import { extend, extendClass, merge } from '../../Shared/Utilities.js';
 
@@ -99,7 +99,7 @@ namespace SeriesRegistry {
     /**
      * Old factory to create new series prototypes.
      *
-     * @deprecated
+     * @deprecated 9.0.0
      * @function Highcharts.seriesType
      *
      * @param {string} type

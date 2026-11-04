@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -40,11 +41,13 @@ import type SankeySeries from './SankeySeries';
  *         Inverted sankey diagram
  * @sample highcharts/plotoptions/sankey-outgoing
  *         Sankey diagram with outgoing links
+ * @sample highcharts/series-sankey/circular-dependencies/
+ *         Sankey diagram with circular and self-referencing links
  *
  * @extends      plotOptions.column
  * @since        6.0.0
  * @product      highcharts
- * @excluding    animationLimit, boostBlending, boostThreshold, borderRadius,
+ * @excluding    animationLimit, boostBlending, boostThreshold,
  *               crisp, cropThreshold, colorAxis, colorKey, dataSorting, depth,
  *               dragDrop, edgeColor, edgeWidth, findNearestPointBy, grouping,
  *               groupPadding, groupZPadding, legendSymbolColor, maxPointWidth,
@@ -66,7 +69,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * Higher numbers makes the links in a sankey diagram or dependency
      * wheel render more curved. A `curveFactor` of 0 makes the lines
-     * straight.
+     * straight. It also sets the turn radius of the bands wrapping around
+     * a circular layout; a self-link's loop turns on the node width
+     * instead.
      *
      * @private
      */
@@ -262,7 +267,8 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * Determines which side of the chart the nodes are to be aligned to. When
      * the chart is inverted, `top` aligns to the left and `bottom` to the
-     * right.
+     * right. With circular links, the nodes align within the space those
+     * links leave.
      *
      * @sample highcharts/plotoptions/sankey-nodealignment
      *         Node alignment demonstrated
@@ -407,13 +413,12 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  *
  * @extends   series,plotOptions.sankey
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderRadius, borderWidth, crisp, cropThreshold, dataParser,
- *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
- *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
- *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
- *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,
- *            pointStart, pointWidth, shadow, softThreshold, stacking,
- *            threshold, zoneAxis, zones, dataSorting
+ *            borderWidth, crisp, cropThreshold, depth, dragDrop, edgeColor,
+ *            edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
+ *            groupPadding, groupZPadding, label, maxPointWidth, negativeColor,
+ *            pointInterval, pointIntervalUnit, pointPadding, pointPlacement,
+ *            pointRange, pointStart, pointWidth, shadow, softThreshold,
+ *            stacking, threshold, zoneAxis, zones, dataSorting
  * @product   highcharts
  * @requires  modules/sankey
  * @apioption series.sankey
@@ -475,6 +480,16 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  */
 
 /**
+ * A reserved subspace to store options and values for customized
+ * functionality. Here you can add additional data for your own event
+ * callbacks and formatter callbacks.
+ * @apioption series.sankey.nodes.custom
+ * @type      {Highcharts.Dictionary<*>}
+ * @product   highcharts
+ * @since     next
+ */
+
+/**
  * Individual data label for each node. The options are the same as
  * the ones for [series.sankey.dataLabels](#series.sankey.dataLabels).
  *
@@ -529,7 +544,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * If a percentage string is given, the node is offset by the percentage of the
  * node size plus `nodePadding`.
  *
- * @deprecated
+ * @deprecated 9.3.0
  * @type      {number|string}
  * @default   0
  * @since     6.0.5

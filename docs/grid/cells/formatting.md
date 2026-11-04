@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Formatting"
+description: >-
+  Choose template-based cells.format for values, row data, expressions, and
+  markup, or use a formatter callback for conditional output. Apply shared
+  defaults and per-column overrides to table body cells.
 ---
 
 # Cell formatting

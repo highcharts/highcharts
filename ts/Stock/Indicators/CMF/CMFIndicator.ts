@@ -6,8 +6,9 @@
  *
  *  Chaikin Money Flow indicator for Highcharts Stock
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,11 +30,9 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import { merge } from '../../../Shared/Utilities.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -44,7 +43,6 @@ const {
 /**
  * The CMF series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.cmf
  *
@@ -68,9 +66,10 @@ class CMFIndicator extends SMAIndicator {
      * @since        6.0.0
      * @excluding    animationLimit
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cmf
+     * @requires     indicators/indicators
+     * @requires     indicators/cmf
      * @optionparent plotOptions.cmf
+     * @internal
      */
     public static defaultOptions: CMFOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -95,9 +94,13 @@ class CMFIndicator extends SMAIndicator {
     public data!: Array<CMFPoint>;
     public options!: CMFOptions;
     public points!: Array<CMFPoint>;
+    /** @internal */
     public volumeSeries!: LineSeries;
+    /** @internal */
     public linkedParent!: LineSeries;
+    /** @internal */
     public yData!: Array<Array<number>>;
+    /** @internal */
     public nameBase: string = 'Chaikin Money Flow';
 
     /* *
@@ -323,7 +326,6 @@ class CMFIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface CMFIndicator {
     pointClass: typeof CMFPoint;
 }
@@ -334,7 +336,6 @@ interface CMFIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmf: typeof CMFIndicator;
@@ -349,7 +350,6 @@ SeriesRegistry.registerSeriesType('cmf', CMFIndicator);
  *
  * */
 
-/** @internal */
 export default CMFIndicator;
 
 /* *
@@ -365,9 +365,8 @@ export default CMFIndicator;
  * @extends   series,plotOptions.cmf
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/cmf
+ * @requires  indicators/indicators
+ * @requires  indicators/cmf
  * @apioption series.cmf
  */
 

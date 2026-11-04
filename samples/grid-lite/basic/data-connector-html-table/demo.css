@@ -1,0 +1,32 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+#source-table {
+    border-collapse: collapse;
+    margin: 0 8px 16px;
+}
+
+#source-table caption {
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+#source-table th,
+#source-table td {
+    border: 1px solid var(--highcharts-neutral-color-20);
+    padding: 6px 10px;
+    text-align: left;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}

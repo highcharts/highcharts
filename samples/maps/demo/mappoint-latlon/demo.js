@@ -55,7 +55,7 @@
                         '{point.lat:.2f}, lon: {point.lon:.2f}.'
                 }
             },
-            color: Highcharts.getOptions().colors[1],
+            color: 'var(--highcharts-color-1)',
             data: [{
                 name: 'London',
                 lat: 51.507222,

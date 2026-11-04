@@ -18,6 +18,10 @@ export function getHTML(
 
     let html = `<highcharts-control type="select" path="${ctrlOpt.path}"`;
 
+    if (ctrlOpt.nullable) {
+        html += ' nullable';
+    }
+
     if (overrideValue !== void 0) {
         html += ` value="${overrideValue}"`;
     }

@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable chart downloads and printing, customize the export menu, and control
+  exported image dimensions and fonts. Learn how client exports, server
+  exports, and the optional export-data module fit together.
+---
+
 Export module
 =============
 
@@ -6,7 +13,7 @@ SVG vector images. It also allows printing the chart directly without
 distracting elements from the web page. The downloads are typically created on the client
 side. PDF exports require the
 [offline-exporting.js](https://highcharts.com/docs/export-module/client-side-export)
-module that loads third party libraries. Otherwise PDFs are generated on Highcharts' featured server or
+module and third party libraries (opt-in via `exporting.libURL` or preloaded on the page). Otherwise PDFs are generated on Highcharts' featured server or
 optionally [your own
 server](https://highcharts.com/docs/export-module/setting-up-the-server).
 

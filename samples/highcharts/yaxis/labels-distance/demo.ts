@@ -1,40 +1,30 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'column'
+        marginBottom: 50,
+        type: 'solidgauge'
     },
     title: {
         text: 'Demo of <em>yAxis.labels.distance</em>'
     },
-    xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
+    subtitle: {
+        text: 'Initially placed in the middle of the solid gauge band'
     },
     yAxis: {
         labels: {
-            distance: '75%',
+            distance: '-20%',
             y: 25
         },
-        lineWidth: 0,
         max: 100,
         min: 0,
-        minorTickWidth: 0,
-        tickAmount: 2,
-        tickWidth: 0
+        plotBands: [],
+        tickAmount: 2
     },
     pane: {
-        background: {
-            innerRadius: '50%',
-            outerRadius: '100%',
-            shape: 'arc'
-        },
-        center: ['50%', '80%'],
         endAngle: 90,
-        size: '130%',
+        innerSize: '60%',
         startAngle: -90
     },
     series: [{
-        data: [54.4],
-        innerRadius: '50%',
-        radius: '100%',
-        type: 'solidgauge'
+        data: [54.4]
     }]
 });

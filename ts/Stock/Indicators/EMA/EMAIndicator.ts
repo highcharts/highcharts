@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,10 +24,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -38,7 +37,6 @@ import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The EMA series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ema
  *
@@ -62,8 +60,9 @@ class EMAIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
+     * @requires     indicators/indicators
      * @optionparent plotOptions.ema
+     * @internal
      */
     public static defaultOptions: EMAOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -100,6 +99,7 @@ class EMAIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public accumulatePeriodPoints(
         period: number,
         index: number,
@@ -118,6 +118,7 @@ class EMAIndicator extends SMAIndicator {
         return sum;
     }
 
+    /** @internal */
     public calculateEma(
         xVal: Array<number>,
         yVal: (Array<number>|Array<Array<number>>),
@@ -139,6 +140,7 @@ class EMAIndicator extends SMAIndicator {
         return [x, y];
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: EMAParamsOptions
@@ -211,7 +213,6 @@ class EMAIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface EMAIndicator {
     pointClass: typeof EMAPoint;
 }
@@ -222,7 +223,6 @@ interface EMAIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ema: typeof EMAIndicator;
@@ -236,7 +236,6 @@ SeriesRegistry.registerSeriesType('ema', EMAIndicator);
  *
  * */
 
-/** @internal */
 export default EMAIndicator;
 
 /* *
@@ -252,8 +251,7 @@ export default EMAIndicator;
  * @extends   series,plotOptions.ema
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
+ * @requires  indicators/indicators
  * @apioption series.ema
  */
 

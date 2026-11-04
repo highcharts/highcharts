@@ -1,5 +1,5 @@
 import { describe, it } from 'node:test';
-import { strictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual } from 'node:assert';
 
 import DataTable from '../../../../../ts/Data/DataTable';
 import Formula from '../../../../../ts/Data/Formula/Formula';
@@ -24,6 +24,20 @@ describe('Formula.getRangeValues', () => {
             result2,
             result1,
             'Subdivisions of ranges should result in the same sum.'
+        );
+    });
+
+    it('should not extend range values beyond table rows', () => {
+        deepStrictEqual(
+            Formula.getRangeValues({
+                type: 'range',
+                beginColumn: 0,
+                beginRow: 0,
+                endColumn: 0,
+                endRow: 9999
+            }, table),
+            [1, 2, 3, 4, 5, 6],
+            'Range ending past the last row should return only table values.'
         );
     });
 });

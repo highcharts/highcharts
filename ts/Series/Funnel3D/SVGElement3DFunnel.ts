@@ -6,8 +6,9 @@
  *
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,11 +31,8 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { charts } = H;
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import SVGElement3D from '../../Core/Renderer/SVG/SVGElement3D.js';
 import { merge } from '../../Shared/Utilities.js';
-const {
-    Element3D: SVGElement3D
-} = RendererRegistry.getRendererType().prototype;
 
 
 /* *
@@ -43,6 +41,7 @@ const {
  *
  * */
 
+/** @internal */
 class SVGElement3DFunnel extends SVGElement3D {
 
     /* *
@@ -190,10 +189,10 @@ class SVGElement3DFunnel extends SVGElement3D {
                             fillColor as any),
                         {
                             linearGradient: {
-                                x1: box.x + gradient.x1 * box.width,
-                                y1: box.y + gradient.y1 * box.height,
-                                x2: box.x + gradient.x2 * box.width,
-                                y2: box.y + gradient.y2 * box.height
+                                x1: box.x + Number(gradient.x1) * box.width,
+                                y1: box.y + Number(gradient.y1) * box.height,
+                                x2: box.x + Number(gradient.x2) * box.width,
+                                y2: box.y + Number(gradient.y2) * box.height
                             }
                         }
                     );
@@ -327,4 +326,5 @@ class SVGElement3DFunnel extends SVGElement3D {
  *
  * */
 
+/** @internal */
 export default SVGElement3DFunnel;

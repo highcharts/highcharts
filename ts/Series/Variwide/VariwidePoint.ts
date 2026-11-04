@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,11 +23,16 @@
 import type VariwidePointOptions from './VariwidePointOptions';
 import type VariwideSeries from './VariwideSeries';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const {
-    column: { prototype: { pointClass: ColumnPoint } }
-} = SeriesRegistry.seriesTypes;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *
@@ -34,6 +40,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         crosshairWidth?: VariwidePoint['crosshairWidth'];
@@ -53,8 +60,10 @@ class VariwidePoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public crosshairWidth!: number;
     public options!: VariwidePointOptions;
+    /** @internal */
     public series!: VariwideSeries;
 
     /* *
@@ -63,6 +72,7 @@ class VariwidePoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return isNumber(this.y) && isNumber(this.z);
     }

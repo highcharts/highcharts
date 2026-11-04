@@ -102,7 +102,7 @@
             colorKey: 'clusterPointsAmount',
             name: 'Cities',
             data: data,
-            color: Highcharts.getOptions().colors[5],
+            color: 'var(--highcharts-color-5)',
             marker: {
                 lineWidth: 1,
                 lineColor: '#fff',

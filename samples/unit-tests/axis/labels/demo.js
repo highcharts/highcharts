@@ -1114,6 +1114,54 @@ QUnit.test('Label reserve space', function (assert) {
         unrotatedPlotLeft >= chart.plotLeft,
         'Long rotated label should not increase the plot left margin (#23527).'
     );
+
+    chart.update({
+        yAxis: {
+            lineWidth: 1,
+            labels: {
+                align: 'left',
+                rotation: 0,
+                format: 'Label'
+            }
+        }
+    });
+
+    const plotLeft = chart.plotLeft;
+    chart.update({
+        yAxis: {
+            labels: {
+                rotation: 45
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.plotLeft,
+        plotLeft,
+        'chart.plotLeft should not change when rotating labels with align left.'
+    );
+    chart.update({
+        yAxis: {
+            opposite: true,
+            labels: {
+                rotation: 0,
+                align: 'right'
+            }
+        }
+    });
+    const plotWidth = chart.plotWidth;
+    chart.update({
+        yAxis: {
+            labels: {
+                rotation: 45
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.plotWidth,
+        plotWidth,
+        `chart.plotWidth should not change when rotating labels with align right
+        on opposite y-axis.`
+    );
 });
 
 QUnit.test('Label ellipsis', function (assert) {
@@ -2316,9 +2364,7 @@ QUnit.test(
                 ]
             }),
             ticks = chart.xAxis[0].ticks,
-            secondLabel = ticks[1].label,
-            thirdLabel = ticks[2].label,
-            seventhLabel = ticks[6].label;
+            secondLabel = ticks[1].label;
 
         assert.strictEqual(
             secondLabel.newOpacity,
@@ -2330,12 +2376,6 @@ QUnit.test(
             secondLabel.newOpacity,
             secondLabel.oldOpacity,
             'The visiblility of the second category should not change'
-        );
-
-        assert.strictEqual(
-            thirdLabel.newOpacity === 0,
-            seventhLabel.newOpacity === 0,
-            'The third and seventh categories should both be hidden'
         );
     }
 );

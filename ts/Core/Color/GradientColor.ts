@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,16 +38,16 @@ export interface GradientColorStop {
 }
 
 export interface LinearGradientColor {
-    x1: number;
-    x2: number;
-    y1: number;
-    y2: number;
+    x1: number|string;
+    x2: number|string;
+    y1: number|string;
+    y2: number|string;
 }
 
 export interface RadialGradientColor {
-    cx: number;
-    cy: number;
-    r: number;
+    cx: number|string;
+    cy: number|string;
+    r: number|string;
 }
 
 /* *

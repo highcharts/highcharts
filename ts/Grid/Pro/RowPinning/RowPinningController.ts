@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Author:
@@ -53,10 +54,50 @@ export type RowPinningPosition = 'top'|'bottom';
 export type RowPinningChangeAction = 'pin'|'unpin'|'toggle';
 
 /**
+ * Language options for the row pinning feature.
+ */
+export interface RowPinningLangOptions {
+    /**
+     * Label used for the built-in row pinning context menu group.
+     *
+     * @default 'Row pinning'
+     */
+    label?: string;
+
+    /**
+     * Label used for the built-in "pin row to top" action.
+     *
+     * @default 'Pin row to top'
+     */
+    pinRowTop?: string;
+
+    /**
+     * Label used for the built-in "pin row to bottom" action.
+     *
+     * @default 'Pin row to bottom'
+     */
+    pinRowBottom?: string;
+
+    /**
+     * Label used for the built-in "unpin row" action.
+     *
+     * @default 'Unpin row'
+     */
+    unpinRow?: string;
+}
+
+/**
  * Snapshot of pinned row IDs by section.
  */
 export interface RowPinningState {
+    /**
+     * Row IDs pinned to the top section.
+     */
     topIds: RowId[];
+
+    /**
+     * Row IDs pinned to the bottom section.
+     */
     bottomIds: RowId[];
 }
 
@@ -78,7 +119,16 @@ export type RowPinningChangeEventCallback = (
 ) => void;
 
 export interface RowPinningEvents {
+    /**
+     * Fires before a row pinning change is applied.
+     *
+     * Call `event.preventDefault()` to cancel the change.
+     */
     beforeRowPin?: RowPinningChangeEventCallback;
+
+    /**
+     * Fires after a row pinning change has been applied.
+     */
     afterRowPin?: RowPinningChangeEventCallback;
 }
 
@@ -90,56 +140,193 @@ export interface RowPinningSectionOptions {
     maxHeight?: number|string;
 }
 
+/**
+ * Options for pinning rows to dedicated sections above or below the main
+ * scrollable body.
+ */
 export interface RowPinningOptions {
+    /**
+     * Whether built-in row pinning UI is enabled.
+     *
+     * This controls UI affordances such as context menu actions. Configured
+     * pinned rows and the runtime row pinning API continue to work when it is
+     * disabled.
+     *
+     * @default false
+     */
     enabled?: boolean;
-    idColumn?: string;
+
+    /**
+     * Row IDs pinned to the top section on initial render.
+     */
     topIds?: RowId[];
+
+    /**
+     * Row IDs pinned to the bottom section on initial render.
+     */
     bottomIds?: RowId[];
+
+    /**
+     * Layout options for the top pinned rows section.
+     */
     top?: RowPinningSectionOptions;
+
+    /**
+     * Layout options for the bottom pinned rows section.
+     */
     bottom?: RowPinningSectionOptions;
+
+    /**
+     * Event callbacks fired when rows are pinned or unpinned.
+     */
     events?: RowPinningEvents;
+
+    /**
+     * Callback used to derive the initial pinned position for each row.
+     *
+     * Return `'top'` or `'bottom'` to pin the row, or `null` / `undefined`
+     * to keep it in the regular scrollable body.
+     */
     resolve?: (row: RowObjectType) => ('top'|'bottom'|null|undefined);
 }
 
 export type GridRowPinningOptions = RowPinningOptions;
 
 export interface RowPinningLangA11yOptions {
+    /**
+     * Screen reader announcements for row pinning state changes.
+     */
     announcements?: {
+        /**
+         * Message announced after a row is pinned.
+         *
+         * Use `{rowId}` and `{position}` placeholders to insert runtime data.
+         *
+         * @default 'Row {rowId} pinned to {position}.'
+         */
         pinned?: string;
+
+        /**
+         * Message announced after a row is unpinned.
+         *
+         * Use `{rowId}` to insert the pinned row identifier.
+         *
+         * @default 'Row {rowId} unpinned.'
+         */
         unpinned?: string;
     };
+
+    /**
+     * Additional descriptions exposed for pinned rows.
+     */
     descriptions?: {
+        /**
+         * Description for rows pinned to the top section.
+         *
+         * @default 'Pinned row in top section.'
+         */
         pinnedTop?: string;
+
+        /**
+         * Description for rows pinned to the bottom section.
+         *
+         * @default 'Pinned row in bottom section.'
+         */
         pinnedBottom?: string;
+
+        /**
+         * Description added when a rendered row also exists in the top pinned
+         * section.
+         *
+         * @default 'This row is also pinned to top section.'
+         */
         alsoPinnedTop?: string;
+
+        /**
+         * Description added when a rendered row also exists in the bottom
+         * pinned section.
+         *
+         * @default 'This row is also pinned to bottom section.'
+         */
         alsoPinnedBottom?: string;
     };
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
     interface CellContextMenuBuiltInActionIdRegistry {
         pinRowTop: never;
         pinRowBottom: never;
         unpinRow: never;
     }
 
+    interface CellContextMenuBuiltInGroupIdRegistry {
+        pinning: never;
+    }
+}
+
+declare module '../../Core/Options' {
     interface LangOptions {
+        /**
+         * Language options for the row pinning feature.
+         */
+        rowPinning?: RowPinningLangOptions;
+
+        /**
+         * Label used for the built-in "pin row to top" action.
+         *
+         * @default 'Pin row to top'
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.pinRowTop` instead.
+         */
         pinRowTop?: string;
+
+        /**
+         * Label used for the built-in "pin row to bottom" action.
+         *
+         * @default 'Pin row to bottom'
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.pinRowBottom` instead.
+         */
         pinRowBottom?: string;
+
+        /**
+         * Label used for the built-in "unpin row" action.
+         *
+         * @default 'Unpin row'
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.unpinRow` instead.
+         */
         unpinRow?: string;
     }
 
     interface RowsSettings {
+        /**
+         * Row pinning options for rendering dedicated sections above or below
+         * the scrollable table body.
+         *
+         * @sample grid-pro/demo/row-pinning Row pinning
+         */
         pinning?: RowPinningOptions;
     }
 }
 
 declare module '../../Core/Accessibility/A11yOptions' {
     interface A11yAnnouncementsOptions {
+        /**
+         * Enable accessibility announcements for row pinning changes.
+         *
+         * @default true
+         */
         rowPinning?: boolean;
     }
 
     interface LangAccessibilityOptions {
+        /**
+         * Accessibility language options for row pinning.
+         */
         rowPinning?: RowPinningLangA11yOptions;
     }
 }
@@ -339,10 +526,10 @@ class RowPinningController {
     }
 
     /**
-     * Returns whether the `enabled` pinning option is not explicitly `false`.
+     * Returns whether the `enabled` pinning option is explicitly `true`.
      */
     public isOptionEnabled(): boolean {
-        return this.getPinningOptions()?.enabled !== false;
+        return this.getPinningOptions()?.enabled === true;
     }
 
     /**

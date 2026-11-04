@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -23,7 +24,7 @@ import Cell from './Cell.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Globals from '../Globals.js';
-import { defined, pick } from '../../Shared/Utilities.js';
+import { defined } from '../../Shared/Utilities.js';
 
 /**
  * @internal
@@ -143,10 +144,13 @@ class Layout extends GUIElement {
      */
     public setRows(): void {
         const layout = this,
-            rowsElements = pick(
-                layout.options.rows,
-                layout.container && layout.container.getElementsByClassName(
-                    layout.options.rowClassName || ''
+            rowsElements = (
+                layout.options.rows ??
+                (
+                    layout.container &&
+                    layout.container.getElementsByClassName(
+                        layout.options.rowClassName || ''
+                    )
                 )
             ) || [];
 

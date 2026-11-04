@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -25,7 +26,9 @@
 
 import type Grid from '../Grid';
 import type { ColumnSortingOrder, FilteringCondition } from '../Options';
-import whcm from '../../../Accessibility/HighContrastMode.js';
+import {
+    isHighContrastModeActive
+} from '../../../Accessibility/HighContrastMode.js';
 
 import {
     hasDataTableProvider
@@ -34,14 +37,15 @@ import Globals from '../Globals.js';
 import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
-import HTMLU from '../../../Accessibility/Utils/HTMLUtilities.js';
+import {
+    getHeadingTagNameForElement
+} from '../../../Accessibility/Utils/HTMLUtilities.js';
 import {
     internalClearTimeout,
     replaceNested
 } from '../../../Shared/Utilities.js';
 
 const { formatText } = GridUtils;
-const { getHeadingTagNameForElement } = HTMLU;
 
 
 /**
@@ -241,8 +245,12 @@ class Accessibility {
         let msg: string | undefined;
 
         if (filteringApplied && condition) {
-            const parsedCondition =
-                ColumnFiltering.parseCamelCaseToReadable(condition);
+            const column = this.grid.viewport?.getColumn(columnId);
+            const parsedCondition = ColumnFiltering.getOperatorLabel(
+                condition,
+                column?.dataType ?? 'string',
+                lang
+            );
 
             if (
                 condition === 'empty' ||
@@ -282,7 +290,7 @@ class Accessibility {
 
         if (
             highContrastMode !== false && (
-                whcm.isHighContrastModeActive() ||
+                isHighContrastModeActive() ||
                 highContrastMode === true
             )
         ) {

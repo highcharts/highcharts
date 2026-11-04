@@ -59,3 +59,44 @@ QUnit.test('Series label', function (assert) {
         'Series label formatter got series ctx as the last argument'
     );
 });
+
+QUnit.test(
+    'Series label survives frequent empty chart.update({}) calls (#24805)',
+    function (assert) {
+        let clock;
+
+        try {
+            clock = TestUtilities.lolexInstall();
+
+            const chart = Highcharts.chart('container', {
+                chart: {
+                    animation: {
+                        duration: 300
+                    }
+                },
+                series: [
+                    {
+                        name: 'Revenue',
+                        data: [4, 2, 1, 3, 5],
+                        label: {
+                            enabled: true
+                        }
+                    }
+                ]
+            });
+
+            // Updates faster than the series-label redraw debounce.
+            const interval = setInterval(() => chart.update({}), 100);
+            clock.tick(650);
+            clearInterval(interval);
+
+            assert.ok(
+                chart.series[0].labelBySeries,
+                'Series label should be drawn, not indefinitely deferred by ' +
+                'empty chart.update({}) calls'
+            );
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
+    }
+);

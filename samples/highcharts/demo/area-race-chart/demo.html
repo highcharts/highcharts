@@ -4,18 +4,17 @@
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
 <figure class="highcharts-figure">
   <div id="parent-container">
     <div id="play-controls">
       <button id="play-pause-button" class="fa fa-play" title="play"></button>
-      <input id="play-range" type="range" value="1973" min="1973" max="2025" />
+      <input id="play-range" type="range" value="1973" min="1973" max="2024" />
     </div>
     <div id="container"></div>
   </div>
 </figure>
-<pre id="csv" style="display:none">
+<script type="text/csv" id="csv">
 # Data from RIAA
 year	LpEp	Vinyl	Cassette	CD	Downloads	Streams
 1973	1.200	0.190	0.076
@@ -70,4 +69,4 @@ year	LpEp	Vinyl	Cassette	CD	Downloads	Streams
 2022	1.200			0.489	0.457	13.285
 2023	1.400			0.537	0.396	14.358
 2024	1.400			0.541	0.329	14.900
-</pre>
+</script>

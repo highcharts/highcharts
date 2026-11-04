@@ -1,3 +1,11 @@
+---
+description: >-
+  Model multidirectional flows with nodes arranged around a circle and links
+  sized by their weights. The article relates its data structure to Sankey
+  diagrams and distinguishes it from layouts with directed, multiple
+  columns.
+---
+
 Dependency wheel
 ===
 

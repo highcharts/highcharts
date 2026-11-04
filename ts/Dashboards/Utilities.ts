@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -53,6 +54,10 @@ function deepClone(value: any, excludedKeys?: string[]): any {
         const keys = Object.keys(value);
 
         for (const key of keys) {
+            if (key === '__proto__' || key === 'constructor') {
+                continue;
+            }
+
             if (excludedKeys && excludedKeys.includes(key)) {
                 clone[key] = value[key];
             } else {

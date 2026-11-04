@@ -5,8 +5,9 @@
  *
  *  Utils for dealing with charts.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -44,7 +45,8 @@ import { defined, find, fireEvent } from '../../Shared/Utilities.js';
 /**
  * Fire an event on an element that is either wrapped by Highcharts,
  * or a DOM element.
- * @private
+ *
+ * @internal
  */
 function fireEventOnWrappedOrUnwrappedElement(
     el: (HTMLElement|SVGElement|DOMElementType),
@@ -73,9 +75,7 @@ function fireEventOnWrappedOrUnwrappedElement(
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function getChartTitle(chart: Accessibility.ChartComposition): string {
     return stripHTMLTags(
         chart.options.title.text ||
@@ -89,7 +89,8 @@ function getChartTitle(chart: Accessibility.ChartComposition): string {
 
 /**
  * Return string with the axis name/title.
- * @private
+ *
+ * @internal
  */
 function getAxisDescription(axis: Axis): string {
     return axis && (
@@ -114,11 +115,14 @@ function getAxisDescription(axis: Axis): string {
 
 /**
  * Return string with text description of the axis range.
- * @private
+ *
  * @param {Highcharts.Axis} axis
  * The axis to get range desc of.
+ *
  * @return {string}
  * A string with the range description for the axis.
+ *
+ * @internal
  */
 function getAxisRangeDescription(axis: Axis): string {
     const axisOptions = axis.options || {};
@@ -149,7 +153,8 @@ function getAxisRangeDescription(axis: Axis): string {
 
 /**
  * Describe the range of a category axis.
- * @private
+ *
+ * @internal
  */
 function getCategoryAxisRangeDesc(axis: Axis): string {
     const chart = axis.chart;
@@ -171,7 +176,8 @@ function getCategoryAxisRangeDesc(axis: Axis): string {
 
 /**
  * Describe the length of the time window shown on an axis.
- * @private
+ *
+ * @internal
  */
 function getAxisTimeLengthDesc(axis: Axis): string {
     const chart = axis.chart,
@@ -210,7 +216,8 @@ function getAxisTimeLengthDesc(axis: Axis): string {
 
 /**
  * Describe an axis from-to range.
- * @private
+ *
+ * @internal
  */
 function getAxisFromToDescription(axis: Axis): string {
     const chart = axis.chart,
@@ -245,11 +252,14 @@ function getAxisFromToDescription(axis: Axis): string {
 
 /**
  * Get the DOM element for the first point in the series.
- * @private
+ *
  * @param {Highcharts.Series} series
  * The series to get element for.
+ *
  * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined}
  * The DOM element for the point.
+ *
+ * @internal
  */
 function getSeriesFirstPointElement(
     series: Series
@@ -270,11 +280,14 @@ function getSeriesFirstPointElement(
 
 /**
  * Get the DOM element for the series that we put accessibility info on.
- * @private
+ *
  * @param {Highcharts.Series} series
  * The series to get element for.
+ *
  * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined}
  * The DOM element for the series
+ *
+ * @internal
  */
 function getSeriesA11yElement(
     series: Series
@@ -292,7 +305,8 @@ function getSeriesA11yElement(
 /**
  * Remove aria-hidden from element. Also unhides parents of the element, and
  * hides siblings that are not explicitly unhidden.
- * @private
+ *
+ * @internal
  */
 function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
     element.setAttribute('aria-hidden', false);
@@ -320,7 +334,8 @@ function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
 
 /**
  * Hide series from screen readers.
- * @private
+ *
+ * @internal
  */
 function hideSeriesFromAT(series: Series): void {
     const seriesEl = getSeriesA11yElement(series);
@@ -333,7 +348,8 @@ function hideSeriesFromAT(series: Series): void {
 
 /**
  * Get series objects by series name.
- * @private
+ *
+ * @internal
  */
 function getSeriesFromName<T extends Chart>(
     chart: T,
@@ -351,7 +367,8 @@ function getSeriesFromName<T extends Chart>(
 
 /**
  * Get point in a series from x/y values.
- * @private
+ *
+ * @internal
  */
 function getPointFromXY<T extends Series>(
     series: Array<T>,
@@ -374,7 +391,8 @@ function getPointFromXY<T extends Series>(
 
 /**
  * Get relative position of point on an x/y axis from 0 to 1.
- * @private
+ *
+ * @internal
  */
 function getRelativePointAxisPosition(axis: Axis, point: Point): number {
     if (!defined(axis.dataMin) || !defined(axis.dataMax)) {
@@ -393,7 +411,8 @@ function getRelativePointAxisPosition(axis: Axis, point: Point): number {
 
 /**
  * Get relative position of point on an x/y axis from 0 to 1.
- * @private
+ *
+ * @internal
  */
 function scrollAxisToPoint(point: Point): void {
     const xAxis = point.series.xAxis,
@@ -425,6 +444,7 @@ function scrollAxisToPoint(point: Point): void {
  *
  * */
 
+/** @internal */
 const ChartUtilities = {
     fireEventOnWrappedOrUnwrappedElement,
     getChartTitle,
@@ -439,4 +459,5 @@ const ChartUtilities = {
     scrollAxisToPoint
 };
 
+/** @internal */
 export default ChartUtilities;

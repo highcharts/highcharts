@@ -1,8 +1,9 @@
 /* *
  *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,10 +26,8 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -70,7 +69,6 @@ function getStandardDeviation(
 /**
  * Bollinger Bands series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.bb
  *
@@ -94,9 +92,10 @@ class BBIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/bollinger-bands
+     * @requires     indicators/indicators
+     * @requires     indicators/bollinger-bands
      * @optionparent plotOptions.bb
+     * @internal
      */
     public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
 
@@ -195,6 +194,7 @@ class BBIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(this: BBIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
@@ -213,6 +213,7 @@ class BBIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: BBParamsOptions
@@ -312,7 +313,6 @@ MultipleLinesComposition.compose(BBIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bb: typeof BBIndicator;
@@ -326,7 +326,6 @@ SeriesRegistry.registerSeriesType('bb', BBIndicator);
  *
  * */
 
-/** @internal */
 export default BBIndicator;
 
 /* *
@@ -341,10 +340,9 @@ export default BBIndicator;
  *
  * @extends   series,plotOptions.bb
  * @since     6.0.0
- * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/bollinger-bands
+ * @requires  indicators/indicators
+ * @requires  indicators/bollinger-bands
  * @apioption series.bb
  */
 

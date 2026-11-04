@@ -7,6 +7,11 @@
  * title
  */
 module.exports = {
+    'Highcharts Overview': {
+        categories: ['Basics'],
+        filter: { tags: ['Highcharts overview'] },
+        path: '/'
+    },
     Highcharts: {
         categories: [
             'Line charts',

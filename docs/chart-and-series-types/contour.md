@@ -1,3 +1,10 @@
+---
+description: >-
+  Set up a contour series with x, y, and value points, load its module, and
+  tune contour intervals, offsets, line visibility, and color smoothing. The
+  article also notes its WebGPU requirement.
+---
+
 Contour
 ===
 

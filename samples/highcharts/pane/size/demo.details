@@ -1,0 +1,7 @@
+---
+ name: Responsive pane size
+ authors:
+   - Torstein Hønsi
+ requiresManualTesting: true
+ js_wrap: b
+...

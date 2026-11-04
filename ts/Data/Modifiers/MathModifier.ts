@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -267,7 +268,9 @@ class MathModifier extends DataModifier {
         rowEnd: number = table.getRowCount()
     ): DataTableColumn {
         rowStart = rowStart >= 0 ? rowStart : 0;
-        rowEnd = rowEnd >= 0 ? rowEnd : table.getRowCount() + rowEnd;
+        rowEnd = rowEnd >= 0 ?
+            Math.min(rowEnd, table.getRowCount()) :
+            table.getRowCount() + rowEnd;
 
         const column = [],
             modified = table.getModified();
