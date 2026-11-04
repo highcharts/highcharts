@@ -1,0 +1,252 @@
+.calendar-mockup {
+    box-sizing: border-box;
+    max-width: 880px;
+    margin: 32px auto;
+    padding: 20px 20px 8px;
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #1f2430;
+}
+
+.calendar-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 6px;
+}
+
+.calendar-nav button,
+#cal-form button {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid #d5d8de;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+    cursor: pointer;
+}
+
+.calendar-nav button:first-child,
+.calendar-nav button:last-child {
+    width: 32px;
+    padding: 0;
+    font-size: 18px;
+    line-height: 1;
+}
+
+#cal-label {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+#container .hcg-visually-hidden {
+    opacity: 0;
+}
+
+#container .hcg-table thead th {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #667085;
+}
+
+#container .hcg-table {
+    border-spacing: 0;
+}
+
+#container .hcg-table > tbody > tr {
+    overflow: visible;
+}
+
+#container .hcg-table tbody > tr > .hcg-cell {
+    padding: 0;
+    overflow: visible;
+    vertical-align: top;
+    height: 108px;
+    border-right: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+#container .hcg-table tbody > tr > .hcg-cell:first-child {
+    border-left: 1px solid #e6e6e6;
+}
+
+#container .hcg-table tbody > tr:first-child > .hcg-cell {
+    border-top: 1px solid #e6e6e6;
+}
+
+#container .hcg-table tbody > tr > .hcg-cell:has(.cal-bar.is-start, .cal-bar.is-mid) {
+    z-index: 1;
+}
+
+.cal-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 108px;
+    padding-top: 8px;
+}
+
+.cal-day.in-range {
+    background: #e8f4ff;
+}
+
+.cal-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.cal-day.is-outside .cal-num {
+    color: #b0b7c3;
+    font-weight: 500;
+}
+
+.cal-num.is-anchor {
+    background: #2caffe;
+    color: #fff;
+}
+
+.cal-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.cal-bar,
+.cal-bar-spacer {
+    height: 18px;
+}
+
+.cal-bar {
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 0 6px;
+    color: #08344d;
+    background: #b9e6fb;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.cal-bar.lane-1 {
+    color: #3b2764;
+    background: #ddd4fb;
+}
+
+.cal-bar.is-start,
+.cal-bar.is-mid {
+    position: relative;
+    z-index: 1;
+    width: calc(100% + 1px);
+}
+
+.cal-bar.is-start,
+.cal-bar.is-single {
+    margin-left: 4px;
+    border-radius: 4px 0 0 4px;
+}
+
+.cal-bar.is-start {
+    width: calc(100% - 4px + 1px);
+}
+
+.cal-bar.is-end,
+.cal-bar.is-single {
+    margin-right: 4px;
+    border-radius: 0 4px 4px 0;
+}
+
+.cal-bar.is-end {
+    width: calc(100% - 4px);
+}
+
+.cal-bar.is-single {
+    width: calc(100% - 8px);
+}
+
+.cal-bar.is-single {
+    border-radius: 4px;
+}
+
+.cal-more {
+    padding-left: 8px;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+}
+
+#cal-dialog {
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 12px 40px rgba(16, 24, 40, 0.18);
+}
+
+#cal-dialog::backdrop {
+    background: rgba(16, 24, 40, 0.35);
+}
+
+#cal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 280px;
+}
+
+#cal-form h3,
+#cal-range {
+    margin: 0;
+}
+
+#cal-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#cal-title {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #d5d8de;
+    border-radius: 8px;
+    font: inherit;
+    font-weight: 500;
+}
+
+.cal-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.highcharts-description {
+    margin: 16px 0 8px;
+    color: #667085;
+    font-size: 13px;
+}

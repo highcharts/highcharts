@@ -1,0 +1,33 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+
+<div class="calendar-mockup">
+    <div class="calendar-toolbar">
+        <div class="calendar-nav">
+            <button id="cal-prev" type="button" aria-label="Previous month">&lsaquo;</button>
+            <button id="cal-today" type="button">Today</button>
+            <button id="cal-next" type="button" aria-label="Next month">&rsaquo;</button>
+        </div>
+        <h2 id="cal-label"></h2>
+    </div>
+    <div id="container"></div>
+    <p class="highcharts-description">
+        Visual mockup of a month calendar on Grid Pro. Days outside the
+        month stay in the grid, grayed out. Tasks are bars inside the cells.
+        Click a day, then another, to draft a task.
+    </p>
+</div>
+
+<dialog id="cal-dialog">
+    <form id="cal-form">
+        <h3>New task</h3>
+        <p id="cal-range"></p>
+        <label>
+            Name
+            <input id="cal-title" name="title" type="text" autocomplete="off">
+        </label>
+        <div class="cal-form-actions">
+            <button type="button" id="cal-cancel">Cancel</button>
+            <button type="submit">Add</button>
+        </div>
+    </form>
+</dialog>
