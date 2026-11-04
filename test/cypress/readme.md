@@ -6,7 +6,7 @@
 
 Cypress allows us to more easily run tests that simulate user interactions, by automating clicks, keyboard inputs, and browser events. It also has functionality that can make prototyping easier, including [stubbing and spying](https://docs.cypress.io/guides/guides/stubs-spies-and-clocks), and being able to [simulate network requests](https://docs.cypress.io/guides/guides/network-requests).
 
-If your tests does not require any of these features, consider if it is better to use [Karma](../readme.md) or the [Node-based](../ts-node-unit-tests/readme.md) setup. One reason to prefer Karma is that the tests are run on a broader range of browsers and operating systems.
+If your tests do not require any of these features, consider whether it is better to use [Playwright](../../tests/README.md) with the QUnit test runner (`npm run test:pw:qunit`) or the [Node-based](../ts-node-unit-tests/readme.md) setup.
 
 ## Overview
 
