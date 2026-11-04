@@ -1,62 +1,35 @@
-import {
-    Chart,
-    Title,
-    Subtitle,
-    Tooltip,
-    Legend,
-    PlotOptions
-} from '@highcharts/react';
+import { Chart, Title, Subtitle, Tooltip, Legend } from '@highcharts/react';
 import { PieSeries } from '@highcharts/react/series/Pie';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-import type { DonutChartOptions } from './types';
 
 export default function DonutChart() {
     return (
         <Chart
             options={{
                 chart: {
-                    custom: {},
                     events: {
                         render() {
-                            const chart = this,
-                                series = chart.series[0],
-                                chartOptions = chart.options
-                                    .chart as DonutChartOptions;
-                            let customLabel = chartOptions.custom.label;
-
-                            if (!customLabel) {
-                                customLabel = chartOptions.custom.label =
-                                    chart.renderer
-                                        .label(
-                                            'Total<br/>' +
-                                                '<strong>2 877 820</strong>',
-                                            0
-                                        )
-                                        .css({
-                                            color: 'var(--highcharts-neutral-color-100, #000)',
-                                            textAnchor: 'middle'
-                                        })
-                                        .add();
-                            }
-
-                            const x = series.center[0] + chart.plotLeft,
-                                y =
-                                    series.center[1] +
-                                    chart.plotTop -
-                                    Number(customLabel.attr('height')) / 2;
-
-                            customLabel.attr({
-                                x,
-                                y
-                            });
-                            // Set font size based on chart diameter
-                            customLabel.css({
-                                fontSize: `${series.center[2] / 12}px`
+                            // Center the caption based on the center of the pie
+                            const centerXChart = this.plotWidth / 2,
+                                centerXPie = this.series[0].center[0];
+                            this.caption.update({
+                                // Set x offset from chart center
+                                x: centerXPie - centerXChart
                             });
                         }
                     }
-                } as DonutChartOptions
+                },
+                caption: {
+                    text: 'Total<br/><strong>2 877 820</strong>',
+                    align: 'center',
+                    verticalAlign: 'middle',
+                    style: {
+                        color: 'var(--highcharts-neutral-color-100, #000)',
+                        fontSize: '1.5em'
+                    },
+                    y: 40
+                }
             }}
         >
             <Title>2023 Norway car registrations</Title>
@@ -68,30 +41,6 @@ export default function DonutChart() {
             </Subtitle>
             <Tooltip pointFormat="{series.name}: <b>{point.percentage:.0f}%</b>" />
             <Legend enabled={false} />
-            <PlotOptions
-                pie={{
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    borderRadius: 8,
-                    dataLabels: [
-                        {
-                            enabled: true,
-                            distance: 20,
-                            format: '{point.name}'
-                        },
-                        {
-                            enabled: true,
-                            backgroundColor: 'contrast',
-                            distance: -18,
-                            format: '{point.percentage:.0f}%',
-                            style: {
-                                fontSize: '0.9em'
-                            }
-                        }
-                    ],
-                    showInLegend: true
-                }}
-            />
             <Exporting />
             <Accessibility point={{ valueSuffix: '%' }} />
             <PieSeries
@@ -115,7 +64,27 @@ export default function DonutChart() {
                     }
                 ]}
                 options={{
-                    innerSize: '75%'
+                    innerSize: '75%',
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    borderRadius: 8,
+                    dataLabels: [
+                        {
+                            enabled: true,
+                            distance: 20,
+                            format: '{point.name}'
+                        },
+                        {
+                            enabled: true,
+                            backgroundColor: 'contrast',
+                            distance: -18,
+                            format: '{point.percentage:.0f}%',
+                            style: {
+                                fontSize: '0.9em'
+                            }
+                        }
+                    ],
+                    showInLegend: true
                 }}
             />
         </Chart>

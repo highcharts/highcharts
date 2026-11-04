@@ -1,45 +1,70 @@
 import {
     Chart,
+    Highcharts,
     Title,
     Subtitle,
+    Tooltip,
     XAxis,
     YAxis,
+    PlotOptions,
     Credits
 } from '@highcharts/react';
 import { AreaSeries } from '@highcharts/react/series/Area';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
+import 'highcharts/es-modules/masters/modules/data.src.js';
+import { csv } from './data';
+
+const dataTable = new Highcharts.Data({
+    csv
+}).getDataTable();
+
+const imports = dataTable.getColumn('Imports') as number[],
+    exports = dataTable.getColumn('Exports') as number[];
+
+dataTable.setColumns({
+    'Trade Balance': exports.map((x, i) => x + imports[i])
+});
+
 export default function AreaNegativeChart() {
     return (
-        <Chart containerProps={{ style: { height: '400px' } }}>
-            <Title>
-                Production, consumption and trade surplus of electrical power
-            </Title>
+        <Chart
+            dataTable={dataTable}
+            options={{
+                chart: {
+                    plotBorderRadius: 4,
+                    plotBorderWidth: 1
+                }
+            }}
+            containerProps={{ style: { height: '400px' } }}
+        >
+            <Title>Import, Export of goods in Norway (NOK million)</Title>
             <Subtitle>
                 Source:{' '}
                 <a
-                    href="https://www.ssb.no/energi-og-industri/energi/statistikk/elektrisitet/artikler/lavere-kraftproduksjon"
+                    href="https://www.ssb.no/en/statbank/table/08792"
                     target="_blank"
                 >
                     SSB
                 </a>
             </Subtitle>
+            <Tooltip
+                shared
+                valuePrefix="NOK "
+                valueSuffix=" M"
+                headerFormat="<table><caption>{point.key}</caption>"
+                pointFormat={`<tr>
+                  <th><span style="color:{point.color}">●</span> {series.name}</th>
+                  <td style="text-align: right;">{point.y}</td>
+                </tr>`}
+                footerFormat="</table>"
+            />
             <XAxis
-                categories={[
-                    'Q1 2019',
-                    'Q2 2019',
-                    'Q3 2019',
-                    'Q4 2019',
-                    'Q1 2020',
-                    'Q2 2020',
-                    'Q3 2020',
-                    'Q4 2020',
-                    'Q1 2021',
-                    'Q2 2021',
-                    'Q3 2021'
-                ]}
+                type="datetime"
+                crosshair
                 lineWidth={0}
+                tickColor="var(--highcharts-neutral-color-20)"
             />
             <YAxis
                 plotLines={[
@@ -50,30 +75,45 @@ export default function AreaNegativeChart() {
                     }
                 ]}
             >
-                TWh
+                MNOK
             </YAxis>
+            <PlotOptions
+                series={{
+                    marker: {
+                        enabled: false
+                    },
+                    dataMapping: {
+                        x: 'Month'
+                    }
+                }}
+            />
             <Credits enabled={false} />
-            <Exporting />
+            <Exporting
+                csv={{
+                    dateFormat: '%b %Y'
+                }}
+            />
             <Accessibility />
             <AreaSeries
-                name="Total production"
-                data={[
-                    37.8, 29.3, 30.8, 36.8, 40.5, 35.3, 34.9, 43.6, 45.7, 35.9,
-                    32.7
-                ]}
+                options={{
+                    dataMapping: {
+                        y: 'Exports'
+                    }
+                }}
             />
             <AreaSeries
-                name="Gross consumption"
-                data={[
-                    39.9, 29.9, 26.7, 38.1, 39.3, 30.2, 27.5, 36.7, 42.7, 31.4,
-                    27.5
-                ]}
+                options={{
+                    dataMapping: {
+                        y: 'Imports'
+                    }
+                }}
             />
             <AreaSeries
-                name="Trade surplus"
-                data={[
-                    -2.2, -0.6, 4.1, -1.3, 1.2, 5.1, 7.4, 6.9, 2.9, 4.5, 5.2
-                ]}
+                options={{
+                    dataMapping: {
+                        y: 'Trade Balance'
+                    }
+                }}
             />
         </Chart>
     );
