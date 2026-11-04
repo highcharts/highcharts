@@ -30,7 +30,9 @@ import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
-import whcm from '../Accessibility/HighContrastMode.js';
+import {
+    isHighContrastModeActive
+} from '../Accessibility/HighContrastMode.js';
 import { merge } from '../Shared/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
@@ -144,7 +146,7 @@ const G = {
     grid: _Grid.grid,
     grids: _Grid.grids,
     HeaderCell,
-    isHighContrastModeActive: whcm.isHighContrastModeActive,
+    isHighContrastModeActive,
     merge: merge,
     Pagination,
     Popup,
@@ -201,6 +203,7 @@ export {
     DataTable,
     _Grid as Grid,
     HeaderCell,
+    isHighContrastModeActive,
     _Options as Options,
     Pagination,
     Popup,
@@ -215,7 +218,6 @@ export const {
     defaultOptions,
     grid,
     grids,
-    isHighContrastModeActive,
     product,
     setOptions,
     version,
