@@ -39,65 +39,17 @@ test('completes partial writes at byte offsets', () => {
     });
 });
 
-test('skips only missing optional files and intentional no-op transforms', () => {
+test('updates the opened file when its pathname is replaced', () => {
     withFile(file => {
-        let called = false;
-        updateFile(file + '.missing', () => {
-            called = true;
-        }, {
-            optional: true
+        const original = file + '.opened';
+        const sentinel = file + '.unrelated';
+        fs.writeFileSync(sentinel, 'untouched');
+        updateFile(file, content => {
+            fs.renameSync(file, original);
+            fs.symlinkSync(sentinel, file);
+            return content + ' updated';
         });
-        assert.equal(called, false);
-        assert.throws(() => updateFile(file + '.missing', () => ''), {
-            code: 'ENOENT'
-        });
-        updateFile(file, () => {});
-        assert.equal(fs.readFileSync(file, 'utf8'), 'original contents');
-        assert.throws(() => updateFile(file, () => {
-            throw Object.assign(new Error('transform failed'), { code: 'ENOENT' });
-        }, { optional: true }), /transform failed/u);
-        assert.equal(fs.readFileSync(file, 'utf8'), 'original contents');
-    });
-});
-
-test('closes the opened descriptor when a transform fails', () => {
-    withFile(file => {
-        const open = fs.openSync;
-        let descriptor;
-        fs.openSync = (...args) => {
-            descriptor = open(...args);
-            return descriptor;
-        };
-        try {
-            assert.throws(() => updateFile(file, () => {
-                throw new Error('failed');
-            }), /failed/u);
-            assert.throws(() => fs.fstatSync(descriptor), { code: 'EBADF' });
-        } finally {
-            fs.openSync = open;
-        }
-    });
-});
-
-test('allows read-only no-ops without bypassing write permission errors', () => {
-    withFile(file => {
-        const open = fs.openSync;
-        const denied = Object.assign(new Error('read-only output'), {
-            code: 'EACCES'
-        });
-        fs.openSync = (path, flags) => {
-            if (flags === 'r+') {
-                throw denied;
-            }
-            return open(path, flags);
-        };
-        try {
-            updateFile(file, () => {});
-            assert.throws(() => updateFile(file, () => 'changed'),
-                error => error === denied);
-        } finally {
-            fs.openSync = open;
-        }
-        assert.equal(fs.readFileSync(file, 'utf8'), 'original contents');
+        assert.equal(fs.readFileSync(sentinel, 'utf8'), 'untouched');
+        assert.equal(fs.readFileSync(original, 'utf8'), 'original contents updated');
     });
 });

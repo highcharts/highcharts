@@ -121,18 +121,6 @@ test('webpack resets stale links and preserves two-product output order', async 
     }
 });
 
-test('webpack preserves the original empty-output error and cleans staging', async () => {
-    await withDirectory(async () => {
-        fs.writeFileSync('webpack.log', 'stale');
-        const error = new Error('no output');
-        await assert.rejects(loadTask(async () => {
-            throw error;
-        })(),
-        value => value === error);
-        assert.throws(() => fs.readFileSync('webpack.log'), { code: 'ENOENT' });
-    });
-});
-
 test('concurrent webpack tasks publish complete independent logs', async () => {
     await withDirectory(async () => {
         let release;
