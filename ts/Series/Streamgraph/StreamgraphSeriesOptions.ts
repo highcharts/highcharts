@@ -163,12 +163,14 @@ export interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
      */
     fillOpacity?: number;
 
+    /** @default 'stream' */
     stacking?: StackOverflowValue;
 
     states?: SeriesStatesOptions<StreamgraphSeriesOptions>;
 
     marker?: PointMarkerOptions;
 
+    /** @default 0 */
     lineWidth?: number;
 }
 
