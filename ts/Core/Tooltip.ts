@@ -1844,45 +1844,45 @@ class Tooltip {
     }
 
     /**
-     * Replace point.key and point.category in a format string with date format
-     * if the x axis is datetime.
+     * Replace point.key in a format string with date format if the x axis is
+     * datetime.
      *
      * @internal
      * @function Highcharts.Tooltip#keyReplace
      */
     public keyReplace(formatString: string, point: Point): string {
-        const series = point.series,
+        const { key, series } = point,
             tooltipOptions = series.tooltipOptions,
             dateTime = series.xAxis?.dateTime;
 
+        // Guess the best date format based on the closest point distance
+        // (#568, #3418)
         if (dateTime && formatString.indexOf('point.') !== -1) {
 
-            // Guess the best date format based on the closest point distance
-            // (#568, #3418)
-            let xDateFormat = tooltipOptions.xDateFormat ||
-                dateTime.getXDateFormat(
-                    point.x,
+            let xDateFormat = tooltipOptions.xDateFormat || (
+                isNumber(key) ? dateTime.getXDateFormat(
+                    key,
                     tooltipOptions.dateTimeLabelFormats
-                );
+                ) : ''
+            );
 
-            if (isObject(xDateFormat)) {
-                const format = xDateFormat;
-                dateFormats[0] = (timestamp): string =>
-                    series.chart.time.dateFormat(format, timestamp);
-                xDateFormat = '%0';
-            }
-
-            // Only numeric keys are dates, a point name stays as is
-            (point.tooltipDateKeys || ['key', 'category']).forEach(
-                (key: string): void => {
-                    if (isNumber(point.getNestedProperty(key))) {
+            // Insert the footer date format if any
+            if (xDateFormat) {
+                if (isObject(xDateFormat)) {
+                    const format = xDateFormat;
+                    dateFormats[0] = (timestamp): string =>
+                        series.chart.time.dateFormat(format, timestamp);
+                    xDateFormat = '%0';
+                }
+                (point.tooltipDateKeys || ['key']).forEach(
+                    (key: string): void => {
                         formatString = formatString.replace(
-                            new RegExp('point\\.' + key + '([ \\)}])', 'g'),
+                            new RegExp('point\\.' + key + '([ \\)}])'),
                             `(point.${key}:${xDateFormat as string})$1`
                         );
                     }
-                }
-            );
+                );
+            }
         }
         return formatString;
     }
