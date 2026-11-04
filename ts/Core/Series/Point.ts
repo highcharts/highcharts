@@ -146,7 +146,6 @@ class Point {
 
         // Set point properties for convenient access in tooltip and data labels
         this.category = series.xAxis?.categories?.[this.x] ?? this.x;
-        this.key = this.name ?? this.category;
 
         fireEvent(this, 'afterInit');
 
@@ -241,7 +240,7 @@ class Point {
      * @name Highcharts.Point#key
      * @type {number|string}
      */
-    public key: string|number;
+    public key?: string|number;
 
     /**
      * Decides which data label is kept when two of them overlap. The label
@@ -1217,6 +1216,32 @@ class Point {
             return result[key];
         }, object);
         return object;
+    }
+
+    /**
+     * Applies the `point.key` property, which is used in tooltip formatting. If
+     * the point has a name or category, it will be used as the key. If the
+     * point is on a datetime axis and has a numeric x value, it will be
+     * formatted accordingly.
+     * @internal
+     * */
+    public applyKey(key?: string|number): string|number {
+        const series = this.series,
+            tooltipOptions = series.tooltipOptions,
+            dateTime = series.xAxis?.dateTime;
+        key ??= this.name ?? this.category;
+
+        if (dateTime && isNumber(key)) {
+            key = series.chart.time.dateFormat(
+                tooltipOptions.xDateFormat ||
+                dateTime.getXDateFormat(
+                    key,
+                    tooltipOptions.dateTimeLabelFormats
+                ),
+                key
+            );
+        }
+        return (this.key = key);
     }
 
     /** @internal */

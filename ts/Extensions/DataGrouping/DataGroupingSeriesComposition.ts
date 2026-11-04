@@ -47,7 +47,8 @@ import {
     extend,
     isNumber,
     merge,
-    splat
+    splat,
+    wrap
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
@@ -582,6 +583,74 @@ function applyGrouping(
 
 }
 
+/**
+ * Extend the original method, make the tooltip's header reflect the grouped
+ * range.
+ * @internal
+ */
+function wrapApplyKey(
+    this: Point,
+    proceed: Function
+): string|number {
+    const { series } = this,
+        time = series.chart.time,
+        dateTime = series.xAxis?.dateTime,
+        currentDataGrouping = series.currentDataGrouping,
+        tooltipOptions = series.tooltipOptions,
+        dataGroupingOptions = series.options.dataGrouping;
+
+    let xDateFormat = tooltipOptions.xDateFormat || '',
+        xDateFormatEnd,
+        key: string|number = this.name ?? this.category;
+
+    if (
+        dateTime &&
+        currentDataGrouping &&
+        dataGroupingOptions &&
+        isNumber(key)
+    ) {
+        const dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats ||
+            // Fallback to commonOptions (#9693)
+            DataGroupingDefaults.common.dateTimeLabelFormats;
+
+        // If we have grouped data, use the grouping information to get the
+        // right format
+        if (currentDataGrouping) {
+            const labelFormats = dateTimeLabelFormats[
+                currentDataGrouping.unitName
+            ];
+            if (currentDataGrouping.count === 1) {
+                xDateFormat = labelFormats[0];
+            } else {
+                xDateFormat = labelFormats[1];
+                xDateFormatEnd = labelFormats[2];
+            }
+        // If not grouped, and we don't have set the xDateFormat option, get the
+        // best fit, so if the least distance between points is one minute, show
+        // it, but if the least distance is one day, skip hours and minutes etc.
+        } else if (!xDateFormat && dateTimeLabelFormats && dateTime) {
+            xDateFormat = dateTime.getXDateFormat(
+                this.x,
+                tooltipOptions.dateTimeLabelFormats
+            );
+        }
+        const groupStart = series.groupMap?.[this.index].groupStart ?? this.x,
+            groupEnd = groupStart + (currentDataGrouping?.totalRange || 0) - 1;
+
+        key = time.dateFormat(xDateFormat, groupStart);
+        if (xDateFormatEnd) {
+            key += time.dateFormat(
+                xDateFormatEnd,
+                groupEnd
+            );
+        }
+
+        return (this.key = key);
+    }
+
+    return proceed.call(this);
+}
+
 /** @internal */
 function compose(
     SeriesClass: typeof Series
@@ -600,6 +669,12 @@ function compose(
                 return false;
             }
         });
+
+        wrap(
+            PointClass.prototype,
+            'applyKey',
+            wrapApplyKey
+        );
 
         addEvent(SeriesClass, 'afterSetOptions', onAfterSetOptions);
         addEvent(SeriesClass, 'destroy', destroyGroupedData);
