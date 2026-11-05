@@ -73,7 +73,7 @@ import type { XRangePointPartialFillOptions } from './XRangePointOptions';
  */
 export interface XRangeSeriesOptions extends ColumnSeriesOptions {
 
-    borderRadius?: number;
+    borderRadius?: (number|string);
 
     /**
      * In an X-range series, this option makes all points of the same Y-axis
