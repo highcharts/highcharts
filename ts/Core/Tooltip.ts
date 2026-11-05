@@ -1179,8 +1179,8 @@ class Tooltip {
 
         }
 
-        // Set the `point.key` for each point, used in `formatter` and `format`
-        // strings
+        // Set the `point.key` for each point, just in time for the tooltip
+        // formatting. Used in formatter functions and format strings.
         points.forEach((item: Point): string|number => item.applyKey());
 
         this.len = points.length; // #6128
