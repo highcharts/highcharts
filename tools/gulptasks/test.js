@@ -23,8 +23,6 @@ const CONFIGURATION_FILE = path.join(
 
 const JS_DIRECTORY = path.join(BASE, 'js');
 
-const KARMA_CONFIG_FILE = path.join(BASE, 'test', 'karma-conf.js');
-
 const TESTS_DIRECTORY = path.join(BASE, 'samples', 'unit-tests');
 
 /* *
@@ -32,6 +30,38 @@ const TESTS_DIRECTORY = path.join(BASE, 'samples', 'unit-tests');
  *  Functions
  *
  * */
+
+/**
+ * Reject legacy runner flags that Playwright does not receive.
+ *
+ * @param {Object} argv Command-line arguments.
+ * @return {void}
+ */
+function rejectRetiredFlags(argv) {
+    const retiredVisualFlag = ['reference', 'visualcompare']
+        .find(flag => flag in argv);
+
+    if (retiredVisualFlag) {
+        throw new Error(
+            `--${retiredVisualFlag} is no longer supported by gulp test. ` +
+            'Use `npm run test:pw:visual` for visual tests. ' +
+            'Set VISUAL_TEST_REFERENCE=1 when generating references.'
+        );
+    }
+
+    const retiredFlag = [
+        'browsers', 'browsercount', 'splitbrowsers', 'debug', 'tests',
+        'testsAbsolutePath', 'ts', 'dots', 'timeout'
+    ].find(flag => flag in argv);
+
+    if (retiredFlag) {
+        throw new Error(
+            `--${retiredFlag} is no longer supported by gulp test. ` +
+            'Use `npx playwright test` for browser selection, test filtering ' +
+            'and other Playwright options.'
+        );
+    }
+}
 
 /**
  * Check that each demo.details has the correct js_wrap setting required for it
@@ -286,23 +316,19 @@ function checkDocsConsistency() {
  */
 async function test(gulpback) {
     const argv = require('yargs').argv;
-    const childProcess = require('node:child_process');
     const logLib = require('../libs/log');
     const PluginError = require('plugin-error');
 
     const { shouldRun, saveRun, HELP_TEXT_COMMON } = require('./lib/test');
 
+    rejectRetiredFlags(argv);
+
     if (argv.help || argv.helpme) {
         logLib.message(
-            `HIGHCHARTS TYPESCRIPT TEST RUNNER
+            `HIGHCHARTS PLAYWRIGHT TEST RUNNER
 
 Available arguments for 'gulp test':` +
-            HELP_TEXT_COMMON +
-            `--visualcompare
-Performs a visual comparison of the output and creates a reference.svg and candidate.svg
-when doing so. A JSON file with the results is produced in the location
-specified by config.imageCapture.resultsOutputPath.
-            `
+            HELP_TEXT_COMMON
         );
         return;
     }
@@ -312,13 +338,7 @@ specified by config.imageCapture.resultsOutputPath.
     checkDemosConsistency();
     checkJSWrap();
 
-    const forceRun = !!(
-        argv.browsers ||
-        argv.browsercount ||
-        argv.force ||
-        argv.tests ||
-        argv.testsAbsolutePath
-    );
+    const forceRun = !!argv.force;
 
     // Extract --project parameter from command line arguments
     // This is passed directly to Playwright, not parsed by yargs
@@ -351,8 +371,7 @@ specified by config.imageCapture.resultsOutputPath.
     const { getProductTests, getProducts } = require('./lib/test');
     const productTests = getProductTests();
 
-    // If false, there's no modified products
-    // If undefined, there's no product argument, so fall back to karma config
+    // If false, there are no modified products. If undefined, run all tests.
     if (productTests === false) {
         logLib.message('No tests to run, exiting early');
         return;
@@ -378,93 +397,57 @@ specified by config.imageCapture.resultsOutputPath.
 
         logLib.message('Run `gulp test --help` for available options');
 
-        // Visual tests use Karma, unit tests use Playwright
-        const isVisualTest = argv.visualcompare || argv.reference;
+        // Unit tests use Playwright
+        const processLib = require('../libs/process');
 
-        if (isVisualTest) {
-            // Visual comparison tests - keep using Karma
-            await gulp.task('scripts')(gulpback);
+        // Conditionally build required code
+        await gulp.task('scripts')(gulpback);
 
-            const testArgumentParts = [];
+        // Determine which Playwright projects to run
+        const products = argv.modified ? getProducts() : (argv.product ? [argv.product] : null);
+        const prods = products?.length ? products : ['Core'];
+        const hasGrid = prods.includes('Grid');
 
-            if (Array.isArray(productTests)) {
-                testArgumentParts.push('--tests');
-                productTests.forEach(testPath =>
-                    testArgumentParts.push(`unit-tests/${testPath}/**/demo.js`));
-            }
+        const hasDashboards = prods.includes('Dashboards');
+        const hasHC = prods.some(p => ['Core', 'Stock', 'Maps', 'Gantt', 'Accessibility'].includes(p));
 
-            const result = childProcess.spawnSync('npx', [
-                'karma', 'start', KARMA_CONFIG_FILE,
-                testArgumentParts.join(' '),
-                ...process.argv
-            ], {
-                cwd: process.cwd(),
-                stdio: ['ignore', process.stdout, process.stderr],
-                timeout: 1800000,
-                shell: path.sep === path.win32.sep
-            });
+        const gridLiteProj = ['grid-lite', 'grid-shared'];
+        const gridProProj = ['grid-pro'];
+        const dashProj = ['setup-dashboards', 'dashboards'];
+        const hcProj = ['setup-highcharts', 'highcharts', 'qunit'];
+        const a11yProj = ['setup-highcharts', 'qunit'];
 
-            if (result.error || result.status !== 0) {
+        const commands = [];
+        if (hasGrid) {
+            commands.push({ projects: gridLiteProj, grep: '' });
+            commands.push({ projects: gridProProj, grep: '' });
+        }
+        if (hasDashboards) {
+            commands.push({ projects: dashProj, grep: '' });
+        }
+        if (hasHC) {
+            const hcGrep = Array.isArray(productTests) && productTests.length > 0 ?
+                `--grep "unit-tests/(${productTests.join('|')})"` :
+                '';
+            commands.push({ projects: hcProj, grep: hcGrep });
+        }
+        if ((hasGrid || hasDashboards) && !hasHC) {
+            commands.push({ projects: a11yProj, grep: '--grep "unit-tests/(accessibility)"' });
+        }
+        if (commands.length === 0) {
+            commands.push({ projects: hcProj, grep: '' });
+        }
+
+        for (const { projects, grep } of commands) {
+            const cmd = `npx playwright test ${projects.map(p => `--project=${p}`).join(' ')} ${grep}`.trim();
+            logLib.message(`Running: ${cmd}`);
+            try {
+                await processLib.exec(cmd);
+            } catch {
                 if (argv.speak) {
                     logLib.say('Tests failed!');
                 }
-                throw new PluginError('karma', {
-                    message: 'Tests failed'
-                });
-            }
-        } else {
-            // Unit tests - use Playwright
-            const processLib = require('../libs/process');
-
-            // Conditionally build required code
-            await gulp.task('scripts')(gulpback);
-
-            // Determine which Playwright projects to run
-            const products = argv.modified ? getProducts() : (argv.product ? [argv.product] : null);
-            const prods = products?.length ? products : ['Core'];
-            const hasGrid = prods.includes('Grid');
-
-            const hasDashboards = prods.includes('Dashboards');
-            const hasHC = prods.some(p => ['Core', 'Stock', 'Maps', 'Gantt', 'Accessibility'].includes(p));
-
-            const gridLiteProj = ['grid-lite', 'grid-shared'];
-            const gridProProj = ['grid-pro'];
-            const dashProj = ['setup-dashboards', 'dashboards'];
-            const hcProj = ['setup-highcharts', 'highcharts', 'qunit'];
-            const a11yProj = ['setup-highcharts', 'qunit'];
-
-            const commands = [];
-            if (hasGrid) {
-                commands.push({ projects: gridLiteProj, grep: '' });
-                commands.push({ projects: gridProProj, grep: '' });
-            }
-            if (hasDashboards) {
-                commands.push({ projects: dashProj, grep: '' });
-            }
-            if (hasHC) {
-                const hcGrep = Array.isArray(productTests) && productTests.length > 0 ?
-                    `--grep "unit-tests/(${productTests.join('|')})"` :
-                    '';
-                commands.push({ projects: hcProj, grep: hcGrep });
-            }
-            if ((hasGrid || hasDashboards) && !hasHC) {
-                commands.push({ projects: a11yProj, grep: '--grep "unit-tests/(accessibility)"' });
-            }
-            if (commands.length === 0) {
-                commands.push({ projects: hcProj, grep: '' });
-            }
-
-            for (const { projects, grep } of commands) {
-                const cmd = `npx playwright test ${projects.map(p => `--project=${p}`).join(' ')} ${grep}`.trim();
-                logLib.message(`Running: ${cmd}`);
-                try {
-                    await processLib.exec(cmd);
-                } catch {
-                    if (argv.speak) {
-                        logLib.say('Tests failed!');
-                    }
-                    throw new PluginError('playwright', { message: 'Tests failed' });
-                }
+                throw new PluginError('playwright', { message: 'Tests failed' });
             }
         }
 

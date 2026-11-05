@@ -124,15 +124,17 @@ export interface XRangeSeriesOptions extends ColumnSeriesOptions {
     /**
      * A partial fill for each point, typically used to visualize how much
      * of a task is performed. The partial fill object can be set either on
-     * series or point level.
+     * series or point level. When set as a number, works as
+     * `{ amount: number }`.
      *
      * @sample {highcharts} highcharts/demo/x-range
      *         X-range with partial fill
      *
      * @product highcharts highstock gantt
      */
-    partialFill?: XRangePointPartialFillOptions;
+    partialFill?: (number|XRangePointPartialFillOptions);
 
+    /** @internal */
     pointRange?: number;
 
     states?: SeriesStatesOptions<XRangeSeriesOptions>;
