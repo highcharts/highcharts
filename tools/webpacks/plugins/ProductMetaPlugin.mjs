@@ -142,6 +142,8 @@ export class ProductMetaPlugin {
         const options = this.options;
         const filepath = Path.join(outputOptions.path, outputOptions.filename);
 
+        // Use one file descriptor for reading and writing so replacing the
+        // pathname between these steps cannot redirect writes to another file.
         updateFile(filepath, content => {
             let productMatch = content.indexOf('@product.');
             // Use the last match - should be the one from ts/masters.
