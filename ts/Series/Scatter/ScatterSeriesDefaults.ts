@@ -117,12 +117,14 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
      */
 
     /**
-     * A configuration object for the tooltip rendering of each single
-     * series. Properties are inherited from [tooltip](#tooltip).
-     * Overridable properties are `headerFormat`, `pointFormat`,
-     * `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other
-     * series, in a scatter plot the series.name by default shows in the
-     * headerFormat and point.x and point.y in the pointFormat.
+     * The tooltip options for each individual series. Properties are inherited
+     * from [tooltip](#tooltip). Overridable properties are `headerFormat`,
+     * `pointFormat`, `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`.
+     *
+     * By default, the header displays the point name, category or datetime
+     * value, and is left out for plain numeric x values. The body displays the
+     * x and y values, or only the y value when the x value is already shown in
+     * the header.
      *
      * @product highcharts highstock highmaps
      */
@@ -130,9 +132,23 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
         /**
          * @product highcharts highstock
          */
-        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
-        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+        headerFormat: '{#if point.name}' +
+            '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>' +
+            '{else}{#if series.xAxis.categories}' +
+            '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>' +
+            '{else}{#if series.xAxis.dateTime}' +
+            '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>' +
+            '{/if}{/if}{/if}',
+        /**
+         * @product highcharts highstock
+         */
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '{series.name}: {#if series.xAxis.categories}<b>{point.y}</b>' +
+            '{else}{#if point.name}' +
+            '[<b>{point.category}</b>, <b>{point.y}</b>]' +
+            '{else}{#if series.xAxis.dateTime}<b>{point.y}</b>' +
+            '{else}[<b>{point.category}</b>, <b>{point.y}</b>]' +
+            '{/if}{/if}{/if}<br/>'
     }
 
 };

@@ -60,6 +60,8 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
     legendSymbol: 'lineMarker',
     stickyTracking: true,
     tooltip: {
+        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
         pointFormat: '{#if point.name}{point.name}{else}Lat: {point.lat}, Lon: {point.lon}{/if}'
     }
 
