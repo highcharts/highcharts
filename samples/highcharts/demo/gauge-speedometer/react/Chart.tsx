@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
-import { Chart, Title, YAxis } from '@highcharts/react';
+import { Chart, Highcharts, Title, YAxis } from '@highcharts/react';
 import { GaugeSeries } from '@highcharts/react/series/Gauge';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
