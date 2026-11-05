@@ -1,3 +1,10 @@
+---
+description: >-
+  Build a gauge from a single value, set its value range and plot bands, and
+  adjust the pane, ticks, dial, and pivot. The guide also covers solid
+  gauges, concentric rings, and combining gauge types.
+---
+
 Angular gauges
 ==============
 

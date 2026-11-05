@@ -1,3 +1,10 @@
+---
+description: >-
+  Use ESM imports for only the chart components, series, and modules you
+  render; keep product bundles out unless needed, configure production
+  bundling correctly, and inspect the result with an analyzer.
+---
+
 # Bundling and tree shaking
 
 Highcharts React is ESM-first and designed to work with modern bundlers.

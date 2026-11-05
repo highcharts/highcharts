@@ -1,3 +1,10 @@
+---
+description: >-
+  Use vertical columns to compare categories, remove padding and shadows to
+  approximate a histogram, and stack series to show cumulative totals.
+  Includes chart examples and the column options reference.
+---
+
 Column chart
 ============
 

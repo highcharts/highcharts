@@ -95,6 +95,27 @@ abstract class DataConnector implements DataEventEmitter<Event> {
         );
     }
 
+    /**
+     * Converts a data refresh rate in seconds into a polling interval in
+     * milliseconds. Invalid values fall back to one second.
+     *
+     * @param {unknown} dataRefreshRate
+     * Data refresh rate in seconds.
+     *
+     * @return {number}
+     * Polling interval in milliseconds.
+     */
+    public static getPollingInterval(
+        dataRefreshRate: unknown
+    ): number {
+        const refreshSeconds = Number(dataRefreshRate);
+        return (
+            Number.isFinite(refreshSeconds) ?
+                Math.max(refreshSeconds, 1) :
+                1
+        ) * 1000;
+    }
+
     /* *
      *
      *  Properties
@@ -311,10 +332,11 @@ abstract class DataConnector implements DataEventEmitter<Event> {
             if ('enablePolling' in options && options.enablePolling) {
                 this.stopPolling();
                 this.startPolling(
-                    (
-                        'dataRefreshRate' in options &&
-                        typeof options.dataRefreshRate === 'number'
-                    ) ? Math.max(options.dataRefreshRate, 1) * 1000 : 1000
+                    DataConnector.getPollingInterval(
+                        'dataRefreshRate' in options ?
+                            options.dataRefreshRate :
+                            void 0
+                    )
                 );
             } else {
                 this.stopPolling();
@@ -384,6 +406,9 @@ abstract class DataConnector implements DataEventEmitter<Event> {
         refreshTime: number = 1000
     ): void {
         const connector = this;
+        const pollingInterval = Number.isFinite(refreshTime) ?
+            refreshTime :
+            1000;
 
         // Assign a new abort controller.
         this.pollingController = new AbortController();
@@ -402,10 +427,10 @@ abstract class DataConnector implements DataEventEmitter<Event> {
                 )
                 .then((): void => {
                     if (connector._polling) {
-                        connector.startPolling(refreshTime);
+                        connector.startPolling(pollingInterval);
                     }
                 })
-            , refreshTime
+            , pollingInterval
         );
     }
 

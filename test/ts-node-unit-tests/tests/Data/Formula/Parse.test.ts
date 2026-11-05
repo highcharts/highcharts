@@ -75,6 +75,25 @@ describe('Formula.parseFormula', () => {
         );
     });
 
+    it('should keep comma decimals with alternative separators', () => {
+        const cases: Array<[string, number]> = [
+            ['SUM(1,5;2,25)', 3.75],
+            ['1,5*2', 3],
+            ['1,5+2,5', 4],
+            ['-1,5', -1.5],
+            ['1,5e+2', 150],
+            ['SUM(1,5;SUM(0,25;0,5))', 2.25]
+        ];
+
+        for (const [text, expected] of cases) {
+            strictEqual(
+                Formula.processFormula(Formula.parseFormula(text, true)),
+                expected,
+                `Formula \`${text}\` should process to ${expected}.`
+            );
+        }
+    });
+
     it('should parse and process <=', () => {
         const formula = Formula.parseFormula('1 <= 1', false);
 

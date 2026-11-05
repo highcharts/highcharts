@@ -39,8 +39,8 @@ import type {
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               params, pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/ao
+ * @requires     indicators/indicators
+ * @requires     indicators/ao
  * @interface Highcharts.AOOptions
  */
 export interface AOOptions extends SMAOptions {

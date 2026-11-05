@@ -1,3 +1,10 @@
+---
+description: >-
+  Choose between dedicated series components and the generic Series component,
+  pass options as props, load required modules when needed, and compare
+  available series across Core, Stock, Maps, and Gantt.
+---
+
 # Series types
 
 You can add a series to your chart using the generic `Series` component or a dedicated component like `ColumnSeries`.

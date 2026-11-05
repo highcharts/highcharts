@@ -25,11 +25,16 @@ import type OrganizationSeries from './OrganizationSeries';
 import type { OrganizationSeriesNodeOptions } from './OrganizationSeriesOptions';
 import type SankeyPoint from './../Sankey/SankeyPoint';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    sankey: { prototype: { pointClass: SankeyPointClass } }
-} = SeriesRegistry.seriesTypes;
+import SankeySeries from '../Sankey/SankeySeries.js';
 import { defined, find } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const SankeyPointClass = SankeySeries.prototype.pointClass;
 
 /* *
  *
@@ -72,24 +77,33 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
+    /** @internal */
     public description?: string;
 
+    /** @internal */
     public fromNode!: OrganizationPoint;
 
+    /** @internal */
     public image?: OrganizationSeriesNodeOptions['image'];
 
+    /** @internal */
     public linksFrom!: Array<OrganizationPoint>;
 
+    /** @internal */
     public linksTo!: Array<OrganizationPoint>;
 
+    /** @internal */
     public nodeHeight?: number;
 
     public options!: OrganizationPointOptions;
 
+    /** @internal */
     public series!: OrganizationSeries;
 
+    /** @internal */
     public title?: string;
 
+    /** @internal */
     public toNode!: OrganizationPoint;
 
     /* *

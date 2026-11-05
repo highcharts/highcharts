@@ -1,3 +1,11 @@
+---
+description: >-
+  Transform cartesian chart types into polar coordinates with one chart
+  option, then configure panes, angles, centers, and point placement. The
+  article explains how axes and common series features behave in this
+  layout.
+---
+
 Polar (Radar) chart
 ===================
 

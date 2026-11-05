@@ -19,14 +19,12 @@
  * */
 
 import type Chart from '../../Chart/Chart';
-import type Series from '../../Series/Series';
 import type { StackOverflowValue } from './StackingOptions';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 
 import { getDeferredAnimation } from '../../Animation/AnimationUtilities.js';
 import Axis from '../Axis.js';
-import SeriesRegistry from '../../Series/SeriesRegistry.js';
-const { series: { prototype: seriesProto } } = SeriesRegistry;
+import Series from '../../Series/Series.js';
 import StackItem from './StackItem.js';
 import {
     addEvent,
@@ -306,7 +304,7 @@ function seriesSetGroupedPoints(
             // With only one series, we don't need to consider centerInCategory
             this.chart.series.length > 1
         ) {
-            seriesProto.setStackedPoints.call(this, axis, 'group');
+            Series.prototype.setStackedPoints.call(this, axis, 'group');
 
         // After updating, if we now have proper stacks, we must delete the
         // group pseudo stacks (#14980)

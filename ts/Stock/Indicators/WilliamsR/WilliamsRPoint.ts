@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class WilliamsRPoint extends SMAPoint {
+    /** @internal */
     public series: WilliamsRIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class WilliamsRPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default WilliamsRPoint;

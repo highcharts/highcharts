@@ -24,10 +24,8 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import AroonIndicator from '../Aroon/AroonIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    aroon: AroonIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -39,7 +37,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Aroon Oscillator series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.aroonoscillator
  *
@@ -68,10 +65,11 @@ class AroonOscillatorIndicator extends AroonIndicator {
      *               joinBy, keys, navigatorOptions, pointInterval,
      *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
      *               showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/aroon
-     * @requires     stock/indicators/aroon-oscillator
+     * @requires     indicators/indicators
+     * @requires     indicators/aroon
+     * @requires     indicators/aroon-oscillator
      * @optionparent plotOptions.aroonoscillator
+     * @internal
      */
     public static defaultOptions: AroonOscillatorOptions = merge(AroonIndicator.defaultOptions, {
         tooltip: {
@@ -95,6 +93,7 @@ class AroonOscillatorIndicator extends AroonIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: AroonOscillatorParamsOptions
@@ -157,7 +156,6 @@ MultipleLinesComposition.compose(AroonIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroonoscillator: typeof AroonOscillatorIndicator;
@@ -172,7 +170,6 @@ SeriesRegistry.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
  *
  * */
 
-/** @internal */
 export default AroonOscillatorIndicator;
 
 /* *
@@ -192,9 +189,9 @@ export default AroonOscillatorIndicator;
  *            joinBy, keys, navigatorOptions, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/aroon
- * @requires  stock/indicators/aroon-oscillator
+ * @requires  indicators/indicators
+ * @requires  indicators/aroon
+ * @requires  indicators/aroon-oscillator
  * @apioption series.aroonoscillator
  */
 

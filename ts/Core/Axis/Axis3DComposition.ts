@@ -32,12 +32,11 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
 const { composed, deg2rad } = H;
-import Math3D from '../Math3D.js';
-const {
+import {
     perspective,
     perspective3D,
     shapeArea
-} = Math3D;
+} from '../Math3D.js';
 import Tick3D from './Tick3DComposition.js';
 import { addEvent, merge, pushUnique, wrap } from '../../Shared/Utilities.js';
 

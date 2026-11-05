@@ -15,8 +15,8 @@ async function api2() {
     const processLib = require('../../libs/process');
 
     await fsLib.deleteFile('tree-database.json');
-    await processLib.exec('npx ts-node tools/api-docs/dashboards-options');
-    await processLib.exec('npx ts-node tools/api-docs/server', { silent: 0 });
+    await processLib.exec('node --import tsx tools/api-docs/dashboards-options.ts');
+    await processLib.exec('node --import tsx tools/api-docs/server.ts', { silent: 0 });
 
 }
 

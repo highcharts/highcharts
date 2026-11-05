@@ -1,3 +1,10 @@
+---
+description: >-
+  Define one or more task dependencies with the dependency property, then
+  customize connector paths, markers, colors, and dash styles globally, per
+  series, or for an individual dependency.
+---
+
 Dependencies between tasks
 ===
 

@@ -24,12 +24,17 @@ import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
 import type WordcloudUtils from './WordcloudUtils';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: { prototype: { pointClass: ColumnPoint } }
-} = SeriesRegistry.seriesTypes;
+import ColumnSeries from '../Column/ColumnSeries.js';
 import WordcloudSeries from './WordcloudSeries';
 import { extend } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *
@@ -45,12 +50,18 @@ class WordcloudPoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public dimensions!: SizeObject;
+    /** @internal */
     public lastCollidedWith?: WordcloudPoint;
     public options!: WordcloudPointOptions;
+    /** @internal */
     public polygon?: WordcloudUtils.PolygonObject;
+    /** @internal */
     public rect?: PolygonBoxObject;
+    /** @internal */
     public rotation?: (boolean|number);
+    /** @internal */
     public series!: WordcloudSeries;
 
     /* *
@@ -59,6 +70,7 @@ class WordcloudPoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return true;
     }
@@ -72,6 +84,7 @@ class WordcloudPoint extends ColumnPoint {
  * */
 
 interface WordcloudPoint {
+    /** @internal */
     weight: number;
 }
 

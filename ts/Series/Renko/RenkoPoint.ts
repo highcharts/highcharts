@@ -21,12 +21,15 @@
 import type RenkoSeries from './RenkoSeries';
 import type RenkoPointOptions from './RenkoPointOptions';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: {
-        prototype: { pointClass: ColumnPoint }
-    }
-} = SeriesRegistry.seriesTypes;
+import ColumnSeries from '../Column/ColumnSeries.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *
@@ -36,8 +39,11 @@ const {
 
 class RenkoPoint extends ColumnPoint {
     public options!: RenkoPointOptions;
+    /** @internal */
     public upTrend!: boolean;
+    /** @internal */
     public series!: RenkoSeries;
+    /** @internal */
     public getClassName(): string {
         return (
             super.getClassName.call(this) +

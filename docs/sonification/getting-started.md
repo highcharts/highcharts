@@ -1,3 +1,10 @@
+---
+description: >-
+  Load the sonification module and add a control to play a chart, then set
+  duration, playback order, and tracks. The walkthrough covers default
+  instruments, global and context tracks, and play markers.
+---
+
 Getting Started with Audio Charts
 ===
 

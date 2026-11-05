@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         scrollablePlotArea: {
             minWidth: 700,
             scrollPositionX: 1
-        }
+        },
+        spacingBottom: 22
     },
     title: {
         text: 'Scrollable plot area'

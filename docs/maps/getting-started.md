@@ -1,3 +1,10 @@
+---
+description: >-
+  Load Highcharts Maps as a standalone script or plugin, provide geometry
+  from TopoJSON or GeoJSON, and initialize a map chart. The guide shows
+  options for map sources and joining data to regions.
+---
+
 Getting started with Highcharts Maps
 ===
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Identify the main parts of a Highcharts chart and understand how titles,
+  series, tooltips, legends, and axes describe or organize data, with links to
+  more detailed explanations.
+---
+
 Understanding Highcharts
 ========================
 

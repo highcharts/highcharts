@@ -1,3 +1,10 @@
+---
+description: >-
+  Represent a distribution with minimum, quartiles, median, and maximum,
+  then provide point data as objects or arrays. The guide shows how to label
+  individual statistics and style boxes, stems, and whiskers.
+---
+
 Box plot series
 ===
 

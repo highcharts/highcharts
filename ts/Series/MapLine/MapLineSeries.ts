@@ -49,6 +49,7 @@ class MapLineSeries extends MapSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: MapLineSeriesOptions = merge(
         MapSeries.defaultOptions,
         MapLineSeriesDefaults

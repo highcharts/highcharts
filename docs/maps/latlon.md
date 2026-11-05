@@ -1,3 +1,10 @@
+---
+description: >-
+  For legacy maps, configure latitude and longitude support with proj4js and
+  an hc-transform projection. The article shows how to place map points,
+  define multiple transform zones, and convert coordinates.
+---
+
 Latitude/longitude
 ===
 

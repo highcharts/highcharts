@@ -23,11 +23,16 @@ import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    scatter: { prototype: { pointClass: ScatterPoint } }
-} = SeriesRegistry.seriesTypes;
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { clamp, defined, extend } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *
@@ -45,14 +50,19 @@ class HeatmapPoint extends ScatterPoint {
 
     public options!: HeatmapPointOptions;
 
+    /** @internal */
     public pointPadding?: number;
 
+    /** @internal */
     public series!: HeatmapSeries;
 
+    /** @internal */
     public value!: (number|null);
 
+    /** @internal */
     public x!: number;
 
+    /** @internal */
     public y!: number;
 
     /* *

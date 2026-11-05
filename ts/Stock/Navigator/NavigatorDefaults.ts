@@ -141,6 +141,7 @@ const NavigatorDefaults: NavigatorOptions = {
          * @sample {highstock} stock/navigator/handles-border-radius/
          *      Border radius on the navigator handles.
          *
+         * @type {number|string}
          * @since 11.4.2
          */
         borderRadius: 0,
@@ -212,7 +213,7 @@ const NavigatorDefaults: NavigatorOptions = {
     /**
      * The color of the mask covering the areas of the navigator series
      * that are currently not visible in the main series. The default
-     * color is bluish with an opacity of 0.3 to see the series below.
+     * color is semi-transparent to see the series below.
      *
      * @see In styled mode, the mask is styled with the
      *      `.highcharts-navigator-mask` and

@@ -138,6 +138,7 @@ module.exports = {
                     'grid/rows/data',
                     'grid/rows/tree-view',
                     'grid/rows/grouping',
+                    'grid/rows/summary-rows',
                     'grid/rows/pinning',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
@@ -188,7 +189,16 @@ module.exports = {
                     'grid/frameworks/index',
                     'grid/frameworks/angular',
                     'grid/frameworks/nextjs',
-                    'grid/frameworks/react',
+                    {
+                        'React': [
+                            'grid/frameworks/react/getting-started',
+                            'grid/frameworks/react/grid',
+                            'grid/frameworks/react/components',
+                            'grid/frameworks/react/column',
+                            'grid/frameworks/react/data',
+                            'grid/frameworks/react/styling'
+                        ]
+                    },
                     'grid/frameworks/vue'
                 ]
             }

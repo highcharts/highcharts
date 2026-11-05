@@ -611,7 +611,7 @@ namespace OrdinalAxis {
             (!e.touches || e.touches.length <= 1)
         ) {
 
-            const mouseDownX = chart.mouseDownX,
+            const { lastPanX = 0 } = chart,
                 extremes = xAxis.getExtremes(),
                 dataMin = extremes.dataMin,
                 dataMax = extremes.dataMax,
@@ -628,7 +628,7 @@ namespace OrdinalAxis {
                 ),
                 // How many ordinal units did we move?
                 movedUnits = Math.round(
-                    ((mouseDownX as any) - chartX) / pointPixelWidth
+                    (lastPanX - chartX) / pointPixelWidth
                 ),
                 // Get index of all the chart's points
                 extendedOrdinalPositions = xAxis.ordinal.getExtendedPositions(),
@@ -727,7 +727,7 @@ namespace OrdinalAxis {
                     );
                 }
 
-                chart.mouseDownX = chartX; // Set new reference for next run
+                chart.lastPanX = chartX; // Set new reference for next run
                 css(chart.container, { cursor: 'move' });
             }
 

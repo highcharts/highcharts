@@ -22,15 +22,17 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FlagsPointOptions from './FlagsPointOptions';
 import type FlagsSeries from './FlagsSeries';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
+import ColumnSeries from '../Column/ColumnSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const {
-    column: {
-        prototype: {
-            pointClass: ColumnPoint
-        }
-    }
-} = SeriesRegistry.seriesTypes;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *
@@ -38,7 +40,6 @@ const {
  *
  * */
 
-/** @internal */
 class FlagsPoint extends ColumnPoint {
 
     /* *
@@ -47,26 +48,36 @@ class FlagsPoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public _y?: number;
 
+    /** @internal */
     public anchorX?: number;
 
     public options!: FlagsPointOptions;
 
+    /** @internal */
     public series!: FlagsSeries;
 
+    /** @internal */
     public fillColor?: ColorType;
 
+    /** @internal */
     public lineWidth?: number;
 
+    /** @internal */
     public raised?: boolean;
 
+    /** @internal */
     public stackIndex?: number;
 
+    /** @internal */
     public style?: CSSObject;
 
+    /** @internal */
     public ttBelow?: boolean = false;
 
+    /** @internal */
     public unbindMouseOver?: Function;
 
     /* *
@@ -101,5 +112,4 @@ class FlagsPoint extends ColumnPoint {
  *
  * */
 
-/** @internal */
 export default FlagsPoint;

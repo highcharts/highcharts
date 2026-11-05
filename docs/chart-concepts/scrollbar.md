@@ -1,3 +1,10 @@
+---
+description: >-
+  Compare native scrolling for a narrow plot area with axis scrollbars
+  supplied by Highcharts Stock. Learn how each approach works and find
+  examples for bar charts, heatmaps, and stock charts.
+---
+
 Scrollbars
 ===
 
@@ -16,6 +23,10 @@ These scrollbars are applied by setting a [scrollablePlotArea with a minWidth](h
 These scrollbars are enabled per axis and appear next to the axis. Scrollbars can be applied to any axis in Highcharts Stock.
 
 The full documentation and available options can be seen in our [API docs](https://api.highcharts.com/highstock/yAxis.scrollbar) for Highcharts Stock.
+
+In Highcharts Stock charts, the scrollbar is shown below the navigator by default. It is controlled by the top-level [`scrollbar`](https://api.highcharts.com/highstock/scrollbar) option, so `scrollbar: { enabled: false }` hides it. The navigator is a separate component and can be hidden with `navigator: { enabled: false }`. Together they form the navigation area at the bottom of the chart. To hide that whole area, for example on small screens, disable both.
+
+Setting `xAxis: { scrollbar: { enabled: true } }` adds another, separate [X axis scrollbar](https://api.highcharts.com/highstock/xAxis.scrollbar.enabled), which is disabled by default. A [Y axis scrollbar](https://api.highcharts.com/highstock/yAxis.scrollbar.enabled) can be enabled the same way, with `yAxis: { scrollbar: { enabled: true } }`. The `xAxis.scrollbar` option does not replace or configure the scrollbar below the navigator, so both are shown. To control the scrollbar below the navigator, use the top-level `scrollbar` option instead.
 
 Scrollbars are not limited to stock charts or Y axis. Using the _highstock.js_ file, it can be applied to regular Highcharts axes too. See examples of:
 

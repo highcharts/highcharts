@@ -30,10 +30,7 @@ const {
     deg2rad
 } = H;
 import Pie3DPoint from './Pie3DPoint.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
+import PieSeries from '../Pie/PieSeries.js';
 import { extend, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
@@ -68,6 +65,7 @@ class Pie3DSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series
     ): void {

@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure the Goal Analysis connector with savings, contributions, portfolio
+  asset-class weights, a target, and a time horizon to request probabilities
+  of meeting financial goals under market assumptions.
+---
+
 # Goal Analysis
 
 The Morningstar **Goal Analysis** service calculates the probabilities of an

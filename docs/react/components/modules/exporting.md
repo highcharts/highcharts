@@ -1,3 +1,10 @@
+---
+description: >-
+  Load chart exporting with the Exporting component, pass exporting API
+  options as props, and provide separate chartOptions for the chart produced
+  by an export, including its title.
+---
+
 # Exporting
 
 You can add the [exporting module](https://www.highcharts.com/docs/export-module/export-module-overview) to your chart using the `Exporting` component:

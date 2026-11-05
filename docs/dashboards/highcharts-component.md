@@ -1,3 +1,10 @@
+---
+description: >-
+  Connect Highcharts to Dashboards, define chart options or data connectors,
+  map table columns to series points, use multiple connectors, and configure
+  highlight, visibility, or extremes synchronization.
+---
+
 # Highcharts Component
 
 The **Highcharts** Component allows the end-user to define a chart in the dashboard. Charts are generally used to visualize changing data.
