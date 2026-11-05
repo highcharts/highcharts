@@ -83,18 +83,44 @@ import type VennPointOptions from './VennPointOptions';
  */
 export interface VennSeriesOptions extends ScatterSeriesOptions {
 
+    /**
+     * The color of the border surrounding each circle or ellipse.
+     *
+     * @default 'var(--highcharts-neutral-color-20)'
+     */
     borderColor?: ColorString;
 
+    /**
+     * The dash style of the border surrounding each circle or ellipse.
+     *
+     * @default 'solid'
+     */
     borderDashStyle?: DashStyleValue;
 
+    /**
+     * The width of the border surrounding each circle or ellipse.
+     *
+     * @default 1
+     */
     borderWidth?: number;
 
+    /** @internal */
     brighten?: number;
 
     brightness?: number;
 
+    /**
+     * Whether to clip the series to the plot area.
+     *
+     * @default false
+     */
     clip?: boolean;
 
+    /**
+     * Whether to give each point an individual color.
+     *
+     * @default true
+     */
     colorByPoint?: boolean;
 
     /**
@@ -126,16 +152,31 @@ export interface VennSeriesOptions extends ScatterSeriesOptions {
 
     /**
      * @ignore-option
+     *
+     * @default 'point'
      */
     legendType?: ('point'|'series');
 
     /**
      * @ignore-option
+     *
+     * @default false
      */
     marker?: PointMarkerOptions;
 
+    /**
+     * Opacity for the circles in the Venn diagram.
+     *
+     * @default 0.75
+     */
     opacity?: number;
 
+    /**
+     * Whether to display this particular series or series type in the
+     * legend.
+     *
+     * @default false
+     */
     showInLegend?: boolean;
 
     states?: SeriesStatesOptions<VennSeriesOptions>;
