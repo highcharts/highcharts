@@ -6,10 +6,10 @@ import { expect, setupRoutes, test } from '~/fixtures.ts';
 /**
  * The page size the tests' layouts and mouse coordinates expect.
  */
-export const testViewport = { width: 1000, height: 660 };
+const testViewport = { width: 1000, height: 660 };
 
 // Fail with a clear error before the test times out
-export const waitTimeout = 10000;
+const waitTimeout = 10000;
 
 /**
  * Opens one page for all tests in the current `describe`. The tests run in
@@ -129,53 +129,4 @@ export function expectClose(
     message?: string
 ): void {
     expect(Math.abs(actual - expected), message).toBeLessThanOrEqual(delta);
-}
-
-/**
- * Types at the end of the current value, keeping it.
- */
-export async function typeAtEnd(input: Locator, text: string): Promise<void> {
-    await input.click();
-    await input.press('End');
-    await input.pressSequentially(text);
-}
-
-/**
- * Drags the mouse from 30% to 60% of the element width.
- */
-async function dragAcross(chart: Locator, modifier?: 'Shift'): Promise<void> {
-    const mouse = chart.page().mouse;
-    const keyboard = chart.page().keyboard;
-    const box = await chart.boundingBox();
-
-    if (!box) {
-        throw new Error('The chart is not visible');
-    }
-
-    const y = box.y + box.height / 2;
-
-    if (modifier) {
-        await keyboard.down(modifier);
-    }
-    await mouse.move(box.x + box.width * 0.3, y);
-    await mouse.down();
-    await mouse.move(box.x + box.width * 0.6, y, { steps: 5 });
-    await mouse.up();
-    if (modifier) {
-        await keyboard.up(modifier);
-    }
-}
-
-/**
- * Zooms a chart by selecting a range.
- */
-export async function zoomChart(chart: Locator): Promise<void> {
-    await dragAcross(chart);
-}
-
-/**
- * Pans a chart by dragging with Shift.
- */
-export async function panChart(chart: Locator): Promise<void> {
-    await dragAcross(chart, 'Shift');
 }

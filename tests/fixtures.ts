@@ -436,11 +436,6 @@ async function replaceSamplePage(route: Route) {
         throw new Error(`Missing sample for ${pathname}`);
     }
 
-    const js = await read('demo.js');
-    const script = js ?
-        `<script>${js}</script>` :
-        `<script type="module">${await read('demo.mjs')}</script>`;
-
     test.info().annotations.push({
         type: 'redirect',
         description: `${pathname} --> samples${pathname}`
@@ -452,23 +447,8 @@ async function replaceSamplePage(route: Route) {
 <meta charset="utf-8">
 <style>${await read('demo.css')}</style>
 <div id="demo-content">${html}</div>
-${script}`
+<script>${await read('demo.js')}</script>`
     });
-}
-
-/**
- * Serves `/code/` from the local build, for samples that import ES modules by
- * relative paths.
- */
-async function replaceLocalCode(route: Route) {
-    const { pathname } = new URL(route.request().url());
-
-    try {
-        await route.fulfill({ path: join(__dirname, '..', pathname) });
-    } catch {
-        await route.abort();
-        throw new Error(`Missing local file for ${pathname}`);
-    }
 }
 
 export async function setupRoutes(page: Page){
@@ -507,13 +487,6 @@ export async function setupRoutes(page: Page){
                         localPath = join('css', 'grid', 'grid-lite.css');
                     } else if (relativePath === 'grid-pro/grid-pro.css') {
                         localPath = join('css', 'grid', 'grid-pro.css');
-                    } else if (
-                        /^grid-(?:lite|pro)\/css\/[\w-]+\.css$/u.test(relativePath)
-                    ) {
-                        // Including the files the main CSS imports
-                        localPath = join(
-                            'css', 'grid', relativePath.split('/').pop()
-                        );
                     } else {
                         await route.abort();
                         return;
@@ -1044,11 +1017,6 @@ export async function setupRoutes(page: Page){
                 pattern: url => url.hostname === 'localhost' &&
                     /^\/(?:dashboards|highcharts)\//u.test(url.pathname),
                 handler: replaceSamplePage
-            },
-            {
-                pattern: url => url.hostname === 'localhost' &&
-                    url.pathname.startsWith('/code/'),
-                handler: replaceLocalCode
             },
             {
                 pattern: '**/testimage.png',

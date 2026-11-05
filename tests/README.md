@@ -411,6 +411,11 @@ test('chart with custom CSS', async ({ page }) => {
 });
 ```
 
+### Shared Helpers
+
+Helpers for tests that drive a page like a user are in `tests/helpers.ts`;
+chart, stock tools and annotation helpers are in `tests/highcharts/helpers.ts`.
+
 ## Best Practices
 
 ### Keep Tests Isolated
@@ -548,6 +553,7 @@ The following URL patterns are automatically rewritten:
 | `**/grid-lite.js`, `**/grid-pro.js` | `code/grid/` | Grid modules |
 | `**/grid-lite.css`, `**/grid-pro.css` | `css/grid/` | Grid styles, including jsDelivr's `css/` URLs |
 | `/grid-lite/**`, `/grid-pro/**`, `/samples/grid-lite/**`, `/samples/grid-pro/**` | `samples/grid-lite/`, `samples/grid-pro/` | Grid samples; npm asset paths use the library rewrites above |
+| `http://localhost/dashboards/**`, `http://localhost/highcharts/**` | `samples/dashboards/`, `samples/highcharts/` | Samples as pages: `demo.html` in `#demo-content`, with `demo.css` and `demo.js` inlined |
 | `**/{samples/graphics}/**` | `samples/graphics/` | Sample graphics |
 | `**/testimage.png` | `test/testimage.png` | Test image |
 | `**/shim.html` | Empty HTML page | Shim page |
