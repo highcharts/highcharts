@@ -76,7 +76,7 @@
     "@cypress-audit/lighthouse": "1.4.2",
     "@eslint/plugin-kit": "0.6.0",
     "@highcharts/connectors-morningstar": "3.2.0",
-    "@highcharts/eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.1.2",
+    "@highcharts/eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#8f34cc431cda534638df40cebd58078bbe8aab75",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.6",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.4.4",
     "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.20",
