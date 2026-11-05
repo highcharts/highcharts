@@ -17,9 +17,9 @@ export default function ColumnPlacementChart() {
             <Title>Efficiency Optimization by Branch</Title>
             <XAxis categories={['Seattle HQ', 'San Francisco', 'Tokyo']} />
             <YAxis min={0}>Employees</YAxis>
-            <YAxis opposite={true}>Profit (millions)</YAxis>
+            <YAxis opposite>Profit (millions)</YAxis>
             <Legend shadow={false} />
-            <Tooltip shared={true} />
+            <Tooltip shared />
             <PlotOptions
                 column={{
                     grouping: false,

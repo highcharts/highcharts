@@ -42,10 +42,10 @@ export default function SplineSymbolsChart() {
                     'Dec'
                 ]}
                 accessibility={{ description: 'Months of the year' }}
-                crosshair={true}
+                crosshair
             />
             <YAxis labels={{ format: '{value}°' }}>Temperature</YAxis>
-            <Tooltip shared={true} />
+            <Tooltip shared />
             <PlotOptions
                 spline={{
                     marker: {

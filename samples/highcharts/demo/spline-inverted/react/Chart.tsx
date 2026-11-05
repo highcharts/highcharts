@@ -14,7 +14,7 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function SplineInvertedChart() {
     return (
-        <Chart inverted={true}>
+        <Chart inverted>
             <Title>Atmosphere Temperature by Altitude</Title>
             <Subtitle>According to the Standard Atmosphere Model</Subtitle>
             <XAxis
@@ -22,7 +22,7 @@ export default function SplineInvertedChart() {
                 labels={{ format: '{value} km' }}
                 accessibility={{ rangeDescription: 'Range: 0 to 80 km.' }}
                 maxPadding={0.05}
-                showLastLabel={true}
+                showLastLabel
             >
                 Altitude
             </XAxis>

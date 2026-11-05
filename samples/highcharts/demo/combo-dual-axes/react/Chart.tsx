@@ -64,7 +64,7 @@ export default function ComboDualAxesChart() {
                     YR
                 </a>
             </Credits>
-            <XAxis type="category" crosshair={true} />
+            <XAxis type="category" crosshair />
             {/* Primary yAxis */}
             <YAxis
                 labels={{
@@ -82,11 +82,11 @@ export default function ComboDualAxesChart() {
                 }}
                 lineColor="var(--highcharts-color-0)"
                 lineWidth={2}
-                opposite={true}
+                opposite
             >
                 Precipitation
             </YAxis>
-            <Tooltip shared={true} />
+            <Tooltip shared />
             <Legend align="left" verticalAlign="top" />
             <PlotOptions
                 series={{

@@ -47,7 +47,7 @@ export default function ColumnStackedPercentChart() {
                     <td> ({point.percentage:.0f}%)</td>
                 </tr>`}
                 footerFormat="</table>"
-                shared={true}
+                shared
             />
             <PlotOptions
                 column={{

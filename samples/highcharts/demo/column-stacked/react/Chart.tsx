@@ -41,7 +41,7 @@ export default function ColumnStackedChart() {
                 x={70}
                 verticalAlign="top"
                 y={70}
-                floating={true}
+                floating
                 backgroundColor="var(--highcharts-background-color, #ffffff)"
                 borderColor="var(--highcharts-neutral-color-20, #cccccc)"
                 borderWidth={1}
