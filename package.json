@@ -156,6 +156,9 @@
     "tests/"
   ],
   "overrides": {
+    "@docusaurus/core": {
+      "tinypool": "2.1.2"
+    },
     "gulp-jsdoc3": {
       "jsdoc": "^4.0.3"
     },
