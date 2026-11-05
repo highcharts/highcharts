@@ -1,3 +1,10 @@
+---
+description: >-
+  Look up which Highcharts option receives child content from each option
+  component, and set _HCReact.childOption to change that component’s child
+  binding across all instances in your application.
+---
+
 # Appendix A: Option Component children
 
 The table below shows what Highcharts option the child content of each option

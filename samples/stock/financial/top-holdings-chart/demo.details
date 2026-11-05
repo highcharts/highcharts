@@ -1,0 +1,8 @@
+---
+name: Top Holdings Chart
+description: Shows the top 5 portfolio holdings as a bubble chart with a data grid.
+tags:
+  - Dashboards
+  - Morningstar
+js_wrap: b
+...

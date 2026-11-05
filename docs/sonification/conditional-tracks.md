@@ -1,3 +1,10 @@
+---
+description: >-
+  Use activeWhen on instrument or speech tracks to play only when a callback
+  or configuration condition matches. The example creates chart zones with
+  different audio settings and points to notification use.
+---
+
 Conditional Tracks
 ===
 

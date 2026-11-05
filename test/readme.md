@@ -22,6 +22,9 @@ npx gulp test --modified
 npm test
 ```
 
+For browser selection or individual test paths, use Playwright directly.
+`gulp test` rejects the former Karma browser, filtering and reporter options.
+
 ### Running Timezone Tests
 
 Timezone tests verify that Highcharts handles time conversions correctly across
@@ -31,39 +34,33 @@ different browser timezones:
 npx playwright test --project=setup-highcharts --project=highcharts tests/highcharts/time/
 ```
 
-## Visual Tests (Karma)
+## Visual Tests (Playwright)
 
-Visual comparison tests still use Karma for generating and comparing SVG
-reference images:
+Visual comparison tests run in Chromium through Playwright. Install the
+Playwright browser before running them:
 
 ```bash
-# Generate reference images
-npx karma start test/karma-conf.js --tests highcharts/*/* --reference
-
-# Compare against reference
-npx karma start test/karma-conf.js --tests highcharts/*/* --visualcompare
+npx playwright install chromium
 ```
 
-The Playwright manifest in `tests/visual/samples.json` covers the same eligible
-sample set as Karma, using shared exclusions. Same-repository PR runs publish
-the Playwright results to production Visual Review; the latest published
-run replaces the current review for that PR. Karma only uploads GitHub Actions
-artifacts and posts an artifact-linked comment; it does not publish to production
-Visual Review. Generate references and compare
-candidates with:
+Playwright discovers eligible samples using the shared visual exclusions in
+`test/visual-test-samples.js`. Same-repository PR runs publish the Playwright
+results to production Visual Review; the latest published run replaces the
+current review for that PR. Generate references and compare candidates with:
 
 ```bash
-VISUAL_TEST_MANIFEST=tests/visual/samples.json \
 VISUAL_TEST_REFERENCE=1 \
-npx playwright test tests/visual/visual.spec.ts --project=visual
+npm run test:pw:visual
 
-VISUAL_TEST_MANIFEST=tests/visual/samples.json \
-npx playwright test tests/visual/visual.spec.ts --project=visual
+npm run test:pw:visual
 ```
 
-`VISUAL_TEST_MANIFEST` selects exact sample IDs. Explicit IDs excluded by Karma
-are rejected, and a manifest cannot be combined with `VISUAL_TEST_PATH`.
-Without a manifest, discovery applies the shared Karma exclusions. See
+`VISUAL_TEST_MANIFEST` selects exact sample IDs. Explicit IDs excluded by the
+shared visual exclusions are rejected. A manifest cannot be combined with
+`VISUAL_TEST_PATH`, which filters sample paths by substring for focused local
+runs. Without a manifest, new eligible samples are discovered automatically.
+The former `gulp test --reference` and `gulp test --visualcompare` entrypoints
+are retired; use the Playwright commands above. See
 [Playwright production publishing](../tests/README.md#production-publishing)
 for upload and completion requirements.
 

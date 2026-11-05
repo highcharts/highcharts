@@ -1,3 +1,11 @@
+---
+description: >-
+  Load pre-generated maps, join data through hc-key, and inspect map
+  properties for labels and drilldown. The article explains licensing,
+  combining or filtering map regions, choosing formats, and modifying
+  collection maps.
+---
+
 Map Collection
 ==============
 

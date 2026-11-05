@@ -42,8 +42,8 @@ import type {
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/dmi
+ * @requires     indicators/indicators
+ * @requires     indicators/dmi
  * @interface Highcharts.DMIOptions
  */
 export interface DMIOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {

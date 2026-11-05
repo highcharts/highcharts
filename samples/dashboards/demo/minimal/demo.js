@@ -168,7 +168,6 @@ Dashboards.board('container', {
                         value: 1.8,
                         color: '#00DD81',
                         dashStyle: 'ShortDash'
-
                     }],
                     title: {
                         text: 'Avg. resolution time'

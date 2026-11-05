@@ -1,3 +1,10 @@
+---
+description: >-
+  Overlay proportional bubbles on map regions by loading a base map and
+  joining mapbubble data through matching properties. The article gives a
+  population example and points to standard bubble options.
+---
+
 Map Bubble
 ==========
 

@@ -67,6 +67,8 @@ declare module './Chart/ChartBase'{
         hoverPoint?: Point;
         hoverPoints?: Array<Point>;
         hoverSeries?: Series;
+        lastPanX?: number;
+        lastPanY?: number;
         mouseDownX?: number;
         mouseDownY?: number;
         mouseIsDown?: (boolean|string);
@@ -436,8 +438,8 @@ class Pointer {
     public drag(e: PointerEvent): void {
         const { chart } = this,
             {
-                mouseDownX = 0,
-                mouseDownY = 0
+                lastPanX = 0,
+                lastPanY = 0
             } = chart,
             chartOptions = chart.options,
             {
@@ -480,16 +482,16 @@ class Pointer {
             chartY = plotTop + plotHeight;
         }
 
-        // Determine if the mouse has moved more than 10px
+        // Determine if the mouse has moved more than 10px since the last pan
         this.hasDragged = Math.sqrt(
-            Math.pow(mouseDownX - chartX, 2) +
-            Math.pow(mouseDownY - chartY, 2)
+            Math.pow(lastPanX - chartX, 2) +
+            Math.pow(lastPanY - chartY, 2)
         );
 
         if (this.hasDragged > 10) {
             clickedInside = chart.isInsidePlot(
-                mouseDownX - plotLeft,
-                mouseDownY - plotTop,
+                lastPanX - plotLeft,
+                lastPanY - plotTop,
                 {
                     visiblePlotOnly: true
                 }
@@ -550,8 +552,8 @@ class Pointer {
         // Record the start position
         chart.mouseIsDown = e.type;
         chart.cancelClick = false;
-        chart.mouseDownX = e.chartX;
-        chart.mouseDownY = e.chartY;
+        chart.mouseDownX = chart.lastPanX = e.chartX;
+        chart.mouseDownY = chart.lastPanY = e.chartY;
     }
 
     /**
@@ -1399,7 +1401,7 @@ class Pointer {
         if (e.type === 'touchstart') {
             pointer.pinchDown = touches;
             pointer.res = true; // Reset on next move
-            chart.mouseDownX = e.chartX;
+            chart.mouseDownX = chart.lastPanX = e.chartX;
 
         // Optionally move the tooltip on touchmove
         } else if (followTouchMove) {
@@ -1898,10 +1900,18 @@ class Pointer {
                     el.getRootNode() as ShadowRoot|undefined
                 )?.host?.parentElement;
 
-        container.onmousedown = this.onContainerMouseDown.bind(this);
-        container.onmousemove = this.onContainerMouseMove.bind(this);
-        container.onclick = this.onContainerClick.bind(this);
         this.eventsToUnbind.push(
+            addEvent(
+                container,
+                'mousedown',
+                this.onContainerMouseDown.bind(this)
+            ),
+            addEvent(
+                container,
+                'mousemove',
+                this.onContainerMouseMove.bind(this)
+            ),
+            addEvent(container, 'click', this.onContainerClick.bind(this)),
             addEvent(
                 container,
                 'mouseenter',
@@ -2351,6 +2361,11 @@ namespace Pointer {
          */
         resetSelection?: boolean;
 
+        /**
+         * The chart that the selection event belongs to.
+         */
+        target: Chart;
+
         /** @internal */
         trigger?: string;
 
@@ -2379,12 +2394,27 @@ namespace Pointer {
 
     /* *
      *
+     *  Variables
+     *
+     * */
+
+    let PointerClass: typeof Pointer = Pointer;
+
+    /* *
+     *
      *  Functions
      *
      * */
 
     /** @internal */
-    export function compose(ChartClass: typeof Chart): void {
+    export function compose(
+        ChartClass: typeof Chart,
+        PointerSubclass?: typeof Pointer
+    ): void {
+
+        // A subclass, like MSPointer in the ES5 build, replaces the class
+        // instead of adding a second pointer to each chart
+        PointerClass = PointerSubclass || PointerClass;
 
         if (pushUnique(composed, 'Core.Pointer')) {
             addEvent(ChartClass, 'beforeRender', function (): void {
@@ -2397,7 +2427,7 @@ namespace Pointer {
                  * @type {Highcharts.Pointer}
                  * @instance
                  */
-                this.pointer = new Pointer(this, this.options);
+                this.pointer = new PointerClass(this, this.options);
             });
         }
 
@@ -2495,6 +2525,16 @@ export default Pointer;
  *
  * @name Highcharts.PointerEventObject#chartY
  * @type {number}
+ *//**
+ * Axis positions on the x-axis, when available for a chart click.
+ *
+ * @name Highcharts.PointerEventObject#xAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>|undefined}
+ *//**
+ * Axis positions on the y-axis, when available for a chart click.
+ *
+ * @name Highcharts.PointerEventObject#yAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>|undefined}
  */
 
 /**
@@ -2533,6 +2573,10 @@ export default Pointer;
  * Indicates a reset event to restore default state.
  * @name Highcharts.SelectEventObject#resetSelection
  * @type {boolean|undefined}
+ *//**
+ * The Chart that the selection belongs to.
+ * @name Highcharts.SelectEventObject#target
+ * @type {Highcharts.Chart}
  *//**
  * Arrays containing the axes of each dimension and each axis' min and max
  * values.

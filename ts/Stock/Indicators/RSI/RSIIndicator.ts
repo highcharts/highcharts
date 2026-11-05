@@ -24,10 +24,8 @@ import type {
 } from './RSIOptions';
 import type RSIPoint from './RSIPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -51,7 +49,6 @@ function toFixed(a: number, n: number): number {
 /**
  * The RSI series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.rsi
  *
@@ -76,9 +73,10 @@ class RSIIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/rsi
+     * @requires     indicators/indicators
+     * @requires     indicators/rsi
      * @optionparent plotOptions.rsi
+     * @internal
      */
     public static defaultOptions: RSIOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -103,6 +101,7 @@ class RSIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: RSIParamsOptions
@@ -217,7 +216,6 @@ class RSIIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface RSIIndicator {
     pointClass: typeof RSIPoint;
 }
@@ -228,7 +226,6 @@ interface RSIIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         rsi: typeof RSIIndicator;
@@ -243,7 +240,6 @@ SeriesRegistry.registerSeriesType('rsi', RSIIndicator);
  *
  * */
 
-/** @internal */
 export default RSIIndicator;
 
 /* *
@@ -259,8 +255,8 @@ export default RSIIndicator;
  * @extends   series,plotOptions.rsi
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/rsi
+ * @requires  indicators/indicators
+ * @requires  indicators/rsi
  * @apioption series.rsi
  */
 

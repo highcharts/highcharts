@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn how to access the chart renderer to draw SVG shapes and text, or
+  create a standalone drawing in an HTML container using the Highcharts
+  rendering API.
+---
+
 Freeform drawing
 ================
 

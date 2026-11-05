@@ -693,7 +693,7 @@ async function apiDocs() {
 
     // 1. Generate tree-grid.json from Grid TypeScript interfaces
     await processLib.exec(
-        'npx ts-node tools/api-docs/grid-options.ts --source "ts/Grid"'
+        'node --import tsx tools/api-docs/grid-options.ts --source "ts/Grid"'
     );
 
     // 2. Generate HTML from the tree.

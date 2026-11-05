@@ -1,3 +1,10 @@
+---
+description: >-
+  Request rolling return history for one or more securities with the
+  TimeSeriesConnector by selecting the RollingReturn series type, and note
+  that the first security sets the start date for multiple-security requests.
+---
+
 # Rolling Return
 
 This type yields rolling return time series data for single or multiple
@@ -32,9 +39,7 @@ const dividendConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnect
 
 ## Relevant demos
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve Rolling Return time series. Specify type
-`RollingReturn`.
+- [Highcharts Stock + Morningstar Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
 
 ## Morningstar API Reference
 

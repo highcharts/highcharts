@@ -43,12 +43,12 @@ test.describe('Exporting the Grid', () => {
 
     test('Grid should be exported to JSON', async ({ page }) => {
         await page.locator('#jsonExport').click();
-        await expect(page.locator('#result')).toContainText(expectedJSonResult);
+        await expect(page.locator('#result')).toHaveValue(expectedJSonResult);
     });
 
     test('Grid should be exported to CSV', async ({ page }) => {
         await page.locator('#csvExport').click();
-        await expect(page.locator('#result')).toContainText(expectedResult);
+        await expect(page.locator('#result')).toHaveValue(expectedResult);
     });
 });
 

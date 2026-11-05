@@ -26,6 +26,7 @@ import type NetworkgraphChart from './NetworkgraphChart';
 import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DragNodesComposition from '../DragNodesComposition.js';
@@ -36,18 +37,10 @@ import NetworkgraphPoint from './NetworkgraphPoint.js';
 import NetworkgraphSeriesDefaults from './NetworkgraphSeriesDefaults.js';
 import NodesComposition from '../NodesComposition.js';
 import ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import LineSeries from '../Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: {
-            prototype: columnProto
-        },
-        line: {
-            prototype: lineProto
-        }
-    }
-} = SeriesRegistry;
 
 import D from '../SimulationSeriesUtilities.js';
 const {
@@ -108,6 +101,7 @@ class NetworkgraphSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart
     ): void {
@@ -123,12 +117,14 @@ class NetworkgraphSeries extends Series {
 
     public data!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public nodes!: Array<NetworkgraphPoint>;
 
     public options!: NetworkgraphSeriesOptions;
 
     public points!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public deferDataLabels: boolean = true;
 
     /* *
@@ -431,7 +427,7 @@ class NetworkgraphSeries extends Series {
 
         // Render markers:
         series.points = series.nodes;
-        lineProto.render.call(this);
+        LineSeries.prototype.render.call(this);
         series.points = points;
 
         points.forEach(function (
@@ -566,7 +562,7 @@ extend(NetworkgraphSeries.prototype, {
     initDataLabels: initDataLabels,
     buildKDTree: noop,
     createNode: NodesComposition.createNode,
-    drawTracker: columnProto.drawTracker,
+    drawTracker: ColumnSeries.prototype.drawTracker,
     onMouseDown: DragNodesComposition.onMouseDown,
     onMouseMove: DragNodesComposition.onMouseMove,
     onMouseUp: DragNodesComposition.onMouseUp,

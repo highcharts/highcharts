@@ -23,14 +23,15 @@ import type HLCSeries from './HLCSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: {
-        prototype: {
-            pointClass: ColumnPoint
-        }
-    }
-} = SeriesRegistry.seriesTypes;
+import ColumnSeries from '../Column/ColumnSeries.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *
@@ -46,26 +47,35 @@ class HLCPoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public close!: number;
 
+    /** @internal */
     public high!: number;
 
+    /** @internal */
     public low!: number;
 
     public options!: HLCPointOptions;
 
+    /** @internal */
     public plotClose!: number;
 
+    /** @internal */
     public plotHigh?: number;
 
+    /** @internal */
     public plotLow?: number;
 
+    /** @internal */
     public series!: HLCSeries;
 
+    /** @internal */
     public yBottom?: number;
 
     /**
-     * Get the origin position for entrance animation of new points
+     * Get the origin position for entrance animation of new points.
+     * @internal
      */
     public getOrigin(
         { x = 0 }: SVGAttributes,

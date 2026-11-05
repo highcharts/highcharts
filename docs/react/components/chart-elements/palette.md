@@ -1,3 +1,10 @@
+---
+description: >-
+  Define chart colors and separate light and dark palettes with the Palette
+  component, pass palette API options as props, and apply colorScheme to
+  select the color scheme.
+---
+
 # Palette
 
 You can define the chart color system &mdash; including separate light and dark

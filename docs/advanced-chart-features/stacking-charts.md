@@ -1,3 +1,10 @@
+---
+description: >-
+  Understand how normal and percent stacking arrange series data, and compare
+  examples with the overlap mode for waterfall charts and the stream stacking
+  mode used by streamgraph charts.
+---
+
 Stacking charts
 ===============
 

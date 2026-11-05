@@ -31,8 +31,7 @@ import type SVGLabel from '../../Renderer/SVG/SVGLabel';
 
 import T from '../../Templating.js';
 const { format } = T;
-import SeriesRegistry from '../../Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
+import Series from '../../Series/Series.js';
 import {
     destroyObjectProperties,
     fireEvent,

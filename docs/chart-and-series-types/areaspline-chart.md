@@ -1,3 +1,10 @@
+---
+description: >-
+  See how an areaspline differs from an area series by connecting points
+  with a spline curve, and find a demo and API options for configuring the
+  series.
+---
+
 Areaspline chart
 ================
 

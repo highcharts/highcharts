@@ -1,3 +1,10 @@
+---
+description: >-
+  Render interactive Highcharts components on the client in Next.js, mark App
+  Router chart files with use client, avoid chart initialization in server
+  props, and stream fetched data to client charts.
+---
+
 # Next.js
 
 ## Server-side rendering

@@ -135,7 +135,7 @@ function getVisualSampleSkipReason(root, sampleId) {
         return void 0;
     }
 
-    const details = yaml.load(detailsText);
+    const details = yaml.safeLoad(detailsText);
 
     if (details && details.skipTest) {
         return 'skipTest';

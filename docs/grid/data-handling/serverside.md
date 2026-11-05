@@ -1,6 +1,10 @@
 ---
 sidebar_label: "Server-side"
 tags: ["grid-pro"]
+description: >-
+  Configure Grid Pro’s remote provider with a fetch callback or URL-template
+  data source, pass query state and pagination details to the backend, return
+  row metadata, and persist edits.
 ---
 
 # Server-side data handling

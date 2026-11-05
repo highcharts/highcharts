@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure y-axis options with the YAxis component, including plot bands,
+  pass axis API settings as props, and supply axis title text as child content
+  within a chart.
+---
+
 # YAxis
 
 You can customize the [chart y-axis](https://www.highcharts.com/docs/chart-concepts/axes) using the `YAxis` component:

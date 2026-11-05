@@ -1,3 +1,10 @@
+---
+description: >-
+  Load the pattern fill module and use predefined patterns, custom SVG paths,
+  or images as chart colors. Configure sizing, point anchoring, and pattern
+  reuse to control how fills are rendered.
+---
+
 Pattern fills
 =============
 
@@ -72,7 +79,7 @@ By default, patterns are shared across all points and rendered relative to the s
 
 Setting `anchorToPoint` to `true` anchors the fill to each individual point, ensuring consistent rendering regardless of the point’s position or size. This improves visual consistency and accessibility, especially for small or narrow points, by keeping fills clearly visible as an alternative to color.
 
-<iframe style="width: 100%; height: 470px" src="https://www.highcharts.com/samples/embed/highcharts/series/pattern-fill-anchor-to-point/" frameborder="0"></iframe>
+<iframe style="width: 100%; height: 470px" src="https://www.highcharts.com/samples/embed/highcharts/series/pattern-fill-anchor-to-point" frameborder="0"></iframe>
 
 Pattern IDs
 -----------

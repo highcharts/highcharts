@@ -20,10 +20,8 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import type { CMOOptions, CMOParamsOptions } from './CMOOptions';
 import type CMOPoint from './CMOPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -35,7 +33,6 @@ import { isNumber, merge } from '../../../Shared/Utilities.js';
 /**
  * The CMO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.cmo
  *
@@ -60,9 +57,10 @@ class CMOIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since 9.1.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cmo
+     * @requires     indicators/indicators
+     * @requires     indicators/cmo
      * @optionparent plotOptions.cmo
+     * @internal
      */
     public static defaultOptions: CMOOptions = merge(
         SMAIndicator.defaultOptions,
@@ -90,6 +88,7 @@ class CMOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: CMOParamsOptions
@@ -190,7 +189,6 @@ class CMOIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface CMOIndicator {
     pointClass: typeof CMOPoint;
 }
@@ -201,7 +199,6 @@ interface CMOIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmo: typeof CMOIndicator;
@@ -216,7 +213,6 @@ SeriesRegistry.registerSeriesType('cmo', CMOIndicator);
  *
  * */
 
-/** @internal */
 export default CMOIndicator;
 
 /* *
@@ -232,8 +228,8 @@ export default CMOIndicator;
  * @extends   series,plotOptions.cmo
  * @since 9.1.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/cmo
+ * @requires  indicators/indicators
+ * @requires  indicators/cmo
  * @apioption series.cmo
  */
 

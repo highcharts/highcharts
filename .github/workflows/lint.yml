@@ -6,6 +6,9 @@ on:
     paths:
       - 'ts/**'
       - 'samples/**'
+      - 'gulpfile.ts'
+      - 'tools/gulptasks/lint-samples.js'
+      - 'tools/gulptasks/typecheck-samples.js'
       - '.github/workflows/lint.yml'
 
 permissions:
@@ -67,6 +70,9 @@ jobs:
       - name: Lint definitions
         run: npx gulp lint-dts
 
+      - name: Typecheck samples
+        run: npx gulp typecheck-samples
+
   lint_samples:
     timeout-minutes: 10
     runs-on: ubuntu-latest
@@ -87,7 +93,7 @@ jobs:
         run: npm ci
 
       - name: Lint samples TS and JS
-        run: npx eslint -c samples/.eslintrc "samples/**/*.{js,ts}"
+        run: npx gulp lint-samples
 
       - name: Lint samples CSS
         run: npx stylelint --config .stylelintrc.json "samples/**/*.css"

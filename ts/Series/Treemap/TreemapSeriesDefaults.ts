@@ -412,6 +412,18 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      */
 
     /**
+     * Determines whether the chart should receive one color per point based
+     * on this level.
+     *
+     * @sample {highcharts} highcharts/demo/treemap-with-levels/
+     *         One color per point on the first level
+     *
+     * @type      {boolean}
+     * @product   highcharts
+     * @apioption plotOptions.treemap.levels.colorByPoint
+     */
+
+    /**
      * A configuration object to define how the color of a child varies from
      * the parent's color. The variation is distributed among the children
      * of node. For example when setting brightness, the brightness change

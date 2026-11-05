@@ -21,20 +21,10 @@
 import type LollipopSeriesOptions from './LollipopSeriesOptions';
 
 import LollipopPoint from './LollipopPoint.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Series from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: {
-            prototype: colProto
-        },
-        dumbbell: {
-            prototype: dumbbellProto
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
 import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -184,7 +174,7 @@ class LollipopSeries extends Series {
     public translate(): void {
         const series = this;
 
-        colProto.translate.apply(series, arguments);
+        ColumnSeries.prototype.translate.apply(series, arguments);
 
         // Correct x position
         for (const point of series.points) {
@@ -205,22 +195,28 @@ class LollipopSeries extends Series {
  * */
 
 interface LollipopSeries {
-    alignDataLabel: typeof colProto['alignDataLabel'];
-    crispCol: typeof colProto['crispCol'];
-    drawConnector: typeof dumbbellProto['drawConnector'];
-    drawDataLabels: typeof colProto['drawDataLabels'];
-    getColumnMetrics: typeof colProto['getColumnMetrics'];
-    getConnectorAttribs: typeof dumbbellProto['getConnectorAttribs'];
+    /** @internal */
+    alignDataLabel: typeof ColumnSeries.prototype['alignDataLabel'];
+    /** @internal */
+    crispCol: typeof ColumnSeries.prototype['crispCol'];
+    /** @internal */
+    drawConnector: typeof DumbbellSeries.prototype['drawConnector'];
+    /** @internal */
+    drawDataLabels: typeof ColumnSeries.prototype['drawDataLabels'];
+    /** @internal */
+    getColumnMetrics: typeof ColumnSeries.prototype['getColumnMetrics'];
+    /** @internal */
+    getConnectorAttribs: typeof DumbbellSeries.prototype['getConnectorAttribs'];
     pointClass: typeof LollipopPoint;
 }
 
 extend(LollipopSeries.prototype, {
-    alignDataLabel: colProto.alignDataLabel,
-    crispCol: colProto.crispCol,
-    drawConnector: dumbbellProto.drawConnector,
-    drawDataLabels: colProto.drawDataLabels,
-    getColumnMetrics: colProto.getColumnMetrics,
-    getConnectorAttribs: dumbbellProto.getConnectorAttribs,
+    alignDataLabel: ColumnSeries.prototype.alignDataLabel,
+    crispCol: ColumnSeries.prototype.crispCol,
+    drawConnector: DumbbellSeries.prototype.drawConnector,
+    drawDataLabels: ColumnSeries.prototype.drawDataLabels,
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
+    getConnectorAttribs: DumbbellSeries.prototype.getConnectorAttribs,
     pointClass: LollipopPoint
 });
 

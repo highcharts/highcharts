@@ -246,6 +246,34 @@ describe('FilterModifier', () => {
             );
         });
 
+        it('should not match rows with an unsupported operator', async () => {
+            const data = ['Apple', 'banana', 'Cherry'];
+            const table = new DataTable({ columns: { name: data } });
+            const condition = {
+                operator: 'repeat',
+                columnId: 'name',
+                value: '1'
+            } as any;
+
+            await new FilterModifier({ condition }).modify(table);
+
+            deepStrictEqual(
+                table.modified.getColumns(),
+                { name: [] },
+                'Unsupported repeat operator matches no rows.'
+            );
+
+            await new FilterModifier({
+                condition: { operator: 'not', condition }
+            }).modify(table);
+
+            deepStrictEqual(
+                table.modified.getColumns(),
+                { name: data },
+                'Negated unsupported operator matches all rows.'
+            );
+        });
+
         it('should filter with nested not and logical conditions', async () => {
             const rows = {
                 x: [-5, -1, 0, 5],

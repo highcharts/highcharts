@@ -1,3 +1,10 @@
+---
+description: >-
+  Customize the information Highcharts exposes to screen readers, including
+  chart introductions, point values, and axis descriptions. Configure how
+  large series and individual points are presented to users.
+---
+
 Advanced accessibility configuration
 ===
 

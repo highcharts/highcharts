@@ -24,10 +24,7 @@ import type Point from '../Core/Series/Point';
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterSeries from './Scatter/ScatterSeries';
 
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const {
-    column: { prototype: columnProto }
-} = SeriesRegistry.seriesTypes;
+import ColumnSeries from './Column/ColumnSeries.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import { addEvent, defined } from '../Shared/Utilities.js';
 
@@ -51,7 +48,7 @@ declare module '../Core/Series/PointBase' {
  *
  * */
 
-namespace ColorMapComposition {
+export namespace ColorMapComposition {
 
     // These properties can be set as both attributes and CSS properties
     /** @internal */
@@ -112,7 +109,7 @@ namespace ColorMapComposition {
         pointArrayMap: ['value'],
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
         colorAttribs: seriesColorAttribs,
-        pointAttribs: columnProto.pointAttribs
+        pointAttribs: ColumnSeries.prototype.pointAttribs
     };
 
     /* *

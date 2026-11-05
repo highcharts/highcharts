@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Width and resizing"
+description: >-
+  Set pixel, percentage, or automatic widths, constrain resizing with minimum
+  and maximum values, choose how neighboring columns respond to drag resizing,
+  and assess strict-width limitations for wide grids.
 ---
 
 # Column width and resizing

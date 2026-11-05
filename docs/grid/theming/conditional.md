@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Conditional theming"
+description: >-
+  Use CSS selectors for simple value, row, and column conditions, or
+  JavaScript classes and styles for computed logic; apply Grid theme variables
+  to table elements and scope reusable rules.
 ---
 
 # Conditional theming with CSS selectors

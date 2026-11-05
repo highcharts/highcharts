@@ -40,15 +40,9 @@ const { noop } = H;
 import PackedBubblePoint from './PackedBubblePoint.js';
 import PackedBubbleSeriesDefaults from './PackedBubbleSeriesDefaults.js';
 import PackedBubbleLayout from './PackedBubbleLayout.js';
+import BubbleSeries from '../Bubble/BubbleSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: seriesProto
-    },
-    seriesTypes: {
-        bubble: BubbleSeries
-    }
-} = SeriesRegistry;
 import D from '../SimulationSeriesUtilities.js';
 const {
     initDataLabels,
@@ -89,6 +83,7 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: PackedBubbleSeriesOptions = merge(
         BubbleSeries.defaultOptions,
         PackedBubbleSeriesDefaults
@@ -100,6 +95,7 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -116,30 +112,40 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public chart!: PackedBubbleChart;
 
     public data!: Array<PackedBubblePoint>;
 
+    /** @internal */
     public hoverPoint?: PackedBubblePoint;
 
+    /** @internal */
     public layout!: PackedBubbleLayout;
 
     public options!: PackedBubbleSeriesOptions;
 
+    /** @internal */
     public parentNode?: PackedBubblePoint;
 
+    /** @internal */
     public parentNodeLayout?: PackedBubbleLayout;
 
+    /** @internal */
     public parentNodesGroup?: SVGElement;
 
+    /** @internal */
     public parentNodeMass: number = 0;
 
+    /** @internal */
     public parentNodeRadius?: number;
 
     public points!: Array<PackedBubblePoint>;
 
+    /** @internal */
     public xData!: Array<number>;
 
+    /** @internal */
     public deferDataLabels: boolean = true;
 
     /* *
@@ -459,6 +465,7 @@ class PackedBubbleSeries extends BubbleSeries {
         }
     }
 
+    /** @internal */
     public destroy(): void {
         // Remove the series from all layouts series collections #11469
         if (this.chart.graphLayoutsLookup) {
@@ -480,7 +487,7 @@ class PackedBubbleSeries extends BubbleSeries {
                     this.parentNode.dataLabel.destroy();
             }
         }
-        seriesProto.destroy.apply(this, arguments as any);
+        Series.prototype.destroy.apply(this, arguments as any);
     }
 
     /**
@@ -495,12 +502,12 @@ class PackedBubbleSeries extends BubbleSeries {
             return;
         }
 
-        seriesProto.drawDataLabels.call(this, this.points);
+        Series.prototype.drawDataLabels.call(this, this.points);
 
         // Render parentNode labels:
         if (this.parentNode) {
             this.parentNode.formatPrefix = 'parentNode';
-            seriesProto.drawDataLabels.call(this, [this.parentNode]);
+            Series.prototype.drawDataLabels.call(this, [this.parentNode]);
         }
     }
 
@@ -566,6 +573,7 @@ class PackedBubbleSeries extends BubbleSeries {
         }
     }
 
+    /** @internal */
     public drawTracker(): void {
         const parentNode = this.parentNode;
         // Chart = series.chart,
@@ -666,8 +674,9 @@ class PackedBubbleSeries extends BubbleSeries {
         this.radii = radii;
     }
 
+    /** @internal */
     public init(): PackedBubbleSeries {
-        seriesProto.init.apply(this, arguments);
+        Series.prototype.init.apply(this, arguments);
         initDataLabelsDefer.call(this);
 
         /* eslint-disable no-invalid-this */
@@ -906,7 +915,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
         const fillOpacity =
                 (markerOptions as BubblePointMarkerOptions).fillOpacity,
-            attr = seriesProto.pointAttribs.call(this, point, state);
+            attr = Series.prototype.pointAttribs.call(this, point, state);
 
         if (fillOpacity !== 1) {
             attr['fill-opacity'] = fillOpacity;
@@ -979,9 +988,10 @@ class PackedBubbleSeries extends BubbleSeries {
         ]; // The same as described before
     }
 
+    /** @internal */
     public render(): void {
         const dataLabels = [] as Array<SVGElement>;
-        seriesProto.render.apply(this, arguments);
+        Series.prototype.render.apply(this, arguments);
         // #10823 - dataLabels should stay visible
         // when enabled allowOverlap.
         if (!(this.options.dataLabels as any).allowOverlap) {
@@ -1109,7 +1119,7 @@ class PackedBubbleSeries extends BubbleSeries {
     public setVisible(): void {
         const series = this;
 
-        seriesProto.setVisible.apply(series, arguments);
+        Series.prototype.setVisible.apply(series, arguments);
 
         if (series.parentNodeLayout && series.graph) {
             if (series.visible) {
@@ -1223,8 +1233,11 @@ class PackedBubbleSeries extends BubbleSeries {
  *
  * */
 
+/** @internal */
 interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
+    /** @internal */
     pointClass: typeof PackedBubblePoint;
+    /** @internal */
     bubblePadding: BubbleSeriesType['bubblePadding'];
     /**
      * Array of internal forces. Each force should be later defined in
@@ -1237,26 +1250,47 @@ interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
      * @internal
      */
     hasDraggableNodes: boolean;
+    /** @internal */
     isBubble: BubbleSeriesType['isBubble'];
+    /** @internal */
     isCartesian: boolean;
+    /** @internal */
     maxPxSize: BubbleSeriesType['maxPxSize'];
+    /** @internal */
     minPxSize: BubbleSeriesType['minPxSize'];
+    /** @internal */
     nodes: NetworkgraphSeries['nodes'];
+    /** @internal */
     noSharedTooltip: boolean;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointValKey: string;
+    /** @internal */
     radii: BubbleSeriesType['radii'];
+    /** @internal */
     specialGroup: BubbleSeriesType['specialGroup'];
+    /** @internal */
     trackerGroups: Array<string>;
+    /** @internal */
     yData: BubbleSeriesType['yData'];
+    /** @internal */
     zData: BubbleSeriesType['zData'];
+    /** @internal */
     zoneAxis: BubbleSeriesType['zoneAxis'];
+    /** @internal */
     getPointsCollection(): Array<PackedBubblePoint>;
+    /** @internal */
     indexateNodes: NetworkgraphSeries['indexateNodes'];
+    /** @internal */
     markerAttribs: BubbleSeriesType['markerAttribs'];
+    /** @internal */
     onMouseDown: typeof DragNodesComposition.onMouseDown;
+    /** @internal */
     onMouseMove: typeof DragNodesComposition.onMouseMove;
+    /** @internal */
     redrawHalo: typeof DragNodesComposition.redrawHalo;
+    /** @internal */
     setState: BubbleSeriesType['setState'];
 }
 extend(PackedBubbleSeries.prototype, {
@@ -1273,7 +1307,7 @@ extend(PackedBubbleSeries.prototype, {
     requireSorting: false,
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
     initDataLabels: initDataLabels,
-    alignDataLabel: seriesProto.alignDataLabel,
+    alignDataLabel: Series.prototype.alignDataLabel,
     indexateNodes: noop as NetworkgraphSeries['indexateNodes'],
     onMouseDown: DragNodesComposition.onMouseDown,
     onMouseMove: DragNodesComposition.onMouseMove,

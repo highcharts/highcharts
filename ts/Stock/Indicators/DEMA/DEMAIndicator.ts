@@ -24,10 +24,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import EMAIndicator from '../EMA/EMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    ema: EMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -39,7 +37,6 @@ import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The DEMA series Type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dema
  *
@@ -68,9 +65,10 @@ class DEMAIndicator extends EMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/dema
+     * @requires     indicators/indicators
+     * @requires     indicators/dema
      * @optionparent plotOptions.dema
+     * @internal
      */
     public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions);
 
@@ -80,6 +78,7 @@ class DEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public EMApercent!: number;
     public data!: Array<DEMAPoint>;
     public options!: DEMAOptions;
@@ -91,6 +90,7 @@ class DEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getEMA(
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
@@ -111,6 +111,7 @@ class DEMAIndicator extends EMAIndicator {
         );
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DEMAParamsOptions
@@ -215,7 +216,6 @@ class DEMAIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface DEMAIndicator {
     pointClass: typeof DEMAPoint;
 }
@@ -226,7 +226,6 @@ interface DEMAIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;
@@ -240,7 +239,6 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
  *
  * */
 
-/** @internal */
 export default DEMAIndicator;
 
 /* *
@@ -259,8 +257,8 @@ export default DEMAIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/dema
+ * @requires  indicators/indicators
+ * @requires  indicators/dema
  * @apioption series.dema
  */
 

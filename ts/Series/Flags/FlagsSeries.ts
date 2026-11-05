@@ -31,13 +31,9 @@ const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import {
     addEvent,
@@ -83,7 +79,6 @@ interface DistributedBoxObject extends R.BoxObject {
 /**
  * The Flags series.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.flags
  *
@@ -97,8 +92,10 @@ class FlagsSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = FlagsSymbols.compose;
 
+    /** @internal */
     public static defaultOptions: FlagsSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         FlagsSeriesDefaults
@@ -112,6 +109,7 @@ class FlagsSeries extends ColumnSeries {
 
     public data!: Array<FlagsPoint>;
 
+    /** @internal */
     public onSeries?: typeof Series.prototype;
 
     public options!: FlagsSeriesOptions;
@@ -486,9 +484,8 @@ extend(FlagsSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypesDictionary {
+    interface SeriesTypeRegistry {
         flags: typeof FlagsSeries;
     }
 }
@@ -500,5 +497,4 @@ SeriesRegistry.registerSeriesType('flags', FlagsSeries);
  *
  * */
 
-/** @internal */
 export default FlagsSeries;

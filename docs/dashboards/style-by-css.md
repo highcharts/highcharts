@@ -1,3 +1,10 @@
+---
+description: >-
+  Import Dashboards stylesheets and target the provided classes or custom IDs
+  to style rows, cells, components, edit-mode controls, and component content;
+  custom HTML layouts disable edit mode.
+---
+
 # Style by CSS
 
 Each dashboard and most child elements are styled using CSS by default. This method offers

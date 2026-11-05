@@ -1,3 +1,10 @@
+---
+description: >-
+  Add speech tracks alongside instrument tracks, choose what is spoken with
+  a format string or function, and map voice pitch or other speech
+  parameters to data. The example announces y values.
+---
+
 Speech
 ===
 
