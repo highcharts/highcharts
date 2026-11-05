@@ -292,17 +292,19 @@ describe('prep-release safe replacements', () => {
         skip: !nativeReleaseTools && 'requires the existing grep and sed release tools'
     }, async () => {
         const version = '13.2.0-rc.1+build.42';
+        // Keep the placeholder separate so release preparation cannot rewrite this test.
+        const next = 'next';
         await withRelease({ nextversion: version }, async ({ root, task }) => {
             const originals = ['package.json', 'bower.json'].map(file => fs.readFileSync(file));
             fs.mkdirSync('docs');
-            const text = 'é @since\t next @since next @deprecated next @deprecated next\n' +
-                '@since\nnext\n@since {next}\n@since nextThing\n';
+            const text = `é @since\t ${next} @since ${next} @deprecated ${next} @deprecated ${next}\n` +
+                `@since\n${next}\n@since {${next}}\n@since ${next}Thing\n`;
             fs.writeFileSync('docs/file with spaces.ts', text);
             if (process.platform !== 'win32') {
-                fs.writeFileSync('docs/line\nbreak.ts', '@since next');
+                fs.writeFileSync('docs/line\nbreak.ts', `@since ${next}`);
             }
             const binary = Buffer.concat([Buffer.from([0x01, 0]),
-                Buffer.from('@since next\n'), Buffer.from([0x02])]);
+                Buffer.from(`@since ${next}\n`), Buffer.from([0x02])]);
             fs.writeFileSync('docs/bytes.dat', binary);
             fs.chmodSync('docs/bytes.dat', 0o664);
             fs.writeFileSync('docs/unicode.ts', '@since\u00a0next @deprecated\u3000next');
@@ -314,13 +316,13 @@ describe('prep-release safe replacements', () => {
                 'docs/node_modules/skip.ts', 'docs/code/skip.ts', 'docs/skip.md', 'docs/skip.bak'];
             for (const file of untouched) {
                 fs.mkdirSync(dirname(file), { recursive: true });
-                fs.writeFileSync(file, '@since next');
+                fs.writeFileSync(file, `@since ${next}`);
             }
             fs.symlinkSync(join(root, 'node_modules/skip.ts'), 'docs/link.ts');
             fs.symlinkSync(join(root, 'node_modules'), 'docs/linked-directory');
             fs.mkdirSync('.hidden');
-            fs.writeFileSync('.hidden/doc.txt', '@deprecated next');
-            fs.writeFileSync('docs/include.MD', '@since next');
+            fs.writeFileSync('.hidden/doc.txt', `@deprecated ${next}`);
+            fs.writeFileSync('docs/include.MD', `@since ${next}`);
             fs.writeFileSync('sentinel', 'untouched');
             fs.symlinkSync(join(root, 'sentinel'), 'package.json.bak');
 
@@ -333,7 +335,7 @@ describe('prep-release safe replacements', () => {
             }
             assert.equal(fs.readFileSync('sentinel', 'utf8'), 'untouched');
             assert.equal(fs.readFileSync('docs/file with spaces.ts', 'utf8'),
-                `é @since\t ${version} @since next @deprecated ${version} @deprecated next\n` +
+                `é @since\t ${version} @since ${next} @deprecated ${version} @deprecated ${next}\n` +
                 `@since\nnext\n@since {next}\n@since ${version}Thing\n`);
             assert.equal(fs.readFileSync('docs/file with spaces.ts.bak', 'utf8'), text);
             assert.equal(fs.readFileSync('docs/unicode.ts', 'utf8'), unicodeExpected);
@@ -347,7 +349,7 @@ describe('prep-release safe replacements', () => {
                 Buffer.from([0x01, 0]), Buffer.from(`@since ${version}\n`), Buffer.from([0x02])
             ]));
             for (const file of untouched) {
-                assert.equal(fs.readFileSync(file, 'utf8'), '@since next');
+                assert.equal(fs.readFileSync(file, 'utf8'), `@since ${next}`);
             }
             assert.equal(fs.readFileSync('.hidden/doc.txt', 'utf8'), `@deprecated ${version}`);
             assert.equal(fs.readFileSync('docs/include.MD', 'utf8'), `@since ${version}`);
