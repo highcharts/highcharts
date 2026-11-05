@@ -1,0 +1,39 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
+/**
+ * Value list of the `oneOf` column filter.
+ *
+ * (c) 2009-2026 Highsoft AS
+ *
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
+ */
+
+.hcg-value-list-items {
+    display: flex;
+    flex-flow: column;
+    max-height: var(--hcg-value-list-max-height, 200px);
+    overflow-y: auto;
+}
+
+.hcg-value-list-item {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5em;
+    padding-block: 2px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.hcg-value-list-toggle {
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/* The button carries the input styles, so it marks the open list itself. */
+.hcg-themed .hcg-value-list-toggle.hcg-button-selected {
+    border-color: var(--ig-input-hover-border-color);
+}

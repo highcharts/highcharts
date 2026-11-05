@@ -70,7 +70,7 @@ describe('FilterModifier', () => {
         });
 
         it('should filter with empty operator', async () => {
-            const data = [12, null, '', 30];
+            const data = [12, null, '', 30, void 0];
             const table = new DataTable({ columns: { name: data } });
             const modifier = new FilterModifier({
                 condition: {
@@ -84,8 +84,8 @@ describe('FilterModifier', () => {
 
             deepStrictEqual(
                 table.modified.getColumns(),
-                { name: [null, ''] },
-                'Only empty strings and nulls are kept.'
+                { name: [null, '', void 0] },
+                'Only empty strings, nulls and missing values are kept.'
             );
         });
 
