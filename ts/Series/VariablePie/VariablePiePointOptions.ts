@@ -26,16 +26,18 @@ import type PiePointOptions from '../Pie/PiePointOptions';
  *
  * */
 
+/**
+ * @excluding marker, x
+ */
 export interface VariablePiePointOptions extends PiePointOptions {
+
     /**
      * The z value of the point.
      *
-     * @type {number}
-     *
      * @product highcharts
-     *
-     * @apioption series.variablepie.data.z
      */
+    z?: (number|null);
+
 }
 
 /* *
