@@ -4,7 +4,7 @@ import { useSharedPage } from '~/helpers.ts';
 test.describe('Multiple charts', () => {
     const errors: string[] = [];
     const getPage = useSharedPage(
-        '/highcharts/cypress/multiple-charts',
+        '/highcharts/e2e/multiple-charts',
         page => {
             page.on('pageerror', error => errors.push(error.message));
             return Promise.resolve();

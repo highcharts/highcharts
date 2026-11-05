@@ -41,7 +41,7 @@ async function removeIndicator(page: Page, name: string): Promise<void> {
 
 test.describe('Adding custom indicator on a separate axis through indicator popup, #15804.', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/custom-indicator-stock-tools-gui',
+        '/highcharts/e2e/custom-indicator-stock-tools-gui',
         page => page.setViewportSize({ width: 1000, height: 500 })
     );
 
@@ -63,7 +63,7 @@ test.describe('Adding custom indicator on a separate axis through indicator popu
 
 test.describe('Axis height recalculation.', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/stock-tools-gui/',
+        '/highcharts/e2e/stock-tools-gui/',
         page => page.setViewportSize({ width: 1000, height: 500 })
     );
 
@@ -96,7 +96,7 @@ test.describe('Axis height recalculation.', () => {
 
 test.describe('An indicator on indicator, #15696.', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/stock-tools-gui/',
+        '/highcharts/e2e/stock-tools-gui/',
         page => page.setViewportSize({ width: 1000, height: 800 })
     );
 

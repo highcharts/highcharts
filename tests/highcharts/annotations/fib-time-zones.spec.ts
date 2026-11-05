@@ -9,7 +9,7 @@ import { clickChart, dragTo } from '../helpers.ts';
 
 test.describe('Stock Tools Fibonacci Time Zones, #15825', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/stock-tools-gui/',
+        '/highcharts/e2e/stock-tools-gui/',
         page => page.setViewportSize({ width: 1000, height: 500 })
     );
 

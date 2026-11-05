@@ -4,7 +4,7 @@ import { clickChart, selectRange } from '../helpers.ts';
 
 test.describe('Measure annotation.', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/stock-tools-gui/',
+        '/highcharts/e2e/stock-tools-gui/',
         page => page.setViewportSize({ width: 1000, height: 800 })
     );
 

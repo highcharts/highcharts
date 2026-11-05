@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 import { useSharedPage, waitForChart } from '~/helpers.ts';
 
 test.describe('Drilldown with point mouseOver', () => {
-    const getPage = useSharedPage('/highcharts/cypress/drilldown');
+    const getPage = useSharedPage('/highcharts/e2e/drilldown');
 
     test('#21534, Should drill down even if point mouseOver is defined', async () => {
         const page = getPage();

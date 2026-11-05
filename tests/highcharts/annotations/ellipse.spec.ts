@@ -32,7 +32,7 @@ async function getEllipse(page: Page): Promise<{
 
 test.describe('Stock tools Ellipse Annotation, #15008', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/stock-tools-gui/',
+        '/highcharts/e2e/stock-tools-gui/',
         page => page.setViewportSize({ width: 1000, height: 500 })
     );
 

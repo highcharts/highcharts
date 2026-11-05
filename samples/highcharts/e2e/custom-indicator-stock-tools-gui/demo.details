@@ -1,5 +1,5 @@
 ---
-name: Stock tools gui demo for cypress tests
+name: Stock tools gui with added custom indicator
 authors:
   - Paweł Lysy
 skipTest: true

@@ -32,7 +32,7 @@ async function getTimeCycles(page: Page): Promise<{
 
 test.describe('Stock Tools Time Cicles, #15826', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/stock-tools-gui/',
+        '/highcharts/e2e/stock-tools-gui/',
         page => page.setViewportSize({ width: 1000, height: 500 })
     );
 

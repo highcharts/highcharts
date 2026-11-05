@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 import { useSharedPage, waitForChart } from '~/helpers.ts';
 
 test.describe('Chart tick trimming, #21743', () => {
-    const getPage = useSharedPage('/highcharts/cypress/axis-tick');
+    const getPage = useSharedPage('/highcharts/e2e/axis-tick');
 
     test('Should properly filter ticks on any linked same sized non-grid axis', async () => {
         const page = getPage();

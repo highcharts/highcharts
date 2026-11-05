@@ -1,5 +1,5 @@
 ---
-name: Annotations GUI for cypress test
+name: Stock tools gui demo
 authors:
   - Paweł Lysy
 skipTest: true

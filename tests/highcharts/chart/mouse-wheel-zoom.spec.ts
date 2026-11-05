@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 import { trigger, useSharedPage, waitForChart } from '~/helpers.ts';
 
 test.describe('Mouse wheel chart zoom, #19178', () => {
-    const getPage = useSharedPage('/highcharts/cypress/mouse-wheel-zoom');
+    const getPage = useSharedPage('/highcharts/e2e/mouse-wheel-zoom');
 
     test('Should change yAxis extremes and keep axis options after zoom', async () => {
         const page = getPage();

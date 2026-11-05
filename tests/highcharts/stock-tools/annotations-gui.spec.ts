@@ -4,7 +4,7 @@ import { clickChart } from '../helpers.ts';
 
 test.describe('Popup tests, #16234', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/annotations-gui',
+        '/highcharts/e2e/annotations-gui',
         page => page.setViewportSize({ width: 1000, height: 500 })
     );
 
@@ -29,7 +29,7 @@ test.describe('Popup tests, #16234', () => {
 
 test.describe('Label annotation crop property.', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/annotations-gui',
+        '/highcharts/e2e/annotations-gui',
         page => page.setViewportSize({ width: 1000, height: 500 })
     );
 

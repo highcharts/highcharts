@@ -4,7 +4,7 @@ import { clickChart } from '../helpers.ts';
 
 test.describe('Stock tools rectangle annotatation.', () => {
     const getPage = useSharedPage(
-        '/highcharts/cypress/stock-tools-gui/',
+        '/highcharts/e2e/stock-tools-gui/',
         page => page.setViewportSize({ width: 1000, height: 500 })
     );
 

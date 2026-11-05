@@ -9,7 +9,7 @@ import {
     selectIndicator
 } from '../helpers.ts';
 
-const sample = '/highcharts/cypress/stock-tools-gui/';
+const sample = '/highcharts/e2e/stock-tools-gui/';
 const searchInput = 'input[name="highcharts-input-search-indicators"]';
 
 async function getAnnotationCount(page: Page): Promise<number> {
