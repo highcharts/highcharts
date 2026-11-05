@@ -60,10 +60,6 @@ import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
  */
 export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
 
-    /**
-     * @type {Highcharts.ColorType}
-     */
-    color?: ColorType;
 
     /**
      * An array of data points for the series. For the `waterfall` series
@@ -147,11 +143,11 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the border stroke can be set with the
      * `.highcharts-point` class.
      *
-     * @type {Highcharts.ColorType}
-     *
      * @since 3.0
      *
      * @product highcharts
+     *
+     * @default 'var(--highcharts-neutral-color-80)'
      */
     borderColor?: ColorType;
 
@@ -164,11 +160,11 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the stroke dash-array can be set with the
      * `.highcharts-graph` class.
      *
-     * @type {Highcharts.DashStyleValue}
-     *
      * @since 3.0
      *
      * @product highcharts
+     *
+     * @default 'Dot'
      */
     dashStyle?: DashStyleValue;
 
@@ -178,11 +174,11 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the stroke can be set with the `.highcharts-graph`
      * class.
      *
-     * @type {Highcharts.ColorType}
-     *
      * @since 3.0
      *
      * @product highcharts
+     *
+     * @default 'var(--highcharts-neutral-color-80)'
      */
     lineColor?: ColorType;
 
@@ -190,10 +186,19 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * The width of the line connecting waterfall columns.
      *
      * @product highcharts
+     *
+     * @default 1
      */
     lineWidth?: number;
 
-    states?: SeriesStatesOptions<WaterfallSeriesOptions>;
+    /**
+     * Options for the data labels appearing on top of the columns.
+     *
+     * @default { inside: true }
+     */
+    dataLabels?: ColumnSeriesOptions['dataLabels'];
+
+    states?: WaterfallSeriesStatesOptions;
 
     /**
      * The color used specifically for positive point columns. When not
@@ -206,12 +211,30 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/demo/waterfall/
      *         Waterfall
      *
-     * @type {Highcharts.ColorType}
-     *
      * @product highcharts
      */
     upColor?: ColorType;
 
+}
+
+
+type WaterfallStatesOptionsAlias = SeriesStatesOptions<WaterfallSeriesOptions>;
+
+export interface WaterfallSeriesStatesOptions
+    extends WaterfallStatesOptionsAlias {
+
+    /**
+     * Options for the hovered series.
+     */
+    hover?: WaterfallStatesOptionsAlias['hover'] & {
+
+        /**
+         * The additional line width for the graph of a hovered series.
+         *
+         * @default 0
+         */
+        lineWidthPlus?: number;
+    };
 }
 
 /* *
