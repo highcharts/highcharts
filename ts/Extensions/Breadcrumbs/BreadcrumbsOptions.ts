@@ -211,6 +211,7 @@ export interface BreadcrumbsOptions {
      * The default padding for each button and separator in each direction.
      *
      * @type  {number}
+     * @default 5
      * @since 10.0.0
      */
     buttonSpacing: number;
@@ -244,6 +245,7 @@ export interface BreadcrumbsOptions {
      *         Floating button
      *
      * @type  {boolean}
+     * @default false
      * @since 10.0.0
      */
     floating: boolean;
@@ -305,6 +307,7 @@ export interface BreadcrumbsOptions {
      *         Breadcrumbs in RTL
      *
      * @type  {boolean}
+     * @default false
      * @since 10.2.0
      */
     rtl: boolean;
@@ -323,6 +326,7 @@ export interface BreadcrumbsOptions {
      *         Single, styled button
      *
      * @type  {boolean}
+     * @default true
      * @since 10.0.0
      */
     showFullPath: boolean;
@@ -343,6 +347,7 @@ export interface BreadcrumbsOptions {
      * Whether to use HTML to render the breadcrumbs items texts.
      *
      * @type  {boolean}
+     * @default false
      * @since 10.0.0
      */
     useHTML: boolean;
@@ -351,6 +356,7 @@ export interface BreadcrumbsOptions {
      * The z index of the breadcrumbs group.
      *
      * @type  {number}
+     * @default 7
      * @since 10.0.0
      */
     zIndex: number;

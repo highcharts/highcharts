@@ -283,6 +283,8 @@ export interface MapViewOptions {
      * @sample maps/mapview/fittogeometry
      *         Fitting the view to geometries
      *
+     * @default undefined
+     *
      * @since 10.3.3
      */
     fitToGeometry?: GeoJSONGeometryMultiPoint;
@@ -340,6 +342,8 @@ export interface MapViewOptions {
      *
      * @sample {highmaps} maps/mapview/maxzoom
      *         Prevent zooming in too far
+     *
+     * @default undefined
      */
     maxZoom?: number;
 
@@ -355,6 +359,8 @@ export interface MapViewOptions {
      *         Visible plot area and percentage padding
      * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Padding for individual sides
+     *
+     * @default 0
      */
     padding: MapViewPaddingType;
 
@@ -386,6 +392,8 @@ export interface MapViewOptions {
      *         Custom view of a world map
      * @sample {highmaps} maps/mapview/get-view
      *         Report the current view of a preprojected map
+     *
+     * @default undefined
      */
     zoom?: number;
 
