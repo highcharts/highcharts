@@ -29,52 +29,6 @@ jobs:
       - name: Run unit tests
         run: npm run test-node
 
-  test_cypress:
-    name: Cypress tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          path: highcharts
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 'lts/*'
-          cache: 'npm'
-          cache-dependency-path: highcharts/package-lock.json
-
-      - name: Install Highcharts deps
-        run: |
-          cd highcharts
-          npm ci
-
-      - name: Build Highcharts
-        run: |
-          cd highcharts
-          npx gulp scripts
-
-      - name: Checkout utils
-        uses: actions/checkout@v6
-        with:
-          repository: highcharts/highcharts-utils
-          path: utils
-          fetch-depth: 1
-
-      - name: Install Highcharts Utils
-        run: |
-          cd utils
-          npm ci
-
-      - name: Run Cypress test
-        uses: cypress-io/github-action@v7
-        with:
-          start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/highcharts.js'
-          browser: chrome
-          working-directory: highcharts
-          config-file: test/cypress/highcharts/config.mjs
-          install: false
-
   test_playwright:
     name: Playwright tests
     timeout-minutes: 15

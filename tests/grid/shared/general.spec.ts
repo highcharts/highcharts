@@ -41,6 +41,56 @@ test.describe('Rendering hidden grid', () => {
         await expect(page.locator('tbody tr').first()).toHaveClass(/hcg-row-odd/);
         await expect(page.locator('tbody tr').nth(1)).toHaveClass(/hcg-row-even/);
     });
+
+    test('Body cells should have a common class', async ({ page }) => {
+        await page.waitForFunction(() => {
+            return typeof (window as any).Grid !== 'undefined';
+        }, { timeout: 10000 });
+
+        await page.locator('#show').click();
+        await expect(page.locator('tbody tr')).toHaveCount(4, { timeout: 5000 });
+
+        const cells = page.locator('tbody tr').first().locator('> *');
+        await expect(cells).toHaveCount(4);
+        for (const cell of await cells.all()) {
+            await expect(cell).toHaveClass(/\bhcg-cell\b/);
+        }
+    });
+
+    test('Row header cells should have the common cell class', async ({ page }) => {
+        await page.evaluate(async () => {
+            const container = document.createElement('div');
+            container.id = 'row-header-grid';
+            document.body.appendChild(container);
+
+            await (window as any).Grid.grid('row-header-grid', {
+                data: {
+                    columns: {
+                        name: ['Ada'],
+                        value: [1]
+                    }
+                },
+                columns: [{
+                    id: 'name',
+                    cells: {
+                        rowHeader: true
+                    }
+                }]
+            }, true);
+        });
+
+        const row = page.locator('#row-header-grid tbody tr').first();
+
+        const nameCell = row.locator('> [data-column-id="name"]');
+        expect(await nameCell.evaluate(el => el.tagName)).toBe('TH');
+        await expect(nameCell).toHaveClass(/\bhcg-cell\b/);
+        await expect(nameCell).toHaveAttribute('scope', 'row');
+        await expect(nameCell).toHaveAttribute('role', 'rowheader');
+
+        const valueCell = row.locator('> [data-column-id="value"]');
+        expect(await valueCell.evaluate(el => el.tagName)).toBe('TD');
+        await expect(valueCell).toHaveClass(/\bhcg-cell\b/);
+    });
 });
 
 test.describe('Grid rows removal', () => {

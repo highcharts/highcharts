@@ -38,12 +38,11 @@ async function replaceHCCode(route: Route) {
 
     let rootPath = 'code';
 
-    if (relativePath.includes('gfx')) {
+    // Both `gfx/…` and e.g. `dashboards/gfx/…` are served from `gfx/`
+    const gfxIndex = relativePath.indexOf('gfx/');
+    if (gfxIndex >= 0) {
         rootPath = '';
-        const { preceding } =
-            relativePath.match(/(?<preceding>^.+)\/gfx/).groups;
-
-        relativePath = relativePath.replace(preceding, '');
+        relativePath = relativePath.slice(gfxIndex);
     }
 
     if (rootPath === 'code') {
@@ -420,6 +419,58 @@ export async function replaceSampleData(route: Route) {
     throw new Error('Failed to find a matching dataset');
 }
 
+/**
+ * Builds the page of a sample in `samples/dashboards/` or
+ * `samples/highcharts/`, like the sample view of highcharts-utils.
+ */
+async function replaceSamplePage(route: Route) {
+    const { pathname } = new URL(route.request().url());
+    const sampleDir = join(__dirname, '..', 'samples', pathname);
+    const read = (file: string) => readFile(join(sampleDir, file), 'utf8')
+        .catch(() => '');
+
+    const html = await read('demo.html');
+
+    if (!html) {
+        await route.abort();
+        throw new Error(`Missing sample for ${pathname}`);
+    }
+
+    const js = await read('demo.js');
+    const script = js ?
+        `<script>${js}</script>` :
+        `<script type="module">${await read('demo.mjs')}</script>`;
+
+    test.info().annotations.push({
+        type: 'redirect',
+        description: `${pathname} --> samples${pathname}`
+    });
+
+    await route.fulfill({
+        contentType: 'text/html',
+        body: `<!DOCTYPE html>
+<meta charset="utf-8">
+<style>${await read('demo.css')}</style>
+<div id="demo-content">${html}</div>
+${script}`
+    });
+}
+
+/**
+ * Serves `/code/` from the local build, for samples that import ES modules by
+ * relative paths.
+ */
+async function replaceLocalCode(route: Route) {
+    const { pathname } = new URL(route.request().url());
+
+    try {
+        await route.fulfill({ path: join(__dirname, '..', pathname) });
+    } catch {
+        await route.abort();
+        throw new Error(`Missing local file for ${pathname}`);
+    }
+}
+
 export async function setupRoutes(page: Page){
     if (!process.env.NO_REWRITES) {
         const routes: RouteType[] = [
@@ -456,6 +507,13 @@ export async function setupRoutes(page: Page){
                         localPath = join('css', 'grid', 'grid-lite.css');
                     } else if (relativePath === 'grid-pro/grid-pro.css') {
                         localPath = join('css', 'grid', 'grid-pro.css');
+                    } else if (
+                        /^grid-(?:lite|pro)\/css\/[\w-]+\.css$/u.test(relativePath)
+                    ) {
+                        // Including the files the main CSS imports
+                        localPath = join(
+                            'css', 'grid', relativePath.split('/').pop()
+                        );
                     } else {
                         await route.abort();
                         return;
@@ -983,130 +1041,14 @@ export async function setupRoutes(page: Page){
                 }
             },
             {
-                pattern: '**/dashboards/cypress/**',
-                handler: async (route) => {
-                    const url = new URL(route.request().url());
-                    const pathMatch = url.pathname.match(/\/dashboards\/cypress\/(.+)/);
-                    if (pathMatch) {
-                        let relativePath = pathMatch[1];
-                        const ext = extname(relativePath);
-
-                        // If path doesn't have extension, try demo.html
-                        if (!ext) {
-                            relativePath = join(relativePath, 'demo.html');
-                        }
-
-                        // Handle demo.js requests
-                        if (relativePath.endsWith('demo.js')) {
-                            const filePath = join('samples/dashboards/cypress', relativePath);
-                            try {
-                                const body = await readFile(join(__dirname, '..', filePath));
-                                test.info().annotations.push({
-                                    type: 'redirect',
-                                    description: `${url.pathname} --> ${filePath}`
-                                });
-                                await route.fulfill({
-                                    status: 200,
-                                    body,
-                                    contentType: 'application/javascript'
-                                });
-                                return;
-                            } catch {
-                                await route.abort();
-                                return;
-                            }
-                        }
-
-                        // Handle demo.html - inject demo.js and demo.css if they exist
-                        if (relativePath.endsWith('demo.html')) {
-                            const htmlPath = join('samples/dashboards/cypress', relativePath);
-                            const jsPath = htmlPath.replace('demo.html', 'demo.js');
-
-                            try {
-                                let htmlBody = await readFile(join(__dirname, '..', htmlPath), 'utf8');
-
-                                // Replace CDN URLs with code.highcharts.com URLs
-                                htmlBody = htmlBody.replace(
-                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.js/gu,
-                                    'https://code.highcharts.com/grid/$2.js'
-                                );
-                                htmlBody = htmlBody.replace(
-                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.css/gu,
-                                    'https://code.highcharts.com/grid/$2.css'
-                                );
-
-                                // Check if demo.css exists and inject it
-                                const cssPath = htmlPath.replace('demo.html', 'demo.css');
-                                if (existsSync(join(__dirname, '..', cssPath))) {
-                                    const cssContent = await readFile(join(__dirname, '..', cssPath), 'utf8');
-                                    // Replace CDN URLs in CSS @import
-                                    const cssWithReplacedUrls = cssContent
-                                        .replace(
-                                            /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
-                                            'https://code.highcharts.com/grid/$2.css'
-                                        );
-                                    // Inject CSS in head or at the beginning
-                                    if (htmlBody.includes('</head>')) {
-                                        htmlBody = htmlBody.replace('</head>', `<style>${cssWithReplacedUrls}</style></head>`);
-                                    } else if (htmlBody.includes('<head>')) {
-                                        htmlBody = htmlBody.replace('<head>', `<head><style>${cssWithReplacedUrls}</style>`);
-                                    } else {
-                                        htmlBody = `<style>${cssWithReplacedUrls}</style>\n${htmlBody}`;
-                                    }
-                                }
-
-                                // Check if demo.js exists and inject it
-                                if (existsSync(join(__dirname, '..', jsPath))) {
-                                    const jsContent = await readFile(join(__dirname, '..', jsPath), 'utf8');
-                                    // Inject demo.js before closing body tag, or at the end if no body tag
-                                    if (htmlBody.includes('</body>')) {
-                                        htmlBody = htmlBody.replace('</body>', `<script>${jsContent}</script></body>`);
-                                    } else if (htmlBody.includes('</html>')) {
-                                        htmlBody = htmlBody.replace('</html>', `<script>${jsContent}</script></html>`);
-                                    } else {
-                                        htmlBody += `\n<script>${jsContent}</script>`;
-                                    }
-                                }
-
-                                test.info().annotations.push({
-                                    type: 'redirect',
-                                    description: `${url.pathname} --> ${htmlPath} (with demo.js and demo.css injected)`
-                                });
-
-                                await route.fulfill({
-                                    status: 200,
-                                    body: htmlBody,
-                                    contentType: 'text/html'
-                                });
-                                return;
-                            } catch {
-                                // Fall through to abort
-                            }
-                        }
-
-                        // Handle other files (CSS, etc.)
-                        const filePath = join('samples/dashboards/cypress', relativePath);
-                        try {
-                            const body = await readFile(join(__dirname, '..', filePath));
-                            const fileExt = extname(relativePath);
-
-                            test.info().annotations.push({
-                                type: 'redirect',
-                                description: `${url.pathname} --> ${filePath}`
-                            });
-
-                            await route.fulfill({
-                                status: 200,
-                                body,
-                                contentType: contentTypes[fileExt] ?? 'text/html'
-                            });
-                            return;
-                        } catch {
-                            // Fall through to abort
-                        }
-                    }
-                    await route.abort();
-                }
+                pattern: url => url.hostname === 'localhost' &&
+                    /^\/(?:dashboards|highcharts)\//u.test(url.pathname),
+                handler: replaceSamplePage
+            },
+            {
+                pattern: url => url.hostname === 'localhost' &&
+                    url.pathname.startsWith('/code/'),
+                handler: replaceLocalCode
             },
             {
                 pattern: '**/testimage.png',
