@@ -387,3 +387,53 @@ QUnit.test('getSVG for boosted chart', async function (assert) {
         'Boost image href should not be replaced with xlink:href (#24102)'
     );
 });
+
+QUnit.test(
+    'getSVG should resolve margin CSS expressions, including ' +
+    'container-scoped variables (#23989)',
+    function (assert) {
+        const rootStyle = document.documentElement.style;
+        rootStyle.setProperty('--hc-export-root-margin', '20px');
+
+        const container = document.createElement('div');
+        container.style.setProperty('--hc-export-container-margin', '50px');
+        document.body.appendChild(container);
+
+        const chart = Highcharts.chart(container, {
+            chart: {
+                marginLeft: 'var(--hc-export-container-margin)',
+                marginTop: 'var(--hc-export-root-margin)',
+                width: 400,
+                height: 300
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        document.getElementById('output').innerHTML =
+            chart.exporting.getSVG();
+
+        const plotBackground = document.querySelector(
+            '#output .highcharts-plot-background'
+        );
+
+        assert.strictEqual(
+            Number(plotBackground.getAttribute('x')),
+            50,
+            'A CSS variable scoped to chart.container should not be ' +
+            'lost during export'
+        );
+
+        assert.strictEqual(
+            Number(plotBackground.getAttribute('y')),
+            20,
+            'A CSS variable scoped to :root should still resolve ' +
+            'correctly during export'
+        );
+
+        chart.destroy();
+        document.body.removeChild(container);
+        rootStyle.removeProperty('--hc-export-root-margin');
+    }
+);

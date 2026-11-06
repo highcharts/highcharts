@@ -48,7 +48,6 @@ import {
     isArray,
     merge,
     pushUnique,
-    relativeLength,
     splat
 } from '../../Shared/Utilities.js';
 
@@ -311,7 +310,7 @@ class FunnelSeries extends PieSeries {
             neckHeight = getLength(options.neckHeight, plotHeight),
             neckY = (centerY - height / 2) + height - neckHeight,
             points = series.points,
-            borderRadius = relativeLength(
+            borderRadius = chart.relativeLength(
                 borderRadiusObj.radius,
                 width
             ),
@@ -383,7 +382,7 @@ class FunnelSeries extends PieSeries {
                 ((series.getWidthAt(reversed ? 2 * centerY - y : y) / 2) +
                 (
                     point.dataLabel?.dataLabelPosition?.distance ??
-                    relativeLength(
+                    chart.relativeLength(
                         this.options.dataLabels?.distance || 0,
                         width
                     )

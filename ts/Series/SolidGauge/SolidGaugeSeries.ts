@@ -35,8 +35,7 @@ import {
     clamp,
     extend,
     isNumber,
-    merge,
-    relativeLength
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -117,6 +116,7 @@ class SolidGaugeSeries extends GaugeSeries {
         const series = this,
             yAxis = series.yAxis,
             center = yAxis.center,
+            outerRadius = center[2] / 2,
             options = series.options,
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
@@ -149,16 +149,14 @@ class SolidGaugeSeries extends GaugeSeries {
             // #10630 null point should not be draw
             if (!point.isNull) { // Condition like in pie chart
                 const paneInnerSize = yAxis.pane.options.innerSize,
-                    radius = ((
-                        relativeLength(
-                            point.options.radius ??
-                                options.radius ??
-                                '100%',
-                            center[2] / 2
-                        )
-                    )),
-                    innerRadius = Math.min((
-                        relativeLength(
+                    radius = series.chart.relativeLength(
+                        point.options.radius ??
+                            options.radius ??
+                            '100%',
+                        outerRadius
+                    ),
+                    innerRadius = Math.min(
+                        series.chart.relativeLength(
                             point.options.innerRadius ??
                                 options.innerRadius ??
                                 (
@@ -167,9 +165,8 @@ class SolidGaugeSeries extends GaugeSeries {
                                         paneInnerSize
                                 ) ??
                                 0,
-                            center[2] / 2
-                        )
-                    ), radius),
+                            outerRadius
+                        ), radius),
                     axisMinAngle = Math.min(
                         yAxis.startAngleRad,
                         yAxis.endAngleRad

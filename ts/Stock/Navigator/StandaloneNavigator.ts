@@ -36,6 +36,7 @@ import {
     defined,
     find,
     fireEvent,
+    isNumber,
     merge
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
@@ -90,18 +91,18 @@ function getSizeOptions(
     const { height, width, margin, inverted } =
             options.chartOptions?.chart || {},
         chartHeight = height ?? (
-            !inverted && options.height ?
+            !inverted && isNumber(options.height) ?
                 options.height + 30 :
                 void 0
         ),
         chartWidth = width ?? (
-            inverted && options.height ?
+            inverted && isNumber(options.height) ?
                 options.height + 20 :
                 void 0
         );
 
     return merge(
-        getChartDefaults(inverted, chartWidth),
+        getChartDefaults(inverted, isNumber(chartWidth) ? chartWidth : 70),
         defined(margin) ? { chart: { margin } } : void 0,
         defined(chartWidth) ? { chart: { width: chartWidth } } : void 0,
         defined(chartHeight) ? { chart: { height: chartHeight } } : void 0
