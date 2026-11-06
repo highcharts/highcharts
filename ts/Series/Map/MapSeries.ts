@@ -52,12 +52,9 @@ const { splitPath } = MapChart;
 import MapPoint from './MapPoint.js';
 import MapSeriesDefaults from './MapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    // Indirect dependency to keep product size low
-    column: ColumnSeries,
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
 import {
     defined,
     extend,
@@ -143,32 +140,43 @@ class MapSeries extends ScatterSeries {
 
     // public baseView?: { center: Highcharts.LonLatArray; zoom: number };
 
+    /** @internal */
     public bounds?: MapBounds;
 
+    /** @internal */
     public chart!: MapChart;
 
     public data!: Array<MapPoint>;
 
+    /** @internal */
     public group!: SVGElement;
 
+    /** @internal */
     public joinBy!: Array<string>;
 
+    /** @internal */
     public mapData?: unknown;
 
+    /** @internal */
     public mapMap?: AnyRecord;
 
+    /** @internal */
     public mapTitle?: string;
 
     public options!: MapSeriesOptions;
 
     public points!: Array<MapPoint>;
 
+    /** @internal */
     public transformGroups: Array<SVGElement>|undefined;
 
+    /** @internal */
     public valueData?: Array<number>;
 
+    /** @internal */
     public valueMax?: number;
 
+    /** @internal */
     public valueMin?: number;
 
     public tupleKey = 'hc-key';
@@ -210,6 +218,7 @@ class MapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public clearBounds(): void {
         this.points.forEach((point): void => {
             delete point.bounds;
@@ -686,6 +695,7 @@ class MapSeries extends ScatterSeries {
         return attr;
     }
 
+    /** @internal */
     public matchPoints(): boolean {
         // #16782
         return !this.hasProcessedDataTable &&
@@ -714,6 +724,7 @@ class MapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public getDataColumnKeys(): Array<string> {
         // No x data for maps
         return this.pointArrayMap;
@@ -952,6 +963,7 @@ class MapSeries extends ScatterSeries {
         fireEvent(series, 'afterTranslate');
     }
 
+    /** @internal */
     public update(
         options: SeriesTypeOptions
     ): void {
@@ -986,21 +998,34 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface MapSeries extends ColorMapComposition.SeriesComposition {
+    /** @internal */
     getCenter: typeof CU['getCenter'];
+    /** @internal */
     pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
+    /** @internal */
     pointClass: typeof MapPoint;
+    /** @internal */
     preserveAspectRatio: boolean;
+    /** @internal */
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
+    /** @internal */
     animate(init?: boolean): void;
+    /** @internal */
     doFullTranslate(): boolean;
+    /** @internal */
     drawMapDataLabels(): void;
+    /** @internal */
     drawPoints(): void;
+    /** @internal */
     hasData(): boolean;
+    /** @internal */
     pointAttribs(
         point?: MapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes;
+    /** @internal */
     render(): void;
 }
 extend(MapSeries.prototype, {

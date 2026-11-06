@@ -1,3 +1,10 @@
+---
+description: >-
+  Identify the external libraries used for optional Highcharts features, see
+  when and how they are loaded, and review the article's licensing and
+  security notes for these third-party dependencies.
+---
+
 Optional dependencies
 ---------------------
 

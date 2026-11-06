@@ -18,24 +18,23 @@
  *
  * */
 
-import type FlowMapPointOptions from './FlowMapPointOptions';
-import type FlowMapSeries from './FlowMapSeries';
+import type { FlowMapPointOptions } from './FlowMapPointOptions';
+import type { FlowMapSeries } from './FlowMapSeries';
 import type { MapLonLatObject } from '../../Maps/GeoJSON';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type ColorMapComposition from '../ColorMapComposition.js';
+import type { PositionObject } from '../../Core/Renderer/PositionObject';
+import type { ColorMapComposition } from '../ColorMapComposition.js';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import MapLineSeries from '../MapLine/MapLineSeries.js';
 import { LonLatArray } from '../../Maps/MapViewOptions';
-const {
-    seriesTypes: {
-        mapline: {
-            prototype: {
-                pointClass: MapLinePoint
-            }
-        }
-    }
-} = SeriesRegistry;
 import { isNumber, isString } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const MapLinePoint = MapLineSeries.prototype.pointClass;
 
 /* *
  *
@@ -51,12 +50,15 @@ class FlowMapPoint extends MapLinePoint {
      *
      * */
 
+    /** @internal */
     public fromPos?: PositionObject;
 
+    /** @internal */
     public toPos?: PositionObject;
 
     public options!: FlowMapPointOptions;
 
+    /** @internal */
     public series!: FlowMapSeries;
 
     /* *
@@ -65,9 +67,7 @@ class FlowMapPoint extends MapLinePoint {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     isValid(): boolean {
         let valid = !!(this.options.to && this.options.from);
         [this.options.to, this.options.from]
@@ -96,6 +96,7 @@ class FlowMapPoint extends MapLinePoint {
  * */
 
 interface FlowMapPoint {
+    /** @internal */
     isValid: ColorMapComposition.PointComposition['isValid'];
 }
 

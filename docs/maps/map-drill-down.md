@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure map drilldown with preloaded or asynchronously fetched detail
+  maps, and control whether transitions zoom to the selected region. The
+  article links to the drilldown API and general feature guide.
+---
+
 Map drill down
 ==============
 

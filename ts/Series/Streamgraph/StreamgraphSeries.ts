@@ -23,10 +23,8 @@
 import type StreamgraphPoint from './StreamgraphPoint';
 import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions';
 
+import AreaSplineSeries from '../AreaSpline/AreaSplineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    areaspline: AreaSplineSeries
-} = SeriesRegistry.seriesTypes;
 import StreamgraphSeriesDefaults from './StreamgraphSeriesDefaults.js';
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 
@@ -47,6 +45,7 @@ class StreamgraphSeries extends AreaSplineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: StreamgraphSeriesOptions = merge(
         AreaSplineSeries.defaultOptions,
         StreamgraphSeriesDefaults
@@ -72,6 +71,7 @@ class StreamgraphSeries extends AreaSplineSeries {
 
     // Modifier function for stream stacks. It simply moves the point up or
     // down in order to center the full stack vertically.
+    /** @internal */
     public streamStacker(
         pointExtremes: Array<number>,
         stack: Record<string, number>,

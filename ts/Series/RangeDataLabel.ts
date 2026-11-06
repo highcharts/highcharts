@@ -31,8 +31,10 @@ import {
  *
  * */
 
+/** @internal */
 namespace RangeDataLabel {
 
+    /** @internal */
     export interface DataLabelOptionsWithAlignToKey extends DataLabelOptions {
         alignToKey?: string;
     }
@@ -50,6 +52,7 @@ namespace RangeDataLabel {
         q3Plot?: number;
     }
 
+    /** @internal */
     export interface SeriesComposition<
         PointValKey extends string = string
     > extends Series {
@@ -120,6 +123,7 @@ namespace RangeDataLabel {
         return false;
     }
 
+    /** @internal */
     export function compose<T extends typeof Series>(
         SeriesClass: T
     ): T {
@@ -175,6 +179,7 @@ namespace RangeDataLabel {
         }
     }
 
+    /** @internal */
     export function resolveAlignToKey<PointValKey extends string>(
         series: SeriesComposition<PointValKey>,
         rawKey?: PointValKey
@@ -184,6 +189,7 @@ namespace RangeDataLabel {
             series.pointValKey;
     }
 
+    /** @internal */
     export function alignDataLabel(
         this: SeriesComposition,
         point: PointComposition,
@@ -243,4 +249,5 @@ namespace RangeDataLabel {
  *
  * */
 
+/** @internal */
 export default RangeDataLabel;

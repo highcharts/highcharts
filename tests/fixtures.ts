@@ -228,24 +228,33 @@ async function getJSONSources(): Promise<RouteType[]> {
             directory: 'tests/visual/data'
         })) : [];
 
-    for (const source of [...sources, ...visualSources] as {
+    type JSONSource = {
         url: string;
         filename: string;
         directory?: string;
         method?: string;
         postData?: unknown;
-    }[]) {
+    };
+    const sourcesByURL = new Map<string, JSONSource[]>();
+    for (const source of [...sources, ...visualSources] as JSONSource[]) {
+        const matches = sourcesByURL.get(source.url) || [];
+        matches.push(source);
+        sourcesByURL.set(source.url, matches);
+    }
+
+    for (const [url, matchingSources] of sourcesByURL) {
         routes.push({
-            pattern: source.url,
+            pattern: url,
             handler: async route => {
                 try {
-                    if (
-                        (source.method &&
-                            route.request().method() !== source.method) ||
-                        (source.postData && !isDeepStrictEqual(
+                    const source = matchingSources.find(source =>
+                        (!source.method ||
+                            route.request().method() === source.method) &&
+                        (!source.postData || isDeepStrictEqual(
                             route.request().postDataJSON(), source.postData
                         ))
-                    ) {
+                    );
+                    if (!source) {
                         await route.abort();
                         return;
                     }
@@ -258,7 +267,7 @@ async function getJSONSources(): Promise<RouteType[]> {
 
                     test.info().annotations.push({
                         type: 'redirect',
-                        description: `${source.url} --> ${localPath}`
+                        description: `${url} --> ${localPath}`
                     });
 
                     await route.fulfill({
@@ -268,7 +277,7 @@ async function getJSONSources(): Promise<RouteType[]> {
                     });
                 } catch {
                     await route.abort();
-                    throw new Error(`Unable to resolve local JSON source for ${source.url}`);
+                    throw new Error(`Unable to resolve local JSON source for ${url}`);
                 }
             }
         });
@@ -687,7 +696,7 @@ export async function setupRoutes(page: Page){
                 }
             },
             {
-                pattern: '**/grid-lite/**',
+                pattern: url => /^\/(?:samples\/)?grid-lite\//u.test(url.pathname),
                 handler: async (route) => {
                     const url = new URL(route.request().url());
                     const pathMatch = url.pathname.match(/\/grid-lite\/(.+)/);
@@ -846,7 +855,7 @@ export async function setupRoutes(page: Page){
                 }
             },
             {
-                pattern: '**/grid-pro/**',
+                pattern: url => /^\/(?:samples\/)?grid-pro\//u.test(url.pathname),
                 handler: async (route) => {
                     const url = new URL(route.request().url());
                     const pathMatch = url.pathname.match(/\/grid-pro\/(.+)/);
@@ -1124,6 +1133,15 @@ export async function setupRoutes(page: Page){
         for (const route of routes) {
             await page.route(route.pattern, route.handler);
         }
+        if (test.info().project.name === 'visual') {
+            await page.route(
+                'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico',
+                route => route.fulfill({
+                    path: 'tests/visual/data/highcharts-favicon.ico',
+                    contentType: 'image/x-icon'
+                })
+            );
+        }
     }
 }
 
@@ -1340,7 +1358,7 @@ export async function createChart(
             >;
 
             const HCInstance =
-                (HC ?? window.Highcharts) as unknown as ChartFactories;
+                (HC ?? window.Highcharts) as ChartFactories;
 
             const callback = serializedCallback ?
                 (chart: Highcharts.Chart) => {

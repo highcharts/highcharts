@@ -1,0 +1,8 @@
+---
+name: Asset Allocations Pie
+description: Shows fund asset allocation as a donut pie chart with a data grid.
+tags:
+  - Dashboards
+  - Morningstar
+js_wrap: b
+...

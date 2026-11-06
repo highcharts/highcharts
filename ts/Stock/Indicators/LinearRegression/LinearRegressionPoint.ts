@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class LinearRegressionPoint extends SMAPoint {
+    /** @internal */
     public series: LinearRegressionIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class LinearRegressionPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default LinearRegressionPoint;

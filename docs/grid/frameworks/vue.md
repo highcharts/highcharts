@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Vue"
+description: >-
+  Install the Grid package, create a Vue wrapper that mounts Grid into a
+  template ref, pass configuration through component props, and switch package
+  imports and CSS when using Grid Pro.
 ---
 
 # Highcharts Grid with Vue

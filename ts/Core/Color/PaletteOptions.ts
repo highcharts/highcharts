@@ -23,20 +23,199 @@ import type ColorString from './ColorString';
  *
  * */
 export interface PaletteSchemeColors {
+
+    /**
+     * Chart background, point stroke for markers and columns etc. The
+     * background is also used as base for interpolated neutral and
+     * highlight colors.
+     */
     backgroundColor?: ColorString;
+
+    /**
+     * Colors for data series and points. This array extends the colors
+     * defined for the general `palette.colors` array, item by item. If an
+     * item is `null` or `undefined`, the general color will be used.
+     */
     colors?: Array<ColorString|null|undefined>;
+
+    /**
+     * Neutral color to be used as base for interpolated colors. For
+     * example, `var(--highcharts-neutral-color-60)` is a blend of the
+     * `neutralColor` and the `backgroundColor`, with a weight of 60%
+     * `neutralColor` and 40% `backgroundColor`.
+     *
+     * Neutral colors are by default used for basic text, lines, borders,
+     * basically most elements except the data itself, and highlighted
+     * elements.
+     */
     neutralColor?: ColorString;
+
+    /**
+     * Highlight color to be used as base for interpolated colors. For
+     * example, `var(--highcharts-highlight-color-60)` is a blend of the
+     * `highlightColor` and the `backgroundColor`, with a weight of 60%
+     * `highlightColor` and 40% `backgroundColor`.
+     *
+     * Highlight colors are by default used for highlighted or active
+     * elements, like the zoom selection marker, clickable Stock Range
+     * Selector date input boxes, clickable drilldown labels and more.
+     */
     highlightColor?: ColorString;
+
+    /**
+     * Positive color used in stock charts, such as for technical
+     * indicators, annotations or hollow candlestick series.
+     */
     positiveColor?: ColorString;
+
+    /**
+     * Negative color used in stock charts, such as for technical
+     * indicators, annotations or hollow candlestick series.
+     */
     negativeColor?: ColorString;
 }
 
+/**
+ * Palette options for dark mode.
+ */
+export interface PaletteSchemeColorsDark extends PaletteSchemeColors {
+
+    /** @default '#141414' */
+    backgroundColor?: PaletteSchemeColors['backgroundColor'];
+
+    /** @default '#ffffff' */
+    neutralColor?: PaletteSchemeColors['neutralColor'];
+
+    /** @default '#2caffe' */
+    highlightColor?: PaletteSchemeColors['highlightColor'];
+}
+
+/**
+ * Palette options for light mode.
+ */
+export interface PaletteSchemeColorsLight extends PaletteSchemeColors {
+
+    /** @default '#ffffff' */
+    backgroundColor?: PaletteSchemeColors['backgroundColor'];
+
+    /** @default '#000000' */
+    neutralColor?: PaletteSchemeColors['neutralColor'];
+
+    /** @default '#0022ff' */
+    highlightColor?: PaletteSchemeColors['highlightColor'];
+
+    /** @default '#06b535' */
+    positiveColor?: PaletteSchemeColors['positiveColor'];
+
+    /** @default '#f21313' */
+    negativeColor?: PaletteSchemeColors['negativeColor'];
+}
+
+/**
+ * The palette object specifies colors for the charts and how to apply them.
+ *
+ * Each color scheme (`light` and `dark`) has three primary colors:
+ * `backgroundColor`, `neutralColor`, and `highlightColor`. For the neutral and
+ * highlight colors, a series of interpolated color variants are generated, and
+ * accessed as CSS variables in the chart settings in their prefixed and
+ * hyphenated form. For example,
+ *
+ * * `var(--highcharts-neutral-color-80)` is a blend of the `neutralColor` and
+ *   the `backgroundColor`, with a weight of 80% `neutralColor` and 20%
+ *   `backgroundColor`. It is the default for the main title
+ *   (`title.style.color`), axis labels and more.
+ * * `var(--highcharts-highlight-color-80)` is a blend of the `highlightColor`
+ *   and the `backgroundColor`, with a weight of 80% `highlightColor` and 20%
+ *   `backgroundColor`. It is used for the zoom selection marker (with opacity),
+ *   Stock Range Selector date input boxes and more.
+ *
+ * The `colors` array is used for data series and points, and is not blended
+ * with the `backgroundColor`. It is also accessible as CSS variables, and this
+ * is the recommended way to hard-code colors to match series and data.
+ * For example, `var(--highcharts-color-0)` is the first color in the `colors`
+ * array, `var(--highcharts-color-1)` is the second color, and so on.
+ *
+ * The palette only accepts plain color strings in the options. Gradients and
+ * patterns are only supported in other color settings, such as `series.color`
+ * or `point.color`, but they can use CSS variables from the palette.
+ *
+ * @sample highcharts/palette/general
+ *         General palette options
+ * @sample highcharts/palette/branding
+ *         Branded chart
+ * @sample highcharts/demo/pie-gradient
+ *         Using palette colors in gradients
+ * @since  13.0.0
+ */
 export interface PaletteOptions {
+
+    /**
+     * Colors for data series and points. This setting is generic for both
+     * light and dark mode, and can be overridden for each mode in
+     * `light.colors` and `dark.colors`.
+     *
+     * @sample highcharts/palette/data-colors-points
+     *         Colors for points
+     * @sample highcharts/palette/data-colors-series
+     *         Colors for series
+     * @default [
+     *       '#2caffe',
+     *       '#544fc5',
+     *       '#00e272',
+     *       '#fe6a35',
+     *       '#6b8abc',
+     *       '#d568fb',
+     *       '#2ee0ca',
+     *       '#fa4b42',
+     *       '#feb56a',
+     *       '#91e8e1'
+     *      ]
+     * @since 13.0.0
+     */
     colors?: Array<ColorString>;
+
+    /**
+     * Color scheme to use. When `light dark` is set, the chart will
+     * automatically switch between light and dark mode based on the user's
+     * system preferences, or whether the `.highcharts-light` or
+     * `.highcharts-dark` class is applied to a parent of the container.
+     *
+     * When `inherit` is set, the chart will inherit the color scheme from the
+     * closest parent element with a defined color scheme, or default to `light`
+     * if none is found.
+     *
+     * @sample  highcharts/palette/colorscheme
+     *          Dark color scheme
+     * @sample  highcharts/palette/exporting-light
+     *          Dark chart with light export
+     * @default 'light dark'
+     * @since   13.0.0
+     */
     colorScheme?: 'light dark' |'light' | 'dark' | 'inherit';
-    dark?: PaletteSchemeColors;
+
+    /**
+     * Palette options for dark mode.
+     */
+    dark?: PaletteSchemeColorsDark;
+
+    /**
+     * Whether to inject the CSS for the dark and light mode. If not injected,
+     * you need to include the CSS manually in your page or application, with
+     * the appropriate CSS variables. A file with the default CSS variables is
+     * available at
+     * [css/highcharts-palette.css](https://code.highcharts.com/css/highcharts-palette.css).
+     *
+     * @sample  highcharts/palette/injectcss-false
+     *          Not injecting CSS variables, import file instead
+     * @default true
+     * @since   13.0.0
+     */
     injectCSS?: boolean;
-    light?: PaletteSchemeColors;
+
+    /**
+     * Palette options for light mode.
+     */
+    light?: PaletteSchemeColorsLight;
 }
 
 

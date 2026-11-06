@@ -18,17 +18,18 @@
 *
 * */
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import PointAndFigureSeries from './PointAndFigureSeries.js';
-const {
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+import type { PointAndFigurePointOptions } from './PointAndFigurePointOptions';
+import type PointAndFigureSeries from './PointAndFigureSeries';
+
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *
@@ -36,10 +37,6 @@ const {
  *
  * */
 
-/**
- * @private
- * @class
- */
 class PointAndFigurePoint extends ScatterPoint {
 
     /* *
@@ -48,7 +45,10 @@ class PointAndFigurePoint extends ScatterPoint {
      *
      * */
 
+    /** @internal */
     public upTrend!: boolean;
+
+    public options!: PointAndFigurePointOptions;
 
     public series!: PointAndFigureSeries;
 
@@ -58,6 +58,7 @@ class PointAndFigurePoint extends ScatterPoint {
      *
      * */
 
+    /** @internal */
     public resolveMarker(): void {
         const seriesOptions = this.series.options;
         this.marker = this.options.marker =
@@ -66,6 +67,7 @@ class PointAndFigurePoint extends ScatterPoint {
         this.color = this.options.marker.lineColor;
     }
 
+    /** @internal */
     public resolveColor(): void {
         super.resolveColor();
         this.resolveMarker();
@@ -73,8 +75,7 @@ class PointAndFigurePoint extends ScatterPoint {
 
     /**
      * Extend the parent method by adding up or down to the class name.
-     * @private
-     * @function Highcharts.seriesTypes.pointandfigure#getClassName
+     * @internal
      */
     public getClassName(): string {
         return super.getClassName.call(this) +

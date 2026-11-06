@@ -29,11 +29,9 @@ import type {
 } from './PSAROptions';
 import type PSARPoint from './PSARPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import { merge } from '../../../Shared/Utilities.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -166,7 +164,6 @@ function getPSAR(
 /**
  * The Parabolic SAR series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.psar
  *
@@ -191,9 +188,10 @@ class PSARIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/psar
+     * @requires     indicators/indicators
+     * @requires     indicators/psar
      * @optionparent plotOptions.psar
+     * @internal
      */
     public static defaultOptions: PSAROptions = merge(SMAIndicator.defaultOptions, {
         lineWidth: 0,
@@ -254,6 +252,7 @@ class PSARIndicator extends SMAIndicator {
      * */
 
     public data!: Array<PSARPoint>;
+    /** @internal */
     public nameComponents: Array<string>|undefined = void 0;
     public points!: Array<PSARPoint>;
     public options!: PSAROptions;
@@ -264,6 +263,7 @@ class PSARIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: PSARParamsOptions
@@ -407,7 +407,6 @@ class PSARIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface PSARIndicator {
     pointClass: typeof PSARPoint;
     nameComponents: Array<string>|undefined;
@@ -419,7 +418,6 @@ interface PSARIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         psar: typeof PSARIndicator;
@@ -434,7 +432,6 @@ SeriesRegistry.registerSeriesType('psar', PSARIndicator);
  *
  * */
 
-/** @internal */
 export default PSARIndicator;
 
 /* *
@@ -450,8 +447,8 @@ export default PSARIndicator;
  * @extends   series,plotOptions.psar
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/psar
+ * @requires  indicators/indicators
+ * @requires  indicators/psar
  * @apioption series.psar
  */
 

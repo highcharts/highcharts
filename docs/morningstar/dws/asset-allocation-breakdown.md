@@ -1,3 +1,11 @@
+---
+description: >-
+  Inspect the InvestmentsConnector tables for general, Canadian, and
+  underlying-instrument allocation, then use their columns to chart long,
+  short, net, or rescaled portfolio percentages across the documented asset
+  classes.
+---
+
 # Asset Allocation Breakdown
 
 The **Asset Allocation Breakdown** view provides the split of a portfolio's net
@@ -77,8 +85,7 @@ Highcharts.chart('container', {
 You will find examples of how to use `AssetAllocationBreakdown` converter in
 our demos.
 
-- **Highcharts Core + Morningstar Asset Allocation Breakdown**
-- **Highcharts Core + Morningstar Asset Allocation Breakdown (Pre-fetched JSON)**
+- [Highcharts Dashboards + Morningstar Asset Allocation Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/asset-allocation-pie/)
 
 ## Morningstar API Reference
 

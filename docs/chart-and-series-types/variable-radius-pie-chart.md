@@ -1,3 +1,10 @@
+---
+description: >-
+  Encode slice volume with y and radius with z, then adjust minimum and
+  maximum slice sizes and sizeBy. The guide shows the data format and
+  explains how z bounds affect the rendered radii.
+---
+
 Variable radius pie
 ===
 

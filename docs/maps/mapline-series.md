@@ -1,3 +1,10 @@
+---
+description: >-
+  Draw geographic lines whose values color their strokes, or add freeform
+  shapes using GeoJSON-compatible geometry. The article shows combining
+  mapline with a base map and separating geometry into mapData.
+---
+
 Map line series
 ===============
 

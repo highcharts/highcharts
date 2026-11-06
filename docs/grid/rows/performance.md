@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Performance"
+description: >-
+  Tune row virtualization with thresholds, buffer size, strict heights, and
+  minimum visible rows; review tradeoffs for scrolling, wide datasets,
+  headers, and column resizing in large tables.
 ---
 
 # Row performance and rendering

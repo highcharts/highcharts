@@ -29,10 +29,8 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     correctFloat,
     extend,
@@ -49,7 +47,6 @@ import {
 /**
  * The Directional Movement Index (DMI) series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dmi
  *
@@ -77,9 +74,10 @@ class DMIIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/dmi
+     * @requires     indicators/indicators
+     * @requires     indicators/dmi
      * @optionparent plotOptions.dmi
+     * @internal
      */
     public static defaultOptions: DMIOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -161,6 +159,7 @@ class DMIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public calculateDM(
         yVal: Array<Array<number>>,
         i: number,
@@ -184,6 +183,7 @@ class DMIIndicator extends SMAIndicator {
         return correctFloat(DM);
     }
 
+    /** @internal */
     public calculateDI(
         smoothedDM: number,
         tr: number
@@ -191,6 +191,7 @@ class DMIIndicator extends SMAIndicator {
         return smoothedDM / tr * 100;
     }
 
+    /** @internal */
     public calculateDX(
         plusDI: number,
         minusDI: number
@@ -200,6 +201,7 @@ class DMIIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public smoothValues(
         accumulatedValues: number,
         currentValue: number,
@@ -210,6 +212,7 @@ class DMIIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public getTR(
         currentPoint: Array<number>,
         prevPoint?: Array<number>
@@ -226,6 +229,7 @@ class DMIIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DMIParamsOptions
@@ -378,7 +382,6 @@ MultipleLinesComposition.compose(DMIIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dmi: typeof DMIIndicator;
@@ -392,7 +395,6 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
  *
  * */
 
-/** @internal */
 export default DMIIndicator;
 
 /* *
@@ -412,8 +414,8 @@ export default DMIIndicator;
  * @excluding allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
  *            pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/dmi
+ * @requires  indicators/indicators
+ * @requires  indicators/dmi
  * @apioption series.dmi
  */
 

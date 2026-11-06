@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Overview"
+description: >-
+  Explore how Grid rows come from the data provider, then choose guides for
+  reading and updating row data, pagination, pinning, TreeView, grouping,
+  summary rows, virtualization, and rendering performance.
 ---
 
 # Rows overview
@@ -26,6 +30,13 @@ Use row pinning to keep selected rows visible at the top or bottom while the
 main row set scrolls normally. See
 [Row pinning](https://www.highcharts.com/docs/grid/rows/pinning).
 
+## Selection
+
+Use row selection to let end users pick one or more rows, then read the
+selection through the API and events to drive editing, exporting, or a
+connected chart. See
+[Row selection](https://www.highcharts.com/docs/grid/rows/selection).
+
 ## Tree view
 
 Use TreeView to present hierarchical source rows as an expandable hierarchy with
@@ -37,6 +48,12 @@ See [Tree view](https://www.highcharts.com/docs/grid/rows/tree-view).
 Use row grouping to turn repeated values of flat data into expandable group rows
 with aggregated summaries. See
 [Row grouping](https://www.highcharts.com/docs/grid/rows/grouping).
+
+## Summary rows
+
+Use summary rows to show totals, averages or other aggregates of each column
+above or below the table body. See
+[Summary rows](https://www.highcharts.com/docs/grid/rows/summary-rows).
 
 ## Virtualization
 

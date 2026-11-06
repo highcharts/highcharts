@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "13.0.2",
+  "version": "13.1.1",
   "private": true,
   "description": "JavaScript charting framework",
   "module": "esm/highcharts.js",
@@ -37,13 +37,14 @@
     "gtest": "gulp test --product Grid --force",
     "test": "npx playwright test --project=setup-highcharts --project=setup-dashboards --project=setup-grid-lite --project=setup-grid-pro --project=highcharts --project=dashboards --project=grid-lite --project=grid-pro --project=grid-shared --project=qunit",
     "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
+    "test-node:tooling": "node --import tsx --test \"test/ts-node-unit-tests/tooling-tests/*.test.ts\"",
     "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",
     "test:webpack": "node tools/webpacks/check-duplicates.mjs && node tools/webpacks/check-namespace-exposure.mjs",
     "test:precommit": "npx gulp generate-samples --check && npx gulp test --modified && npm run test-node",
     "test:pw": "playwright test --project=setup-highcharts --project=highcharts",
     "test:pw:all": "playwright test",
     "test:pw:qunit": "playwright test --project=setup-highcharts --project=qunit --project=qunit-firefox",
-    "test:pw:visual": "playwright test --project=setup-highcharts --project=visual",
+    "test:pw:visual": "playwright test --project=setup-visual --project=visual",
     "test:pw:dashboards": "playwright test --project=setup-dashboards --project=dashboards",
     "test:pw:dashboards:all": "playwright test --project=setup-dashboards --project=dashboards --project=dashboards-firefox --project=dashboards-webkit",
     "test:pw:internal": "playwright test --project=setup-highcharts --project=setup-dashboards --project=internal",
@@ -58,7 +59,7 @@
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
     "prepare": "husky install && npm run clean",
-    "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap",
+    "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap && npx playwright install",
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "tsx test/ts-node-unit-tests/bench.ts",
     "benchmark-compare": "tsx test/ts-node-unit-tests/benchmark-compare.ts",
@@ -92,9 +93,9 @@
     "@types/qunit": "^2.19.10",
     "@types/trusted-types": "^2.0.7",
     "@types/yargs": "^17.0.32",
-    "@typescript-eslint/eslint-plugin": "8.39.1",
-    "@typescript-eslint/parser": "8.39.1",
-    "@webgpu/types": "^0.1.64",
+    "@typescript-eslint/eslint-plugin": "8.70.0",
+    "@typescript-eslint/parser": "8.70.0",
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^5.1.1",
     "cloudflare": "^3.2.0",
@@ -116,26 +117,17 @@
     "gulp-jsdoc3": "^3.0.0",
     "gulp-zip": "5.1.0",
     "gzip-size": "6.0.0",
+    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.6",
     "husky": "^8.0.3",
     "jquery": "^3.7.1",
     "js-yaml": "3.15.2",
     "jsdom": "^21.1.0",
     "jspdf": "4.2.1",
-    "karma": "^6.4.3",
-    "karma-browserstack-launcher": "^1.6.0",
-    "karma-chrome-launcher": "^3.2.0",
-    "karma-edge-launcher": "^0.4.2",
-    "karma-firefox-launcher": "^2.1.3",
-    "karma-generic-preprocessor": "^1.1.1",
-    "karma-ie-launcher": "^1.0.0",
-    "karma-qunit": "^4.2.0",
-    "karma-safari-launcher": "^1.0.0",
-    "karma-sharding": "^4.4.0",
     "lint-staged": "^15.2.5",
     "lolex": "^6.0.0",
     "marked": "^4.2.12",
     "mini-css-extract-plugin": "2.10.0",
-    "moment": "2.30",
+    "moment": "2.31",
     "moment-timezone": "^0.5.45",
     "node-fetch": "^2.6.12",
     "plugin-error": "^2.0.1",
@@ -149,11 +141,10 @@
     "stylelint-config-standard": "^29.0.0",
     "svg2pdf.js": "2.7.0",
     "topojson-client": "^3.1.0",
-    "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typedoc": "^0.28.13",
     "typedoc-plugin-rename-defaults": "^0.7.3",
-    "typescript": "~5.9.3",
+    "typescript": "~6.0.2",
     "undertaker-forward-reference": "^2.0.0",
     "webpack": "^5.102.0",
     "webpack-cli": "^5.1.4",
@@ -165,6 +156,9 @@
     "tests/"
   ],
   "overrides": {
+    "@docusaurus/core": {
+      "tinypool": "2.1.2"
+    },
     "gulp-jsdoc3": {
       "jsdoc": "^4.0.3"
     },
@@ -199,7 +193,17 @@
     ],
     "./tests/**": [
       "npx --workspace tests eslint"
+    ],
+    "{.github/workflows/visual-compare-playwright.yml,package.json,package-lock.json,test/visual-test-samples.js,test/ts-node-unit-tests/bench*.ts,test/ts-node-unit-tests/tooling-tests/**,tests/utils.ts,tests/visual/**}": [
+      "node -e \"require('node:child_process').execSync('npm run test-node:tooling', {stdio: 'inherit'})\""
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>"
+  "license": "SEE LICENSE IN <license.txt>",
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "@swc/core@1.16.1": true,
+    "cypress@15.21.1": true,
+    "core-js": false,
+    "fsevents": false
+  }
 }

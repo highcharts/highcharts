@@ -30,7 +30,6 @@ import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
  *
  * */
 
-/** @internal */
 class BulletPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
@@ -39,10 +38,14 @@ class BulletPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public borderColor: BulletPointOptions['borderColor'];
     public options!: BulletPointOptions;
+    /** @internal */
     public series!: BulletSeries;
+    /** @internal */
     public target?: number;
+    /** @internal */
     public targetGraphic?: SVGElement;
 
     /* *
@@ -73,5 +76,4 @@ class BulletPoint extends ColumnSeries.prototype.pointClass {
  *
  * */
 
-/** @internal */
 export default BulletPoint;

@@ -1,73 +1,72 @@
 /**
- * Custom Legend extension to allow scrollbar on legend area. Note that the
- * plugin needs enabled legend.useHTML option to move legend into separate SVG
- * element inside div element.
+ * Custom Legend extension to allow scrollbar on legend area. The plugin moves
+ * the legend into a separate SVG element inside a scrollable div element.
  */
 
-(function (H) {
-    const { defined } = H;
+(({ addEvent, createElement, css, Legend }) => {
 
-    H.addEvent(H.Legend, 'afterRender', function () {
+    addEvent(Legend, 'afterRender', function () {
         const legend = this,
-            chart = legend.chart,
-            {
-                custom,
-                useHTML,
-                layout
-            } = legend.options,
-            isHorizontal = layout === 'horizontal';
+            { chart, group, options } = legend,
+            area = options.custom?.scrollableLegendArea;
 
-        if (
-            defined(custom) &&
-            defined(custom.scrollableLegendArea) &&
-            useHTML &&
-            legend.group.div
-        ) {
-            const {
-                minHeight,
-                minWidth
-            } = custom.scrollableLegendArea;
-
-            if (!legend.legendWrapper) {
-                // Create additional SVG element to put inside additional div
-                // after first render
-                legend.legendWrapper = chart.renderer
-                    .createElement('svg')
-                    .attr({
-                        version: '1.1',
-                        class: 'highcharts-scrollable-legend',
-                        height: legend.legendHeight,
-                        width: isHorizontal ?
-                            legend.contentGroup.getBBox().width :
-                            legend.legendWidth
-                    });
-            }
-            const { element } = legend.legendWrapper;
-            // Move legend group to the new SVG element
-            legend.group.add(legend.legendWrapper);
-
-            // Add SVG element to div
-            legend.group.div.appendChild(element);
-
-            // Add style to use native browser scrollbar
-            legend.group.div.style.overflow = 'auto';
-
-            if (minHeight) {
-                legend.group.div.style.height = minHeight + 'px';
-                // Overwrite legend's height
-                legend.legendHeight = minHeight;
-            }
-            if (minWidth) {
-                legend.group.div.style.width = minWidth + 'px';
-                // Overwrite legend's width
-                legend.legendWidth = minWidth;
-            }
-
-            legend.align();
-            legend.group.element.removeAttribute('transform');
+        if (!area || chart.options.chart.forExport) {
+            return;
         }
+
+        const { minHeight, minWidth } = area;
+
+        if (!legend.scrollableDiv) {
+            // Create a div with an SVG element to hold the legend group
+            legend.scrollableDiv = createElement('div', {
+                className: 'highcharts-scrollable-legend'
+            }, {
+                position: 'absolute',
+                // Use native browser scrollbar
+                overflow: 'auto'
+            }, chart.container);
+
+            legend.scrollableSvg = chart.renderer
+                .createElement('svg')
+                .attr({ version: '1.1' })
+                // Inherit the root font styles
+                .css(chart.renderer.style || {});
+
+            legend.scrollableDiv.appendChild(legend.scrollableSvg.element);
+            group.add(legend.scrollableSvg);
+        }
+
+        legend.scrollableSvg.attr({
+            height: legend.legendHeight,
+            width: options.layout === 'horizontal' ?
+                legend.contentGroup.getBBox().width :
+                legend.legendWidth
+        });
+
+        // Constrain only one dimension, the other one grows to fit the
+        // scrollbar
+        if (minHeight) {
+            legend.scrollableDiv.style.height = minHeight + 'px';
+            // Overwrite legend's height
+            legend.legendHeight = minHeight;
+        }
+        if (minWidth) {
+            legend.scrollableDiv.style.width = minWidth + 'px';
+            // Overwrite legend's width
+            legend.legendWidth = minWidth;
+        }
+
+        // Skip animation, the div is positioned from the final translation
+        group.placed = false;
+        legend.align();
+
+        css(legend.scrollableDiv, {
+            left: group.translateX + 'px',
+            top: group.translateY + 'px'
+        });
+        group.element.removeAttribute('transform');
     });
-}(Highcharts));
+})(Highcharts);
 
 Highcharts.chart('container', {
 
@@ -77,8 +76,11 @@ Highcharts.chart('container', {
 
     legend: {
         layout: 'vertical',
-        // Set useHTML to true to put legend SVG into div
-        useHTML: true,
+        align: 'right',
+        verticalAlign: 'middle',
+        navigation: {
+            enabled: false
+        },
         // Use custom properties to configure scrollable legend
         custom: {
             scrollableLegendArea: {

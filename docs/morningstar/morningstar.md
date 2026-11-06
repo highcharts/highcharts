@@ -1,8 +1,22 @@
+---
+description: >-
+  Choose the Morningstar connector bundle for enterprise components or Direct
+  Web Services, configure credentials, and connect the integration to
+  Highcharts or Dashboards; the examples also show region selection and
+  pre-fetched JSON.
+---
+
 # Morningstar Connectors
 
 With the **Highcharts Connectors** for the **Morningstar Direct Web Services**
 you can access finance-related information to different kinds of financial
 assets. This requires a Highcharts license and a Morningstar subscription.
+
+The dashboard below combines several connectors in one view: portfolio
+performance from the Time Series API, a holdings grid, and KPIs fed by the
+`RiskScoreConnector` and `GoalAnalysisConnector`.
+
+<iframe style="width: 100%; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/personal-portfolio" allow="fullscreen"></iframe>
 
 ## Versions
 

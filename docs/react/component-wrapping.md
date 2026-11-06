@@ -1,3 +1,10 @@
+---
+description: >-
+  Wrap supported Highcharts React components in helper components to organize
+  chart structure and derive series data; keep state in the parent and pass
+  values through props because wrapper hooks are unsupported.
+---
+
 # Component wrapping
 
 You can wrap components supported by Highcharts React to better organize your code:

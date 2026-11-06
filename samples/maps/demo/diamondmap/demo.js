@@ -58,9 +58,11 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
+        tilemap: {
+            tileShape: 'diamond'
+        },
         series: {
             keys: ['x', 'y', 'name', 'desc'],
-            tileShape: 'diamond',
             dataLabels: {
                 enabled: true,
                 format: '{point.name}',

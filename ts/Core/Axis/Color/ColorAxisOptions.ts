@@ -16,7 +16,10 @@
  * */
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
-import type AxisOptions from '../AxisOptions';
+import type {
+    AxisOptions,
+    AxisTitleOptions
+} from '../AxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type GradientColor from '../../Color/GradientColor';
 import type LegendOptions from '../../Legend/LegendOptions';
@@ -196,6 +199,11 @@ export interface ColorAxisMarkerOptions {
      */
     width?: number;
 
+}
+
+export interface ColorAxisTitleOptions extends AxisTitleOptions {
+    /** @default 5 */
+    margin?: AxisTitleOptions['margin'];
 }
 
 /**
@@ -412,7 +420,7 @@ export interface ColorAxisOptions extends AxisOptions {
      *
      * @product highcharts highstock highmaps
      */
-    title: AxisOptions['title'];
+    title: ColorAxisTitleOptions;
 
     /**
      * The type of interpolation to use for the color axis. Can be

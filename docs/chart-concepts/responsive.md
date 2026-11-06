@@ -1,3 +1,10 @@
+---
+description: >-
+  Define rules that override chart options when size conditions are met. Use
+  responsive settings to hide or move legends, adjust axes, and control
+  styling as the chart width changes.
+---
+
 Responsive charts
 ===
 

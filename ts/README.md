@@ -16,6 +16,7 @@ similarities.
 Content
 -------
 * [Coding Recommendations](#coding-rules)
+  * [Keep the code lean](#keep-the-code-lean)
   * [Use alphabetical order](#use-alphabetical-order)
   * [Use common ES6 (ES2015) patterns](#use-common-es6-es2015-patterns)
   * [Use TypeScript syntax](#use-typescript-syntax)
@@ -32,6 +33,25 @@ Content
 
 Coding Recommendations
 ----------------------
+
+### Keep the code lean
+
+Code added to the core is loaded by almost every Highcharts user, and small
+additions quickly add up. Keep each change as small as the problem allows.
+
+- **Choose the right place.** Add code to the core only for general features
+  that most charts need. Code for a specific series type or feature belongs in
+  its module. When only a few users need a feature, start with a plugin in a
+  sample. It can move into the library later if there is wider demand.
+- **Keep module fixes out of the core.** Fix a bug in a module inside that
+  module. If the module needs support from the core, add only a minimal hook,
+  such as an event or a simple property, and keep the logic in the module.
+- **Reuse before you add.** Check the existing utility functions, events and
+  hooks before writing new code. Adapting existing code to cover a new case is
+  welcome, as it often fixes a bug without adding size.
+- **Keep the cost proportional.** The size of a change should match how many
+  users the problem affects. A fix for a rare edge case should be small.
+
 
 ### Use alphabetical order
 

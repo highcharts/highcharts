@@ -30,16 +30,11 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import AreaRangePoint from './AreaRangePoint.js';
+import AreaSeries from '../Area/AreaSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import RangeDataLabel from '../RangeDataLabel.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    area: AreaSeries,
-    area: {
-        prototype: areaProto
-    }
-} = SeriesRegistry.seriesTypes;
 import {
     addEvent,
     defined,
@@ -290,7 +285,6 @@ function getRangeDataLabelOptions(
 /**
  * The AreaRange series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.arearange
  *
@@ -302,6 +296,7 @@ class AreaRangeSeries extends AreaSeries {
      *
      *  Static Properties
      *
+     * @internal
      */
 
     public static defaultOptions: AreaRangeSeriesOptions = merge(
@@ -318,8 +313,11 @@ class AreaRangeSeries extends AreaSeries {
     public data!: Array<AreaRangePoint>;
     public options!: AreaRangeSeriesOptions;
     public points!: Array<AreaRangePoint>;
+    /** @internal */
     public lowerStateMarkerGraphic?: SVGElement;
+    /** @internal */
     public upperStateMarkerGraphic?: SVGElement;
+    /** @internal */
     public xAxis!: Axis|RadialAxis.AxisComposition;
 
     /* *
@@ -328,6 +326,7 @@ class AreaRangeSeries extends AreaSeries {
      *
      * */
 
+    /** @internal */
     public toYData(point: AreaRangePoint): Array<number> {
         return [point.low, point.high];
     }
@@ -361,7 +360,7 @@ class AreaRangeSeries extends AreaSeries {
 
         const highPoints = [],
             highAreaPoints: Array<AreaPoint> = [],
-            getGraphPath = areaProto.getGraphPath,
+            getGraphPath = AreaSeries.prototype.getGraphPath,
             options = this.options,
             polar = this.chart.polar,
             connectEnds = polar && options.connectEnds !== false,
@@ -470,6 +469,7 @@ class AreaRangeSeries extends AreaSeries {
         return linePath;
     }
 
+    /** @internal */
     public drawDataLabels(): void {
         const series = this,
             dataLabelOptions = series.options.dataLabels;
@@ -481,9 +481,9 @@ class AreaRangeSeries extends AreaSeries {
             rangeOptions.forEach(RangeDataLabel.applyAlignToKeyValue);
             series.options.dataLabels = rangeOptions;
 
-            if (areaProto.drawDataLabels) {
+            if (AreaSeries.prototype.drawDataLabels) {
                 // #1209
-                areaProto.drawDataLabels.call(series);
+                AreaSeries.prototype.drawDataLabels.call(series);
             }
             series.options.dataLabels = dataLabelOptions;
 
@@ -508,6 +508,7 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
+    /** @internal */
     public modifyMarkerSettings(): {
         marker?: PointMarkerOptions;
         symbol?: SymbolKey;
@@ -533,6 +534,7 @@ class AreaRangeSeries extends AreaSeries {
         return originalMarkerSettings;
     }
 
+    /** @internal */
     public restoreMarkerSettings(originalSettings: {
         marker?: PointMarkerOptions;
         symbol?: SymbolKey;
@@ -543,6 +545,7 @@ class AreaRangeSeries extends AreaSeries {
         series.symbol = originalSettings.symbol;
     }
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             pointLength = series.points.length;
@@ -553,7 +556,7 @@ class AreaRangeSeries extends AreaSeries {
         const originalSettings = series.modifyMarkerSettings();
 
         // Draw bottom points
-        areaProto.drawPoints.apply(series, arguments);
+        AreaSeries.prototype.drawPoints.apply(series, arguments);
 
         // Restore previous state
         series.restoreMarkerSettings(originalSettings);
@@ -603,7 +606,7 @@ class AreaRangeSeries extends AreaSeries {
         }
 
         // Draw top points
-        areaProto.drawPoints.apply(series, arguments);
+        AreaSeries.prototype.drawPoints.apply(series, arguments);
 
         // Reset top points preliminary modifications
         i = 0;
@@ -623,6 +626,7 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
+    /** @internal */
     public hasMarkerChanged(
         options: DeepPartial<AreaRangeSeriesOptions>,
         oldOptions: DeepPartial<AreaRangeSeriesOptions>
@@ -649,6 +653,15 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
         this.points.forEach((point): void => {
             const high = point.high,
                 plotY = point.plotY;
+
+            // Rank both labels of the point by how tall the range is.
+            // `pointValKey` is `low` for this series, so the generic value
+            // based rank would order the labels by their lower bound rather
+            // than by size. Set here rather than in `drawDataLabels` so that
+            // column ranges and their subtypes get it too (#23585).
+            point.labelrank = point.options.labelrank ?? Math.abs(
+                (high || 0) - (point.low || 0)
+            );
 
             if (point.isNull) {
                 point.plotY = void 0;
@@ -706,11 +719,14 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
  *
  * */
 
-/** @internal */
 interface AreaRangeSeries {
+    /** @internal */
     deferTranslatePolar: boolean;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof AreaRangePoint;
+    /** @internal */
     pointValKey: string;
 }
 
@@ -730,7 +746,6 @@ RangeDataLabel.compose(AreaRangeSeries);
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arearange: typeof AreaRangeSeries;
@@ -746,5 +761,4 @@ SeriesRegistry.registerSeriesType('arearange', AreaRangeSeries);
  *
  * */
 
-/** @internal */
 export default AreaRangeSeries;

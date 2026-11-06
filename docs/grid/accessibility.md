@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Accessibility"
+description: >-
+  Configure how Highcharts Grid exposes table structure and interactions to
+  assistive technologies, set announcements and header descriptions, add
+  caption and screen reader context, and provide high contrast styling.
 ---
 
 # Accessibility (a11y) in Highcharts Grid
@@ -28,6 +32,25 @@ Accessibility features are enabled by default, and we generally recommend keepin
 Setting `accessibility.enabled: false` disables all Grid accessibility features, including ARIA attributes, screen reader regions, and [ARIA live announcements](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions).
 
 All `accessibility` options are optional. Use `announcements` to enable or disable specific live announcements while accessibility is enabled.
+
+## Row selection
+
+In Grid Pro, [selected rows](https://www.highcharts.com/docs/grid/rows/selection)
+carry `aria-selected`, and the table is marked `aria-multiselectable` when
+`rowSelection.mode` is `multiple`. Keyboard users toggle the focused row with
+`Space`; `Enter` stays reserved for cell editing.
+
+The selection checkbox label is localized with `lang.rowSelection.selectRow`:
+
+```js
+{
+    lang: {
+        rowSelection: {
+            selectRow: 'Select row'
+        }
+    }
+}
+```
 
 ## Row pinning announcements
 

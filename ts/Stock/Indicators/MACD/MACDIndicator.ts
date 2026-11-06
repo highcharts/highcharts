@@ -16,7 +16,6 @@
  * */
 
 import type ColorString from '../../../Core/Color/ColorString';
-import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -29,12 +28,11 @@ import type MACDPoint from './MACDPoint';
 import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
+import ColumnSeries from '../../../Series/Column/ColumnSeries.js';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     correctFloat,
     defined,
@@ -62,7 +60,6 @@ interface MACDZonesObject {
 /**
  * The MACD series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.macd
  *
@@ -87,9 +84,10 @@ class MACDIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/macd
+     * @requires     indicators/indicators
+     * @requires     indicators/macd
      * @optionparent plotOptions.macd
+     * @internal
      */
     public static defaultOptions: MACDOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -188,11 +186,15 @@ class MACDIndicator extends SMAIndicator {
      * */
 
     public data!: Array<MACDPoint>;
+    /** @internal */
     public graphmacd?: SVGElement;
+    /** @internal */
     public graphsignal?: SVGElement;
+    /** @internal */
     public macdZones!: MACDZonesObject;
     public options!: MACDOptions;
     public points!: Array<MACDPoint>;
+    /** @internal */
     public signalZones!: MACDZonesObject;
 
     /* *
@@ -201,6 +203,7 @@ class MACDIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
@@ -262,12 +265,14 @@ class MACDIndicator extends SMAIndicator {
         this.colorIndex = originalColorIndex;
     }
 
+    /** @internal */
     public toYData(
         point: MACDPoint
     ): Array<number> {
         return [point.y, point.signal, point.MACD];
     }
 
+    /** @internal */
     public translate(): void {
         const indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];
@@ -291,6 +296,7 @@ class MACDIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public destroy(): void {
         // This.graph is null due to removing two times the same SVG element
         this.graph = (null as any);
@@ -300,6 +306,7 @@ class MACDIndicator extends SMAIndicator {
         SeriesRegistry.seriesTypes.sma.prototype.destroy.apply(this, arguments);
     }
 
+    /** @internal */
     public drawGraph(): void {
         const indicator = this,
             mainLinePoints: Array<(
@@ -368,6 +375,7 @@ class MACDIndicator extends SMAIndicator {
         indicator.zones = histogramZones;
     }
 
+    /** @internal */
     public applyZones(): void {
         // Histogram zones are handled by drawPoints method
         // Here we need to apply zones for all lines
@@ -385,6 +393,7 @@ class MACDIndicator extends SMAIndicator {
         this.zones = histogramZones;
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MACDParamsOptions
@@ -510,14 +519,20 @@ class MACDIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface MACDIndicator {
+    /** @internal */
     crispCol: typeof ColumnSeries.prototype.crispCol;
+    /** @internal */
     getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
+    /** @internal */
     nameComponents: Array<string>;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof MACDPoint;
+    /** @internal */
     pointValKey: string;
 }
 
@@ -529,9 +544,9 @@ extend(MACDIndicator.prototype, {
     pointValKey: 'y',
     // Columns support:
     markerAttribs: noop as any,
-    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    crispCol: H.seriesTypes.column.prototype.crispCol,
-    drawPoints: H.seriesTypes.column.prototype.drawPoints
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
+    crispCol: ColumnSeries.prototype.crispCol,
+    drawPoints: ColumnSeries.prototype.drawPoints
 });
 
 /* *
@@ -540,7 +555,6 @@ extend(MACDIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         macd: typeof MACDIndicator;
@@ -555,7 +569,6 @@ SeriesRegistry.registerSeriesType('macd', MACDIndicator);
  *
  * */
 
-/** @internal */
 export default MACDIndicator;
 
 /* *
@@ -571,8 +584,8 @@ export default MACDIndicator;
  * @extends   series,plotOptions.macd
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/macd
+ * @requires  indicators/indicators
+ * @requires  indicators/macd
  * @apioption series.macd
  */
 

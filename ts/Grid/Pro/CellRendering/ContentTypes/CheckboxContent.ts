@@ -30,6 +30,7 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';
+import { setUserAttributes } from '../../../Core/GridUtils.js';
 
 
 /* *
@@ -91,11 +92,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         input.name = cell.column.id + '-' + cell.row.id;
         input.classList.add(Globals.getClassName('input'));
 
-        if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]): void => {
-                input.setAttribute(key, value);
-            });
-        }
+        setUserAttributes(input, options.attributes);
 
         this.update();
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure chart zooming and panning for mouse and touch interactions. Learn
+  which modules enable wheel and non-cartesian zooming, and how default
+  navigation behavior differs between Highcharts Core and Stock.
+---
+
 Zooming
 =======
 

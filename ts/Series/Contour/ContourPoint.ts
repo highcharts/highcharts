@@ -19,12 +19,15 @@
  *
  * */
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 
-const {
-    scatter: { prototype: { pointClass: ScatterPoint } }
-} = SeriesRegistry.seriesTypes;
+/* *
+ *
+ *  Constants
+ *
+ * */
 
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *
@@ -32,13 +35,15 @@ const {
  *
  * */
 
-/** @internal */
 class ContourPoint extends ScatterPoint {
 
+    /** @internal */
     public value!: (number|null);
 
+    /** @internal */
     public x!: number;
 
+    /** @internal */
     public y!: number;
 
 
@@ -50,5 +55,4 @@ class ContourPoint extends ScatterPoint {
  *
  * */
 
-/** @internal */
 export default ContourPoint;

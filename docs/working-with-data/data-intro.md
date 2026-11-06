@@ -1,3 +1,10 @@
+---
+description: >-
+  Explore ways to supply chart data, from series arrays to shared DataTables
+  and column mappings. Find guides for parsing external sources, custom
+  preprocessing, live updates, database data, and compression.
+---
+
 Working with data
 =================
 

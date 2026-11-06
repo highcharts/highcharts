@@ -1,3 +1,10 @@
+---
+description: >-
+  Choose axis types and configure ticks, labels, grid lines, and titles. Learn
+  how multiple axes align, how datetime values and time zones work, and when
+  category axes are appropriate.
+---
+
 Axes
 ====
 

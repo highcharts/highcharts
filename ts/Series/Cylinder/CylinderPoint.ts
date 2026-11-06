@@ -24,11 +24,16 @@
 import type CylinderPointOptions from './CylinderPointOptions';
 import type CylinderSeries from './CylinderSeries';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    column: { prototype: { pointClass: ColumnPoint } }
-} = SeriesRegistry.seriesTypes;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *
@@ -36,7 +41,6 @@ const {
  *
  * */
 
-/** @internal */
 class CylinderPoint extends ColumnPoint {
 
     /* *
@@ -47,6 +51,7 @@ class CylinderPoint extends ColumnPoint {
 
     public options!: CylinderPointOptions;
 
+    /** @internal */
     public series!: CylinderSeries;
 
 }
@@ -72,5 +77,4 @@ extend(CylinderPoint.prototype, {
  *
  * */
 
-/** @internal */
 export default CylinderPoint;

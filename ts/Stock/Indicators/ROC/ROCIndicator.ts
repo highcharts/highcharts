@@ -27,10 +27,8 @@ import type {
 } from './ROCOptions';
 import type ROCPoint from './ROCPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -83,7 +81,6 @@ function populateAverage(
 /**
  * The ROC series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.roc
  *
@@ -115,9 +112,10 @@ class ROCIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/roc
+     * @requires     indicators/indicators
+     * @requires     indicators/roc
      * @optionparent plotOptions.roc
+     * @internal
      */
     public static defaultOptions: ROCOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -144,6 +142,7 @@ class ROCIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ROCParamsOptions
@@ -193,7 +192,6 @@ class ROCIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ROCIndicator {
     nameBase: string;
     pointClass: typeof ROCPoint;
@@ -209,7 +207,6 @@ extend(ROCIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         roc: typeof ROCIndicator;
@@ -224,7 +221,6 @@ SeriesRegistry.registerSeriesType('roc', ROCIndicator);
  *
  * */
 
-/** @internal */
 export default ROCIndicator;
 
 /* *
@@ -251,8 +247,8 @@ export default ROCIndicator;
  * @extends   series,plotOptions.roc
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/roc
+ * @requires  indicators/indicators
+ * @requires  indicators/roc
  * @apioption series.roc
  */
 

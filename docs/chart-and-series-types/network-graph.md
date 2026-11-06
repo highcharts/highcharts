@@ -1,3 +1,10 @@
+---
+description: >-
+  Model relationships as linked nodes whose positions are determined by a
+  force-directed layout. Learn the data format, simulation and force
+  options, node and link styling, draggable nodes, and labels.
+---
+
 Network graph
 ===
 

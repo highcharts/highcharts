@@ -12,7 +12,14 @@
 import Highcharts from '../Core/Globals.js';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
 import type TimeBase from '../Shared/TimeBase';
-import Defaults from '../Core/Defaults.js';
+import {
+    defaultOptions,
+    getOptions,
+    setOptions,
+    time
+} from '../Core/Defaults.js';
+// Bundle legend defaults next to the other defaults for better compression
+import '../Core/Legend/LegendDefaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import {
     animate,
@@ -48,11 +55,11 @@ import '../Series/Line/LineSeries.js';
 import '../Series/Area/AreaSeries.js';
 import '../Series/Spline/SplineSeries.js';
 import '../Series/AreaSpline/AreaSplineSeries.js';
-import '../Series/Column/ColumnSeries.js';
+import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import ColumnDataLabel from '../Series/Column/ColumnDataLabel.js';
 import '../Series/Bar/BarSeries.js';
 import '../Series/Scatter/ScatterSeries.js';
-import '../Series/Pie/PieSeries.js';
+import PieSeries from '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
 import { composeOverlappingDataLabels } from '../Core/Series/OverlappingDataLabels.js';
@@ -143,8 +150,6 @@ G.Templating = Templating;
 G.Tick = Tick;
 G.Time = class extends Time {
     public constructor(options?: TimeBase.TimeOptions, lang?: LangOptionsCore) {
-        const defaultOptions = Defaults.getOptions();
-
         super(
             options ?? defaultOptions.time,
             lang ?? defaultOptions.lang
@@ -168,7 +173,7 @@ G.createElement = createElement;
 G.css = css;
 G.crisp = crisp;
 G.dateFormat = Templating.dateFormat;
-G.defaultOptions = Defaults.defaultOptions;
+G.defaultOptions = defaultOptions;
 G.defined = defined;
 G.destroyObjectProperties = destroyObjectProperties;
 G.diffObjects = diffObjects;
@@ -186,7 +191,7 @@ G.getClosestDistance = getClosestDistance;
 G.getDeferredAnimation = getDeferredAnimation;
 G.getMagnitude = getMagnitude;
 G.getNestedProperty = getNestedProperty;
-G.getOptions = Defaults.getOptions;
+G.getOptions = getOptions;
 G.getStyle = getStyle;
 G.insertItem = insertItem;
 G.isArray = isArray;
@@ -211,12 +216,12 @@ G.removeEvent = removeEvent;
 G.replaceNested = replaceNested;
 G.seriesType = SeriesRegistry.seriesType;
 G.setAnimation = setAnimation;
-G.setOptions = Defaults.setOptions;
+G.setOptions = setOptions;
 G.splat = splat;
 G.stableSort = stableSort;
 G.stop = stop;
 G.syncTimeout = syncTimeout;
-G.time = Defaults.defaultTime;
+G.time = time;
 G.ucfirst = ucfirst;
 G.timers = Fx.timers;
 G.timeUnits = timeUnits;
@@ -226,14 +231,14 @@ G.wrap = wrap;
 
 // Compositions
 composeBorderRadius(G.Series, G.SVGElement, G.SVGRenderer);
-ColumnDataLabel.compose(G.Series.types.column);
+ColumnDataLabel.compose(ColumnSeries);
 DataLabel.compose(G.Series);
 DateTimeAxis.compose(G.Axis);
 HTMLElement.compose(G.SVGRenderer);
 Legend.compose(G.Chart);
 LogarithmicAxis.compose(G.Axis);
 composeOverlappingDataLabels(G.Chart);
-PieDataLabel.compose(G.Series.types.pie);
+PieDataLabel.compose(PieSeries);
 PlotLineOrBand.compose(G.Chart, G.Axis);
 Pointer.compose(G.Chart);
 Responsive.compose(G.Chart);

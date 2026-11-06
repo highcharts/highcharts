@@ -1,3 +1,10 @@
+---
+description: >-
+  Choose an installation method for Highcharts Core, Stock, Maps, or Gantt.
+  Load product bundles and optional modules in the right order using npm,
+  browser imports, script tags, or self-hosted files.
+---
+
 Installation
 ===
 
@@ -197,7 +204,7 @@ See the [Loader API documentation](https://api.highcharts.com/class-reference/Hi
 
 The CDN is useful for demos, prototypes, JSFiddle, CodePen, and simple static pages. For production applications, npm or self-hosted files are usually a better long-term choice.
 
-If you use files from `code.highcharts.com`, make sure your usage complies with the [Highsoft fair usage policy](https://www.highcharts.com/blog/fair-usage-policy-pdf).
+If you use files from `code.highcharts.com`, make sure your usage complies with the [Acceptable Use Policy](https://shop.highcharts.com/license-eula#2).
 
 ## AMD and CommonJS
 

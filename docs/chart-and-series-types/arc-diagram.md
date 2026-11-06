@@ -1,3 +1,10 @@
+---
+description: >-
+  Define nodes and weighted links for an arc diagram, choose marker symbols,
+  and rotate the layout with inversion or reversal. The article shows how
+  the from, to, and weight keys structure connections.
+---
+
 Arc diagram
 ============
 

@@ -138,7 +138,7 @@ class Fullscreen {
         if (button && button.innerElement) {
             const lang = editMode.lang;
 
-            button.innerElement.innerHTML =
+            button.innerElement.textContent =
                 (this.isOpen ? lang.exitFullscreen : lang.viewFullscreen) || '';
         }
     }

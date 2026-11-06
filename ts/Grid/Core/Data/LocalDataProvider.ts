@@ -265,7 +265,9 @@ export class LocalDataProvider extends DataProvider {
             'dataRefreshRate' in connector.options
         ) {
             connector.startPolling(
-                Math.max(connector.options.dataRefreshRate || 0, 1) * 1000
+                DataConnector.getPollingInterval(
+                    connector.options.dataRefreshRate
+                )
             );
         }
     }
