@@ -1,4 +1,7 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'Demo of <em>scrollbar.enabled</em>'
+    },
     xAxis: {
         categories: [
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
@@ -6,19 +9,16 @@ Highcharts.chart('container', {
         ],
         min: 6
     },
-
     legend: {
-        verticalAlign: 'top',
-        align: 'right'
+        align: 'right',
+        verticalAlign: 'top'
     },
-
     scrollbar: {
         enabled: true
     },
-
     series: [{
         data: [
-            29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
+            29.9, 71.5, 106.4, 129.2, 144, 176, 135.6, 148.5, 216.4, 194.1,
             95.6, 54.4
         ]
     }]
