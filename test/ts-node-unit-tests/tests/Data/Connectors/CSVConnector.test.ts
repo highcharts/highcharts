@@ -155,6 +155,25 @@ describe('CSVConnector', () => {
                 dataType: 'string'
             });
         });
+
+        it('should preserve line breaks inside quoted fields', async () => {
+            const connector = new CSVConnector({
+                csv: 'Name,Note\nA,"first\nsecond"\nB,end'
+            });
+
+            await connector.load();
+
+            strictEqual(
+                connector.getTable().getRowCount(),
+                2,
+                'A multiline field should remain one logical row.'
+            );
+            strictEqual(
+                connector.getTable().getCell('Note', 0),
+                'first\nsecond',
+                'The line break should remain in the field value.'
+            );
+        });
     });
 
     // Note: URL-based tests require browser/fetch and are handled in Playwright tests
