@@ -456,7 +456,11 @@ describe('static React artifact consumer', async () => {
         });
         await ReactStatic.publishArtifact(artifact, session, {
             reportPath: fixture.reportPath,
-            log: { message(text) { messages.push(text); } }
+            log: {
+                message(text) {
+                    messages.push(text);
+                }
+            }
         });
         const immutableCount = fixture.records.length - PRODUCTS.length;
         assert.ok(messages.some(message => message.includes(`immutable: ${immutableCount}/${immutableCount} files`)));
@@ -601,7 +605,11 @@ describe('static React artifact consumer', async () => {
         const fixture = await makeFixture();
         const artifact = await stage(fixture);
         const calls = [];
-        const session = remoteSession(fixture.bucket, { putObject(params) { calls.push(params); } });
+        const session = remoteSession(fixture.bucket, {
+            putObject(params) {
+                calls.push(params);
+            }
+        });
         for (const [index, root] of [fixture.artifactDirectory, fixture.stagingDirectory].entries()) {
             const target = Path.join(root, 'unowned-report.json');
             const alias = Path.join(fixture.directory, `dangling-report-${index}.json`);

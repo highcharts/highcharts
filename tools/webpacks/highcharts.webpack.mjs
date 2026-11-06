@@ -24,7 +24,7 @@ import { getMasterName } from './utilities.mjs';
  * */
 
 
-const __dirname = import.meta.dirname;
+const configFolder = import.meta.dirname;
 
 const sourceFolder = Path.join('code', 'es-modules');
 const mastersFolder = Path.join(sourceFolder, 'masters');
@@ -69,7 +69,7 @@ const umdWebpacks = FSLib
     .getFilePaths(mastersFolder, true)
     .filter(masterFile => masterFile.endsWith('.js'))
     .map(masterFile => {
-        const masterPath = Path.relative(mastersFolder, masterFile)
+        const masterPath = Path.relative(mastersFolder, masterFile);
         const masterName = getMasterName(masterPath);
         const umdWebpack = {
             // path to the main file
@@ -92,8 +92,8 @@ const umdWebpacks = FSLib
                     name: (
                         productMasters.includes(masterName) ?
                             {
-                                amd: `highcharts/highcharts`,
-                                commonjs: `highcharts`,
+                                amd: 'highcharts/highcharts',
+                                commonjs: 'highcharts',
                                 root: namespace
                             } :
                             {
@@ -121,7 +121,7 @@ const umdWebpacks = FSLib
                 }),
                 new UMDExtensionPlugin({
                     productBundles: productMasters.map(pm => `${pm}.src.js`)
-                }),
+                })
                 // new BDWP.BundleDeclarationsWebpackPlugin({
                 //     entry: {
                 //         filePath: `./${masterFile}`.replace(/\.js$/u, '.d.ts'),
@@ -152,7 +152,7 @@ const umdWebpacks = FSLib
         if (!productMasters.includes(masterName)) {
             umdWebpack.externalsType = 'umd';
             umdWebpack.externals = [
-                (info) => resolveExternals(
+                info => resolveExternals(
                     info,
                     masterName,
                     sourceFolder,
@@ -186,7 +186,7 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
                     exclude: /node_modules/u,
                     use: {
                         loader:
-                            Path.join(__dirname, 'plugins/MastersLoader.mjs'),
+                            Path.join(configFolder, 'plugins/MastersLoader.mjs'),
                         options: {
                             mastersFolder,
                             requirePrefix: 'highcharts'
@@ -227,7 +227,7 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
         !masterName.includes('standalone')
     ) {
         esmWebpack.externals = [
-            (info) => {
+            info => {
                 const contextPath =
                     FSLib.path([info.context, info.request], true);
 
@@ -239,16 +239,16 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
                         namespace,
                         'module-import'
                     );
-                } else {
-                    return resolveExternals(
-                        info,
-                        masterName,
-                        sourceFolder,
-                        namespace,
-                        productMasters[0],
-                        'module-import'
-                    );
                 }
+                return resolveExternals(
+                    info,
+                    masterName,
+                    sourceFolder,
+                    namespace,
+                    productMasters[0],
+                    'module-import'
+                );
+
             }
         ];
     }

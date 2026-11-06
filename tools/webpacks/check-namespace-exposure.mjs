@@ -1,3 +1,6 @@
+// These CLI checks report diagnostics and return an explicit exit status.
+/* eslint no-console: 0, node/no-process-exit: 0 */
+
 import FS from 'node:fs';
 import Path from 'node:path';
 import { fileURLToPath } from 'node:url';
