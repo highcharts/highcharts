@@ -30,10 +30,7 @@ The custom implementations have the following requirements:
 
 8. `@since` and `@deprecated` support `next` as a pending version number.
    The `prep-release` task replaces it only for a plain `x.y.z` release, such
-   as `13.2.0`. Versions with a prerelease or build suffix, such as
-   `13.2.0-beta.1` or `13.2.0+build.42`, update the version metadata while
-   leaving doclet tags unchanged. Use `next` during beta development;
-   `beta` is not recognized as a placeholder.
+   as `13.2.0`.
 
    When used in a public doclet - any block comment starting with `/**` that do
    not have `@internal` (nor its legacy alias `@private`) tag,
