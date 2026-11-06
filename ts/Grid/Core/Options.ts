@@ -45,7 +45,8 @@ import type {
 import type { IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
-    Condition as ColumnFilteringCondition
+    Condition as ColumnFilteringCondition,
+    OptInConditionRegistry
 } from './Table/Actions/ColumnFiltering/FilteringTypes';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 
@@ -993,6 +994,20 @@ export interface TimeOptions {
 }
 
 /**
+ * A single value a filtering rule compares the column against.
+ */
+export type FilteringRuleItem = string | number | boolean | null;
+
+/**
+ * Value a filtering rule compares the column against: a single value, or
+ * whatever the registered operators take, like a list of values.
+ */
+export type FilteringRuleValue = (
+    FilteringRuleItem |
+    OptInConditionRegistry[keyof OptInConditionRegistry]
+);
+
+/**
  * Active filtering rule for a column.
  */
 export interface FilteringRule {
@@ -1002,9 +1017,11 @@ export interface FilteringRule {
     operator?: ColumnFilteringCondition;
 
     /**
-     * The value that is used with the operator to filter the column.
+     * The value that is used with the operator to filter the column. An
+     * operator that matches a list of values takes an array of the selected
+     * ones.
      */
-    value?: string | number | boolean | null;
+    value?: FilteringRuleValue;
 }
 
 /**
@@ -1019,7 +1036,7 @@ export interface FilteringCondition {
     /**
      * The value applied to the column filter.
      */
-    value?: string | number | boolean | null;
+    value?: FilteringRuleValue;
 }
 
 /**
@@ -1079,7 +1096,7 @@ export interface ColumnFilteringOptions {
      * @deprecated 3.1.0
      * @deprnote Use `rule.value` instead.
      */
-    value?: string | number | boolean | null;
+    value?: FilteringRuleItem;
 
     /**
      * Restricts the list of available filtering conditions for the column.

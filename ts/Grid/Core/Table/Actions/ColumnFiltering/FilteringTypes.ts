@@ -24,7 +24,11 @@
  *
  * */
 
+import type {
+    FilterCondition
+} from '../../../../../Data/Modifiers/FilterModifierOptions';
 import type { ColumnDataType } from '../../Column';
+import type { FilteringRuleValue } from '../../../Options';
 
 /* *
  *
@@ -113,6 +117,38 @@ export const booleanConditions = [
 ] as const;
 
 /**
+ * Describes the operators a feature registers, as a record of their name and
+ * the type of their rule value.
+ */
+export interface OptInConditionRegistry {
+    // Extend this interface with the declare module pattern.
+}
+
+/**
+ * Operators that come with their own value editor, provided by a feature.
+ */
+export type OptInCondition = keyof OptInConditionRegistry;
+
+/**
+ * Builds the data layer condition of an operator from its rule value.
+ */
+export type ConditionMapper = (
+    columnId: string,
+    value?: FilteringRuleValue
+) => (FilterCondition | undefined);
+
+/**
+ * Mappers the features have registered, which is what makes their operators
+ * available. A registered operator is only offered when listed in the
+ * `filtering.operators` option, and then takes over the filter UI of the
+ * column, dropping the other operators. Without its feature the operator has
+ * no mapper, so it is ignored like an invalid one.
+ */
+export const conditionMappers: Partial<
+    Record<Condition, ConditionMapper>
+> = {};
+
+/**
  * Legacy datetime operator aliases (`before` → `lessThan`, `after` → `greaterThan`).
  */
 // TODO: Remove, deprecated
@@ -125,7 +161,7 @@ export const operatorAliases = {
  * Combined filtering conditions.
  */
 export type Condition =
-    StringCondition | NumberCondition | BooleanCondition |
+    StringCondition | NumberCondition | BooleanCondition | OptInCondition |
     keyof typeof operatorAliases; // TODO: Remove, deprecated
 
 /**

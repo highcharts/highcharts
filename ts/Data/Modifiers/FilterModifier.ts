@@ -128,7 +128,11 @@ class FilterModifier extends DataModifier {
             case '<=':
                 return (row): boolean => (row[col] || 0) <= (value || 0);
             case 'empty':
-                return (row): boolean => row[col] === null || row[col] === '';
+                return (row): boolean => (
+                    row[col] === null ||
+                    row[col] === '' ||
+                    row[col] === void 0
+                );
         }
 
         const { ignoreCase } = condition;

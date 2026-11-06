@@ -352,6 +352,40 @@ export function joinClassNames(
 }
 
 /**
+ * Moves the focus along a cycle of controls that the arrow keys navigate,
+ * when the event comes from one of them.
+ *
+ * @param controls
+ * The controls in their navigation order.
+ *
+ * @param e
+ * The keyboard event to handle.
+ *
+ * @returns
+ * `true` when the focus moved, otherwise `false`.
+ */
+export function focusNextControl(
+    controls: HTMLElement[],
+    e: KeyboardEvent
+): boolean {
+    const direction = {
+        'ArrowDown': 1,
+        'ArrowUp': -1
+    }[e.key];
+    const index = controls.indexOf(e.target as HTMLElement);
+
+    if (!direction || index < 0) {
+        return false;
+    }
+
+    e.preventDefault();
+    const length = controls.length;
+    controls[(index + direction + length) % length].focus();
+
+    return true;
+}
+
+/**
  * Replaces previously applied user class tokens on an element without touching
  * other classes (e.g. Core `hcg-*` tokens).
  *
@@ -607,6 +641,7 @@ export default {
     createOptionsProxy,
     formatText,
     joinClassNames,
+    focusNextControl,
     applyUserClassNames,
     isDeepEqual,
     resolveStyleValue,
