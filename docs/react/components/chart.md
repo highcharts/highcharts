@@ -39,7 +39,7 @@ export default function ChartComponent() {
 }
 ```
 
-### Props:
+### Props
 
 | Option           | Type                                                                                          | Default                                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -164,3 +164,35 @@ export default function GanttChartComponent() {
 **Note:** Shares the exact same [props](#props) as the `Chart` component.
 
 To learn more about series components, see the [Series types](https://www.highcharts.com/docs/react/components/series-types#other-chart-types) documentation.
+
+## Option precedence
+
+When the same option is set in more than one place, this merge order determines which value wins, from lowest to highest priority:
+
+1. `options` prop
+2. Direct props
+3. Options from children
+
+In this chart, the title is set in all three places, the subtitle in two, and the caption only in `options`. The chart shows the title from the child, the subtitle from the prop, and the caption from `options`:
+
+```tsx
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
+
+export default function OptionPrecedenceChart() {
+  return (
+    <Chart
+      options={{
+        title: { text: "Title from options" },
+        subtitle: { text: "Subtitle from options" },
+        caption: { text: "Caption from options" },
+      }}
+      title="Title from prop"
+      subtitle="Subtitle from prop"
+    >
+      <Title>Title from child</Title>
+      <LineSeries data={[3, 4, 1, 5, 2]} />
+    </Chart>
+  );
+}
+```
