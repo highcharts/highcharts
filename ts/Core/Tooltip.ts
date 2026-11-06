@@ -1636,7 +1636,7 @@ class Tooltip {
                     box.boxWidth,
                     box.size,
                     box.point,
-                    void 0,
+                    this,
                     [box.anchorX, box.anchorY],
                     false
                 );
@@ -2042,7 +2042,7 @@ namespace Tooltip {
         (
             this: Point,
             tooltip: Tooltip,
-            ctx?: Point
+            ctx: Point
         ): (false|string|Array<string>);
     }
 
@@ -2058,7 +2058,7 @@ namespace Tooltip {
             labelWidth: number,
             labelHeight: number,
             point: (Point|PositionerPointObject),
-            ctx?: Tooltip,
+            ctx: Tooltip,
             anchor?: [number, number],
             alignLeft?: boolean
         ): PositionObject;
@@ -2142,7 +2142,7 @@ export default Tooltip;
  * @param {Highcharts.Tooltip} tooltip
  * The tooltip instance
  *
- * @param {Highcharts.Point} [ctx]
+ * @param {Highcharts.Point} ctx
  * Since v12.6.0, the point context passed as an extra argument for arrow
  * functions.
  *
@@ -2167,7 +2167,7 @@ export default Tooltip;
  * @param {Highcharts.TooltipPositionerPointObject} point
  * Point information for positioning a tooltip.
  *
- * @param {Highcharts.Tooltip} [ctx]
+ * @param {Highcharts.Tooltip} ctx
  * Since v12.6.0, the tooltip context passed as an extra argument for arrow
  * functions.
  *
