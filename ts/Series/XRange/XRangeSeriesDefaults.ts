@@ -108,7 +108,7 @@ const XRangeSeriesDefaults: XRangeSeriesOptions = {
     },
 
     /**
-     * @type {number|string}
+     * @type {number|string|Highcharts.BorderRadiusOptionsObject}
      */
     borderRadius: 3,
 
