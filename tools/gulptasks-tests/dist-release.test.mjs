@@ -291,7 +291,7 @@ describe('prep-release safe replacements', () => {
     it('prep-release preserves versions, formatting, backups and doclet semantics', {
         skip: !nativeReleaseTools && 'requires the existing grep and sed release tools'
     }, async () => {
-        const version = '13.2.0-rc.1+build.42';
+        const version = '13.2.0';
         // Keep the placeholder separate so release preparation cannot rewrite this test.
         const next = 'next';
         await withRelease({ nextversion: version }, async ({ root, task }) => {
@@ -354,6 +354,33 @@ describe('prep-release safe replacements', () => {
             assert.equal(fs.readFileSync('.hidden/doc.txt', 'utf8'), `@deprecated ${version}`);
             assert.equal(fs.readFileSync('docs/include.MD', 'utf8'), `@since ${version}`);
         });
+    });
+
+    it('prep-release preserves pending doclets for suffixed versions', {
+        skip: !nativeReleaseTools && 'requires the existing grep and sed release tools'
+    }, async () => {
+        const next = 'next';
+        for (const version of ['13.2.0-rc.1', '13.2.0+build.42',
+            '13.2.0-rc.1+build.42']) {
+            await withRelease({ nextversion: version }, async ({ task }) => {
+                const files = ['package.json', 'bower.json'];
+                const originals = files.map(file => fs.readFileSync(file));
+                const doclet = `/**\n * @since ${next}\n * @deprecated ${next}\n */\n`;
+                fs.mkdirSync('docs');
+                fs.writeFileSync('docs/pending.ts', doclet);
+
+                await task();
+
+                for (const file of [...files, 'build-properties.json']) {
+                    strictEqual(JSON.parse(fs.readFileSync(file, 'utf8')).version, version);
+                }
+                for (const [index, file] of files.entries()) {
+                    assert.deepEqual(fs.readFileSync(file + '.bak'), originals[index]);
+                }
+                strictEqual(fs.readFileSync('docs/pending.ts', 'utf8'), doclet);
+                strictEqual(fs.existsSync('docs/pending.ts.bak'), false);
+            });
+        }
     });
 
     it('prep-release rejects injected versions before writes', async () => {

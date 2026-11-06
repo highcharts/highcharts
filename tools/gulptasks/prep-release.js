@@ -44,8 +44,8 @@ function replaceNextTags(directory, version) {
 /**
  * Prepares a new release by replacing version numbers with the supplied
  * version. Replaces version numbers in package.json, bower.json,
- * build-properties.json and replaces any "@ since next" and "@ deprecated next"
- * tags in docs with the specified --nextversion
+ * build-properties.json. For plain x.y.z versions, also replaces pending
+ * "since" and "deprecated" doclet tags with the specified --nextversion.
  *
  * Run using `gulp prep-release --nextversion` and
  * `gulp prep-release --cleanup (--commit)`.
@@ -148,13 +148,18 @@ function prepareRelease() {
             JSON.stringify(buildProperties, null, 2)
         );
 
-        replaceNextTags('.', nextVersion);
+        const updateDoclets = !parsed.prerelease.length && !parsed.build.length;
+        if (updateDoclets) {
+            replaceNextTags('.', nextVersion);
+        }
 
         LogLib.success(
-            'Updated version in package.json, bower.json,' +
-            ' build-properties.json and replaced next in @ since and' +
-            ' @ deprecated in the docs. Please review changes and commit' +
-            ' & push when ready.'
+            'Updated version in package.json, bower.json and' +
+            ' build-properties.json. ' +
+            (updateDoclets ?
+                'Replaced pending since/deprecated doclet tags. ' :
+                'Preserved doclet tags for the suffixed version. ') +
+            'Please review changes and commit & push when ready.'
         );
         resolve();
     });
@@ -162,16 +167,15 @@ function prepareRelease() {
 
 prepareRelease.description = 'Prepares a new release by replacing version' +
     ' numbers with the supplied version. Replaces version numbers in' +
-    ' package.json, bower.json, build-properties.json and replaces any' +
-    ' "next" or "{next}" in doclets\' tags "since" and "deprecated" with the' +
-    ' specified nextversion';
+    ' package.json, bower.json and build-properties.json. Only plain x.y.z' +
+    ' versions replace "next" in "since" and "deprecated" doclet tags.';
 prepareRelease.flags = {
     '--cleanup': 'Will add -modified to version and remove date from' +
         ' build-properties.json. Exludes --version',
     '--commit': 'Commit cleanup changes. Implies --cleanup.',
     '--nextversion': 'Version that will replace version in package.json,' +
-        ' build-properties.json, bower.json and "next"/"{next}" in doclets\'' +
-        ' "since" and "deprecated" tags.'
+        ' build-properties.json and bower.json. Only plain x.y.z versions' +
+        ' replace "next" in "since" and "deprecated" doclet tags.'
 };
 
 Gulp.task('prep-release', prepareRelease);
