@@ -1247,6 +1247,9 @@ function seriesRenderCanvas(this: Series): void {
     chart.boosted = true;
 
     if (!this.visible) {
+        // Marker visibility is resolved in `WGLRenderer.render`, which a
+        // hidden series never reaches, so resolve it here (#24307)
+        this.syncLegendSymbol(this.hasEnabledMarkers());
         return;
     }
 

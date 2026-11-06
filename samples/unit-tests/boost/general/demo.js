@@ -1341,21 +1341,52 @@ QUnit.skip(
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Legend symbol follows boosted markers (#24307)',
     function (assert) {
-        const chart = Highcharts.chart('container', {
-            chart: {
-                width: 600
-            },
-            series: [{
-                boostThreshold: 1,
-                data: Array.from({ length: 200 }, (value, i) => i % 50)
-            }]
-        });
+        const getData = () => Array.from(
+                { length: 200 },
+                (value, i) => i % 50
+            ),
+            chart = Highcharts.chart('container', {
+                chart: {
+                    width: 600
+                },
+                series: [{
+                    boostThreshold: 1,
+                    data: getData()
+                }, {
+                    boostThreshold: 1,
+                    visible: false,
+                    data: getData()
+                }]
+            }),
+            hidden = chart.series[1],
+            symbolVisibility = series => series.legendItem.symbol.element
+                .getAttribute('visibility');
 
         assert.strictEqual(
-            chart.series[0].legendItem.symbol.element
-                .getAttribute('visibility'),
+            symbolVisibility(chart.series[0]),
             'hidden',
             'Markers auto disabled in boost should be hidden in the legend'
+        );
+
+        assert.ok(
+            hidden.boosted,
+            'A series hidden from the start should still be boosted'
+        );
+
+        assert.strictEqual(
+            symbolVisibility(hidden),
+            'hidden',
+            'A series hidden from the start should not keep a legend ' +
+            'marker that the plot would not draw'
+        );
+
+        hidden.setVisible(true);
+
+        assert.strictEqual(
+            symbolVisibility(hidden),
+            'hidden',
+            'Showing the series should confirm the decision made while it ' +
+            'was hidden'
         );
     }
 );
