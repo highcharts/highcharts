@@ -203,6 +203,24 @@ function test_grid() {
                     header: ['x']
                 }
             }]
+        },
+        rowSelection: {
+            enabled: true,
+            mode: 'multiple',
+            trigger: 'both',
+            clickAction: 'toggle',
+            modifierKey: 'ctrlOrMeta',
+            checkbox: {
+                enabled: true
+            }
+        },
+        events: {
+            afterRowSelectionChange: function (e): void {
+                void this.rowSelection?.getSelectedRowIds();
+                void e.selectedRowIds;
+                void e.addedRowIds;
+                void e.removedRowIds;
+            }
         }
     });
 
@@ -213,6 +231,14 @@ function test_grid() {
     grid.rowPinning?.unpin('A');
     grid.rowPinning?.getPinnedRows();
     grid.tableEditing?.isEnabled();
+
+    grid.rowSelection?.select('A');
+    grid.rowSelection?.select(['A', 'B']);
+    grid.rowSelection?.deselect('A');
+    grid.rowSelection?.toggle('A');
+    grid.rowSelection?.isSelected('A');
+    grid.rowSelection?.getSelectedRowIds();
+    grid.rowSelection?.clear();
 
     const detach = grid.contextMenu.attach(document.createElement('button'), {
         items: [
