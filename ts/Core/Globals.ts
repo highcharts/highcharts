@@ -264,7 +264,9 @@ namespace Globals {
      * @deprecated
      * @todo Use only `Core/Series/SeriesRegistry.seriesTypes`
      */
-    export const seriesTypes = {} as GlobalsBase['seriesTypes'];
+    export const seriesTypes = Object.create(
+        null
+    ) as GlobalsBase['seriesTypes'];
 
     /** @internal */
     export const symbolSizes: GlobalsBase['symbolSizes'] = {};
