@@ -233,6 +233,41 @@ QUnit.test('Grid algorithm tests.', function (assert) {
     assert.ok(result, 'Clusters should not overlap when allowOverlap = false.');
 });
 
+QUnit.test('Cropping points with a zero Y value', function (assert) {
+    let visibleYData;
+
+    const chart = Highcharts.chart('container', {
+        yAxis: {
+            min: 100,
+            max: 200
+        },
+        series: [{
+            type: 'scatter',
+            cluster: {
+                enabled: true,
+                layoutAlgorithm: {
+                    type: function (xData, yData) {
+                        visibleYData = yData;
+                        return false;
+                    }
+                }
+            },
+            data: [[0, 0], [1, 150]]
+        }]
+    });
+
+    assert.deepEqual(
+        visibleYData,
+        [150],
+        'A zero outside the visible Y-axis range should be cropped'
+    );
+    assert.strictEqual(
+        chart.series[0].dataMinY,
+        0,
+        'Zero should remain the calculated minimum Y value'
+    );
+});
+
 QUnit.test('Kmeans algorithm tests.', function (assert) {
     var chart = Highcharts.chart('container', options),
         series = chart.series[0],

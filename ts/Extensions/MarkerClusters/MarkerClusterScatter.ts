@@ -953,10 +953,10 @@ function seriesGeneratePoints(
                     seriesMaxX = Math.max(xData[i], seriesMaxX);
                     seriesMinX = Math.min(xData[i], seriesMinX);
                     seriesMaxY = Math.max(
-                        (yData[i] as any) || seriesMaxY, seriesMaxY
+                        yData[i] as number, seriesMaxY
                     );
                     seriesMinY = Math.min(
-                        (yData[i] as any) || seriesMinY, seriesMinY
+                        yData[i] as number, seriesMinY
                     );
                 }
             }
@@ -966,9 +966,10 @@ function seriesGeneratePoints(
             if (
                 xData[i] >= (realExtremes.minX - cropDataOffsetX) &&
                 xData[i] <= (realExtremes.maxX + cropDataOffsetX) &&
-                (yData[i] as number || realExtremes.minY) >=
+                isNumber(yData[i]) &&
+                yData[i] >=
                     (realExtremes.minY - cropDataOffsetY) &&
-                (yData[i] as number || realExtremes.maxY) <=
+                yData[i] <=
                     (realExtremes.maxY + cropDataOffsetY)
             ) {
                 visibleXData.push(xData[i]);
