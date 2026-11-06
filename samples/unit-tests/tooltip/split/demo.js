@@ -461,10 +461,7 @@ QUnit.test(
 QUnit.test('positioning', assert => {
     const axisHeight = 150;
     const data = [85, 82, 84, 87, 92];
-    const {
-        series: [series1, series2],
-        yAxis: [, /* yAxis1 */ yAxis2]
-    } = Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
         chart: {
             height: axisHeight * 3
         },
@@ -498,6 +495,8 @@ QUnit.test('positioning', assert => {
             { data: data, yAxis: 1 }
         ]
     });
+    const [series1, series2] = chart.series;
+    const yAxis2 = chart.yAxis[1];
     const isInsideAxis = ({ pos, len }, { anchorY }) =>
         pos <= anchorY && anchorY <= pos + len;
 
@@ -515,6 +514,58 @@ QUnit.test('positioning', assert => {
         isInsideAxis(yAxis2, tooltip),
         'Should have Series 2 tooltip anchorY aligned within yAxis when ' +
         'point is inside plot area'
+    );
+
+    // Add a 2nd xAxis pane with one series colliding with series1 and one
+    // lone series, to check boxes are distributed per pane, not chart-wide.
+    chart.update({
+        xAxis: [
+            { width: '50%' },
+            { left: '50%', width: '50%' }
+        ],
+        series: [
+            { data: [[3, 87]], yAxis: 0 },
+            { data: [[3, 87]], yAxis: 1 },
+            { xAxis: 0, data: [[3, 87]] },
+            { xAxis: 1, data: [[3, 87]] }
+        ]
+    }, true, true);
+    const leftPoint = chart.series[2].points[0];
+    const rightPoint = chart.series[3].points[0];
+
+    // Show the right pane's tooltip alone first, to get its natural position.
+    chart.tooltip.refresh([rightPoint]);
+    const naturalY = chart.series[3].tt.attr('y');
+
+    // Show it again, now together with the crowded left pane.
+    chart.tooltip.refresh([series1.points[0], leftPoint, rightPoint]);
+
+    assert.strictEqual(
+        chart.series[3].tt.attr('y'),
+        naturalY,
+        'The right pane\'s tooltip should stay in place, unaffected by ' +
+            'the collisions in the unrelated crowded left pane'
+    );
+
+    chart.update({
+        xAxis: [{ left: void 0, width: void 0 }],
+        yAxis: [{ top: void 0, height: void 0 }],
+        series: [
+            { data: [0, 10] },
+            { data: [0, 10], yAxis: 0 },
+            { data: [0, 10] }
+        ]
+    }, true, true);
+    const [s1, s2, s3] = chart.series;
+    chart.tooltip.refresh([s1.points[0], s2.points[0], s3.points[0]]);
+    // Equal targets are stacked in series order, so the last one is lowest.
+    const lowestBox = s3.tt;
+
+    assert.ok(
+        lowestBox.attr('y') + lowestBox.getBBox().height <=
+            chart.tooltip.tt.attr('y'),
+        'The series boxes should be pushed clear of the header, as they ' +
+            'share a pane with it'
     );
 });
 
