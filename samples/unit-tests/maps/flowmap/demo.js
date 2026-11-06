@@ -349,3 +349,54 @@ QUnit.test('Flowmap API options.', assert => {
         'Points with correctly defined data should not be null.'
     );
 });
+
+QUnit.test('Flowmap links to points on a plot edge', assert => {
+    const chart = Highcharts.mapChart('container', {
+            mapView: {
+                zoom: 3,
+                center: [10, 50]
+            },
+            series: [{
+                type: 'mappoint',
+                data: [{
+                    id: 'A',
+                    lat: 50,
+                    lon: 0
+                }, {
+                    id: 'B',
+                    lat: 50,
+                    lon: 20
+                }]
+            }, {
+                type: 'flowmap',
+                data: [{
+                    from: 'A',
+                    to: 'B',
+                    weight: 1
+                }]
+            }]
+        }),
+        sourcePoints = chart.series[0].points,
+        flowPoint = chart.series[1].points[0];
+
+    sourcePoints[0].plotX = 0;
+    sourcePoints[1].plotY = 0;
+    chart.series[1].translate();
+
+    assert.deepEqual(
+        flowPoint.fromPos,
+        {
+            x: 0,
+            y: sourcePoints[0].plotY
+        },
+        'A point on the left plot edge should be linked'
+    );
+    assert.deepEqual(
+        flowPoint.toPos,
+        {
+            x: sourcePoints[1].plotX,
+            y: 0
+        },
+        'A point on the top plot edge should be linked'
+    );
+});
