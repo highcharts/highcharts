@@ -613,4 +613,35 @@ test.describe('Layout Tests', () => {
             'layoutChanged should be fired with type cellDestroyed when cell is destroyed (#24258)'
         ).toContainEqual({ type: 'cellDestroyed', target: 'cell-1' });
     });
+
+    test('Hiding sidebar cancels its pending show transition', async ({ page }) => {
+        await page.setContent(
+            dashboardsWithHighchartsAndEditModeHTML,
+            { waitUntil: 'networkidle' }
+        );
+
+        const result = await page.evaluate(async () => {
+            const Dashboards = (window as any).Dashboards;
+            const board = Dashboards.board('container', {
+                editMode: { enabled: true }
+            });
+
+            board.editMode.toggleEditMode(true);
+            const sidebar = board.editMode.sidebar;
+
+            sidebar.show();
+            sidebar.hide();
+            await new Promise((resolve): void => setTimeout(resolve));
+
+            return {
+                className: sidebar.container.className,
+                isVisible: sidebar.isVisible
+            };
+        });
+
+        expect(result.isVisible).toBe(false);
+        expect(result.className).not.toContain(
+            'highcharts-dashboards-edit-sidebar-show'
+        );
+    });
 });
