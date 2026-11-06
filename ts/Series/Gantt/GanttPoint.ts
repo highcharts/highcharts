@@ -23,10 +23,15 @@ import type GanttPointOptions from './GanttPointOptions';
 import type GanttSeries from './GanttSeries';
 import type Chart from '../../Core/Chart/Chart';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    xrange: { prototype: { pointClass: XRangePoint } }
-} = SeriesRegistry.seriesTypes;
+import XRangeSeries from '../XRange/XRangeSeries.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const XRangePoint = XRangeSeries.prototype.pointClass;
 
 /* *
  *

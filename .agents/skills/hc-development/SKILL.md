@@ -86,7 +86,7 @@ Keep it short:
 
 Each product has a main bundle that nearly every user loads: `highcharts.js`, Grid's core (in both Grid Lite and Grid Pro), and `dashboards.js`. The bar for adding code there is very high, for bugfixes too. Take the first option that works:
 
-1. Existing options, events or API can do it: write a demo or docs.
+1. Existing options, events or API can do it: write a demo, docs or a plugin in a sample.
 2. The module, composition or component that owns the area.
 3. A new module or composition that hooks into the main classes.
 4. The main bundle: only if nearly every user needs it and no hook can do it.

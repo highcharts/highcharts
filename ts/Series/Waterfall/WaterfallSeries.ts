@@ -27,11 +27,9 @@ import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
@@ -54,6 +52,7 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         /** @internal */
@@ -69,7 +68,7 @@ declare module '../../Core/Series/SeriesBase' {
 
 /**
  * Returns true if the key is a direct property of the object.
- * @private
+ * @internal
  * @param {*} obj
  * Object with property to test
  * @param {string} key
@@ -90,7 +89,6 @@ function ownProp(obj: unknown, key: string): boolean {
 /**
  * Waterfall series type.
  *
- * @private
  */
 class WaterfallSeries extends ColumnSeries {
 
@@ -918,6 +916,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
  *
  * */
 
+/** @internal */
 namespace WaterfallSeries {
     export interface WaterfallChart extends Chart {
         /** @internal */

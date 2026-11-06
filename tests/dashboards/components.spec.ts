@@ -503,6 +503,55 @@ test.describe('KPI Component', () => {
         expect(result.hasChartBeforeUpdate, 'KPI Component should be loaded without a chart.').toBe(false);
         expect(result.hasChartAfterUpdate, 'KPI Component should have a chart after update.').toBe(true);
     });
+
+    test('KPI Component value escaping', async ({ page }) => {
+        await page.setContent(dashboardsWithHighchartsHTML, { waitUntil: 'networkidle' });
+
+        const result = await page.evaluate(async () => {
+            const Highcharts = (window as any).Highcharts;
+            const Dashboards = (window as any).Dashboards;
+
+            Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+            Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+            const dashboard = await Dashboards.board('container', {
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{
+                                id: 'dashboard-cell-1'
+                            }]
+                        }]
+                    }]
+                },
+                components: [{
+                    renderTo: 'dashboard-cell-1',
+                    type: 'KPI',
+                    title: 'Value',
+                    value: '<a href="https://example.com">link</a>'
+                }]
+            }, true);
+
+            const kpi = dashboard.mountedComponents[0].component;
+            const rawValueHTML = kpi.value.innerHTML;
+
+            kpi.update({ valueFormat: '<b>{value}</b>' });
+
+            return {
+                rawValueHTML,
+                formattedValueHasBold: !!kpi.value.querySelector('b')
+            };
+        });
+
+        expect(
+            result.rawValueHTML,
+            'Raw value should be escaped, not rendered as markup.'
+        ).toBe('&lt;a href="https://example.com"&gt;link&lt;/a&gt;');
+        expect(
+            result.formattedValueHasBold,
+            'Value format should still be rendered as HTML.'
+        ).toBe(true);
+    });
 });
 
 test.describe('Highcharts Component', () => {

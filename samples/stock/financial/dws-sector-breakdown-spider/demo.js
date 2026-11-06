@@ -21,12 +21,9 @@ async function renderChart() {
     // Load data
     await connector.load();
 
-    // Get data table
-    const table = connector.getTable('EqSectors'),
-        data = table.getRows(0, table.getRowCount(), ['Type', 'PercLong']);
-
     // Create chart
     Highcharts.chart('container', {
+        dataTable: connector.getTable('EqSectors'),
         chart: {
             polar: true,
             type: 'line',
@@ -58,7 +55,10 @@ async function renderChart() {
         },
         series: [{
             name: 'Capital Group Global Equity Fund (LUX) B',
-            data,
+            dataMapping: {
+                name: 'Type',
+                y: 'PercLong'
+            },
             color: '#274FE0'
         }]
     });

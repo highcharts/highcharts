@@ -35,12 +35,10 @@ import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
 import SankeyPoint from './SankeyPoint.js';
 import SankeySeriesDefaults from './SankeySeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SankeyColumnComposition from './SankeyColumnComposition.js';
-const {
-    column: ColumnSeries,
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import TU from '../TreeUtilities.js';

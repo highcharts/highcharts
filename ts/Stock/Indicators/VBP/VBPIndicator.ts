@@ -22,7 +22,6 @@
 
 import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
-import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
 import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
@@ -36,18 +35,15 @@ import type {
     VBPParamsOptions
 } from './VBPOptions';
 import type { TypedArray } from '../../../Shared/Types';
+
 import VBPPoint from './VBPPoint.js';
 
 import { animObject } from '../../../Core/Animation/AnimationUtilities.js';
+import ColumnSeries from '../../../Series/Column/ColumnSeries.js';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    column: {
-        prototype: columnProto
-    },
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     addEvent,
     arrayMax,
@@ -384,11 +380,11 @@ class VBPIndicator extends SMAIndicator {
 
         if ((indicator.options.volumeDivision as any).enabled) {
             indicator.posNegVolume(true, true);
-            columnProto.drawPoints.apply(indicator, arguments);
+            ColumnSeries.prototype.drawPoints.apply(indicator, arguments);
             indicator.posNegVolume(false, false);
         }
 
-        columnProto.drawPoints.apply(indicator, arguments);
+        ColumnSeries.prototype.drawPoints.apply(indicator, arguments);
     }
 
     // Function responsible for dividing volume into positive and negative
@@ -484,7 +480,7 @@ class VBPIndicator extends SMAIndicator {
             barX: number,
             barY: number;
 
-        columnProto.translate.apply(indicator);
+        ColumnSeries.prototype.translate.apply(indicator);
 
         const indicatorPoints = indicator.points;
 
@@ -938,8 +934,8 @@ extend(VBPIndicator.prototype, {
     pointClass: VBPPoint,
     markerAttribs: noop as any,
     drawGraph: noop,
-    getColumnMetrics: columnProto.getColumnMetrics,
-    crispCol: columnProto.crispCol
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
+    crispCol: ColumnSeries.prototype.crispCol
 });
 
 /* *

@@ -21,17 +21,6 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import Globals from './Globals.js';
 import { defined, isObject } from '../../Shared/Utilities.js';
 
-AST.allowedAttributes.push(
-    'srcset',
-    'media'
-);
-
-AST.allowedTags.push(
-    'picture',
-    'source'
-);
-
-
 /* *
  *
  *  Declarations

@@ -28,12 +28,10 @@ const {
     composed,
     noop
 } = H;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import HeatmapSeries from '../Heatmap/HeatmapSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    heatmap: HeatmapSeries,
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
 import TilemapPoint from './TilemapPoint.js';
 import TilemapSeriesDefaults from './TilemapSeriesDefaults.js';
 import TilemapShapes from './TilemapShapes.js';
@@ -73,7 +71,7 @@ declare module '../../Core/Series/SeriesOptions' {
  * Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
  * series and adds the largest padding required. If no series has this function
  * defined, we add nothing.
- * @private
+ * @internal
  */
 function onAxisAfterSetAxisTranslation(
     this: Axis
@@ -122,7 +120,6 @@ function onAxisAfterSetAxisTranslation(
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.tilemap
  *
@@ -186,7 +183,7 @@ class TilemapSeries extends HeatmapSeries {
 
     /**
      * Use the shape's defined data label alignment function.
-     * @private
+     * @internal
      */
     public alignDataLabel(): void {
         return this.tileShape.alignDataLabel.apply(this, arguments);
@@ -208,7 +205,7 @@ class TilemapSeries extends HeatmapSeries {
 
     /**
      * Get metrics for padding of axis for this series.
-     * @private
+     * @internal
      */
     public getSeriesPixelPadding(
         axis: Axis
@@ -266,7 +263,7 @@ class TilemapSeries extends HeatmapSeries {
 
     /**
      * Set tile shape object on series.
-     * @private
+     * @internal
      */
     public setOptions(): TilemapSeriesOptions {
         // Call original function
@@ -280,7 +277,7 @@ class TilemapSeries extends HeatmapSeries {
 
     /**
      * Use translate from tileShape.
-     * @private
+     * @internal
      */
     public translate(): void {
         return this.tileShape.translate.apply(this, arguments);

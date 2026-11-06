@@ -25,10 +25,8 @@ import type { TypedArray } from '../../Shared/Types';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
 
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import VariwideComposition from './VariwideComposition.js';
 import VariwidePoint from './VariwidePoint.js';
 import VariwideSeriesDefaults from './VariwideSeriesDefaults.js';
@@ -48,7 +46,6 @@ import {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.variwide
  *
@@ -63,6 +60,7 @@ class VariwideSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = VariwideComposition.compose;
 
     /** @internal */
@@ -132,7 +130,7 @@ class VariwideSeries extends ColumnSeries {
      * Translate an x value inside a given category index into the distorted
      * axis translation.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#postTranslate
      *
      * @param {number} index
@@ -203,7 +201,7 @@ class VariwideSeries extends ColumnSeries {
 
     /**
      * Function that corrects stack labels positions
-     * @private
+     * @internal
      */
     public correctStackLabels(): void {
         const series = this,

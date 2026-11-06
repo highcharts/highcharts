@@ -34,8 +34,9 @@ export interface TilesProviderRegistry {
     USGS: typeof USGS;
 }
 
-/** @internal */
-export type TilesProviderRegistryName = keyof TilesProviderRegistry;
+export type TilesProviderRegistryName = (
+    'Esri'|'LimaLabs'|'OpenStreetMap'|'Stamen'|'Thunderforest'|'USGS'
+);
 
 /* *
  *

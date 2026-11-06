@@ -41,9 +41,7 @@ import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
-import SeriesRegistry from '../../Series/SeriesRegistry.js';
-import SeriesClass from '../../Series/Series';
-const { series: Series } = SeriesRegistry;
+import Series from '../../Series/Series.js';
 import {
     defined,
     extend,
@@ -230,10 +228,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
         userOptions: Partial<ColorAxisOptions>
     ): void {
         const axis = this;
-        const legend = chart.options.legend || {},
-            horiz = userOptions.layout ?
-                userOptions.layout !== 'vertical' :
-                legend.layout !== 'vertical';
+        const horiz = userOptions.layout ?
+            userOptions.layout !== 'vertical' :
+            chart.options.legend?.layout !== 'vertical';
 
         axis.reversed = userOptions.reversed;
         axis.opposite = !horiz;
@@ -291,9 +288,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
      * @internal
      */
     public setOptions(userOptions: DeepPartial<ColorAxisOptions>): void {
-        const legend = this.chart.options.legend || {},
+        const legend = this.chart.options.legend,
             theme = defaultOptions.colorAxis as ColorAxisOptions,
-            layout = userOptions.layout || legend.layout || theme.layout,
+            layout = userOptions.layout || legend?.layout || theme.layout,
             horiz = layout !== 'vertical';
 
         const sideSpecific = horiz ? { title: { rotation: 0 } } :
@@ -311,7 +308,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
             // Forced options
             {
                 showEmpty: false,
-                visible: this.chart.options.legend.enabled &&
+                visible: legend?.enabled &&
                     userOptions.visible !== false
             }
         );
@@ -863,8 +860,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
                 []
             ),
             legendOptions = chart.options.legend,
-            valueDecimals = (legendOptions.valueDecimals ?? -1),
-            valueSuffix = (legendOptions.valueSuffix ?? '');
+            valueDecimals = (legendOptions?.valueDecimals ?? -1),
+            valueSuffix = (legendOptions?.valueSuffix ?? '');
 
         const getPointsInDataClass = (i: number): Array<Point> =>
             axis.series.reduce((points, s): Point[] => {
@@ -925,7 +922,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
                             this: ColorAxis.LegendItemObject
                         ): void {
                             this.visible = vis = axis.visible = !vis;
-                            const affectedSeries: SeriesClass[] = [];
+                            const affectedSeries: Series[] = [];
                             for (const point of getPointsInDataClass(i)) {
                                 point.setVisible(vis);
                                 point.hiddenInDataClass = !vis; // #20441
@@ -936,9 +933,20 @@ class ColorAxis extends Axis implements ColorAxisBase {
                                 }
                             }
                             chart.legend.colorizeItem(this as any, vis);
+
+                            const redraw = vis && this.isDirtyPoints;
                             affectedSeries.forEach((series): void => {
                                 fireEvent(series, 'afterDataClassLegendClick');
+
+                                // Points hidden in a data class have no
+                                // graphic or data label yet (#25083)
+                                if (redraw) {
+                                    series.isDirty = true;
+                                }
                             });
+                            if (redraw) {
+                                chart.redraw(false);
+                            }
                         }
                     },
                     dataClass
@@ -1020,6 +1028,7 @@ namespace ColorAxis {
         visible: boolean;
         setState: Point['setState'];
         isDataClass: true;
+        isDirtyPoints?: boolean;
         setVisible: Function;
     }
 

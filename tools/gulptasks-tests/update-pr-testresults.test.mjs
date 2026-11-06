@@ -45,7 +45,8 @@ const environmentKeys = [
 ];
 
 async function runComment({
-    artifactsUrl,
+    args = {},
+    dryrun = false,
     environment = {},
     existingComment,
     failSilently = false,
@@ -127,10 +128,11 @@ async function runComment({
         }
         Object.assign(commandArgv, {
             _: [],
-            artifactsUrl,
+            dryrun,
             failSilently,
             pr: '25068',
-            resultsPath
+            resultsPath,
+            ...args
         });
 
         globalThis.fetch = async (...args) => {
@@ -217,7 +219,6 @@ test('creates API samples from positive visual differences', () => {
 for (const compared of [0, 1]) {
     test(`reference failures report ${compared} compared samples without claiming a clean run`, async () => {
         const { comment, requests } = await runComment({
-            artifactsUrl: 'https://github.com/highcharts/highcharts/actions/runs/1',
             testResults: compared ? { 'highcharts/demo/line-basic': 0 } : {},
             referenceFailures: [{
                 sample: 'stock/financial/interactive-chart',
@@ -232,7 +233,7 @@ for (const compared of [0, 1]) {
         assert.match(body, /\*\*1\*\* candidates rendered without a reference/);
         assert.match(body, /stock\/financial\/interactive-chart/);
         assert.match(body, /getRow is not a function/);
-        assert.equal(requests.length, 0);
+        assert.equal(requests.length, 2);
     });
 }
 
@@ -355,11 +356,10 @@ test('skips the existing PR comment when visual execution errors occur', async (
     }
 });
 
-test('reports Karma artifacts without credentials or API requests', async () => {
-    const artifactsUrl = 'https://github.com/highcharts/highcharts/actions/runs/123#artifacts';
+test('dryrun writes comments without credentials or API requests', async () => {
     for (const pixels of [0, 526]) {
         const { comment, requests } = await runComment({
-            artifactsUrl,
+            dryrun: true,
             environment: { VISUAL_REVIEW_API_KEY: undefined },
             testResults: { 'highcharts/series-networkgraph/textpath-datalabels': pixels }
         });
@@ -367,14 +367,13 @@ test('reports Karma artifacts without credentials or API requests', async () => 
         assert.equal(requests.length, 0);
         assert.match(payload.body, /Compared \*\*1\*\* samples/u);
         assert.equal([...payload.body.matchAll(/Compared /gu)].length, 1);
-        assert.match(payload.body, /Production Visual Review contains Playwright results/u);
         const linkDestinations = Array.from(
             payload.body.matchAll(/\[[^\]]*\]\(([^)]+)\)/gu),
             match => match[1]
         );
         assert.deepEqual(
             linkDestinations,
-            pixels ? [artifactsUrl, artifactsUrl] : [artifactsUrl]
+            pixels ? ['https://vrevs.test/pr/25068/review'] : []
         );
         assert.match(payload.title, pixels ? /Differences found/u : /No difference found/u);
         if (pixels) {
@@ -383,9 +382,30 @@ test('reports Karma artifacts without credentials or API requests', async () => 
     }
 });
 
-test('does not report successful artifact comparisons after execution errors', async () => {
+test('rejects the retired artifact mode before publishing or changing comments', async () => {
+    const existingComment = '{"title":"Existing","body":"KEEP"}';
+    for (const failSilently of [false, true]) {
+        const options = {
+            args: { artifactsUrl: 'https://github.com/highcharts/highcharts/actions/runs/123#artifacts' },
+            existingComment,
+            failSilently,
+            testResults: {},
+            fetchImplementation: () => assert.fail('Retired mode must not publish')
+        };
+        if (failSilently) {
+            const { comment, requests } = await runComment(options);
+            assert.equal(comment, existingComment);
+            assert.equal(requests.length, 0);
+        } else {
+            await assert.rejects(runComment(options), error =>
+                /--artifacts-url is no longer supported.*--dryrun/u.test(error.message) &&
+                error.commentAfterAttempt === existingComment);
+        }
+    }
+});
+
+test('does not write a success comment after execution errors', async () => {
     const { comment, requests, result } = await runComment({
-        artifactsUrl: 'https://github.com/highcharts/highcharts/actions/runs/123#artifacts',
         testResults: {},
         visualTestErrors: true
     });
