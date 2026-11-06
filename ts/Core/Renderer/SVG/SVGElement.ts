@@ -2171,31 +2171,15 @@ class SVGElement implements SVGElementBase {
      * attributes) is based on `em` or other units, the pixel size is returned.
      */
     public strokeWidth(): number {
-
-        // In non-styled mode, read the stroke width as set by .attr
-        if (!this.renderer.styledMode) {
-            return this['stroke-width'] || 0;
-        }
-
-        // In styled mode, read computed stroke width
-        const val = this.getStyle('stroke-width');
-
-        let ret = 0;
-
-        // Read pixel values directly
-        if (/px$/.test(val)) {
-            ret = pInt(val);
-
-        // Other values like em, pt etc need to be measured
-        } else if (val !== '') {
-            ret = relativeLength(
-                val,
+        return this.renderer.styledMode ?
+            relativeLength(
+                this.getStyle('stroke-width'),
                 0,
                 void 0,
                 this.element.parentNode as SVGDOMElement
-            );
-        }
-        return ret;
+            ) :
+            // In non-styled mode, read the stroke width as set by .attr
+            (this['stroke-width'] || 0);
     }
 
     /**
