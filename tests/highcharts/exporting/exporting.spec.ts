@@ -188,6 +188,61 @@ test.describe('exporting/inline-fonts', () => {
             '/fonts/merriweather.woff2'
         ]);
     });
+
+    test('inlineFonts should resolve @import relative to the importing sheet (#25422)', async ({ page }) => {
+        // Same-origin page outside the stylesheet folder, as in the report
+        const base = 'https://example.test/myproject/',
+            files: Record<string, string> = {
+                'index.html': '<!DOCTYPE html>',
+                'designs/main.css': '@import "dark.css";',
+                'designs/dark.css': '@font-face { font-family: "DarkFont"; ' +
+                    'src: url("fonts/dark.woff2"); }'
+            };
+
+        await page.route(base + '**', route => {
+            const path = route.request().url().slice(base.length);
+
+            return route.fulfill({
+                contentType: path.endsWith('.css') ? 'text/css' : 'text/html',
+                body: files[path]
+            });
+        });
+        await page.goto(base + 'index.html');
+
+        const chart = await createChart(
+            page,
+            {
+                title: {
+                    text: 'Title',
+                    style: {
+                        fontFamily: 'DarkFont'
+                    }
+                },
+                series: [{
+                    type: 'line',
+                    data: [1, 2]
+                }]
+            },
+            {
+                modules: ['modules/exporting.js'],
+                applyTestOptions: false
+            }
+        );
+
+        await page.addStyleTag({ url: base + 'designs/main.css' });
+        await interceptFontFetches(page);
+
+        await chart.evaluate(async c => {
+            await c.exporting.exportChart({
+                type: 'image/png'
+            });
+        });
+
+        expect(
+            await page.evaluate(() => window.testFontFetchUrls),
+            'Font in imported sheet should resolve from its own folder'
+        ).toEqual([base + 'designs/fonts/dark.woff2']);
+    });
 });
 
 test('networkgraph export should include node data labels', async ({ page }) => {
