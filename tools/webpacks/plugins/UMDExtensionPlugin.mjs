@@ -33,6 +33,10 @@ const HOOKS_NAME = 'Highcharts.UMDExtensionPlugin';
 
 const UMD_REGEXP = /(\(function webpackUniversalModuleDefinition\(root, factory\) \{\s+)(.*?)(\s+\}\)\(this, (?:function)?\()/su;
 
+// Top-level `this` is undefined when the bundle is re-bundled as a strict
+// module (e.g. Next.js with `transpilePackages`), so fall back to an object.
+const UMD_ROOT = '(typeof window === \'undefined\' ? this || {} : window,';
+
 /* *
  *
  *  Functions
@@ -193,11 +197,7 @@ export class UMDExtensionPlugin {
                                     : 'define("$1", [], factory)'
                             ) +
                         umdSuffix
-                            .replace(
-                                '(this,',
-                                '(typeof window === \'undefined\' ?' +
-                                ' this : window,'
-                            )
+                            .replace('(this,', UMD_ROOT)
                     ) : (
                         umdPrefix +
                         umdBridge
@@ -210,11 +210,7 @@ export class UMDExtensionPlugin {
                                 `root["${nodeNamespaceReplacement}"]`
                             ) +
                         umdSuffix
-                            .replace(
-                                '(this,',
-                                '(typeof window === \'undefined\' ?' +
-                                ' this : window,'
-                            )
+                            .replace('(this,', UMD_ROOT)
                     )
                 )
             ),
