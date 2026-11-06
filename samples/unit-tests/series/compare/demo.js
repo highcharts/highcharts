@@ -263,3 +263,59 @@ QUnit.test('Compare with linked series, #21119.', assert => {
         linked to :previous series.`
     );
 });
+
+QUnit.test(
+    'CompareStart with dataGrouping (#25538)',
+    assert => {
+        const data = [];
+        for (let i = 0; i < 1000; i++) {
+            data.push([Date.UTC(2020, 0, 1) + i * 864e5, 100 + i]);
+        }
+
+        const chart = Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 5 // All -> grouping active
+            },
+            series: [{
+                id: 'main',
+                data,
+                compare: 'percent',
+                compareStart: true,
+                dataGrouping: {
+                    groupPixelWidth: 20
+                }
+            }, {
+                type: 'sma',
+                linkedTo: 'main',
+                compareToMain: true,
+                params: {
+                    period: 3
+                }
+            }]
+        });
+
+        const main = chart.series[0],
+            sma = chart.series[1],
+            yData = main.getColumn('y', true),
+            firstVisibleIndex = main.points.findIndex(p => p.plotX >= 0),
+            firstVisible = main.points[firstVisibleIndex],
+            // Grouped y of the first visible point (the correct compare base)
+            expectedBase = yData[firstVisibleIndex];
+
+        assert.strictEqual(
+            firstVisible.change,
+            0,
+            'First visible point change should be 0 with compareStart'
+        );
+        assert.strictEqual(
+            main.dataModify.compareValue,
+            expectedBase,
+            'Main compareValue should be the first visible grouped y'
+        );
+        assert.strictEqual(
+            sma.dataModify.compareValue,
+            expectedBase,
+            'SMA with compareToMain should use the same grouped base as main'
+        );
+    }
+);

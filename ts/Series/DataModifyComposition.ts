@@ -245,7 +245,7 @@ namespace DataModifyComposition {
 
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'afterGetExtremes', afterGetExtremes);
-            addEvent(SeriesClass, 'afterProcessData', afterProcessData);
+            addEvent(SeriesClass, 'afterProcessData', updateCompareValue);
         }
 
         if (!axisProto.setCompare) {
@@ -254,6 +254,8 @@ namespace DataModifyComposition {
             axisProto.setCumulative = axisSetCumulative;
 
             pointProto.tooltipFormatter = tooltipFormatter;
+
+            addEvent(AxisClass, 'postProcessData', postProcessData);
         }
 
         return SeriesClass as (typeof SeriesComposition&T);
@@ -457,13 +459,12 @@ namespace DataModifyComposition {
     }
 
     /**
-     * Extend series.processData by finding the first y value in the plot area,
-     * used for comparing the following values
+     * Set the series compare base by finding the first non-zero value in the
+     * visible x range and storing it on `dataModify.compareValue`.
      *
      * @ignore
-     * @function Highcharts.Series#processData
      */
-    function afterProcessData(this: Series): void {
+    function updateCompareValue(this: Series): void {
         const series = this,
 
             // For series with more than one value (range, OHLC etc), compare
@@ -494,6 +495,40 @@ namespace DataModifyComposition {
                     series.dataModify.compareValue = compareValue;
                     break;
                 }
+            }
+        }
+    }
+
+    /**
+     * Recalculate compareValue for a series, then for its linkedSeries
+     * (parent before children, so compareToMain can copy a fresh base).
+     */
+    function recalculateCompareValueTree(series: Series): void {
+        if (series.dataModify) {
+            const parentModify = series.linkedParent?.dataModify,
+                compareToMain = 'compareToMain' in series.options &&
+                    !!series.options.compareToMain;
+
+            if (compareToMain && parentModify?.compareValue) {
+                series.dataModify.compareValue = parentModify.compareValue;
+            } else if (!compareToMain && series.hasGroupedData) {
+                updateCompareValue.call(series);
+            }
+
+            for (const linkedSeries of series.linkedSeries) {
+                recalculateCompareValueTree(linkedSeries);
+            }
+        }
+    }
+
+    /**
+     * After data grouping, refresh compareValue on each unlinked grouped
+     * series and its linked descendants (#25538).
+     */
+    function postProcessData(this: Axis): void {
+        for (const series of this.series) {
+            if (!series.linkedParent && series.hasGroupedData) {
+                recalculateCompareValueTree(series);
             }
         }
     }
