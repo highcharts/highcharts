@@ -691,6 +691,9 @@ export interface ChartOptions {
      * properties of the click event argument (`event.altKey`,
      * `event.ctrlKey`, `event.metaKey` and `event.shiftKey`).
      *
+     * With the [mouse wheel zoom](#chart.zooming.mouseWheel) enabled, holding
+     * the pan key while scrolling the mouse wheel pans the chart.
+     *
      * @since   4.0.3
      * @product highcharts gantt
      */
@@ -708,6 +711,10 @@ export interface ChartOptions {
      * **Note:** If both zooming and panning are enabled without keys, zooming
      * will take precedence by default. To prioritize panning, either set
      * [chart.zooming.key](#chart.zooming.key) or panKey.
+     *
+     * With the [mouse wheel zoom](#chart.zooming.mouseWheel) enabled, the chart
+     * can also be panned by scrolling the mouse wheel while holding the
+     * [panKey](#chart.panKey).
      *
      * @sample  {highcharts} highcharts/chart/pankey/
      *          Zooming and panning

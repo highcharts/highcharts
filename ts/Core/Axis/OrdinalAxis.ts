@@ -590,7 +590,8 @@ namespace OrdinalAxis {
         this: Chart,
         e: Event & {
             originalEvent: PointerEvent,
-            touches: Touch[] | undefined
+            touches: Touch[] | undefined,
+            mouseWheel?: boolean
         }
     ): void {
         const chart = this,
@@ -661,7 +662,9 @@ namespace OrdinalAxis {
             } else if (!extendedAxis.ordinal.positions) {
                 runBase = true;
 
-            } else if (Math.abs(movedUnits) > 1) {
+            } else if (
+                Math.abs(movedUnits) > ((e).mouseWheel ? 0 : 1)
+            ) {
 
                 // Remove active points for shared tooltip
                 if (hoverPoints) {
