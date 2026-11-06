@@ -140,6 +140,7 @@ export const isIos = !!win.navigator && (
         win.navigator.maxTouchPoints > 1
     )
 );
+export const isMac = isIos || userAgent.indexOf('Mac') !== -1;
 export const isTouchDevice = !!(
     'ontouchstart' in win ||
     (win.navigator && win.navigator.maxTouchPoints > 0)
@@ -165,6 +166,7 @@ export default {
     isChrome,
     isSafari,
     isIos,
+    isMac,
     isTouchDevice,
     getClassName
 } as const;
