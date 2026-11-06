@@ -155,6 +155,20 @@ describe('CSVConnector', () => {
                 dataType: 'string'
             });
         });
+
+        it('should decode escaped quotes in quoted fields', async () => {
+            const connector = new CSVConnector({
+                csv: 'label,value\n"He said ""hi""",1'
+            });
+
+            await connector.load();
+
+            strictEqual(
+                connector.getTable().getCell('label', 0),
+                'He said "hi"',
+                'A doubled quote should produce one literal quote.'
+            );
+        });
     });
 
     // Note: URL-based tests require browser/fetch and are handled in Playwright tests
