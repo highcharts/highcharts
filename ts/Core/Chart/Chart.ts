@@ -2767,12 +2767,10 @@ class Chart {
             y: mgn / 2,
             width: chartWidth - mgn - chartBorderWidth % 2,
             height: chartHeight - mgn - chartBorderWidth % 2,
-            r: defined(borderRadius) ?
-                chart.relativeLength(
-                    borderRadius,
-                    Math.min(chartWidth, chartHeight)
-                ) :
-                void 0
+            r: chart.relativeLength(
+                borderRadius || 0,
+                Math.min(chartWidth, chartHeight)
+            )
         });
 
         // Plot background
