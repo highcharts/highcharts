@@ -195,7 +195,6 @@ const DragDropDefaults: DragDropOptions = {
      * @since      6.2.0
      * @validvalue ["alt", "ctrl", "meta", "shift"]
      * @deprecated 10.2.1
-     * @requires   modules/draggable-points
      * @apioption  chart.zoomKey
      */
 
@@ -211,7 +210,6 @@ const DragDropDefaults: DragDropOptions = {
      * @type       {string}
      * @default    {highcharts} undefined
      * @validvalue ["alt", "ctrl", "meta", "shift"]
-     * @requires   modules/draggable-points
      * @apioption  chart.zooming.key
      */
 

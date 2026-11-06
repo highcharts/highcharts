@@ -72,12 +72,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'chart.polar': [
         'highcharts-more'
     ],
-    'chart.zoomKey': [
-        'modules/draggable-points'
-    ],
-    'chart.zooming.key': [
-        'modules/draggable-points'
-    ],
     'chart.zooming.mouseWheel': [
         'modules/mouse-wheel-zoom'
     ],
@@ -168,17 +162,100 @@ const DependencyMapping: Record<string, Array<string>> = {
     'pane': [
         'highcharts-more'
     ],
-    'plotOptions.series.data.connect': [
-        'highcharts-gantt'
-    ],
-    'plotOptions.series.data.description': [
+    'plotOptions.series.accessibility': [
         'modules/accessibility'
+    ],
+    'plotOptions.series.boostBlending': [
+        'modules/boost'
+    ],
+    'plotOptions.series.boostThreshold': [
+        'modules/boost'
+    ],
+    'plotOptions.series.cluster': [
+        'modules/marker-clusters'
+    ],
+    'plotOptions.series.cluster.events.drillToCluster': [
+        'modules/marker-clusters'
+    ],
+    'plotOptions.series.cluster.states.hover.fillColor': [
+        'modules/marker-clusters'
+    ],
+    'plotOptions.series.data.connect': [
+        'modules/pathfinder'
     ],
     'plotOptions.series.data.dragDrop': [
         'modules/draggable-points'
     ],
     'plotOptions.series.data.drilldown': [
         'modules/drilldown'
+    ],
+    'plotOptions.series.dataGrouping': [
+        'modules/stock'
+    ],
+    'plotOptions.series.dataSorting': [
+        'modules/data-sorting'
+    ],
+    'plotOptions.series.depth': [
+        'highcharts-3d'
+    ],
+    'plotOptions.series.description': [
+        'modules/accessibility'
+    ],
+    'plotOptions.series.dragDrop': [
+        'modules/draggable-points'
+    ],
+    'plotOptions.series.edgeColor': [
+        'highcharts-3d'
+    ],
+    'plotOptions.series.edgeWidth': [
+        'highcharts-3d'
+    ],
+    'plotOptions.series.gapSize': [
+        'modules/broken-axis'
+    ],
+    'plotOptions.series.gapUnit': [
+        'modules/broken-axis'
+    ],
+    'plotOptions.series.groupZPadding': [
+        'highcharts-3d'
+    ],
+    'plotOptions.series.includeInDataExport': [
+        'modules/exporting',
+        'modules/export-data'
+    ],
+    'plotOptions.series.label': [
+        'modules/series-label'
+    ],
+    'plotOptions.series.lastPrice': [
+        'modules/price-indicator'
+    ],
+    'plotOptions.series.lastVisiblePrice': [
+        'modules/price-indicator'
+    ],
+    'plotOptions.series.onPoint': [
+        'highcharts-more',
+        'modules/series-on-point'
+    ],
+    'plotOptions.series.point.events.drag': [
+        'modules/draggable-points'
+    ],
+    'plotOptions.series.point.events.dragStart': [
+        'modules/draggable-points'
+    ],
+    'plotOptions.series.point.events.drop': [
+        'modules/draggable-points'
+    ],
+    'plotOptions.series.pointDescriptionFormat': [
+        'modules/accessibility'
+    ],
+    'plotOptions.series.pointDescriptionFormatter': [
+        'modules/accessibility'
+    ],
+    'plotOptions.series.sonification': [
+        'modules/sonification'
+    ],
+    'plotOptions.series.zoomEnabled': [
+        'modules/non-cartesian-zoom'
     ],
     'series.abands': [
         'indicators/indicators',
@@ -257,6 +334,10 @@ const DependencyMapping: Record<string, Array<string>> = {
     'series.columnrange': [
         'highcharts-more'
     ],
+    'series.contour': [
+        'modules/coloraxis',
+        'modules/contour'
+    ],
     'series.cylinder': [
         'highcharts-3d',
         'modules/cylinder'
@@ -303,7 +384,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/funnel3d'
     ],
     'series.gantt': [
-        'highcharts-gantt'
+        'modules/gantt'
     ],
     'series.gauge': [
         'highcharts-more'
@@ -486,6 +567,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/tiledwebmap'
     ],
     'series.tilemap': [
+        'modules/heatmap',
         'modules/tilemap'
     ],
     'series.timeline': [
@@ -558,6 +640,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     'stockTools': [
         'modules/stock-tools'
     ],
+    'tooltip.clusterFormat': [
+        'modules/marker-clusters'
+    ],
     'xAxis.accessibility': [
         'modules/accessibility'
     ],
@@ -566,6 +651,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'xAxis.labels.skew3d': [
         'highcharts-3d'
+    ],
+    'xAxis.staticScale': [
+        'modules/static-scale'
     ],
     'xAxis.title.position3d': [
         'highcharts-3d'

@@ -337,7 +337,7 @@ export default connectorsDefaults;
  * @since     6.2.0
  * @excluding enabled
  * @product   gantt
- * @requires  highcharts-gantt
+ * @requires  modules/pathfinder
  * @apioption series.xrange.data.connect
  */
 

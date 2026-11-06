@@ -16,12 +16,15 @@ function treeToMappingRecursive(key, branch, keyPath, mapping = {}) {
     if (branch.doclet?.requires) {
         const fullKey = (keyPath.filter(Boolean).join('.') + '.' + key)
             .replace(/^\./u, '');
-        mapping[
-            fullKey
-        ] = branch.doclet.requires.map(
-            r => r
-                .replace(/module:/u, '')
+        const requires = branch.doclet.requires.map(
+            r => r.replace(/module:/u, '')
         );
+        // Dependencies after product:x are built into x, so load them first.
+        const marker = requires.findIndex(r => r.startsWith('product:'));
+        mapping[fullKey] = marker < 0 ? requires : [
+            ...requires.slice(marker + 1),
+            ...requires.slice(0, marker)
+        ];
     }
     return mapping;
 }
@@ -300,6 +303,16 @@ code {
 
 }
 
+// Convert an API tree key to the key the Loader looks up.
+function normalizeKey(key) {
+    return key
+        .replace(/^plotOptions\.([a-zA-Z0-9]+)$/u, 'series.$1')
+        .replace(
+            /^(?:plotOptions|series)\.[a-zA-Z0-9]+\./u,
+            'plotOptions.series.'
+        );
+}
+
 /**
  * Create the DependencyMapping module file
  *
@@ -340,22 +353,22 @@ async function dependencyMapping() {
         );
     }
 
-    // Remove plotOptions.* entries, and combine them with series.* entries
+    // plotOptions.<type> and series.<type> must have the same dependencies
     let seriesMismatch = false;
     Object.keys(mapping).forEach(key => {
-        if (key.startsWith('plotOptions.')) {
-            const seriesType = key.replace('plotOptions.', 'series.');
-            if (
-                /^series\.[a-zA-Z]+$/u.test(seriesType) &&
-                mapping[key].join(',') !== mapping[seriesType]?.join(',')
-            ) {
-                log.warn(
-                    `Mismatched dependencies for ${key} and ${seriesType}:\n` +
-                    ` ${mapping[key]} vs ${mapping[seriesType]}`
-                );
-                seriesMismatch = true;
-            }
-            delete mapping[key];
+        const seriesKey = key.replace(
+            /^plotOptions\.([a-zA-Z0-9]+)$/u,
+            'series.$1'
+        );
+        if (
+            seriesKey !== key &&
+            mapping[key].join(',') !== mapping[seriesKey]?.join(',')
+        ) {
+            log.warn(
+                `Mismatched dependencies for ${key} and ${seriesKey}:\n` +
+                ` ${mapping[key]} vs ${mapping[seriesKey]}`
+            );
+            seriesMismatch = true;
         }
     });
     if (seriesMismatch) {
@@ -364,13 +377,13 @@ async function dependencyMapping() {
         );
     }
 
-    // Rename key series.series to plotOptions.series
-    const deepSeriesRegex = /^series\.[a-zA-Z]+\./u;
-    Object.entries(mapping).forEach(([key, value]) => {
-        if (deepSeriesRegex.test(key)) {
-            mapping[
-                key.replace(deepSeriesRegex, 'plotOptions.series.')
-            ] = value;
+    // Convert keys to what the Loader looks up
+    Object.keys(mapping).forEach(key => {
+        const newKey = normalizeKey(key);
+        if (newKey !== key) {
+            mapping[newKey] = Array.from(
+                new Set([...(mapping[newKey] || []), ...mapping[key]])
+            );
             delete mapping[key];
         }
     });
