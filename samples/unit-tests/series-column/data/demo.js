@@ -49,3 +49,32 @@ QUnit.test(
         assert.ok(true, 'Setting extremes should not throw');
     }
 );
+
+QUnit.test('A zero animation limit disables point updates', assert => {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+            plotOptions: {
+                column: {
+                    animationLimit: 0
+                }
+            },
+            series: [{
+                type: 'column',
+                data: [1]
+            }]
+        }),
+        point = chart.series[0].points[0],
+        graphic = point.graphic,
+        originalAnimate = graphic.animate;
+    let animated = false;
+
+    graphic.animate = function () {
+        animated = true;
+        return originalAnimate.apply(this, arguments);
+    };
+    point.update(2);
+
+    assert.notOk(animated, 'The column should update without animation');
+});
