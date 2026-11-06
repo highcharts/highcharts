@@ -3,7 +3,6 @@
  */
 
 
-const FSP = require('node:fs/promises');
 const Gulp = require('gulp');
 const Path = require('node:path');
 
@@ -45,109 +44,78 @@ async function scriptsWebpack() {
         };
     }
 
-    const logDirectory = await FSP.mkdtemp(Path.resolve('.webpack-log-'));
-    const logFile = Path.join(logDirectory, 'webpack.log');
-    const env = { ...process.env, HIGHCHARTS_WEBPACK_LOG_PATH: logFile };
+    for (const productName of Object.keys(configs)) {
+        const config = Path.join('tools', 'webpacks', configs[productName]);
+        const webpackCommand = `npx webpack -c ${config} --no-color`;
 
-    try {
-        await FSP.rm('webpack.log', { force: true });
+        if (argv.verbose) {
+            LogLib.warn(config);
+        }
 
-        let config;
-        let log = '';
+        try {
+            await ProcessLib.exec(
+                webpackCommand,
+                {
+                    maxBuffer: 8 * 1024 * 1024,
+                    silent: argv.verbose ? 0 : 2,
+                    timeout: 60000
+                }
+            );
+        } catch (error) {
+            const stderr = (
+                error &&
+                typeof error.stderr === 'string' &&
+                error.stderr.trim()
+            ) ? error.stderr.trim() : '';
+            const stdout = (
+                error &&
+                typeof error.stdout === 'string' &&
+                error.stdout.trim()
+            ) ? error.stdout.trim() : '';
+            const detail = stderr || stdout;
 
-        for (const productName of Object.keys(configs)) {
-            config = Path.join('tools', 'webpacks', configs[productName]);
-            const webpackCommand = `npx webpack -c ${config} --no-color`;
+            if (detail) {
+                const detailLines = detail.split(/\r?\n/u);
+                const maxLines = 200;
+                const excerpt = detailLines.slice(-maxLines).join('\n');
 
-            if (argv.verbose) {
-                LogLib.warn(config);
+                LogLib.failure(
+                    `Webpack failed for ${productName} (${config}). ` +
+                    `Showing last ${Math.min(detailLines.length, maxLines)} line(s):`
+                );
+                process.stderr.write(`${excerpt}\n`);
+            } else {
+                LogLib.failure(
+                    `Webpack failed for ${productName} (${config}), ` +
+                    'but no compiler output was captured.'
+                );
             }
 
+            LogLib.warn(
+                'Re-running failed webpack command with detailed diagnostics...'
+            );
+
             try {
-                log += await ProcessLib.exec(
-                    webpackCommand,
+                await ProcessLib.exec(
+                    (
+                        `${webpackCommand} --bail ` +
+                        '--stats errors-warnings'
+                    ),
                     {
-                        env,
                         maxBuffer: 8 * 1024 * 1024,
-                        silent: argv.verbose ? 1 : 2,
+                        silent: 0,
                         timeout: 60000
                     }
                 );
-            } catch (error) {
-                const stderr = (
-                    error &&
-                    typeof error.stderr === 'string' &&
-                    error.stderr.trim()
-                ) ? error.stderr.trim() : '';
-                const stdout = (
-                    error &&
-                    typeof error.stdout === 'string' &&
-                    error.stdout.trim()
-                ) ? error.stdout.trim() : '';
-                const detail = stderr || stdout;
-
-                if (detail) {
-                    const detailLines = detail.split(/\r?\n/u);
-                    const maxLines = 200;
-                    const excerpt = detailLines.slice(-maxLines).join('\n');
-
-                    LogLib.failure(
-                        `Webpack failed for ${productName} (${config}). ` +
-                        `Showing last ${Math.min(detailLines.length, maxLines)} line(s):`
-                    );
-                    process.stderr.write(`${excerpt}\n`);
-                    log += `${stdout}${stdout && stderr ? '\n' : ''}${stderr}\n`;
-                } else {
-                    LogLib.failure(
-                        `Webpack failed for ${productName} (${config}), ` +
-                        'but no compiler output was captured.'
-                    );
-                }
-
-                LogLib.warn(
-                    'Re-running failed webpack command with detailed diagnostics...'
-                );
-
-                try {
-                    await ProcessLib.exec(
-                        (
-                            `${webpackCommand} --bail ` +
-                            '--stats errors-warnings'
-                        ),
-                        {
-                            env,
-                            maxBuffer: 8 * 1024 * 1024,
-                            silent: 0,
-                            timeout: 60000
-                        }
-                    );
-                } catch {
-                    // Ignore: this run is only for interactive diagnostics.
-                }
-
-                if (log) {
-                    await FSP.appendFile(logFile, log);
-                }
-                try {
-                    await FSP.rename(logFile, 'webpack.log');
-                } catch (publishError) {
-                    if (publishError.code !== 'ENOENT') {
-                        throw publishError;
-                    }
-                }
-
-                throw error;
+            } catch {
+                // Ignore: this run is only for interactive diagnostics.
             }
 
+            throw error;
         }
-
-        await FSP.appendFile(logFile, log);
-        await FSP.rename(logFile, 'webpack.log');
-
-        LogLib.success('Finished packing.');
-    } finally {
-        await FSP.rm(logDirectory, { recursive: true, force: true });
     }
+
+    LogLib.success('Finished packing.');
 }
 
 Gulp.task('scripts-webpack', scriptsWebpack);
