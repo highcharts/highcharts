@@ -55,7 +55,7 @@ function isRowEqual(
     let i = row1.length;
 
     if (row2.length === i) {
-        while (--i) {
+        while (i--) {
             if (row1[i] !== row2[i]) {
                 return false;
             }
