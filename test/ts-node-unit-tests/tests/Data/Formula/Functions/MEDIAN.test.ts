@@ -26,4 +26,25 @@ describe('Formula.processorFunctions.MEDIAN', () => {
             'MEDIAN test should return expected value.'
         );
     });
+
+    it('should calculate medians independently of input order', () => {
+        const unsortedTable = new DataTable({
+            columns: { values: [100, 1, 2, -5] }
+        });
+
+        strictEqual(
+            Formula.processFormula(
+                Formula.parseFormula('MEDIAN(A1:A3)', false),
+                unsortedTable
+            ),
+            2
+        );
+        strictEqual(
+            Formula.processFormula(
+                Formula.parseFormula('MEDIAN(A1:A4)', false),
+                unsortedTable
+            ),
+            1.5
+        );
+    });
 });
