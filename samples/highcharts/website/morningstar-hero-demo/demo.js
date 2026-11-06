@@ -257,9 +257,9 @@ const getCurrentTotal = arrOfArr => {
                 innerRadius: '85%',
                 dataLabels: {
                     format: '<div style="text-align:center; ' +
-                        'margin-top: -20px">' +
-                    '<div style="font-size:1.6em;">{y:.0f}</div>' +
-                    '<div style="font-size:14px; opacity:0.5; ' +
+                        'margin-top:0">' +
+                    '<div style="font-size:1em;">{y:.0f}</div>' +
+                    '<div style="font-size:12px; opacity:0.5; ' +
                     'text-align: center;">Risk score</div>' +
                     '</div>',
                     useHTML: true
@@ -331,9 +331,9 @@ const getCurrentTotal = arrOfArr => {
             clip: false,
             dataLabels: {
                 format: '<div style="text-align:center; ' +
-                    'margin-top: -40px">' +
-                    '<div style="font-size:1.4em;">{y}%</div>' +
-                    '<div style="font-size:14px; opacity:0.5; ' +
+                    'margin-top: 0">' +
+                    '<div style="font-size:1em;">{y}%</div>' +
+                    '<div style="font-size:12px; opacity:0.5; ' +
                     'text-align: center;">Goal probability</div>' +
                     '</div>',
                 useHTML: true
