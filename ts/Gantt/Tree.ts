@@ -76,29 +76,29 @@ function getListOfParents(
     data: Array<TreePointOptionsObject>
 ): Record<string, Array<TreePointOptionsObject>> {
     const root = '',
-        ids: string[] = [],
-        listOfParents = data.reduce((
-            prev,
-            curr
-        ): Record<string, Array<TreePointOptionsObject>> => {
-            const { parent = '', id } = curr;
+        ids = new Set<string>(),
+        listOfParents = Object.create(null) as Record<
+            string,
+            Array<TreePointOptionsObject>
+        >;
 
-            if (typeof prev[parent] === 'undefined') {
-                prev[parent] = [];
-            }
+    data.forEach((item): void => {
+        const { parent = '', id } = item;
 
-            prev[parent].push(curr);
+        if (typeof listOfParents[parent] === 'undefined') {
+            listOfParents[parent] = [];
+        }
 
-            if (id) {
-                ids.push(id);
-            }
+        listOfParents[parent].push(item);
 
-            return prev;
-        }, {} as Record<string, Array<TreePointOptionsObject>>);
+        if (id) {
+            ids.add(id);
+        }
+    });
 
     Object.keys(listOfParents).forEach(
         (node: string): void => {
-            if ((node !== root) && (ids.indexOf(node) === -1)) {
+            if ((node !== root) && !ids.has(node)) {
                 const adoptedByRoot = listOfParents[node].map(
                     function (orphan): TreePointOptionsObject {
                         const { ...parentExcluded } = orphan; // #15196
