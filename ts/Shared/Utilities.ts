@@ -1597,25 +1597,34 @@ function measureCSSLength(
         probe = isSVG ?
             doc.createElementNS(SVG_NS, 'rect') as SVGRectElement :
             doc.createElement('div');
-        probe.setAttribute('class', 'highcharts-length-probe');
+        attr(probe, { 'class': 'highcharts-length-probe' });
+
         // A rect resolves lengths even at display:none, keeping it out of
         // the parent's bounding box. A div must stay rendered to resolve.
-        probe.style.cssText = isSVG ?
-            'display:none' :
-            'position:absolute;visibility:hidden;pointer-events:none;' +
-            'top:-9999px';
+        css(probe, isSVG ? {
+            display: 'none'
+        } : {
+            position: 'absolute',
+            visibility: 'hidden',
+            pointerEvents: 'none',
+            top: '-9999px'
+        });
         H.cssLengthProbes.set(parent, probe);
     }
+
     // Attach, or re-attach after the parent was emptied, e.g. when a new
     // chart is created in the same element (#23989)
     if (!probe.isConnected) {
         parent.appendChild(probe);
     }
+
     // Workaround for supporting negative values (#23989)
     const prop = isSVG ? 'width' : 'marginLeft';
+
     // Reset first, so invalid values yield 0 instead of the last measure
     probe.style[prop] = '';
     probe.style[prop] = value;
+
     return parseFloat(win.getComputedStyle(probe)[prop]) || 0;
 }
 
