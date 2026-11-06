@@ -27,6 +27,7 @@ import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
  *
  * */
 
+/** @internal */
 export interface NetworkgraphChart extends DragNodesChart {
     graphLayoutsLookup: Array<ReingoldFruchtermanLayout>;
     graphLayoutsStorage: Record<string, ReingoldFruchtermanLayout>;
@@ -38,4 +39,5 @@ export interface NetworkgraphChart extends DragNodesChart {
  *
  * */
 
+/** @internal */
 export default NetworkgraphChart;

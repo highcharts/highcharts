@@ -16,8 +16,7 @@
  *
  * */
 
-import type BubbleSeriesOptions from '../Bubble/BubbleSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type BubblePointOptions from '../Bubble/BubblePointOptions';
 
 /* *
  *
@@ -25,8 +24,14 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
-    states?: SeriesStatesOptions<MapBubbleSeriesOptions>;
+export interface MapBubblePointOptions extends BubblePointOptions {
+
+    /**
+     * The value of the point, resulting in a relative area of the bubble.
+     *
+     * @product highmaps
+     */
+    z?: (number|null);
 }
 
 /* *
@@ -35,4 +40,4 @@ export interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
  *
  * */
 
-export default MapBubbleSeriesOptions;
+export default MapBubblePointOptions;
