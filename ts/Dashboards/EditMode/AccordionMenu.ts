@@ -30,7 +30,7 @@ import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLCom
 import EditRenderer from './EditRenderer.js';
 import EditGlobals from './EditGlobals.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
-import { createElement, fireEvent, merge } from '../../Shared/Utilities.js';
+import { createElement, fireEvent, isSafeKey, merge } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /* *
@@ -190,9 +190,7 @@ class AccordionMenu {
         value: boolean | string | number
     ): void {
         // Reject paths that would allow prototype pollution
-        if (propertyPath.some((key): boolean => (
-            key === '__proto__' || key === 'constructor' || key === 'prototype'
-        ))) {
+        if (!propertyPath.every(isSafeKey)) {
             return;
         }
 
