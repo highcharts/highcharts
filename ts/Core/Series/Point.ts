@@ -142,8 +142,6 @@ class Point {
 
         this.dataLabelOnNull ??= series.options.nullInteraction;
 
-        series.chart.pointCount++;
-
         // Set point properties for convenient access in tooltip and data labels
         this.category = series.xAxis?.categories?.[this.x] ?? this.x;
         this.key = this.name ?? this.category;
@@ -728,7 +726,7 @@ class Point {
                 series = point.series,
                 chart = series.chart,
                 hoverPoints = chart.hoverPoints,
-                globalAnimation = point.series.chart.renderer.globalAnimation,
+                globalAnimation = chart.renderer.globalAnimation,
                 { duration } = animObject(globalAnimation);
 
             /**
@@ -771,6 +769,9 @@ class Point {
                 point.onMouseOut();
             }
 
+            // Avoid points out of range dodging unselect (#6445)
+            delete point.options.selected;
+
             // Remove properties after animation
             if (duration && !sync && series.condemnedPoints) {
                 series.condemnedPoints.push(this);
@@ -779,8 +780,6 @@ class Point {
             } else {
                 destroyPoint();
             }
-
-            chart.pointCount--;
         }
 
         this.condemned = true;

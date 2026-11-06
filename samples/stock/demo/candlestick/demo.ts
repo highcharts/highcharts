@@ -6,6 +6,7 @@
 
     // create the chart
     Highcharts.stockChart('container', {
+         chart: { animation : { duration: 1500 } },
         rangeSelector: {
             selected: 1
         },
@@ -85,7 +86,7 @@
             enabled: false
         },
 
-        navigator: {
+        navigator: { enabled: false,
             height: 72,
             maskFill: 'rgba(44, 175, 254, 0.15)',
             handles: {
