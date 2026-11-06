@@ -80,8 +80,6 @@ const SankeySeriesDefaults: SankeySeriesOptions = {
      * string by default.
      *
      * @declare Highcharts.SeriesSankeyDataLabelsOptionsObject
-     *
-     * @private
      */
     dataLabels: {
 
