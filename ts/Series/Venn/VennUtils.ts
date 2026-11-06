@@ -871,10 +871,10 @@ function processVennData(
                 return validSets.indexOf(set) === -1;
             })
         ) {
-            mapOfIdToRelation[
-                relation.sets.sort().join(splitter)
-            ] = {
-                sets: relation.sets,
+            const sets = relation.sets.slice().sort();
+
+            mapOfIdToRelation[sets.join(splitter)] = {
+                sets,
                 value: relation.value || 0
             };
         }
