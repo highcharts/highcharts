@@ -361,12 +361,9 @@ function arc(
 function seriesOnAfterColumnTranslate(
     this: ColumnSeries
 ): void {
-    if (
-        this.options.borderRadius &&
-        !(this.chart.is3d && this.chart.is3d())
-    ) {
-        const { options, yAxis } = this,
-            percent = options.stacking === 'percent',
+    const { chart, options, yAxis } = this;
+    if (options.borderRadius && !chart.is3d?.()) {
+        const percent = options.stacking === 'percent',
             seriesDefault = defaultOptions.plotOptions
                 ?.[this.type]
                 ?.borderRadius,
@@ -447,7 +444,7 @@ function seriesOnAfterColumnTranslate(
 
                 // Get the radius
                 const r = Math.min(
-                    this.chart.relativeLength(borderRadius.radius, width),
+                    chart.relativeLength(borderRadius.radius, width),
                     width / 2,
                     // Cap to the height, but not if where is `end`
                     where === 'all' ? brBoxHeight / 2 : Infinity

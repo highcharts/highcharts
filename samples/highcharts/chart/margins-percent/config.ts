@@ -8,12 +8,12 @@ export default {
         value: '400'
     }, {
         path: 'chart.marginLeft',
-        type: 'text',
-        value: '20%'
+        value: '20%',
+        max: 49
     }, {
         path: 'chart.marginRight',
-        type: 'text',
-        value: '20%'
+        value: '20%',
+        max: 49
     }],
 
     chartOptionsExtra: {

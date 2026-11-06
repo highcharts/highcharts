@@ -1556,7 +1556,7 @@ export function pushUnique(
 export function relativeLength(
     value: (number|CSSLength|null|undefined),
     base: number,
-    offset?: number,
+    offset: number = 0,
     parent: DOMElementType = doc.body
 ): number {
     if (typeof value === 'number') {
@@ -1567,7 +1567,7 @@ export function relativeLength(
         return NaN;
     }
     if ((/%$/).test(value)) {
-        return (base * parseFloat(value) / 100) + (offset || 0);
+        return (base * parseFloat(value) / 100) + offset;
     }
     // Plain numeric strings and pixel values need no probe to resolve
     if ((/^-?\d+(\.\d+)?(px)?$/).test(value)) {

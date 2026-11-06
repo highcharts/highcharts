@@ -735,8 +735,7 @@ namespace ColumnDataLabel {
         overflow: Array<number>
     ): boolean {
 
-        const center = this.center,
-            options = this.options,
+        const { chart, center, options } = this,
             centerOption = options.center,
             minSize = options.minSize || 80;
 
@@ -786,21 +785,21 @@ namespace ColumnDataLabel {
             if (newSize < center[2]) {
                 center[2] = newSize;
                 center[3] = Math.min( // #3632
-                    options.thickness ?
-                        Math.max(0, newSize - options.thickness * 2) :
-                        Math.max(
-                            0,
-                            this.chart.relativeLength(
+                    Math.max(
+                        0,
+                        options.thickness ?
+                            newSize - options.thickness * 2 :
+                            chart.relativeLength(
                                 options.innerSize || 0,
                                 newSize
                             )
-                        ), newSize
+                    ),
+                    newSize
                 ); // #6647
-                this.translate(center);
 
-                if (this.drawDataLabels) {
-                    this.drawDataLabels();
-                }
+                this.translate(center);
+                this.drawDataLabels?.();
+
             // Else, return true to indicate that the pie and its labels is
             // within the plot area
             } else {
