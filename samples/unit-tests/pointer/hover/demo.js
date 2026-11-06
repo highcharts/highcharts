@@ -305,3 +305,55 @@ QUnit.test('Polar chart without stickyTracking, #17359.', function (assert) {
         'The tooltip should not be displayed when not hovering over the series.'
     );
 });
+
+QUnit.test('Should not hover condemned points (#25063)', function (assert) {
+    const chart = Highcharts.chart('container', {
+            tooltip: {
+                shared: true
+            },
+            series: [{
+                data: [2, 3, 4]
+            }, {
+                data: [1, 2, 3]
+            }]
+        }),
+        [condemned, livePoint] = chart.series.map(s => s.points[1]);
+
+    chart.renderer.globalAnimation = {
+        duration: 100
+    };
+    condemned.destroy();
+
+    new TestController(chart).moveTo(
+        chart.plotLeft + condemned.plotX,
+        chart.plotTop + condemned.plotY
+    );
+
+    assert.deepEqual(
+        chart.hoverPoints,
+        [livePoint],
+        'Only the closest live point should be hovered'
+    );
+
+    // Mouse over the fading out graphic of the condemned point
+    chart.series[0].points[0].onMouseOver();
+    condemned.onMouseOver();
+
+    assert.strictEqual(
+        chart.hoverPoint,
+        livePoint,
+        'Mouse over a condemned point should hover the closest live point'
+    );
+
+    // Without a pointer event, like from the dashboards highlight sync
+    assert.strictEqual(
+        chart.pointer.getHoverData(
+            condemned,
+            condemned.series,
+            chart.series,
+            true
+        ).hoverPoint,
+        void 0,
+        'Condemned point should not be hovered without a pointer event'
+    );
+});

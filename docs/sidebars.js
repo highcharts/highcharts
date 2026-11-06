@@ -140,6 +140,7 @@ module.exports = {
                     'grid/rows/grouping',
                     'grid/rows/summary-rows',
                     'grid/rows/pinning',
+                    'grid/rows/selection',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
