@@ -4756,7 +4756,7 @@ class Series {
      *
      * @function Highcharts.Series#update
      *
-     * @param {Highcharts.SeriesOptionsType} options
+     * @param {Partial<Highcharts.SeriesOptionsType>} options
      *        New options that will be merged with the series' existing options.
      *
      * @param {boolean} [redraw=true]

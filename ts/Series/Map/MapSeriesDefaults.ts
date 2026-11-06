@@ -530,6 +530,15 @@ const MapSeriesDefaults: MapSeriesOptions = {
  */
 
 /**
+ * The key of the map area that the point joins to when `joinBy` is
+ * `hc-key`.
+ *
+ * @type      {string}
+ * @product   highmaps
+ * @apioption series.map.data.hc-key
+ */
+
+/**
  * An id for the point. This can be used after render time to get a
  * pointer to the point object through `chart.get()`.
  *
