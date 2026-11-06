@@ -46,9 +46,8 @@ const composedClasses: Array<(Function|GlobalsBase)> = [],
         enabled: true,
         sensitivity: 1.1,
         showResetButton: false
-    };
-
-let wheelTimer: number;
+    },
+    wheelTimers = new WeakMap<Chart, number>();
 
 /* *
  *
@@ -113,6 +112,8 @@ const zoomBy = function (
     });
 
     if (hasZoomed) {
+        const wheelTimer = wheelTimers.get(chart);
+
         if (defined(wheelTimer)) {
             internalClearTimeout(wheelTimer);
         }
@@ -120,9 +121,13 @@ const zoomBy = function (
         // Some time after the last mousewheel event, run drop. In case any of
         // the affected axes had `startOnTick` or `endOnTick`, they will be
         // re-adjusted now.
-        wheelTimer = setTimeout((): void => {
-            chart.pointer?.drop();
-        }, 400);
+        wheelTimers.set(
+            chart,
+            setTimeout((): void => {
+                chart.pointer?.drop();
+                wheelTimers.delete(chart);
+            }, 400)
+        );
     }
 
     return hasZoomed;
