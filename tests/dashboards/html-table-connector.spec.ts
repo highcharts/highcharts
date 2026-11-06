@@ -451,4 +451,43 @@ test.describe('HTMLTableConnector', () => {
         expect(result.loadError).toBe(false);
         expect(result.exportedMatchesOriginal).toBe(true);
     });
+
+    test('Export preserves falsy values', async ({ page }) => {
+        await page.setContent(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+                    <script src="https://code.highcharts.com/modules/data-tools.src.js"></script>
+                </head>
+                <body></body>
+            </html>
+        `, { waitUntil: 'networkidle' });
+
+        const result = await page.evaluate(() => {
+            const Highcharts = (window as any).Highcharts,
+                HTMLTableConnector =
+                    Highcharts.DataConnector.types.HTMLTable,
+                connector = new HTMLTableConnector({
+                    dataTables: [{
+                        columns: {
+                            value: [0, false, true]
+                        }
+                    }]
+                }),
+                table = document.createElement('div');
+
+            table.innerHTML = connector.converter.export(connector);
+
+            return {
+                subheader: table.querySelector('thead tr:last-child th')
+                    ?.textContent,
+                values: Array.from(table.querySelectorAll('tbody th'))
+                    .map((cell): string | null => cell.textContent)
+            };
+        });
+
+        expect(result.subheader).toBe('0');
+        expect(result.values).toStrictEqual(['false', 'true']);
+    });
 });
