@@ -17,7 +17,7 @@
  * */
 
 
-import * as FS from 'node:fs';
+import { updateFile } from '../../libs/fs.js';
 import * as Path from 'node:path';
 import Webpack from 'webpack';
 
@@ -152,21 +152,15 @@ export class UMDExtensionPlugin {
 
         const filepath = Path.join(outputOptions.path, outputOptions.filename);
 
-        if (!FS.existsSync(filepath)) {
-            return;
-        }
+        updateFile(filepath, content => {
+            const isES5 = filepath.includes('/es5/');
 
-        const content = FS.readFileSync(filepath, 'utf8');
-        const isES5 = filepath.includes('/es5/');
+            const nodeNamespaceReplacement = '_' + content
+                .match(/root\["(.*?)"\]/su)[1]
+                .replace(/\\/gu, '\\\\')
+                .replace(/\$/gu, '\\$');
 
-        const nodeNamespaceReplacement = '_' + content
-            .match(/root\["(.*?)"\]/su)[1]
-            .replace(/\\/gu, '\\\\')
-            .replace(/\$/gu, '\\$');
-
-        FS.writeFileSync(
-            filepath,
-            content.replace(
+            return content.replace(
                 UMD_REGEXP,
                 (_, umdPrefix, umdBridge, umdSuffix) => (
                     productBundles.includes(filename) ? (
@@ -217,9 +211,8 @@ export class UMDExtensionPlugin {
                             )
                     )
                 )
-            ),
-            'utf8'
-        );
+            );
+        }, { optional: true });
 
     }
 
