@@ -183,6 +183,9 @@ class CSVConverter extends DataConverter {
             if (firstRowAsNames) {
                 const headers = lines[0].split(
                     itemDelimiter || converter.guessedItemDelimiter || ','
+                ).slice(
+                    parserOptions.startColumn,
+                    parserOptions.endColumn + 1
                 );
 
                 // Remove ""s from the headers
@@ -204,7 +207,8 @@ class CSVConverter extends DataConverter {
                     converter.parseCSVRow(
                         columnsArray,
                         lines[rowIt],
-                        rowIt - startRow - offset
+                        rowIt - startRow - offset,
+                        parserOptions
                     );
                 }
             }
@@ -262,18 +266,19 @@ class CSVConverter extends DataConverter {
     private parseCSVRow(
         columns: DataTableBasicColumn[],
         columnStr: string,
-        rowNumber: number
+        rowNumber: number,
+        options: CSVConverterOptions
     ): void {
         const converter = this,
             dataTypes = converter.dataTypes,
-            { startColumn, endColumn } = converter.options,
+            { startColumn, endColumn } = options,
             itemDelimiter = (
-                converter.options.itemDelimiter ||
+                options.itemDelimiter ||
                 converter.guessedItemDelimiter
             );
 
 
-        let { decimalPoint } = converter.options;
+        let { decimalPoint } = options;
 
         if (!decimalPoint || decimalPoint === itemDelimiter) {
             decimalPoint = converter.guessedDecimalPoint || '.';

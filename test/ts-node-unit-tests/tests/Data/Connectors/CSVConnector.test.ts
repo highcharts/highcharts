@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import { deepStrictEqual, strictEqual, ok } from 'node:assert';
 
 import CSVConnector from '../../../../../ts/Data/Connectors/CSVConnector.js';
+import CSVConverter from '../../../../../ts/Data/Converters/CSVConverter.js';
 
 const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "#TriBall",0.7199,  20.41,    0.60,15.24,     1 #this is a comment
@@ -154,6 +155,25 @@ describe('CSVConnector', () => {
             connector.describeColumn('test', {
                 dataType: 'string'
             });
+        });
+
+        it('should honor row options supplied to parse', () => {
+            const converter = new CSVConverter();
+
+            deepStrictEqual(
+                converter.parse({
+                    csv: 'ignored;a;b\n0;1,5;2,5',
+                    itemDelimiter: ';',
+                    decimalPoint: ',',
+                    startColumn: 1,
+                    endColumn: 2
+                }),
+                {
+                    a: [1.5],
+                    b: [2.5]
+                },
+                'Parse options should control tokenization and selection.'
+            );
         });
     });
 
