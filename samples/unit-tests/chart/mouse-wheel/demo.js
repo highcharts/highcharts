@@ -85,32 +85,51 @@ QUnit.test('Mouse wheel zoom on chart', function (assert) {
 });
 
 QUnit.test(
-    'Mouse wheel zoom drop timers are isolated per chart (#25099)',
+    'Mouse wheel drop timers and pan remainders are isolated per chart ' +
+    '(#25099)',
     function (assert) {
         const clock = TestUtilities.lolexInstall();
         const container1 = document.getElementById('container');
         const container2 = document.createElement('div');
 
         [container1, container2].forEach(container => {
-            container.style.width = '300px';
-            container.style.height = '200px';
+            container.style.width = '600px';
+            container.style.height = '300px';
         });
         document.body.append(container2);
 
-        const getChart = container => Highcharts.chart(container, {
+        const getChart = container => Highcharts.stockChart(container, {
             chart: {
+                panning: {
+                    enabled: true,
+                    type: 'x'
+                },
+                panKey: 'shift',
                 zooming: {
                     mouseWheel: {
                         type: 'x'
                     }
                 }
             },
+            navigator: {
+                enabled: false
+            },
+            rangeSelector: {
+                enabled: false
+            },
+            scrollbar: {
+                enabled: false
+            },
             xAxis: {
+                min: 14,
+                max: 28,
                 startOnTick: true,
                 endOnTick: true
             },
             series: [{
-                data: [1, 2, 3, 4, 5]
+                // Gaps like weekends make the axis ordinal
+                data: Array.from(Array(42), (_, i) => [i, i])
+                    .filter(([x]) => x % 7 < 5)
             }]
         });
 
@@ -125,14 +144,46 @@ QUnit.test(
         chart2.pointer.drop = () => drops2++;
 
         try {
-            new TestController(chart1).mouseWheel(100, 80, {
-                deltaY: -1000,
-                target: chart1.container
-            });
-            new TestController(chart2).mouseWheel(100, 80, {
-                deltaY: -1000,
-                target: chart2.container
-            });
+            const axis = chart1.xAxis[0],
+                // Pixel movement per wheel notch, see MouseWheelZoom.ts
+                notch = 15 * 1.1,
+                pointPixelWidth = axis.translationSlope *
+                    (axis.ordinal.slope || axis.closestPointRange),
+                notches = Math.ceil(pointPixelWidth / notch),
+                min = axis.min,
+                wheel = (chart, deltaY, shiftKey) => new TestController(chart)
+                    .mouseWheel(300, 150, {
+                        deltaY,
+                        shiftKey,
+                        target: chart.container
+                    });
+
+            // Accumulate just below one point on the first chart
+            for (let i = 0; i < notches - 1; i++) {
+                wheel(chart1, 120, true);
+            }
+
+            assert.strictEqual(
+                axis.min,
+                min,
+                'Sub-point wheel movement should not pan the first chart'
+            );
+
+            // Wheel pan in the opposite direction on the second chart
+            wheel(chart2, -120, true);
+
+            // One more notch on the first chart completes a whole point
+            wheel(chart1, 120, true);
+
+            assert.notStrictEqual(
+                axis.min,
+                min,
+                'Wheel panning on another chart should not reset the ' +
+                'accumulated pan remainder of the first chart'
+            );
+
+            wheel(chart1, -1000);
+            wheel(chart2, -1000);
 
             clock.tick(400);
 

@@ -59,10 +59,10 @@ const composedClasses: Array<(Function|GlobalsBase)> = [],
     };
 
 const wheelTimers = new WeakMap<Chart, number>();
-// Accumulated sub-point pixel movement for ordinal wheel panning, so that
-// fractional point movements add up across notches instead of being lost to
-// rounding. Reset when the wheel gesture ends or reverses direction.
-let wheelPanRemainder = 0;
+// Accumulated sub-point pixel movement for ordinal wheel panning per chart, so
+// that fractional point movements add up across notches instead of being lost
+// to rounding. Reset when the wheel gesture ends or reverses direction.
+const wheelPanRemainders = new WeakMap<Chart, number>();
 type TransformGeometry = Pick<
     NonNullable<Parameters<Chart['transform']>[0]>,
     'from'|'to'
@@ -102,7 +102,7 @@ const scheduleDrop = function (chart: Chart): void {
         chart,
         setTimeout((): void => {
             // End of the gesture, start accumulating from scratch next time.
-            wheelPanRemainder = 0;
+            wheelPanRemainders.delete(chart);
             chart.pointer?.drop();
             wheelTimers.delete(chart);
         }, 400)
@@ -193,20 +193,22 @@ const panBy = function (
             0
         );
         if (pointPixelWidth) {
+            let remainder = wheelPanRemainders.get(chart) || 0;
+
             // Restart the accumulation when the scroll direction reverses.
-            if (howMuch * wheelPanRemainder < 0) {
-                wheelPanRemainder = 0;
+            if (howMuch * remainder < 0) {
+                remainder = 0;
             }
 
-            wheelPanRemainder += howMuch;
+            remainder += howMuch;
 
             // Whole points accumulated so far, truncated towards zero.
-            const ratio = wheelPanRemainder / pointPixelWidth,
+            const ratio = remainder / pointPixelWidth,
                 units = ratio < 0 ? Math.ceil(ratio) : Math.floor(ratio);
 
             // Keep the sub-point pixel remainder for the next notch.
-            wheelPanRemainder -= units * pointPixelWidth;
             panX = units * pointPixelWidth;
+            wheelPanRemainders.set(chart, remainder - panX);
         }
     }
 
@@ -392,6 +394,10 @@ export default MouseWheelZoomComposition;
  * [chart.zooming.type](chart.zooming.type) is set. It can be disabled by
  * setting this option to `false`.
  *
+ * When [chart.panning](#chart.panning) is enabled and the
+ * [chart.panKey](#chart.panKey) is held, scrolling the mouse wheel pans the
+ * chart instead of zooming it.
+ *
  * @type      {boolean|object}
  * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom
@@ -416,7 +422,7 @@ export default MouseWheelZoomComposition;
 /**
  * Adjust the sensitivity of the zoom. Sensitivity of mouse wheel or trackpad
  * scrolling. `1` is no sensitivity, while with `2`, one mouse wheel delta will
- * zoom in `50%`.
+ * zoom in `50%`. Also scales the speed of mouse wheel panning.
  *
  * @type      {number}
  * @default   1.1

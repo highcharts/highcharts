@@ -32,12 +32,15 @@ and
 [endOnTick](https://api.highcharts.com/highcharts/yAxis.endOnTick)
 are set to `false`.
 
-#### Mouse wheel zooming
+#### Mouse wheel zooming and panning
 Mouse wheel zooming is available through the
 [zooming.mouseWheel](https://api.highcharts.com/highcharts/chart.zooming.mouseWheel)
 option set (since v11.1). It requires a [separate module
 file](https://code.highcharts.com/modules/mouse-wheel-zoom.js) for Highcharts Core,
-but is bundled in Highcharts Stock.
+but is bundled in Highcharts Stock. The module also supports panning with the mouse wheel when
+[chart.panning](https://api.highcharts.com/highcharts/chart.panning) is enabled
+and the [chart.panKey](https://api.highcharts.com/highcharts/chart.panKey) is
+held.
 
 #### Non-cartesian zooming
 Zooming is also available for non-cartesian series, such as pie, treegraph,
