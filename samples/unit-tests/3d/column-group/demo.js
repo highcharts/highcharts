@@ -55,3 +55,33 @@ QUnit.test('3D columns with scatter series', function (assert) {
         'seriesGroup is not translated'
     );
 });
+
+QUnit.test('3D columns support zero group Z padding', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            options3d: {
+                enabled: true,
+                depth: 100
+            }
+        },
+        plotOptions: {
+            column: {
+                depth: 40,
+                grouping: false,
+                groupZPadding: 0
+            }
+        },
+        series: [{
+            data: [1]
+        }, {
+            data: [2]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series.map(series => series.points[0].shapeArgs.z),
+        [0, 40],
+        'Zero padding leaves no space before or between columns'
+    );
+});
