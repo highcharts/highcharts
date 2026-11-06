@@ -710,7 +710,8 @@ namespace ExportData {
             while (j--) {
                 val = row[j];
                 if (typeof val === 'string') {
-                    val = `"${val}"`;
+                    // Escape embedded quotes by doubling them, #25571
+                    val = `"${val.replace(/"/g, '""')}"`;
                 }
                 if (typeof val === 'number') {
                     if (decimalPoint !== '.') {
