@@ -57,3 +57,68 @@ test('Grid credits', async ({ page }) => {
     await expect(creditsElement, 'Credits should still be visible (not configurable in grid-lite).').toBeVisible();
 });
 
+test('Credits observers are owned by their grids', async ({ page }) => {
+    await page.evaluate(() => {
+        const NativeMutationObserver = window.MutationObserver;
+        const observers: Array<MutationObserver & { disconnected: boolean }> =
+            [];
+
+        class TrackedMutationObserver extends NativeMutationObserver {
+            public disconnected = false;
+
+            constructor(callback: MutationCallback) {
+                super(callback);
+                observers.push(this);
+            }
+
+            public override disconnect(): void {
+                this.disconnected = true;
+                super.disconnect();
+            }
+        }
+
+        (window as any).MutationObserver = TrackedMutationObserver;
+        (window as any).creditsObservers = observers;
+    });
+
+    await page.setContent(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
+                <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-lite.css"></link>
+            </head>
+            <body>
+                <div id="first-container"></div>
+                <div id="second-container"></div>
+            </body>
+        </html>
+    `, { waitUntil: 'networkidle' });
+
+    const observerStates = await page.evaluate(async () => {
+        const Grid = (window as any).Grid,
+            data = {
+                columns: {
+                    value: [1]
+                }
+            },
+            firstGrid = await Grid.grid('first-container', { data }, true),
+            secondGrid = await Grid.grid(
+                'second-container',
+                { data },
+                true
+            );
+
+        firstGrid.destroy();
+
+        const states = (window as any).creditsObservers.map(
+            (observer: { disconnected: boolean }): boolean =>
+                observer.disconnected
+        );
+
+        secondGrid.destroy();
+        return states;
+    });
+
+    expect(observerStates).toEqual([true, false]);
+});
