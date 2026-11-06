@@ -42,16 +42,11 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends series,plotOptions.solidgauge
  *
- * @excluding dial, pivot, wrap
- *
- * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
- *            cropThreshold, dashStyle, dial,
- *            findNearestPointBy, getExtremesFromAll, marker, negativeColor,
- *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
- *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones,
- *            dataSorting, boostBlending
+ * @excluding dial, pivot, marker, states, threshold
  *
  * @product highcharts
+ *
+ * @requires highcharts-more
  *
  * @requires modules/solid-gauge
  */
@@ -69,6 +64,8 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
 
     /**
      * Whether to give each point an individual color.
+     *
+     * @default true
      */
     colorByPoint?: boolean;
 
@@ -111,13 +108,9 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<number|null|*>}
-     *
      * @extends series.gauge.data
      *
      * @product highcharts
-     *
-     * @apioption series.solidgauge.data
      */
     data?: Array<(number|null|SolidGaugePointOptions)>;
 
@@ -131,10 +124,7 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
      *         Individual radius and innerRadius
      *
-     * @default undefined
-     *
      * @since 4.1.6
-     *
      * @product highcharts
      */
     innerRadius?: string;
@@ -175,10 +165,7 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
      *         Individual radius and innerRadius
      *
-     * @default undefined
-     *
      * @since 4.1.6
-     *
      * @product highcharts
      */
     radius?: string;
@@ -214,6 +201,34 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      * @product highcharts
      */
     threshold?: number;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    animationLimit?: undefined;
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    connectEnds?: undefined;
+    connectNulls?: undefined;
+    cropThreshold?: undefined;
+    dashStyle?: undefined;
+    dataSorting?: undefined;
+    findNearestPointBy?: undefined;
+    getExtremesFromAll?: undefined;
+    negativeColor?: undefined;
+    pointPlacement?: undefined;
+    shadow?: undefined;
+    softThreshold?: undefined;
+    stack?: undefined;
+    stacking?: undefined;
+    step?: undefined;
+    turboThreshold?: undefined;
+    wrap?: undefined;
+    zoneAxis?: undefined;
+    zones?: undefined;
 
 }
 

@@ -40,7 +40,7 @@ import type {
 import type Templating from '../../Core/Templating';
 import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
 import type { AnyRecord, DeepPartial } from '../../Shared/Types';
-import { StateGenericOptions } from '../../Core/Series/StatesOptions';
+import type { StateGenericOptions } from '../../Core/Series/StatesOptions';
 
 /* *
  *
@@ -48,9 +48,6 @@ import { StateGenericOptions } from '../../Core/Series/StatesOptions';
  *
  * */
 
-/**
- * @optionparent series.sankey.level
- */
 export interface SankeySeriesLevelOptions {
 
     /**
@@ -65,10 +62,6 @@ export interface SankeySeriesLevelOptions {
 
     /**
      * Can set `color` on all nodes which lay on the same level.
-     *
-     * @type {Highcharts.ColorType}
-     *
-     * @apioption plotOptions.sankey.levels.color
      */
     color?: ColorType;
 
@@ -101,8 +94,6 @@ export interface SankeySeriesLevelOptions {
      * Can set `states` on all nodes and points which lay on the same level.
      *
      * @extends plotOptions.sankey.states
-     *
-     * @apioption plotOptions.sankey.levels.states
      */
     states?: SeriesStatesOptions<SankeySeriesOptions>;
 
@@ -114,13 +105,15 @@ export interface SankeySeriesNodeOptions {
      * A reserved subspace to store options and values for customized
      * functionality. Here you can add additional data for your own event
      * callbacks and formatter callbacks.
+     *
+     * @since next
+     *
+     * @product highcharts
      */
     custom?: AnyRecord;
 
     /**
      * The color of the auto generated node.
-     *
-     * @type {Highcharts.ColorType}
      *
      * @product highcharts
      */
@@ -130,11 +123,7 @@ export interface SankeySeriesNodeOptions {
      * The color index of the auto generated node, especially for use in styled
      * mode.
      *
-     * @type {number}
-     *
      * @product highcharts
-     *
-     * @apioption series.sankey.nodes.colorIndex
      */
     colorIndex?: number;
 
@@ -285,35 +274,24 @@ export interface SankeySeriesNodeOptions {
  *
  * @product highcharts
  *
- * @excluding animationLimit, boostThreshold,
- *            crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
- *            edgeColor, edgeWidth, findNearestPointBy, grouping,
- *            groupPadding, groupZPadding, maxPointWidth, negativeColor,
- *            pointInterval, pointIntervalUnit, pointPadding,
- *            pointPlacement, pointRange, pointStart, pointWidth,
- *            shadow, softThreshold, stacking, threshold, zoneAxis,
- *            zones, minPointLength, dataSorting, boostBlending
- *
- * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderWidth, crisp, cropThreshold, depth, dragDrop, edgeColor,
- *            edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
- *            groupPadding, groupZPadding, label, maxPointWidth, negativeColor,
- *            pointInterval, pointIntervalUnit, pointPadding, pointPlacement,
- *            pointRange, pointStart, pointWidth, shadow, softThreshold,
- *            stacking, threshold, zoneAxis, zones, dataSorting
+ * @excluding borderColor, borderWidth
  *
  * @requires modules/sankey
  */
 export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.SeriesCompositionOptions {
 
+    /** @default 0 */
     borderWidth?: number;
 
+    /** @default true */
     colorByPoint?: boolean;
 
     /**
      * Higher numbers makes the links in a sankey diagram or dependency
-     * wheelrender more curved. A `curveFactor` of 0 makes the lines
+     * wheel render more curved. A `curveFactor` of 0 makes the lines
      * straight.
+     *
+     * @default 0.33
      */
     curveFactor?: number;
 
@@ -361,7 +339,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      *
      * @product highcharts
      */
-    data?: Array<(SankeyPointOptions|PointShortOptions)>
+    data?: Array<(SankeyPointOptions|PointShortOptions)>;
 
     /**
      * Options for the data labels appearing on top of the nodes and links.
@@ -408,16 +386,16 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      * @sample highcharts/series-sankey/link-color-mode
      *         Sankey diagram with gradients and explanation
      *
-     * @type {('from'|'gradient'|'to')}
+     * @default 'from'
      */
     linkColorMode?: ('from'|'gradient'|'to');
 
     /**
      * Opacity for the links between nodes in the sankey diagram.
+     *
+     * @default 0.5
      */
     linkOpacity?: number;
-
-    mass?: undefined;
 
     /**
      * The minimal width for a line of a sankey. By default,
@@ -425,8 +403,6 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      *
      * @sample highcharts/plotoptions/sankey-minlinkwidth
      *         Sankey diagram with minimal link height
-     *
-     * @type {number}
      *
      * @since 7.1.3
      *
@@ -442,7 +418,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      * @sample highcharts/plotoptions/sankey-nodealignment
      *         Node alignment demonstrated
      *
-     * @type {'top'|'center'|'bottom'}
+     * @default 'center'
      */
     nodeAlignment?: ('top'|'center'|'bottom');
 
@@ -463,10 +439,12 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      * @since 11.4.0
      *
      * @sample highcharts/series-sankey/node-distance
-     *         Sankey with dnode distance of 100% means equal to node width
+     *         Sankey with node distance of 100% means equal to node width
      *
      * @sample highcharts/series-organization/node-distance
      *         Organization chart with node distance of 50%
+     *
+     * @default 30
      */
     nodeDistance?: (number|string);
 
@@ -479,6 +457,8 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      * If the number of nodes is so great that it is impossible to lay them out
      * within the plot area with the given `nodePadding`, they will be rendered
      * with a smaller padding as a strategy to avoid overflow.
+     *
+     * @default 10
      */
     nodePadding?: number;
 
@@ -513,29 +493,68 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      *
      * @sample highcharts/series-organization/node-distance
      *         Organization chart with node distance of 50%
+     *
+     * @default 20
      */
     nodeWidth?: number|string;
 
     /**
      * Opacity for the nodes in the sankey diagram.
+     *
+     * @default 1
      */
     opacity?: number;
 
+    /** @default false */
     showInLegend?: boolean;
 
     states?: SankeySeriesStatesOptions;
 
-    /**
-     * The opposite state of a hover for a single point node/link.
-     *
-     * @declare Highcharts.SeriesStatesInactiveOptionsObject
-     *
-     * @apioption series.sankey.states.inactive
-     */
-
     tooltip?: SankeySeriesTooltipOptions;
 
     width?: number;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    animationLimit?: undefined;
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    colorAxis?: undefined;
+    colorKey?: undefined;
+    crisp?: undefined;
+    cropThreshold?: undefined;
+    dataSorting?: undefined;
+    depth?: undefined;
+    dragDrop?: undefined;
+    edgeColor?: undefined;
+    edgeWidth?: undefined;
+    findNearestPointBy?: undefined;
+    getExtremesFromAll?: undefined;
+    grouping?: undefined;
+    groupPadding?: undefined;
+    groupZPadding?: undefined;
+    label?: undefined;
+    mass?: undefined;
+    maxPointWidth?: undefined;
+    minPointLength?: undefined;
+    negativeColor?: undefined;
+    pointInterval?: undefined;
+    pointIntervalUnit?: undefined;
+    pointPadding?: undefined;
+    pointPlacement?: undefined;
+    pointRange?: undefined;
+    pointStart?: undefined;
+    pointWidth?: undefined;
+    shadow?: undefined;
+    softThreshold?: undefined;
+    stacking?: undefined;
+    threshold?: undefined;
+    zoneAxis?: undefined;
+    zones?: undefined;
 
 }
 
@@ -598,7 +617,23 @@ export interface SankeySeriesStatesInactiveOptions
 }
 
 export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {
+
+    /**
+     * The
+     * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+     * specifying what to show for _nodes_ in tooltip of a diagram
+     * series, as opposed to links.
+     *
+     * @default '{point.name}: <b>{point.sum}</b><br/>'
+     */
     nodeFormat?: string;
+
+    /**
+     * A callback for defining the format for _nodes_ in the chart's
+     * tooltip, as opposed to links.
+     *
+     * @since 6.0.2
+     */
     nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
 }
 
