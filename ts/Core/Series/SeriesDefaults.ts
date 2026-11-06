@@ -1171,7 +1171,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         /**
          * Enable or disable the point marker. If `undefined`, the markers
          * are hidden when the data is dense, and shown for more widespread
-         * data points.
+         * data points. The legend symbol follows, and is rendered without a
+         * marker while the markers are hidden.
          *
          * @sample {highcharts} highcharts/plotoptions/series-marker-enabled/
          *         Disabled markers

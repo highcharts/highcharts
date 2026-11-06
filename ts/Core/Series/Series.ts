@@ -1091,6 +1091,65 @@ class Series {
     }
 
     /**
+     * Whether markers are enabled for the series as a whole, from
+     * `marker.enabled` or, when that is undefined, from the point density.
+     * Only meaningful after `translate` has run.
+     *
+     * @internal
+     * @function Highcharts.Series#hasEnabledMarkers
+     */
+    public hasEnabledMarkers(): boolean {
+        const markerOptions = this.options.marker || {},
+            xAxis = this.xAxis;
+
+        return markerOptions.enabled ??
+            (!xAxis || xAxis.isRadial ? true : null) ??
+            // Use larger or equal as radius is null in bubbles (#6321)
+            ((this.closestPointRangePx ?? -Infinity) >= (
+                (markerOptions.enabledThreshold ?? 2) *
+                (markerOptions as any).radius
+            ));
+    }
+
+    /**
+     * Whether any individual point enables a marker that is actually
+     * drawn, mirroring the point conditions in `drawPoints`. The
+     * `_hasPointMarkers` flag is checked first, so the point loop is
+     * skipped for series without point level marker options.
+     *
+     * @internal
+     * @function Highcharts.Series#hasEnabledPointMarkers
+     */
+    public hasEnabledPointMarkers(): boolean {
+        const nullInteraction = this.options.nullInteraction;
+
+        return !!(
+            this._hasPointMarkers &&
+            this.points?.some((point): boolean => !!(
+                point.marker?.enabled &&
+                (!point.isNull || nullInteraction) &&
+                point.visible !== false
+            ))
+        );
+    }
+
+    /**
+     * Mirror the plot area markers in the legend symbol (#24307). Each
+     * renderer passes its own decision, as SVG and boost resolve marker
+     * visibility independently.
+     *
+     * @internal
+     * @function Highcharts.Series#syncLegendSymbol
+     */
+    public syncLegendSymbol(hasMarkers: boolean): void {
+        const symbol = this.legendItem?.symbol;
+
+        if (symbol?.isMarker) {
+            symbol[hasMarkers ? 'show' : 'hide']();
+        }
+    }
+
+    /**
      * Return an auto incremented x value based on the pointStart and
      * pointInterval options. This is only used if an x value is not given
      * for the point that calls autoIncrement.
@@ -3161,14 +3220,7 @@ class Series {
             seriesMarkerOptions = options.marker || {},
             nullInteraction = options.nullInteraction,
             markerGroup = series[series.specialGroup || 'markerGroup'],
-            xAxis = series.xAxis,
-            globallyEnabled = seriesMarkerOptions.enabled ??
-                (!xAxis || xAxis.isRadial ? true : null) ??
-                // Use larger or equal as radius is null in bubbles (#6321)
-                ((series.closestPointRangePx ?? -Infinity) >= (
-                    (seriesMarkerOptions.enabledThreshold ?? 2) *
-                    (seriesMarkerOptions as any).radius
-                ));
+            globallyEnabled = series.hasEnabledMarkers();
         let i,
             point,
             graphic,
@@ -3960,6 +4012,11 @@ class Series {
         if (series.visible) {
             series.drawPoints();
         }
+
+        // Outside the `visible` check, a hidden series still has a legend item
+        series.syncLegendSymbol(
+            series.hasEnabledMarkers() || series.hasEnabledPointMarkers()
+        );
 
         // Draw the data labels
         series.drawDataLabels?.();
