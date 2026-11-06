@@ -24,7 +24,7 @@ You may also opt to bypass the filtering completely through the
 [bypassHTMLFiltering](https://api.highcharts.com/class-reference/Highcharts.AST#.bypassHTMLFiltering)
 flag.
 
-Since v9.3.2 Highcharts supports [Trusted Types](https://web.dev/trusted-types/) under the built-in policy name `highcharts`. Our Cypress tests and developer tools are set up with Trusted Types enabled, which enforces an added layer of security and greatly reduces the risk for one of our developers to accidentally introduce a DOM XSS vulnerability.
+Since v9.3.2 Highcharts supports [Trusted Types](https://web.dev/trusted-types/) under the built-in policy name `highcharts`. Our developer tools are set up with Trusted Types enabled, which enforces an added layer of security and greatly reduces the risk for one of our developers to accidentally introduce a DOM XSS vulnerability.
 
 *Important*: While Highcharts applies strict internal security measures, we cannot take responsibility for the security of external third-party libraries (including [optional dependencies](https://www.highcharts.com/docs/getting-started/optional-dependencies)). Such libraries are not covered by the Highcharts license and come without any guarantees or warranties from Highcharts.
 

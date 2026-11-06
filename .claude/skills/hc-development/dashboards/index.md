@@ -35,14 +35,14 @@ A problem in how Dashboards drives a chart or a grid is fixed in the component o
 
 ### Tests
 
-- Playwright specs in `tests/dashboards/`; extend an existing one. A spec calls `page.setContent()` with `https://code.highcharts.com/…` script tags, which the fixtures route to the local `code/` build, then creates the board in `page.evaluate()` with `await Dashboards.board('container', options, true)`. Load Highcharts or Grid before Dashboards, or connect the plugin by hand. `/dashboards/cypress/<name>` serves `samples/dashboards/cypress/<name>/` as a page.
+- Playwright specs in `tests/dashboards/`; extend an existing one. A spec calls `page.setContent()` with `https://code.highcharts.com/…` script tags, which the fixtures route to the local `code/` build, then creates the board in `page.evaluate()` with `await Dashboards.board('container', options, true)`. Load Highcharts or Grid before Dashboards, or connect the plugin by hand.
 - One file: `npx playwright test tests/dashboards/<file>.spec.ts --project=dashboards`. The setup project rebuilds Dashboards and Grid, not Highcharts: run `npx gulp scripts` first.
 - All: `npm run dtest`. Serialize helpers have node tests in `test/ts-node-unit-tests/tests/Dashboards/`, run by `npm run test-node`.
 - `test/cypress/dashboards/` is legacy; CI runs only its visual and Lighthouse tests. Add tests to Playwright.
 
 ### Samples and docs
 
-- Samples in `samples/dashboards/<category>/<name>/`. `demo.html` loads what the sample uses before `dashboards.js`: Highcharts or Stock for chart, KPI and navigator components, Grid Pro for a Grid component. Add `modules/layout.js` for `gui` layouts or edit mode. `demo.css` imports `dashboards.css`. `samples/dashboards/cypress/` holds pages for tests.
+- Samples in `samples/dashboards/<category>/<name>/`. `demo.html` loads what the sample uses before `dashboards.js`: Highcharts or Stock for chart, KPI and navigator components, Grid Pro for a Grid component. Add `modules/layout.js` for `gui` layouts or edit mode. `demo.css` imports `dashboards.css`.
 - Docs in `docs/dashboards/`, sidebar in `docs/sidebars.js`. Option doc comments link samples as "Try it" jsFiddle links.
 
 ### Commands
