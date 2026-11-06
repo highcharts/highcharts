@@ -29,7 +29,7 @@ export default function BarStackedChart() {
         >
             <Title align="left">Ferry passengers by vehicle type 2024</Title>
             <XAxis type="category" />
-            <YAxis min={0} title={{ text: '' }} />
+            <YAxis min={0}>{''}</YAxis>
             <Legend reversed />
             <PlotOptions
                 series={{
