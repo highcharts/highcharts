@@ -6,7 +6,6 @@
 
 
 import * as Path from 'node:path';
-import FS from 'node:fs';
 import FSLib from '../libs/fs.js';
 
 import Error16Plugin from './plugins/Error16Plugin.mjs';

@@ -11,6 +11,12 @@ Use this skill for changes in `tools/`, build scripts, test runners, or reposito
 
 1. Reuse existing tooling first:
 - Prefer npm scripts, gulp tasks, eslint/playwright setup, and existing helpers under `tools/`.
+- For literal command arguments, use `ProcessLib.execFile()` in
+  [tools/libs/process.js](../../../tools/libs/process.js).
+- For transforms that preserve the opened file's identity, use `updateFile()` in
+  [tools/libs/fs.js](../../../tools/libs/fs.js).
+- Trace callers and consumers before hardening a tool; consider removing unused
+  behavior instead of adding safeguards around it.
 - Do not add a new toolchain when equivalent behavior already exists.
 
 2. Keep stack consistency:

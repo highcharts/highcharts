@@ -54,6 +54,7 @@
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
     "lint": "cd ts && npx eslint",
+    "lint:tooling-modules": "eslint \"tools/webpacks/**/*.mjs\" \"tools/gulptasks-tests/**/*.mjs\"",
     "lint-docs": "npx cspell -c ./tools/cspell/cspell.json \"docs/**/*.md\"",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
@@ -193,6 +194,9 @@
     ],
     "{.github/workflows/visual-compare-playwright.yml,package.json,package-lock.json,test/visual-test-samples.js,test/ts-node-unit-tests/bench*.ts,test/ts-node-unit-tests/tooling-tests/**,tests/utils.ts,tests/visual/**}": [
       "node -e \"require('node:child_process').execSync('npm run test-node:tooling', {stdio: 'inherit'})\""
+    ],
+    "tools/{webpacks,gulptasks-tests}/**/*.mjs": [
+      "eslint"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>",
