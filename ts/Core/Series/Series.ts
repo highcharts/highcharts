@@ -56,7 +56,6 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
-import type StackItem from '../Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -2720,7 +2719,7 @@ class Series {
 
         const series = this,
             { options, xAxis, yAxis } = series,
-            { stacking, threshold } = options,
+            { threshold } = options,
             { hasRendered, polar } = series.chart,
             points = series.points.concat(series.condemnedPoints),
             dataLength = points.length,
@@ -2772,28 +2771,16 @@ class Series {
         // Translate each point
         for (i = 0; i < dataLength; i++) {
             const point = points[i],
-                xValue = point.x;
-            let stackItem: StackItem|undefined,
-                stackValues: (Array<number>|undefined),
+                xValue = point.x,
+                stackItem = this.getStackItem(point);
+            let stackValues: (Array<number>|undefined),
                 yValue = point.y,
                 lowValue = point.low;
-            const stacks = stacking && yAxis.stacking?.stacks[(
-                series.negStacks &&
-                (yValue as any) <
-                (stackThreshold ? 0 : (threshold as any)) ?
-                    '-' :
-                    ''
-            ) + series.stackKey];
 
             point.plotX = plotX = getPlotX(xValue);
 
             // Calculate the bottom y value for stacked series
-            if (
-                stacking &&
-                series.visible &&
-                stacks &&
-                stacks[xValue]
-            ) {
+            if (stackItem && series.visible) {
                 stackIndicator = series.getStackIndicator(
                     stackIndicator,
                     xValue,
@@ -2801,8 +2788,7 @@ class Series {
                 );
 
                 if (!point.isNull && stackIndicator.key) {
-                    stackItem = stacks[xValue];
-                    stackValues = stackItem.points[stackIndicator.key];
+                    stackValues = stackItem.values[stackIndicator.key];
                 }
 
                 if (stackItem && isArray(stackValues)) {
@@ -2811,7 +2797,7 @@ class Series {
 
                     if (
                         lowValue === stackThreshold &&
-                        stackIndicator.key === stacks[xValue].base
+                        stackIndicator.key === stackItem.base
                     ) {
                         lowValue = isNumber(threshold) ?
                             threshold :
