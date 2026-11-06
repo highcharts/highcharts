@@ -118,11 +118,26 @@ class XRangePoint extends ColumnPoint {
     /** @internal */
     public dlBox?: BBoxObjectWithCenter;
 
+    /**
+     * The formatted ending x-value (typically date), for use in a tooltip
+     * formatter.
+     */
+    public keyEnd?: string|number;
+
     /* *
      *
      *  Functions
      *
      * */
+
+    /**
+     * Extend the parent function by setting an end key
+     * @internal
+     * */
+    public applyKey(): string|number {
+        this.keyEnd = super.applyKey(this.x2);
+        return super.applyKey(this.x);
+    }
 
     /**
      * @internal

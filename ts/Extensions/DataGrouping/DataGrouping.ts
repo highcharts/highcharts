@@ -20,22 +20,9 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Series from '../../Core/Series/Series';
-import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
-import type Tooltip from '../../Core/Tooltip';
 
 import DataGroupingAxisComposition from './DataGroupingAxisComposition.js';
-import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DataGroupingSeriesComposition from './DataGroupingSeriesComposition.js';
-import F from '../../Core/Templating.js';
-const { format } = F;
-import H from '../../Core/Globals.js';
-const { composed } = H;
-import {
-    addEvent,
-    extend,
-    isNumber,
-    pushUnique
-} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -45,115 +32,10 @@ import {
 
 function compose(
     AxisClass: typeof Axis,
-    SeriesClass: typeof Series,
-    TooltipClass?: typeof Tooltip
+    SeriesClass: typeof Series
 ): void {
     DataGroupingAxisComposition.compose(AxisClass);
     DataGroupingSeriesComposition.compose(SeriesClass);
-
-    if (
-        TooltipClass &&
-        pushUnique(composed, 'DataGrouping')
-    ) {
-        addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
-    }
-
-}
-
-/**
- * Extend the original method, make the tooltip's header reflect the grouped
- * range.
- * @internal
- */
-function onTooltipHeaderFormatter(
-    this: Tooltip,
-    e: Event&Tooltip.HeaderFormatterEventObject
-): void {
-
-    const chart = this.chart,
-        time = chart.time,
-        point = e.point,
-        series = point.series,
-        options = series.options,
-        tooltipOptions = series.tooltipOptions,
-        dataGroupingOptions = options.dataGrouping,
-        xAxis = series.xAxis;
-
-    let xDateFormat = tooltipOptions.xDateFormat || '',
-        xDateFormatEnd,
-        currentDataGrouping: (TimeTicksInfoObject|undefined),
-        dateTimeLabelFormats,
-        labelFormats,
-        formattedKey,
-        formatString = tooltipOptions[
-            e.isFooter ? 'footerFormat' : 'headerFormat'
-        ];
-
-    // Apply only to grouped series
-    if (
-        xAxis &&
-        xAxis.options.type === 'datetime' &&
-        dataGroupingOptions &&
-        isNumber(point.key)
-    ) {
-
-        // Set variables
-        currentDataGrouping = series.currentDataGrouping;
-        dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats ||
-            // Fallback to commonOptions (#9693)
-            DataGroupingDefaults.common.dateTimeLabelFormats;
-
-        // If we have grouped data, use the grouping information to get the
-        // right format
-        if (currentDataGrouping) {
-            labelFormats = (dateTimeLabelFormats as AnyRecord)[
-                currentDataGrouping.unitName
-            ];
-            if ((currentDataGrouping as any).count === 1) {
-                xDateFormat = labelFormats[0];
-            } else {
-                xDateFormat = labelFormats[1];
-                xDateFormatEnd = labelFormats[2];
-            }
-        // If not grouped, and we don't have set the xDateFormat option, get the
-        // best fit, so if the least distance between points is one minute, show
-        // it, but if the least distance is one day, skip hours and minutes etc.
-        } else if (!xDateFormat && dateTimeLabelFormats && xAxis.dateTime) {
-            xDateFormat = xAxis.dateTime.getXDateFormat(
-                point.x,
-                tooltipOptions.dateTimeLabelFormats
-            );
-        }
-
-        const groupStart =
-                series.groupMap?.[point.index].groupStart ?? point.key,
-            groupEnd = groupStart + (currentDataGrouping?.totalRange || 0) - 1;
-
-        formattedKey = time.dateFormat(xDateFormat, groupStart);
-        if (xDateFormatEnd) {
-            formattedKey += time.dateFormat(
-                xDateFormatEnd,
-                groupEnd
-            );
-        }
-
-        // Replace default header style with class name
-        if (series.chart.styledMode) {
-            formatString = this.styledModeFormat(formatString);
-        }
-
-        // Return the replaced format
-        e.text = format(
-            formatString, {
-                point: extend(point, { key: formattedKey }),
-                series
-            },
-            chart
-        );
-
-        e.preventDefault();
-
-    }
 }
 
 /* *
