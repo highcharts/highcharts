@@ -344,7 +344,7 @@ namespace ForcedMarkersComposition {
         merge(true, pointOptions.marker, {
             states: {
                 normal: {
-                    opacity: getPointMarkerOpacity(pointOptions) || 1
+                    opacity: getPointMarkerOpacity(pointOptions) ?? 1
                 }
             }
         });
