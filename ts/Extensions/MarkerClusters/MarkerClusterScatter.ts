@@ -1329,14 +1329,22 @@ function seriesGetGridOffset(
     let plotLeft = 0,
         plotTop = 0;
 
-    if (xAxis && series.dataMinX && series.dataMaxX) {
+    if (
+        xAxis &&
+        isNumber(series.dataMinX) &&
+        isNumber(series.dataMaxX)
+    ) {
         plotLeft = xAxis.reversed ?
             xAxis.toPixels(series.dataMaxX) : xAxis.toPixels(series.dataMinX);
     } else {
         plotLeft = chart.plotLeft;
     }
 
-    if (yAxis && series.dataMinY && series.dataMaxY) {
+    if (
+        yAxis &&
+        isNumber(series.dataMinY) &&
+        isNumber(series.dataMaxY)
+    ) {
         plotTop = yAxis.reversed ?
             yAxis.toPixels(series.dataMinY) : yAxis.toPixels(series.dataMaxY);
     } else {
