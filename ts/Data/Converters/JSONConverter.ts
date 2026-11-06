@@ -137,6 +137,7 @@ class JSONConverter extends DataConverter {
         }
 
         converter.headers = [];
+        converter.headerColumnIds = [];
         const columnsArray: DataTableBasicColumn[] = [];
 
         converter.emit({
@@ -338,8 +339,13 @@ class JSONConverter extends DataConverter {
                 });
             return newRow;
         }
-        converter.headerColumnIds = Object.keys(rowObj);
-        return Object.values(rowObj);
+        if (!(converter.headerColumnIds as string[]).length) {
+            converter.headerColumnIds = Object.keys(rowObj);
+        }
+
+        return (converter.headerColumnIds as string[]).map(
+            (columnId): string | number => rowObj[columnId]
+        );
     }
 
 }
