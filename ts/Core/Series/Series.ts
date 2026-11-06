@@ -68,7 +68,7 @@ import {
     setAnimation
 } from '../Animation/AnimationUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import { defaultOptions } from '../Defaults.js';
+import { defaultOptions, globalUserPlotOptions } from '../Defaults.js';
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -1182,7 +1182,11 @@ class Series {
             defaultPlotOptionsType = (
                 defaultOptions.plotOptions[this.type] || {}
             ),
-            userPlotOptionsType = userPlotOptions[this.type] || {};
+            userPlotOptionsType = userPlotOptions[this.type] || {},
+            defaultPlotOptionsSeries = defaultOptions.plotOptions.series || {},
+            globalUserPlotOptionsSeries = globalUserPlotOptions.series || {},
+            globalUserPlotOptionsType =
+                globalUserPlotOptions[this.type] || {};
 
         // Merge in multiple data label options from the plot option. (#21928)
         typeOptions.dataLabels = this.mergeArrays(
@@ -1193,9 +1197,15 @@ class Series {
         // Use copy to prevent undetected changes (#9762)
         this.userOptions = e.userOptions;
 
+        // Merge plotOptions in ascending order: built in defaults, then global
+        // user options from `setOptions`, then chart instance options (#20716).
+        // Type options rank above series options.
         const options: SeriesTypeOptions = merge(
+                defaultPlotOptionsSeries,
                 typeOptions,
-                plotOptions.series,
+                globalUserPlotOptionsSeries,
+                globalUserPlotOptionsType,
+                userPlotOptionsSeries,
                 // #3881, chart instance plotOptions[type] should trump
                 // plotOptions.series
                 userPlotOptionsType,

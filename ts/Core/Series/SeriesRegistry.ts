@@ -18,12 +18,16 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
+import type { AnyRecord, DeepPartial } from '../../Shared/Types';
 import type { SeriesTypeRegistry } from './SeriesType';
 import type Series from './Series.js';
 
 import H from '../Globals.js';
-import { defaultOptions } from '../Defaults.js';
+import {
+    builtinPlotOptions,
+    defaultOptions,
+    globalUserPlotOptions
+} from '../Defaults.js';
 import Point from './Point.js';
 import { extend, extendClass, merge } from '../../Shared/Utilities.js';
 
@@ -89,6 +93,15 @@ namespace SeriesRegistry {
 
         if (seriesOptions) {
             defaultPlotOptions[seriesType] = seriesOptions;
+        }
+
+        // Snapshot the built in type defaults so global user options can be
+        // told apart from them later (#20716). Registering again retakes the
+        // snapshot, which makes the difference derived from the old one stale.
+        if (defaultPlotOptions[seriesType]) {
+            (builtinPlotOptions as AnyRecord)[seriesType] =
+                merge(true, {}, defaultPlotOptions[seriesType]);
+            delete (globalUserPlotOptions as AnyRecord)[seriesType];
         }
 
         seriesTypes[seriesType] = SeriesClass;
