@@ -597,6 +597,47 @@ QUnit.test('X axis label rotation ignored step(#3971)', function (assert) {
         60,
         'No ticks are skipped'
     );
+
+    // Automatic tick spacing in Axis.unsquish, which labels.step and
+    // staggerLines would otherwise skip (#5463)
+    chart.xAxis[0].update({
+        labels: {
+            step: 0,
+            staggerLines: 0,
+            rotation: 1
+        }
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        7,
+        'Ticks should be skipped based on the label width, not collapsed ' +
+        'to the first and the last one (#5463)'
+    );
+
+    chart.xAxis[0].update({
+        labels: {
+            rotation: 0
+        }
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        60,
+        'Horizontal labels should never be skipped (#5463)'
+    );
+
+    chart.xAxis[0].update({
+        labels: {
+            rotation: 45
+        }
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        20,
+        'Steep rotation should be unaffected (#5463)'
+    );
 });
 
 QUnit.test(
