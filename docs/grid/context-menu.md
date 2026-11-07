@@ -17,10 +17,17 @@ button of your own acts on whatever you wrote it to.
 | Target | Opened on | Configured with |
 |---|---|---|
 | `cell` | A table body cell | `columnDefaults.cells.contextMenu`, or `columns[].cells.contextMenu` per column |
+| `table` | The table body next to its cells, which is all of it while the table holds no row | `rendering.table.contextMenu` |
 | `element` | Any element you give a menu to | The options passed to [`grid.contextMenu.attach()`](#a-menu-on-an-element-of-your-own) |
 
-Both use the same items, the same registry and the same rendering. Only the
+They all use the same items, the same registry and the same rendering. Only the
 target they hand to your callbacks differs.
+
+The table menu is what makes a Grid without rows usable: in Grid Pro, table
+editing contributes an `'addRow'` item to it, so a table that has nothing to
+right-click on still offers a row to start from.
+
+<iframe src="https://www.highcharts.com/samples/embed/grid-pro/options/table-editing-empty?force-light-theme" allow="fullscreen"></iframe>
 
 ## Configuring a menu
 
@@ -59,6 +66,11 @@ native menu explicitly.
 Use `contextMenu: { enabled: false }` to disable the Grid menu for a column,
 or globally via `columnDefaults`.
 
+The table body menu follows the same rules under `rendering.table.contextMenu`.
+Left alone, it holds the items features register for it, which in Grid Pro is
+table editing's `'addRow'`; `enabled: false` keeps the native menu over the
+body instead.
+
 ## Menu items
 
 Each item supports:
@@ -80,7 +92,8 @@ context the menu was opened in.
 Grid Pro contributes built-in items. Row pinning exposes the group ID
 `'pinning'` and the individual action IDs `'pinRowTop'`, `'pinRowBottom'` and
 `'unpinRow'`; table editing exposes the groups `'rows'` and `'columns'` and the
-actions behind them. These are not available in Grid Lite.
+actions behind them, plus `'addRow'` on the table menu. These are not available
+in Grid Lite.
 
 A group ID used in `items` expands in place, so built-ins and your own items
 mix freely:
@@ -236,12 +249,13 @@ onClick: function (cell, context) {
 ```
 
 The target is what the menu was opened on: the `TableCell` for a cell menu,
-and the element itself for a menu attached to one. For Highcharts-style
-callbacks it is also bound to `this`.
+and the element itself for a menu on the table body or on an attached element.
+For Highcharts-style callbacks it is also bound to `this`.
 
-The context carries `grid` and `target`. On a cell menu the target holds
-`cell`, `column` and `row`; on an attached one it holds `element`. Its `type`
-says which.
+The context carries `grid`, `target` and the `options` the menu was configured
+with. On a cell menu the target holds `cell`, `column` and `row`; on a table or
+an attached one it holds `element`, which is the `tbody` for the table menu. Its
+`type` says which.
 
 ## Menus and the Grid's edges
 
@@ -263,6 +277,9 @@ When a cell is focused, open its menu with the `ContextMenu` key or
 `Shift+F10`. The same keys work on an element you attached a menu to, once it
 has the focus. Inside the menu, the arrow keys move between items, `ArrowRight`
 opens the submenu of a branch and `ArrowLeft` closes it again.
+
+A table that holds no row has no cell to focus, so the table body takes the
+tab stop itself and the same keys open the table menu there.
 
 On touch devices, a long-press opens the menu, on a cell and on an attached
 element alike. This matters most on iOS, where browsers do not fire the
