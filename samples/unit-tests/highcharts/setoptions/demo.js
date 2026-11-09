@@ -99,3 +99,124 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     Highcharts.defaultOptions.xAxis = xAxis;
 
 });
+
+QUnit.test(
+    'plotOptions[type] set through setOptions should trump ' +
+    'plotOptions.series (#20716).',
+    function (assert) {
+        Highcharts.setOptions({
+            plotOptions: {
+                series: {
+                    custom: { origin: 'global-series' }
+                },
+                pie: {
+                    custom: { origin: 'global-pie' }
+                }
+            }
+        });
+
+        assert.strictEqual(
+            Highcharts.chart('container', {
+                series: [{
+                    type: 'pie',
+                    data: [1, 2, 3]
+                }]
+            }).series[0].options.custom.origin,
+            'global-pie',
+            'Global plotOptions.pie should trump global plotOptions.series ' +
+            '(#20716)'
+        );
+
+        assert.strictEqual(
+            Highcharts.chart('container', {
+                plotOptions: {
+                    series: {
+                        custom: { origin: 'instance-series' }
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    data: [1, 2, 3]
+                }]
+            }).series[0].options.custom.origin,
+            'instance-series',
+            'Instance plotOptions.series should still beat the global ' +
+            'plotOptions.pie set through setOptions'
+        );
+
+        // Reset the merged defaults
+        delete Highcharts.defaultOptions.plotOptions.series.custom;
+        delete Highcharts.defaultOptions.plotOptions.pie.custom;
+    }
+);
+
+QUnit.test(
+    'plotOptions.series set through setOptions should trump built in type ' +
+    'defaults (#20716)',
+    function (assert) {
+        Highcharts.setOptions({
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            }
+        });
+
+        assert.strictEqual(
+            Highcharts.chart('container', {
+                series: [{
+                    type: 'pie',
+                    data: [1, 2, 3]
+                }]
+            }).series[0].options.animation,
+            false,
+            'User set plotOptions.series should override the built in ' +
+            'plotOptions.pie defaults'
+        );
+    }
+);
+
+QUnit.test(
+    'Re-registering a series type should not leave stale global user ' +
+    'plotOptions behind (#20716)',
+    function (assert) {
+        const type = 'regressionprobe';
+
+        function register(origin) {
+            Highcharts.seriesType(type, 'line', {
+                custom: { origin: origin }
+            }, {});
+        }
+
+        register('first');
+
+        // Stored as a difference against the defaults snapshotted at
+        // registration.
+        Highcharts.setOptions({
+            plotOptions: {
+                regressionprobe: {
+                    custom: { origin: 'global' }
+                }
+            }
+        });
+
+        // Registering again retakes the snapshot, so the old difference no
+        // longer describes anything the user asked for.
+        register('second');
+
+        assert.strictEqual(
+            Highcharts.chart('container', {
+                series: [{
+                    type: type,
+                    data: [1, 2, 3]
+                }]
+            }).series[0].options.custom.origin,
+            'second',
+            'Re-registering a type should not leave a stale global user ' +
+            'plotOptions entry behind (#20716)'
+        );
+
+        delete Highcharts.defaultOptions.plotOptions[type];
+        delete Highcharts.seriesTypes[type];
+    }
+);
