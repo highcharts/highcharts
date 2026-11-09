@@ -1446,14 +1446,57 @@ QUnit.test('Zooming on ordinal axis, #21483', assert => {
         'Chart should be zoomed out - max value.'
     );
 
-    // #24545
+    // Light wheel zoom-in must keep moving extremes inward (#24563).
     chart.update({
         xAxis: {
             minRange: 24 * 3600 * 1000
-        }
+        },
+        series: [{
+            dataGrouping: {
+                enabled: true,
+                forced: true,
+                units: [['day', [1]]]
+            }
+        }]
     });
+    chart.xAxis[0].setExtremes(1629552600000, 1629807000000);
+
+    let inconsistent = false;
+    for (let i = 0; i < 20; i++) {
+        const oldMin = chart.xAxis[0].min,
+            oldMax = chart.xAxis[0].max,
+            oldRange = oldMax - oldMin;
+
+        if (oldRange <= 24 * 3600 * 1000) {
+            break;
+        }
+
+        controller.mouseWheel(
+            chart.plotWidth / 2,
+            chart.plotHeight / 2,
+            -1
+        );
+
+        const newMin = chart.xAxis[0].min,
+            newMax = chart.xAxis[0].max,
+            newRange = newMax - newMin;
+
+        // Zoom-in notch moved an edge outward or widened the range.
+        if (newMin < oldMin || newMax > oldMax || newRange > oldRange) {
+            inconsistent = true;
+            break;
+        }
+    }
+
+    assert.strictEqual(
+        inconsistent,
+        false,
+        'Each light mouse-wheel zoom-in on ordinal axis should move ' +
+        'extremes inward, #24563.'
+    );
+
     // Emulate scrolling with mouse wheel to gradually zoom in, instead of
-    // calling one big mousewheel zoom in event
+    // calling one big mousewheel zoom in event (#24545)
     for (let i = 0; i < 40; i++) {
         controller.mouseWheel(chart.plotWidth / 2, chart.plotHeight / 2, -100);
     }
