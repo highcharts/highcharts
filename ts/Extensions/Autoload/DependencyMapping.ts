@@ -17,12 +17,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'annotations.labelOptions.includeInDataExport': [
         'modules/export-data'
     ],
-    'annotations.labels.point': [
-        'modules/annotations'
-    ],
-    'annotations.shapes.point': [
-        'modules/annotations'
-    ],
     'annotations.type': [
         'modules/annotations-advanced'
     ],
@@ -78,6 +72,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     'colorAxis': [
         'modules/coloraxis'
     ],
+    'connectors': [
+        'modules/pathfinder'
+    ],
     'data': [
         'modules/data'
     ],
@@ -91,20 +88,15 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/accessibility'
     ],
     'exporting.csv': [
-        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.csv.annotations': [
-        'modules/exporting',
-        'modules/export-data',
         'modules/annotations'
     ],
     'exporting.error': [
-        'modules/exporting',
         'modules/offline-exporting'
     ],
     'exporting.fallbackToExportServer': [
-        'modules/exporting',
         'modules/offline-exporting'
     ],
     'exporting.menuItemDefinitions.downloadCSV': [
@@ -123,19 +115,15 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/export-data'
     ],
     'exporting.showTable': [
-        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.tableCaption': [
-        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.useMultiLevelHeaders': [
-        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.useRowspanHeaders': [
-        'modules/exporting',
         'modules/export-data'
     ],
     'legend.accessibility': [
@@ -174,11 +162,8 @@ const DependencyMapping: Record<string, Array<string>> = {
     'plotOptions.series.cluster': [
         'modules/marker-clusters'
     ],
-    'plotOptions.series.cluster.events.drillToCluster': [
-        'modules/marker-clusters'
-    ],
-    'plotOptions.series.cluster.states.hover.fillColor': [
-        'modules/marker-clusters'
+    'plotOptions.series.connectors': [
+        'modules/pathfinder'
     ],
     'plotOptions.series.data.connect': [
         'modules/pathfinder'
@@ -191,6 +176,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'plotOptions.series.dataGrouping': [
         'modules/stock'
+    ],
+    'plotOptions.series.dataLabels.textPath': [
+        'modules/textpath'
     ],
     'plotOptions.series.dataSorting': [
         'modules/data-sorting'
@@ -640,6 +628,12 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'xAxis.accessibility': [
         'modules/accessibility'
+    ],
+    'xAxis.currentDateIndicator': [
+        'modules/current-date-indicator'
+    ],
+    'xAxis.grid': [
+        'modules/grid-axis'
     ],
     'xAxis.labels.position3d': [
         'highcharts-3d'

@@ -822,7 +822,6 @@ const Options: DeepPartial<A11yOptions> = {
      *
      * @extends    accessibility.point
      * @since 9.3.0
-     * @requires   modules/accessibility
      * @apioption  plotOptions.series.accessibility.point
      */
 
@@ -939,7 +938,6 @@ const Options: DeepPartial<A11yOptions> = {
              * Options for keyboard navigation for the legend.
              *
              * @since     7.1.0
-             * @requires  modules/accessibility
              */
             keyboardNavigation: {
                 /**

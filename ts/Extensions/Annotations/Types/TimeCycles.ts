@@ -56,7 +56,6 @@ if (defaultOptions.annotations?.types) {
          * @extends      annotations.types.crookedLine
          * @product      highstock
          * @exclude      labelOptions
-         * @requires     modules/annotations-advanced
          * @optionparent annotations.types.timeCycles
          */
         {

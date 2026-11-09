@@ -133,7 +133,6 @@ interface ChartOptions3D {
      *
      * @since    4.0
      * @product  highcharts
-     * @requires highcharts-3d
      */
     frame?: Chart3D.FrameOptions;
     viewDistance?: number;
@@ -180,7 +179,6 @@ namespace Chart3D {
      *
      * @since    4.0
      * @product  highcharts
-     * @requires highcharts-3d
      */
     export interface FrameOptions {
 
@@ -239,7 +237,6 @@ namespace Chart3D {
      *
      * @since    4.0
      * @product  highcharts
-     * @requires highcharts-3d
      */
     export interface FrameSideOptions {
 
@@ -382,7 +379,6 @@ namespace Chart3D {
                  *
                  * @since    4.0
                  * @product  highcharts
-                 * @requires highcharts-3d
                  */
                 frame: {
 
@@ -401,7 +397,6 @@ namespace Chart3D {
                      *
                      * @since    4.0
                      * @product  highcharts
-                     * @requires highcharts-3d
                      */
 
                     /**
@@ -2168,7 +2163,6 @@ export default Chart3D;
  * @deprecated 5.0.12
  * @since     4.0
  * @product   highcharts
- * @requires  highcharts-3d
  * @apioption chart.options3d.frame.side
  */
 

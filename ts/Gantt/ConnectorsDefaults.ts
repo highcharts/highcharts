@@ -61,6 +61,7 @@ const connectorsDefaults: ConnectorsDefaults = {
      *
      * @declare      Highcharts.ConnectorsOptions
      * @product      gantt
+     * @requires     modules/pathfinder
      * @optionparent connectors
      */
     connectors: {
@@ -320,6 +321,7 @@ export default connectorsDefaults;
  * @since     6.2.0
  * @excluding enabled, algorithmMargin
  * @product   gantt
+ * @requires  modules/pathfinder
  * @apioption plotOptions.series.connectors
  */
 

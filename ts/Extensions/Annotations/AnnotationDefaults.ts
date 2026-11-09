@@ -135,8 +135,6 @@ const AnnotationDefaults: AnnotationOptions = {
      * Options for annotation's labels. Each label inherits options
      * from the labelOptions object. An option from the labelOptions
      * can be overwritten by config for a specific label.
-     *
-     * @requires modules/annotations
      */
     labelOptions: {
 
@@ -418,7 +416,6 @@ const AnnotationDefaults: AnnotationOptions = {
      *         Attach annotation to a mock point with different ways
      *
      * @type      {Highcharts.AnnotationMockPointOptions}
-     * @requires  modules/annotations
      * @apioption annotations.labels.point
      */
 
@@ -454,7 +451,6 @@ const AnnotationDefaults: AnnotationOptions = {
      *
      * @type      {Highcharts.AnnotationMockPointOptions}
      * @extends   annotations.labels.point
-     * @requires  modules/annotations
      * @apioption annotations.shapes.point
      */
 
@@ -506,8 +502,6 @@ const AnnotationDefaults: AnnotationOptions = {
      * Options for annotation's shapes. Each shape inherits options
      * from the shapeOptions object. An option from the shapeOptions
      * can be overwritten by config for a specific shape.
-     *
-     * @requires  modules/annotations
      */
     shapeOptions: {
 
@@ -670,7 +664,6 @@ const AnnotationDefaults: AnnotationOptions = {
      * by options in a specific control point.
      *
      * @declare  Highcharts.AnnotationControlPointOptionsObject
-     * @requires modules/annotations
      */
     controlPointOptions: {
 
@@ -746,8 +739,6 @@ const AnnotationDefaults: AnnotationOptions = {
 
     /**
      * Events available in annotations.
-     *
-     * @requires modules/annotations
      */
     events: {},
 
@@ -755,7 +746,6 @@ const AnnotationDefaults: AnnotationOptions = {
      *
      * Additional options for an annotation with the type.
      *
-     * @requires  modules/annotations
      * @apioption annotations.typeOptions
      */
     typeOptions: {
