@@ -903,6 +903,184 @@ test.describe('Cell Context Menu', () => {
             await expect(popup).not.toContainText('Unpin row');
         });
 
+        test('Hovering a branch opens its submenu, a leaf closes it', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-hover');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-hover';
+                document.body.appendChild(container);
+
+                (window as any).Grid.grid(container, {
+                    data: {
+                        columns: {
+                            id: ['ROW-001'],
+                            value: [1]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: {
+                            contextMenu: {
+                                enabled: true,
+                                items: [{
+                                    label: 'Leaf'
+                                }, {
+                                    label: 'Branch',
+                                    items: [{ label: 'First child' }]
+                                }]
+                            }
+                        }
+                    }
+                });
+            });
+
+            const cell = page.locator(
+                '#cm-hover tbody tr[data-row-index="0"] td[data-column-id="id"]'
+            );
+            await cell.click({ button: 'right' });
+
+            const popups = page.locator('.hcg-popup');
+            const root = popups.first();
+            const focusedLabel = (): Promise<string> => page.evaluate(() => (
+                (document.activeElement as HTMLButtonElement | null)
+                    ?.innerText?.trim() || ''
+            ));
+
+            expect(await focusedLabel()).toContain('Leaf');
+
+            await root.locator('.hcg-menu-item', { hasText: 'Branch' })
+                .hover();
+
+            await expect(popups).toHaveCount(2);
+            await expect(popups.last()).toContainText('First child');
+
+            // The pointer opens the submenu without taking the keyboard
+            // along, so the focus stays where it was.
+            expect(await focusedLabel()).toContain('Leaf');
+
+            await root.locator('.hcg-menu-item', { hasText: 'Leaf' }).hover();
+
+            await expect(popups).toHaveCount(1);
+        });
+
+        test('A disabled branch opens for neither pointer nor keyboard', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-disabled');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-disabled';
+                document.body.appendChild(container);
+
+                (window as any).cmDisabledRan = [];
+                (window as any).Grid.grid(container, {
+                    data: {
+                        columns: {
+                            id: ['ROW-001'],
+                            value: [1]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: {
+                            contextMenu: {
+                                enabled: true,
+                                items: [{
+                                    label: 'Disabled branch',
+                                    disabled: true,
+                                    items: [{ label: 'Child' }]
+                                }, {
+                                    label: 'Disabled leaf',
+                                    disabled: true,
+                                    onClick: (): void => {
+                                        (window as any).cmDisabledRan
+                                            .push('leaf');
+                                    }
+                                }]
+                            }
+                        }
+                    }
+                });
+            });
+
+            const cell = page.locator(
+                '#cm-disabled tbody tr[data-row-index="0"] td[data-column-id="id"]'
+            );
+            await cell.click({ button: 'right' });
+
+            const popups = page.locator('.hcg-popup');
+            const items = popups.first().locator('.hcg-menu-item');
+
+            await expect(items.first()).toHaveAttribute('disabled', '');
+
+            await items.first().hover({ force: true });
+            await expect(popups).toHaveCount(1);
+
+            // The branch button is disabled, so the key that activates it is
+            // ignored by the button itself.
+            await page.keyboard.press('ArrowDown');
+            await page.keyboard.press('ArrowRight');
+            await expect(popups).toHaveCount(1);
+
+            await items.last().click({ force: true });
+            expect(
+                await page.evaluate(() => (window as any).cmDisabledRan)
+            ).toEqual([]);
+        });
+
+        test('The focused item is marked once the keyboard is used', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-focus-ring');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-focus-ring';
+                document.body.appendChild(container);
+
+                (window as any).Grid.grid(container, {
+                    data: {
+                        columns: {
+                            id: ['ROW-001'],
+                            value: [1]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: {
+                            contextMenu: {
+                                enabled: true,
+                                items: [
+                                    { label: 'First' },
+                                    { label: 'Second' }
+                                ]
+                            }
+                        }
+                    }
+                });
+            });
+
+            const cell = page.locator(
+                '#cm-focus-ring tbody tr[data-row-index="0"] td[data-column-id="id"]'
+            );
+            const marked = (): Promise<string[]> => page.evaluate(() => (
+                [...document.querySelectorAll('.hcg-menu-item')]
+                    .filter((el): boolean => (
+                        getComputedStyle(el).boxShadow !== 'none'
+                    ))
+                    .map((el): string => (el as HTMLElement).innerText.trim())
+            ));
+
+            await cell.click({ button: 'right' });
+
+            // Opened with the pointer: nothing is marked, although the first
+            // item holds the focus for whoever reaches for a key.
+            await expect(page.locator('.hcg-popup')).toHaveCount(1);
+            expect(await marked()).toEqual([]);
+
+            await page.keyboard.press('ArrowDown');
+
+            expect(await marked()).toEqual(['Second']);
+        });
+
         test('ArrowRight opens submenu and focuses first child', async ({ page }) => {
             await page.evaluate(() => {
                 const existing = document.getElementById('cm-key-right');
@@ -1013,6 +1191,515 @@ test.describe('Cell Context Menu', () => {
             await page.keyboard.press('Escape');
             await expect(page.locator('.hcg-popup')).toHaveCount(0);
         });
+
+        test(
+            'A menu attached to an element of your own opens and runs',
+            async ({ page }) => {
+                await page.evaluate(() => {
+                    document.getElementById('cm-attach')?.remove();
+                    document.getElementById('cm-attach-button')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-attach';
+                    document.body.appendChild(container);
+
+                    const button = document.createElement('button');
+                    button.id = 'cm-attach-button';
+                    button.type = 'button';
+                    button.textContent = 'Actions';
+                    document.body.appendChild(button);
+
+                    const grid = (window as any).Grid.grid(container, {
+                        data: {
+                            columns: {
+                                id: ['ROW-001'],
+                                value: [1]
+                            }
+                        }
+                    });
+
+                    grid.contextMenu.attach(button, {
+                        items: [{
+                            label: 'Rename the button',
+                            onClick: (target: HTMLElement) => {
+                                target.textContent = 'Renamed';
+                            }
+                        }, {
+                            separator: true
+                        }, {
+                            label: 'Second action'
+                        }]
+                    });
+                });
+
+                const button = page.locator('#cm-attach-button');
+                await button.click({ button: 'right' });
+
+                const popup = page.locator('.hcg-popup');
+                await expect(popup).toBeVisible();
+                await expect(popup.locator('.hcg-menu-divider')).toHaveCount(1);
+
+                // The grid clips its overflow, so a menu opened on an element
+                // outside it is only whole because it renders in the top
+                // layer. It stays a child of the grid, which is what keeps
+                // the styles and the theme on it.
+                expect(await page.evaluate(() => {
+                    const el = document.querySelector('.hcg-popup');
+                    const grid = document.querySelector('#cm-attach');
+                    const p = el.getBoundingClientRect();
+                    const g = grid.getBoundingClientRect();
+                    return {
+                        isPopover: el.matches(':popover-open'),
+                        reachesPastTheGrid:
+                            p.top < g.top || p.bottom > g.bottom,
+                        insideViewport:
+                            p.top >= 0 && p.bottom <= window.innerHeight,
+                        insideTheGridElement: grid.contains(el)
+                    };
+                })).toEqual({
+                    isPopover: true,
+                    reachesPastTheGrid: true,
+                    insideViewport: true,
+                    insideTheGridElement: true
+                });
+
+                await popup.locator('.hcg-menu-item', {
+                    hasText: 'Rename the button'
+                }).click();
+
+                await expect(button).toHaveText('Renamed');
+                await expect(popup).toHaveCount(0);
+            }
+        );
+
+        test(
+            'Destroying the grid takes its menu back from user custom elements',
+            async ({ page }) => {
+                // The element is not the grid's own, so emptying its container
+                // leaves it listening. A destroyed grid opens nothing anyway,
+                // so what the leak costs is memory: the listeners hold the
+                // element and the grid. Hence counting them rather than
+                // right-clicking.
+                const listeners = await page.evaluate(async () => {
+                    document.getElementById('cm-detach')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-detach';
+                    document.body.appendChild(container);
+
+                    // Counts what each element was given and what it got back.
+                    const watch = (): {
+                        element: HTMLElement,
+                        added: string[],
+                        removed: string[]
+                    } => {
+                        const element = document.createElement('button');
+                        const added: string[] = [];
+                        const removed: string[] = [];
+                        const add = element.addEventListener.bind(element);
+                        const remove =
+                            element.removeEventListener.bind(element);
+
+                        document.body.appendChild(element);
+
+                        element.addEventListener = (
+                            type: string,
+                            listener: EventListenerOrEventListenerObject,
+                            options?: boolean | AddEventListenerOptions
+                        ): void => {
+                            added.push(type);
+                            add(type, listener, options);
+                        };
+
+                        element.removeEventListener = (
+                            type: string,
+                            listener: EventListenerOrEventListenerObject,
+                            options?: boolean | EventListenerOptions
+                        ): void => {
+                            removed.push(type);
+                            remove(type, listener, options);
+                        };
+
+                        return { element, added, removed };
+                    };
+
+                    const first = watch();
+                    const second = watch();
+                    const detached = watch();
+
+                    const grid = await (window as any).Grid.grid(container, {
+                        data: { columns: { id: ['ROW-001'] } }
+                    }, true);
+
+                    const items = [{ label: 'Attached action' }];
+
+                    grid.contextMenu.attach(first.element, { items });
+                    // Left open on purpose: tearing the Grid down has to
+                    // close it, or the menu outlives the Grid on screen.
+                    first.element.dispatchEvent(
+                        new MouseEvent('contextmenu', { bubbles: true })
+                    );
+                    const wasOpen = !!document.querySelector('.hcg-popup');
+                    // The same element given a second menu, and one the user
+                    // detaches before the Grid goes away.
+                    grid.contextMenu.attach(second.element, { items });
+                    grid.contextMenu.attach(second.element, { items });
+                    grid.contextMenu.attach(detached.element, { items })();
+
+                    grid.destroy();
+
+                    return {
+                        wasOpen,
+                        elements: [first, second, detached].map((w): {
+                            added: string[], removed: string[]
+                        } => ({ added: w.added, removed: w.removed }))
+                    };
+                });
+
+                // A vacuous check otherwise: the menu has to have opened.
+                expect(listeners.wasOpen).toBe(true);
+
+                for (const element of listeners.elements) {
+                    expect(element.added).toEqual(
+                        expect.arrayContaining(['contextmenu', 'keydown'])
+                    );
+                    expect(element.removed).toEqual(element.added);
+                }
+
+                // Two menus on one element are two sets of listeners.
+                expect(listeners.elements[1].added).toHaveLength(4);
+
+                // The menu left open above went with the Grid.
+                await expect(page.locator('.hcg-popup')).toHaveCount(0);
+            }
+        );
+
+        test(
+            'A menu outgrows the grid by default, and not when kept inside',
+            async ({ page }) => {
+                const open = async (inside: boolean | undefined) => {
+                    await page.evaluate((insideContainer) => {
+                        document.getElementById('cm-top-layer')?.remove();
+
+                        const container = document.createElement('div');
+                        container.id = 'cm-top-layer';
+                        // Too short for the menu below to fit in it.
+                        container.style.height = '90px';
+                        document.body.appendChild(container);
+
+                        (window as any).Grid.grid(container, {
+                            data: { columns: { id: ['ROW-001'] } },
+                            rendering: { popups: { insideContainer } },
+                            columnDefaults: {
+                                cells: {
+                                    contextMenu: {
+                                        items: [
+                                            { label: 'One' },
+                                            { label: 'Two' },
+                                            { label: 'Three' },
+                                            { label: 'Four' }
+                                        ]
+                                    }
+                                }
+                            }
+                        });
+                    }, inside);
+
+                    await page.locator(
+                        '#cm-top-layer tbody td[data-column-id="id"]'
+                    ).click({ button: 'right' });
+                    await expect(page.locator('.hcg-popup')).toBeVisible();
+
+                    return page.evaluate(() => {
+                        const popup = document.querySelector('.hcg-popup');
+                        const grid = document.getElementById('cm-top-layer');
+                        const p = popup.getBoundingClientRect();
+                        const g = grid.getBoundingClientRect();
+                        return {
+                            isPopover: popup.matches(':popover-open'),
+                            outgrowsTheGrid: p.height > g.height
+                        };
+                    });
+                };
+
+                expect(await open(void 0)).toEqual({
+                    isPopover: true,
+                    outgrowsTheGrid: true
+                });
+
+                await page.keyboard.press('Escape');
+
+                // Kept inside, the grid clips the menu, which scrolls within
+                // it instead.
+                expect(await open(true)).toEqual({
+                    isPopover: false,
+                    outgrowsTheGrid: false
+                });
+            }
+        );
+
+        test(
+            'Without the Popover API the popup stays inside the container',
+            async ({ page }) => {
+                await page.addInitScript(() => {
+                    // Popover is Baseline only since January 2025.
+                    delete (HTMLElement.prototype as {
+                        showPopover?: unknown;
+                    }).showPopover;
+                });
+                await page.reload({ waitUntil: 'networkidle' });
+                await page.waitForFunction(() => (
+                    (window as any).Grid?.grids?.length > 0
+                ));
+
+                await page.evaluate(() => {
+                    const container = document.createElement('div');
+                    container.id = 'cm-no-popover';
+                    container.style.height = '90px';
+                    document.body.appendChild(container);
+
+                    const grid = (window as any).Grid.grid(container, {
+                        data: { columns: { id: ['ROW-001'] } },
+                        // Asked for, but the browser cannot deliver it.
+                        rendering: { popups: { insideContainer: false } },
+                        columnDefaults: {
+                            cells: {
+                                contextMenu: {
+                                    items: [
+                                        { label: 'One' },
+                                        { label: 'Two' },
+                                        { label: 'Three' }
+                                    ]
+                                }
+                            }
+                        }
+                    });
+
+                    const button = document.createElement('button');
+                    button.id = 'cm-no-popover-button';
+                    document.body.appendChild(button);
+                    grid.contextMenu.attach(button, {
+                        items: [{ label: 'Attached' }]
+                    });
+                });
+
+                const popup = page.locator('.hcg-popup');
+
+                await page.locator(
+                    '#cm-no-popover tbody td'
+                ).first().click({ button: 'right' });
+                await expect(popup).toBeVisible();
+                expect(await page.evaluate(() => (
+                    document.querySelector('.hcg-popup').hasAttribute('popover')
+                ))).toBe(false);
+
+                await page.keyboard.press('Escape');
+
+                // The attached menu asks for a popover unconditionally, so it
+                // is the one that would throw without the fallback.
+                await page.locator(
+                    '#cm-no-popover-button'
+                ).click({ button: 'right' });
+                await expect(popup).toBeVisible();
+            }
+        );
+
+        test(
+            'Items can be registered through the new and the old API',
+            async ({ page }) => {
+                await page.evaluate(() => {
+                    const G = (window as any).Grid;
+
+                    G.ContextMenu.registerItem('sayHello', {
+                        label: 'Say hello',
+                        targets: ['cell'],
+                        onClick: (cell: { htmlElement: HTMLElement }) => {
+                            cell.htmlElement.setAttribute('data-said', 'new');
+                        }
+                    });
+
+                    // The pre-3.3.0 API, which nothing in Grid itself uses
+                    // any more, still has to reach the same menu.
+                    G.CellContextMenuBuiltInActions.registerBuiltInAction(
+                        'sayLegacy',
+                        {
+                            getLabel: () => 'Say legacy',
+                            icon: 'checkmark',
+                            onClick: (context: {
+                                cell: { htmlElement: HTMLElement };
+                            }) => {
+                                context.cell.htmlElement.setAttribute(
+                                    'data-said',
+                                    'legacy'
+                                );
+                            }
+                        }
+                    );
+
+                    document.getElementById('cm-register')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-register';
+                    document.body.appendChild(container);
+
+                    G.grid(container, {
+                        data: { columns: { id: ['ROW-001'] } },
+                        columnDefaults: {
+                            cells: {
+                                contextMenu: {
+                                    items: ['sayHello', 'sayLegacy']
+                                }
+                            }
+                        }
+                    });
+                });
+
+                const cell = page.locator(
+                    '#cm-register tbody td[data-column-id="id"]'
+                );
+
+                await cell.click({ button: 'right' });
+                await expect(page.locator('.hcg-menu-item')).toHaveText([
+                    'Say hello',
+                    'Say legacy'
+                ]);
+
+                await page.locator('.hcg-menu-item', {
+                    hasText: 'Say legacy'
+                }).click();
+                await expect(cell).toHaveAttribute('data-said', 'legacy');
+
+                await cell.click({ button: 'right' });
+                await page.locator('.hcg-menu-item', {
+                    hasText: 'Say hello'
+                }).click();
+                await expect(cell).toHaveAttribute('data-said', 'new');
+            }
+        );
+
+        test(
+            'A feature can open a menu on a surface of its own',
+            async ({ page }) => {
+                // What a composition would do: listen where the element is
+                // built, then hand `open` a target of its own. No Core
+                // change, and no registered item involved.
+                await page.evaluate(async () => {
+                    document.getElementById('cm-surface')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-surface';
+                    document.body.appendChild(container);
+
+                    const grid = await (window as any).Grid.grid(container, {
+                        data: { columns: { id: ['ROW-001'] } }
+                    }, true);
+
+                    const header = container.querySelector('thead th');
+
+                    header.addEventListener('contextmenu', e => {
+                        const opened = grid.contextMenu.open(
+                            {
+                                grid,
+                                target: {
+                                    type: 'header',
+                                    cell: { htmlElement: header },
+                                    column: grid.viewport.columns[0]
+                                }
+                            },
+                            e.clientX,
+                            e.clientY,
+                            {
+                                items: [{
+                                    label: 'Sort this column',
+                                    onClick: target => {
+                                        target.htmlElement.setAttribute(
+                                            'data-acted', 'yes'
+                                        );
+                                    }
+                                }]
+                            }
+                        );
+
+                        if (opened) {
+                            e.preventDefault();
+                        }
+                    });
+                });
+
+                await page.waitForFunction(() => (
+                    document.querySelector('#cm-surface thead th') !== null
+                ));
+
+                const header = page.locator('#cm-surface thead th').first();
+                await header.click({ button: 'right' });
+
+                await expect(page.locator('.hcg-popup')).toBeVisible();
+                await expect(page.locator('.hcg-menu-item')).toHaveText([
+                    'Sort this column'
+                ]);
+
+                await page.locator('.hcg-menu-item').click();
+                await expect(header).toHaveAttribute('data-acted', 'yes');
+            }
+        );
+
+        test(
+            'A redraw closes an open menu and builds none when there is none',
+            async ({ page }) => {
+                await page.evaluate(async () => {
+                    document.getElementById('cm-redraw')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-redraw';
+                    document.body.appendChild(container);
+
+                    (window as any).cmRedrawGrid = await (window as any).Grid
+                        .grid(container, {
+                            data: {
+                                idColumn: 'id',
+                                columns: {
+                                    id: ['ROW-001'],
+                                    value: [1]
+                                }
+                            },
+                            rendering: {
+                                rows: {
+                                    pinning: { enabled: true }
+                                }
+                            }
+                        }, true);
+                });
+
+                const built = (): Promise<boolean> => page.evaluate(() => (
+                    !!(window as any).cmRedrawGrid.contextMenuInstance
+                ));
+
+                // A redraw of a grid nobody opened a menu in builds none.
+                await page.evaluate(async () => {
+                    await (window as any).cmRedrawGrid.update({
+                        columns: [{ id: 'value', className: 'redrawn' }]
+                    });
+                });
+
+                expect(await built()).toBe(false);
+
+                // One that is open goes away with the table it belongs to.
+                await page.locator(
+                    '#cm-redraw tbody tr[data-row-index="0"] ' +
+                    'td[data-column-id="id"]'
+                ).click({ button: 'right' });
+
+                await expect(page.locator('.hcg-popup')).toHaveCount(1);
+
+                await page.evaluate(async () => {
+                    await (window as any).cmRedrawGrid.update({
+                        columns: [{ id: 'value', className: 'redrawn-again' }]
+                    });
+                });
+
+                await expect(page.locator('.hcg-popup')).toHaveCount(0);
+            }
+        );
 
     });
 });
