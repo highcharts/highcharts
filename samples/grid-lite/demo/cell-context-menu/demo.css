@@ -25,78 +25,10 @@ body {
     min-width: 0;
 }
 
-.event-log {
-    --log-border-color: color-mix(in srgb, var(--highcharts-neutral-color-100) 12%, transparent);
-
-    margin: 12px 0 8px;
-    padding: 10px 12px;
-    border: 1px solid var(--log-border-color);
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--highcharts-neutral-color-100) 4%, var(--highcharts-background-color));
-}
-
-.event-log-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 8px;
-}
-
-.event-log-header button {
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: 1px solid color-mix(in srgb, var(--highcharts-neutral-color-100) 20%, transparent);
-    background: color-mix(in srgb, var(--highcharts-neutral-color-100) 8%, var(--highcharts-background-color));
-    color: inherit;
-    cursor: pointer;
-}
-
-.event-log-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    max-height: 160px;
-    overflow: auto;
-    font-family:
-        ui-monospace,
-        SFMono-Regular,
-        Menlo,
-        Monaco,
-        Consolas,
-        "Liberation Mono",
-        "Courier New",
-        monospace;
-    font-size: 12px;
-    line-height: 1.35;
-}
-
-.event-log-list li {
-    padding: 4px 0;
-    border-top: 1px dashed var(--log-border-color);
-    overflow-wrap: anywhere;
-}
-
-.event-log-list li:first-child {
-    border-top: 0;
+#status {
+    margin: 12px 0 0;
 }
 
 .highcharts-description {
     max-width: 60rem;
-    padding: 0 8px;
-}
-
-@media (max-width: 480px) {
-    .demo {
-        padding: 8px;
-    }
-
-    .event-log {
-        padding: 8px 10px;
-    }
-
-    .highcharts-description {
-        padding: 0;
-    }
 }

@@ -58,6 +58,7 @@ import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
+import ContextMenu from './ContextMenu/ContextMenu.js';
 import {
     diffObjects,
     erase,
@@ -282,6 +283,24 @@ export class Grid {
      * The list of currently shown popups.
      */
     public popups: Set<Popup> = new Set();
+
+    /**
+     * The context menu of the Grid. Call `attach` on it to give an element of
+     * your own the same menu the Grid uses for its cells.
+     *
+     * @sample grid-lite/basic/context-menu-attach Menu on your own button
+     */
+    public get contextMenu(): ContextMenu {
+        return this.contextMenuInstance || (
+            this.contextMenuInstance = new ContextMenu(this)
+        );
+    }
+
+    /**
+     * Holds the menu once something needed one, so that a Grid nobody opens a
+     * menu in never builds one.
+     */
+    private contextMenuInstance?: ContextMenu;
 
     /**
      * The render target (container) of the Grid.
@@ -1701,6 +1720,9 @@ export class Grid {
         if (onlyDOM) {
             return;
         }
+
+        // Getter can return a new instance, so using field ref instead.
+        this.contextMenuInstance?.detachAll();
 
         // Clear all properties
         Object.keys(this).forEach((key): void => {

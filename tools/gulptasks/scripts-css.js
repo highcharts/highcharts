@@ -123,6 +123,7 @@ function copyCSS(config) {
 function replaceProductVersionInFiles(folder, buildPropertiesPath) {
     const fs = require('fs');
     const path = require('path');
+    const { updateFile } = require('../libs/fs');
 
     const { version } = JSON.parse(
         fs.readFileSync(
@@ -130,19 +131,26 @@ function replaceProductVersionInFiles(folder, buildPropertiesPath) {
             'utf8'
         )
     );
-    const files = fs.readdirSync(folder);
+    const files = fs.readdirSync(folder, { withFileTypes: true });
 
     files.forEach(file => {
-        const filePath = path.join(folder, file);
-
-        if (fs.statSync(filePath).isDirectory()) {
+        if (file.isDirectory()) {
             return;
         }
 
-        const content = fs.readFileSync(filePath, 'utf8');
-        const updatedContent = content.replace(/@product\.version@/gu, version);
-
-        fs.writeFileSync(filePath, updatedContent);
+        const filePath = path.join(folder, file.name);
+        try {
+            updateFile(filePath, content =>
+                content.replace(/@product\.version@/gu, version));
+        } catch (error) {
+            // Directory symlinks are not marked as directories by readdir.
+            if (
+                !['EISDIR', 'EPERM'].includes(error.code) ||
+                !fs.statSync(filePath).isDirectory()
+            ) {
+                throw error;
+            }
+        }
     });
 }
 

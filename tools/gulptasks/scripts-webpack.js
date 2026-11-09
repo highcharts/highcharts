@@ -3,8 +3,6 @@
  */
 
 
-const FS = require('node:fs');
-const FSP = require('node:fs/promises');
 const Gulp = require('gulp');
 const Path = require('node:path');
 
@@ -46,15 +44,8 @@ async function scriptsWebpack() {
         };
     }
 
-    if (FS.existsSync('webpack.log')) {
-        await FSP.rm('webpack.log');
-    }
-
-    let config;
-    let log = '';
-
     for (const productName of Object.keys(configs)) {
-        config = Path.join('tools', 'webpacks', configs[productName]);
+        const config = Path.join('tools', 'webpacks', configs[productName]);
         const webpackCommand = `npx webpack -c ${config} --no-color`;
 
         if (argv.verbose) {
@@ -62,11 +53,11 @@ async function scriptsWebpack() {
         }
 
         try {
-            log += await ProcessLib.exec(
+            await ProcessLib.exec(
                 webpackCommand,
                 {
                     maxBuffer: 8 * 1024 * 1024,
-                    silent: argv.verbose ? 1 : 2,
+                    silent: argv.verbose ? 0 : 2,
                     timeout: 60000
                 }
             );
@@ -93,7 +84,6 @@ async function scriptsWebpack() {
                     `Showing last ${Math.min(detailLines.length, maxLines)} line(s):`
                 );
                 process.stderr.write(`${excerpt}\n`);
-                log += `${stdout}${stdout && stderr ? '\n' : ''}${stderr}\n`;
             } else {
                 LogLib.failure(
                     `Webpack failed for ${productName} (${config}), ` +
@@ -121,16 +111,9 @@ async function scriptsWebpack() {
                 // Ignore: this run is only for interactive diagnostics.
             }
 
-            if (log) {
-                await FSP.writeFile('webpack.log', log, { flag: 'a' });
-            }
-
             throw error;
         }
-
     }
-
-    await FSP.writeFile('webpack.log', log, { flag: 'a' }); // 'a' - append
 
     LogLib.success('Finished packing.');
 }

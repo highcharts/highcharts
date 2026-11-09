@@ -3,17 +3,14 @@
 <div class="demo">
     <div id="container"></div>
 
-    <div class="event-log" aria-label="Event log">
-        <div class="event-log-header">
-            <strong>Events</strong>
-            <button id="clearLog" type="button">Clear</button>
-        </div>
-        <ul id="eventLog" class="event-log-list"></ul>
-    </div>
+    <p id="status" aria-live="polite">
+        Right-click a cell to open its menu.
+    </p>
 
     <p class="highcharts-description">
-        Right-click any cell to open a custom context menu. This demo shows how
-        to provide custom actions like copying the cell value, inserting a new
-        row at the clicked position, and deleting the clicked row.
+        Right-click any cell for a menu of your own: an item with an icon, a
+        divider, and a submenu whose actions act on the cell they were opened
+        on. Grid Pro adds built-in actions for rows and columns on top of
+        these.
     </p>
 </div>

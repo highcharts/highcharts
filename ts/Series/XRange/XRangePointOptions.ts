@@ -1,0 +1,124 @@
+/* *
+ *
+ *  X-range series module
+ *
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi, Lars A. V. Cabrera
+ *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColorType from '../../Core/Color/ColorType';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface XRangePointOptions extends ColumnPointOptions {
+
+    /**
+     * A partial fill for each point, typically used to visualize how much of
+     * a task is performed. The partial fill object can be set either on series
+     * or point level. When set as a number, works as `{ amount: number }`.
+     *
+     * @sample {highcharts} highcharts/demo/x-range
+     *         X-range with partial fill
+     *
+     * @declare Highcharts.XrangePointPartialFillOptionsObject
+     *
+     * @product highcharts highstock gantt
+     */
+    partialFill?: number|XRangePointPartialFillOptions;
+
+    /**
+     * The starting X value of the range point. May be a timestamp or a date
+     * string.
+     *
+     * @sample {highcharts} highcharts/demo/x-range
+     *         X-range
+     *
+     * @product highcharts highstock gantt
+     */
+    x?: number|string;
+
+    /**
+     * The ending X value of the range point. May be a timestamp or a date
+     * string.
+     *
+     * @sample {highcharts} highcharts/demo/x-range
+     *         X-range
+     *
+     * @product highcharts highstock gantt
+     */
+    x2?: number|string;
+
+    /**
+     * The Y value of the range point.
+     *
+     * @sample {highcharts} highcharts/demo/x-range
+     *         X-range
+     *
+     * @product highcharts highstock gantt
+     */
+    y?: (number|null);
+
+}
+
+/**
+ * @optionparent series.xrange.data.partialFill
+ */
+export interface XRangePointPartialFillOptions {
+
+    /**
+     * The amount of the X-range point to be filled. Values can be 0-1 and are
+     * converted to percentages in the default data label formatter.
+     *
+     * @product highcharts highstock gantt
+     */
+    amount?: number;
+
+    /**
+     * The fill color to be used for partial fills. Defaults to a darker shade
+     * of the point color.
+     *
+     * @product highcharts highstock gantt
+     */
+    fill?: ColorType;
+
+    /** @internal */
+    height?: number;
+
+    /** @internal */
+    r?: number;
+
+    /** @internal */
+    width?: number;
+
+    /** @internal */
+    x?: number;
+
+    /** @internal */
+    y?: (number|null);
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default XRangePointOptions;
