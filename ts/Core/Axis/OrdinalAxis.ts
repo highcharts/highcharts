@@ -626,10 +626,9 @@ namespace OrdinalAxis {
                     xAxis.translationSlope *
                     (xAxis.ordinal.slope || (closestPointRange as any))
                 ),
+                movedPixels = lastPanX - chartX,
                 // How many ordinal units did we move?
-                movedUnits = Math.round(
-                    (lastPanX - chartX) / pointPixelWidth
-                ),
+                movedUnits = Math.round(movedPixels / pointPixelWidth),
                 // Get index of all the chart's points
                 extendedOrdinalPositions = xAxis.ordinal.getExtendedPositions(),
                 extendedAxis = {
@@ -643,10 +642,12 @@ namespace OrdinalAxis {
             let trimmedRange,
                 ordinalPositions;
 
-            // Make sure panning to the edges does not decrease the zoomed range
+            // Make sure panning to the edges does not decrease the zoomed
+            // range. Check the unrounded direction, so that small movements
+            // away from the edge, like a mouse wheel notch, are not blocked.
             if (
-                (min <= dataMin && movedUnits <= 0) ||
-                (max >= dataMax + overscroll && movedUnits >= 0)
+                (min <= dataMin && movedPixels <= 0) ||
+                (max >= dataMax + overscroll && movedPixels >= 0)
             ) {
                 // At the x-axis data edge, with vertical panning enabled, fall
                 // back to the base pan so the y-axis can still be panned,
