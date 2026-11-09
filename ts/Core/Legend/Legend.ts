@@ -1102,10 +1102,13 @@ class Legend {
      *
      * @internal
      * @function Highcharts.Legend#adjustMargins
-     * @param {Array<number>} margin
+     * @param {Array<(number|undefined)>} margin
      * @param {Array<number>} spacing
      */
-    public adjustMargins(margin: Array<number>, spacing: Array<number>): void {
+    public adjustMargins(
+        margin: Array<number|undefined>,
+        spacing: Array<number>
+    ): void {
         const chart = this.chart,
             options = this.options,
             alignment = this.getAlignment();

@@ -538,7 +538,7 @@ class Chart {
     public locale?: string|Array<string>;
 
     /** @internal */
-    public margin!: Array<number>;
+    public margin!: Array<number|undefined>;
 
     /** @internal */
     public marginBottom?: number;
@@ -2644,34 +2644,24 @@ class Chart {
             halfWidth = Math.round(plotBorderWidth) / 2;
 
         // Create margin and spacing array
-        (['margin', 'spacing'] as ('margin'|'spacing')[]).forEach((
-            target
-        ): void => {
+        for (const target of ['margin', 'spacing'] as const) {
             const value = chartOptions[target],
                 values = isObject(value) ? value : [value, value, value, value];
 
-            ([
-                'Top',
-                'Right',
-                'Bottom',
-                'Left'
-            ] as ('Top'|'Right'|'Bottom'|'Left')[]
-            ).forEach((sideName, side): void => {
+            (['Top', 'Right', 'Bottom', 'Left'] as const).forEach((
+                sideName,
+                side
+            ): void => {
                 const optionValue = chartOptions[`${target}${sideName}`] ??
                     values[side];
-                if (!defined(optionValue)) {
-                    chart[target][side] = optionValue as any;
-                } else {
-                    const base = side % 2 ? // Right or Left
-                        chart.chartWidth :
-                        chart.chartHeight;
-                    chart[target][side] = chart.relativeLength(
+                chart[target][side] = defined(optionValue) ?
+                    chart.relativeLength(
                         optionValue,
-                        base || 0
-                    );
-                }
+                        // Right or Left relates to chart width
+                        side % 2 ? chart.chartWidth : chart.chartHeight
+                    ) : void 0;
             });
-        });
+        }
 
         // Set margin names like chart.plotTop, chart.plotLeft,
         // chart.marginRight, chart.marginBottom.

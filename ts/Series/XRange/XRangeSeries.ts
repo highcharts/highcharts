@@ -52,8 +52,7 @@ import {
     isNumber,
     isObject,
     merge,
-    pushUnique,
-    relativeLength
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -369,15 +368,13 @@ class XRangeSeries extends ColumnSeries {
             width = x2 - x;
 
         const r = Math.min(
-            relativeLength(
+            this.chart.relativeLength(
                 (
                     typeof borderRadius === 'object' ?
                         (borderRadius as any).radius :
                         borderRadius || 0
                 ),
-                pointHeight,
-                void 0,
-                this.chart.renderTo
+                pointHeight
             ),
             Math.min(width, pointHeight) / 2
         );
