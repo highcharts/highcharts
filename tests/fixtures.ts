@@ -13,7 +13,7 @@ import type Highcharts from '~code/esm/highcharts.src';
 
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { join, extname } from 'node:path/posix';
+import { basename, join, extname } from 'node:path/posix';
 import { isDeepStrictEqual } from 'node:util';
 
 import { test as base } from '@playwright/test';
@@ -455,12 +455,13 @@ export async function setupRoutes(page: Page){
     if (!process.env.NO_REWRITES) {
         const routes: RouteType[] = [
             {
-                pattern: '**/code.highcharts.com/connectors/morningstar/**',
-                handler: replaceMorningstarConnectors
-            },
-            {
                 pattern: '**/code.highcharts.com/**',
                 handler: replaceHCCode
+            },
+            {
+                // After the route above: the last registered route runs first
+                pattern: '**/code.highcharts.com/connectors/morningstar/**',
+                handler: replaceMorningstarConnectors
             },
             {
                 pattern: '**/cdn.jsdelivr.net/npm/@highcharts/**',
@@ -483,10 +484,18 @@ export async function setupRoutes(page: Page){
                         localPath = join('code', 'grid', 'grid-lite.src.js');
                     } else if (relativePath === 'grid-pro/grid-pro.js') {
                         localPath = join('code', 'grid', 'grid-pro.src.js');
-                    } else if (relativePath === 'grid-lite/grid-lite.css') {
-                        localPath = join('css', 'grid', 'grid-lite.css');
-                    } else if (relativePath === 'grid-pro/grid-pro.css') {
-                        localPath = join('css', 'grid', 'grid-pro.css');
+                    } else if (
+                        relativePath.startsWith('grid-lite/') &&
+                        relativePath.endsWith('.css')
+                    ) {
+                        // grid-lite.css and the files it imports
+                        localPath = join('css', 'grid', basename(relativePath));
+                    } else if (
+                        relativePath.startsWith('grid-pro/') &&
+                        relativePath.endsWith('.css')
+                    ) {
+                        // grid-pro.css and the files it imports
+                        localPath = join('css', 'grid', basename(relativePath));
                     } else {
                         await route.abort();
                         return;
