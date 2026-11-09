@@ -629,6 +629,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     'xAxis.accessibility': [
         'modules/accessibility'
     ],
+    'xAxis.breaks': [
+        'modules/broken-axis'
+    ],
     'xAxis.currentDateIndicator': [
         'modules/current-date-indicator'
     ],
