@@ -4286,6 +4286,7 @@ class Chart {
                     horiz,
                     len,
                     minPointOffset = 0,
+                    minPixelPadding = 0,
                     options,
                     reversed
                 } = axis,
@@ -4321,26 +4322,21 @@ class Chart {
 
             // Adjust offset to ensure selection zoom triggers correctly
             // (#22945)
-            // Set offset to 0 for ordinal axis only when zooming out, (#24545).
+            // Ordinal axes skip offset. Padding must go through
+            // toValue (before conversion), not after
+            // (#21484, #24545, #24563, #23407).
             const offset = (
-                selection || axis.chart.polar ||
-                (axis.isOrdinal && scale <= 1)
-            ) ?
-                0 :
-                (minPointOffset * pointRangeDirection || 0);
-
-            let eventMin = axis.toValue(minPx, true),
-                eventMax = axis.toValue(minPx + len / scale, true);
-
-            // Ordinal `toValue` is non-linear. On a small zoom-in,
-            // the range can come out wider than the current extremes,
-            // which feels like zooming out. Clamp, so zoom-in cannot
-            // expand past the visible min/max (#24563).
-            if (axis.isOrdinal && scale > 1) {
-                const { min, max } = axis.getExtremes();
-                eventMin = Math.max(eventMin, min);
-                eventMax = Math.min(eventMax, max);
-            }
+                    selection || axis.chart.polar || axis.isOrdinal
+                ) ?
+                    0 :
+                    (minPointOffset * pointRangeDirection || 0),
+                // Apply pixel padding (offset) before ordinal toValue (#24563).
+                minPxOffset = (axis.isOrdinal && minPixelPadding) || 0,
+                eventMin = axis.toValue(minPx + minPxOffset, true),
+                eventMax = axis.toValue(
+                    minPx + len / scale - minPxOffset,
+                    true
+                );
 
             let newMin = eventMin + offset,
                 newMax = eventMax - offset,
