@@ -23,6 +23,14 @@ const cases: Array<[object, Array<string>]> = [
         ['modules/marker-clusters']
     ],
 
+    // Options in arrays, and axis options documented for xAxis only
+    [{ yAxis: [{ resize: {} }, {}] }, ['modules/drag-panes']],
+    [
+        { series: [{ type: 'pie', dataLabels: [{ textPath: {} }] }] },
+        ['modules/textpath']
+    ],
+    [{ yAxis: { grid: {} } }, ['modules/grid-axis']],
+
     // Series types: dependencies first, modules instead of product bundles
     [{ series: [{ type: 'tilemap' }] }, ['modules/heatmap', 'modules/tilemap']],
     [{ series: [{ type: 'gantt' }] }, ['modules/gantt']],
