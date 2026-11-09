@@ -39,8 +39,7 @@ import type { DeepPartial } from '../../Shared/Types';
 
 import AST from '../Renderer/HTML/AST.js';
 import { animObject } from '../Animation/AnimationUtilities.js';
-import D from '../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Defaults.js';
 import F from '../Templating.js';
 const { format } = F;
 import {
@@ -737,6 +736,11 @@ class Point {
              * @internal
              */
             const destroyPoint = (): void => {
+                const i = series.condemnedPoints?.indexOf(point) ?? -1;
+                if (i > -1) {
+                    series.condemnedPoints.splice(i, 1);
+                }
+
                 // Remove all events and elements
                 if (
                     point.graphic ||
@@ -766,8 +770,8 @@ class Point {
                 if (!hoverPoints.length) {
                     chart.hoverPoints = void 0;
                 }
-
             }
+
             if (point === chart.hoverPoint) {
                 point.onMouseOut();
             }

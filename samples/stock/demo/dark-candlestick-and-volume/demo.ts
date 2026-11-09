@@ -30,56 +30,39 @@
     }
 
     Highcharts.setOptions({
-        chart: {
-            backgroundColor: '#0a0a0a'
-        },
-        title: {
-            style: {
-                color: '#cccccc'
+        palette: {
+            colorScheme: 'dark',
+            dark: {
+                backgroundColor: '#0a0a0a'
             }
         },
         xAxis: {
-            gridLineColor: '#181816',
+            gridLineColor: 'var(--highcharts-neutral-color-5)',
             labels: {
                 style: {
-                    color: '#9d9da2'
+                    color: 'var(--highcharts-neutral-color-60)'
                 }
             }
         },
         yAxis: {
-            gridLineColor: '#181816',
+            gridLineColor: 'var(--highcharts-neutral-color-5)',
             labels: {
                 style: {
-                    color: '#9d9da2'
+                    color: 'var(--highcharts-neutral-color-60)'
                 }
             }
         },
         tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            style: {
-                color: '#cdcdc9'
-            }
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
         },
         scrollbar: {
-            barBackgroundColor: '#464646',
             barBorderRadius: 0,
             barBorderWidth: 0,
             buttonBorderWidth: 0,
-            buttonArrowColor: '#cccccc',
-            rifleColor: '#cccccc',
-            trackBackgroundColor: '#121211',
+            rifleColor: 'var(--highcharts-neutral-color-80)',
+            trackBackgroundColor: 'var(--highcharts-neutral-color-3)',
             trackBorderRadius: 0,
-            trackBorderWidth: 1,
-            trackBorderColor: '#464646'
-        },
-        exporting: {
-            buttons: {
-                contextButton: {
-                    theme: {
-                        fill: '#121211'
-                    }
-                }
-            }
+            trackBorderWidth: 1
         }
     });
 
