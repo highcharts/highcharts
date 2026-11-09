@@ -3,6 +3,7 @@
  */
 
 const gulp = require('gulp');
+const { updateFile } = require('../../libs/fs');
 
 /* *
  *
@@ -83,19 +84,13 @@ function fetchGridVersion() {
  * Map of class names to their TypeDoc page paths.
  */
 function postProcessApiJS(gridDir, classMap) {
-    const fs = require('fs');
     const path = require('path');
 
     const apiJsPath = path.join(gridDir, 'api.js');
-    if (!fs.existsSync(apiJsPath)) {
-        return;
-    }
-
-    let content = fs.readFileSync(apiJsPath, 'utf8');
-
-    // Inject Grid class reference map and an extended URL resolver
-    const gridClassMap = JSON.stringify(classMap);
-    const injection = `
+    updateFile(apiJsPath, content => {
+        // Inject Grid class reference map and an extended URL resolver
+        const gridClassMap = JSON.stringify(classMap);
+        const injection = `
   var gridClassMap = ${gridClassMap};
 
   function formatGridDocText(text, asHTML) {
@@ -123,119 +118,120 @@ function postProcessApiJS(gridDir, classMap) {
   }
 `;
 
-    // Replace getClassReferenceUrl to also check Grid classes
-    content = content.replace(
-        /function getClassReferenceUrl\(type\) \{/u,
-        injection + '\n  function getClassReferenceUrl(type) {\n' +
-        '    var gridUrl = getGridClassReferenceUrl(type);\n' +
-        '    if (gridUrl) return gridUrl;\n'
-    );
+        // Replace getClassReferenceUrl to also check Grid classes
+        content = content.replace(
+            /function getClassReferenceUrl\(type\) \{/u,
+            injection + '\n  function getClassReferenceUrl(type) {\n' +
+            '    var gridUrl = getGridClassReferenceUrl(type);\n' +
+            '    if (gridUrl) return gridUrl;\n'
+        );
 
-    // In the right option panel, render string defaults with single quotes.
-    // Keep sidebar rendering unchanged.
-    content = content.replace(
-        /'Defaults to <code>' \+ defaultHTML \+ '<\/code>\.',/gu,
-        '\'Defaults to <code>\' + formatGridOptionDefault(def, defaultHTML) + \'</code>.\','
-    );
-    content = content.replace(
-        /function createOption\(target, def, parentDef, state, origState\) \{/u,
-        'function formatGridOptionDefault(def, defaultHTML) {\n' +
-        '  var typeNames = def && def.typeList && def.typeList.names;\n' +
-        '  if (\n' +
-        '    Array.isArray(typeNames) &&\n' +
-        '    typeNames.indexOf(\'string\') !== -1 &&\n' +
-        '    defaultHTML !== \'undefined\' &&\n' +
-        '    defaultHTML !== \'null\' &&\n' +
-        '    !/^(&quot;|&#39;|\\\\\'|")/.test(defaultHTML)\n' +
-        '  ) {\n' +
-        '    return \'\\\'\' + defaultHTML + \'\\\'\';\n' +
-        '  }\n' +
-        '  return defaultHTML;\n' +
-        '}\n\n' +
-        'function createOption(target, def, parentDef, state, origState) {'
-    );
+        // In the right option panel, render string defaults with single quotes.
+        // Keep sidebar rendering unchanged.
+        content = content.replace(
+            /'Defaults to <code>' \+ defaultHTML \+ '<\/code>\.',/gu,
+            '\'Defaults to <code>\' + formatGridOptionDefault(def, defaultHTML) + \'</code>.\','
+        );
+        content = content.replace(
+            /function createOption\(target, def, parentDef, state, origState\) \{/u,
+            'function formatGridOptionDefault(def, defaultHTML) {\n' +
+            '  var typeNames = def && def.typeList && def.typeList.names;\n' +
+            '  if (\n' +
+            '    Array.isArray(typeNames) &&\n' +
+            '    typeNames.indexOf(\'string\') !== -1 &&\n' +
+            '    defaultHTML !== \'undefined\' &&\n' +
+            '    defaultHTML !== \'null\' &&\n' +
+            '    !/^(&quot;|&#39;|\\\\\'|")/.test(defaultHTML)\n' +
+            '  ) {\n' +
+            '    return \'\\\'\' + defaultHTML + \'\\\'\';\n' +
+            '  }\n' +
+            '  return defaultHTML;\n' +
+            '}\n\n' +
+            'function createOption(target, def, parentDef, state, origState) {'
+        );
 
-    // Display discriminator-based branches in the same "{ type: ..., ... }"
-    // style used by series-type branches in the left navigation tree.
-    content = content.replace(
-        /\/\^series\\\.\[a-z0-9\]\+\$\/\.test\(def\.fullname\)/u,
-        '/(^series\\.[a-z0-9]+$)|(^.*renderer\\.[A-Za-z0-9]+$)|(^data\\.[a-z0-9]+$)|(^.*connector\\.[A-Za-z0-9]+$)|(^.*treeView\\.input\\.[A-Za-z0-9]+$)/.test(def.fullname)'
-    );
+        // Display discriminator-based branches in the same "{ type: ..., ... }"
+        // style used by series-type branches in the left navigation tree.
+        content = content.replace(
+            /\/\^series\\\.\[a-z0-9\]\+\$\/\.test\(def\.fullname\)/u,
+            '/(^series\\.[a-z0-9]+$)|(^.*renderer\\.[A-Za-z0-9]+$)|(^data\\.[a-z0-9]+$)|(^.*connector\\.[A-Za-z0-9]+$)|(^.*treeView\\.input\\.[A-Za-z0-9]+$)/.test(def.fullname)'
+        );
 
-    // For data provider branches, use `providerType` as discriminator key.
-    content = content.replace(
-        /title\.innerHTML = '\{ <span class="type-item">type: "' \+ def\.name \+ '",<\/span>';/u,
-        'var discriminatorKey = /^data\\.[a-z0-9]+$/.test(def.fullname) ? \'providerType\' : \'type\';\n' +
-        '        title.innerHTML = \'{ <span class="type-item">\' + discriminatorKey + \': "\' + def.name + \'",</span>\';'
-    );
-    // Mark Grid Pro-only options in the right panel and option header.
-    content = content.replace(
-        /deprecated,\n\s+since,/u,
-        'deprecated,\n      proOnly,\n      since,'
-    );
-    content = content.replace(
-        /deprecated,\n\s+description,/u,
-        'deprecated,\n          proOnly,\n          description,'
-    );
-    content = content.replace(
-        /deprecated,\n\s+description =/u,
-        'deprecated,\n          proOnly,\n          description ='
-    );
-    content = content.replace(
-        /samples = getSampleList\(def\);/u,
-        'if (def.product === \'gridpro\') {\n' +
-        '      proOnly = cr(\'p\', \'pro-only\', \'Grid Pro only\');\n' +
-        '      option.setAttribute(\n' +
-        '        \'class\', option.getAttribute(\'class\') + \' gridpro-only\'\n' +
-        '      );\n' +
-        '    }\n\n' +
-        '    samples = getSampleList(def);'
-    );
-    content = content.replace(
-        /if \(def\.deprecated\) \{\n\s+deprecated = cr\('p', 'deprecated', 'Deprecated' \+ \(\n\s+def\.deprecated === true \? '' : ' ' \+ def\.deprecated\n\s+\)\);\n\s+option\.setAttribute\(\n\s+'class', option\.getAttribute\('class'\) \+ ' deprecated'\n\s+\);\n\s+\}\n\n\s+state\.split/u,
-        'if (def.deprecated) {\n' +
-        '          deprecated = cr(\'p\', \'deprecated\', \'Deprecated\' + (\n' +
-        '            def.deprecated === true ? \'\' : \' \' + formatGridDocText(def.deprecated, true)\n' +
-        '          ), true);\n' +
-        '          option.setAttribute(\n' +
-        '            \'class\', option.getAttribute(\'class\') + \' deprecated\'\n' +
-        '          );\n' +
-        '        }\n' +
-        '        if (def.product === \'gridpro\') {\n' +
-        '          proOnly = cr(\'p\', \'pro-only\', \'Grid Pro only\');\n' +
-        '          option.setAttribute(\n' +
-        '            \'class\', option.getAttribute(\'class\') + \' gridpro-only\'\n' +
-        '          );\n' +
-        '        }\n\n' +
-        '        state.split'
-    );
-    // Add a Grid Pro marker in the left sidebar nodes.
-    content = content.replace(
-        /expanded = false,\n\s+hasNext = false;/u,
-        'expanded = false,\n      hasNext = false,\n      proBadge;'
-    );
-    content = content.replace(
-        /if \(def\.deprecated\) \{\n\s+node\.className \+= ' deprecated';\n\s+\}/u,
-        'if (def.deprecated) {\n' +
-        '      node.className += \' deprecated\';\n' +
-        '    }\n' +
-        '    if (def.product === \'gridpro\') {\n' +
-        '      node.className += \' gridpro-only\';\n' +
-        '      proBadge = cr(\'span\', \'product-badge\', \'Pro\');\n' +
-        '    }'
-    );
-    content = content.replace(
-        /ap\(\n\s+title,\n\s+arrow\n\s+\)/u,
-        'ap(\n          title,\n          proBadge,\n          arrow\n        )'
-    );
-    content = content.replace(
-        /deprecated = cr\('p', 'deprecated', 'Deprecated' \+ \(\n\s+def\.deprecated === true \? '' : ' ' \+ def\.deprecated\n\s+\)\);/gu,
-        'deprecated = cr(\'p\', \'deprecated\', \'Deprecated\' + (\n' +
-        '            def.deprecated === true ? \'\' : \' \' + formatGridDocText(def.deprecated, true)\n' +
-        '          ), true);'
-    );
+        // For data provider branches, use `providerType` as discriminator key.
+        content = content.replace(
+            /title\.innerHTML = '\{ <span class="type-item">type: "' \+ def\.name \+ '",<\/span>';/u,
+            'var discriminatorKey = /^data\\.[a-z0-9]+$/.test(def.fullname) ? \'providerType\' : \'type\';\n' +
+            '        title.innerHTML = \'{ <span class="type-item">\' + discriminatorKey + \': "\' + def.name + \'",</span>\';'
+        );
+        // Mark Grid Pro-only options in the right panel and option header.
+        content = content.replace(
+            /deprecated,\n\s+since,/u,
+            'deprecated,\n      proOnly,\n      since,'
+        );
+        content = content.replace(
+            /deprecated,\n\s+description,/u,
+            'deprecated,\n          proOnly,\n          description,'
+        );
+        content = content.replace(
+            /deprecated,\n\s+description =/u,
+            'deprecated,\n          proOnly,\n          description ='
+        );
+        content = content.replace(
+            /samples = getSampleList\(def\);/u,
+            'if (def.product === \'gridpro\') {\n' +
+            '      proOnly = cr(\'p\', \'pro-only\', \'Grid Pro only\');\n' +
+            '      option.setAttribute(\n' +
+            '        \'class\', option.getAttribute(\'class\') + \' gridpro-only\'\n' +
+            '      );\n' +
+            '    }\n\n' +
+            '    samples = getSampleList(def);'
+        );
+        content = content.replace(
+            /if \(def\.deprecated\) \{\n\s+deprecated = cr\('p', 'deprecated', 'Deprecated' \+ \(\n\s+def\.deprecated === true \? '' : ' ' \+ def\.deprecated\n\s+\)\);\n\s+option\.setAttribute\(\n\s+'class', option\.getAttribute\('class'\) \+ ' deprecated'\n\s+\);\n\s+\}\n\n\s+state\.split/u,
+            'if (def.deprecated) {\n' +
+            '          deprecated = cr(\'p\', \'deprecated\', \'Deprecated\' + (\n' +
+            '            def.deprecated === true ? \'\' : \' \' + formatGridDocText(def.deprecated, true)\n' +
+            '          ), true);\n' +
+            '          option.setAttribute(\n' +
+            '            \'class\', option.getAttribute(\'class\') + \' deprecated\'\n' +
+            '          );\n' +
+            '        }\n' +
+            '        if (def.product === \'gridpro\') {\n' +
+            '          proOnly = cr(\'p\', \'pro-only\', \'Grid Pro only\');\n' +
+            '          option.setAttribute(\n' +
+            '            \'class\', option.getAttribute(\'class\') + \' gridpro-only\'\n' +
+            '          );\n' +
+            '        }\n\n' +
+            '        state.split'
+        );
+        // Add a Grid Pro marker in the left sidebar nodes.
+        content = content.replace(
+            /expanded = false,\n\s+hasNext = false;/u,
+            'expanded = false,\n      hasNext = false,\n      proBadge;'
+        );
+        content = content.replace(
+            /if \(def\.deprecated\) \{\n\s+node\.className \+= ' deprecated';\n\s+\}/u,
+            'if (def.deprecated) {\n' +
+            '      node.className += \' deprecated\';\n' +
+            '    }\n' +
+            '    if (def.product === \'gridpro\') {\n' +
+            '      node.className += \' gridpro-only\';\n' +
+            '      proBadge = cr(\'span\', \'product-badge\', \'Pro\');\n' +
+            '    }'
+        );
+        content = content.replace(
+            /ap\(\n\s+title,\n\s+arrow\n\s+\)/u,
+            'ap(\n          title,\n          proBadge,\n          arrow\n        )'
+        );
+        content = content.replace(
+            /deprecated = cr\('p', 'deprecated', 'Deprecated' \+ \(\n\s+def\.deprecated === true \? '' : ' ' \+ def\.deprecated\n\s+\)\);/gu,
+            'deprecated = cr(\'p\', \'deprecated\', \'Deprecated\' + (\n' +
+            '            def.deprecated === true ? \'\' : \' \' + formatGridDocText(def.deprecated, true)\n' +
+            '          ), true);'
+        );
 
-    fs.writeFileSync(apiJsPath, content, 'utf8');
+        return content;
+    }, { optional: true });
 }
 
 
@@ -246,81 +242,76 @@ function postProcessApiJS(gridDir, classMap) {
  * Path to the Grid API docs output directory.
  */
 function postProcessCSS(gridDir) {
-    const fs = require('fs');
     const path = require('path');
     const stylePath = path.join(gridDir, 'style.css');
 
-    if (!fs.existsSync(stylePath)) {
-        return;
-    }
+    updateFile(stylePath, content => {
+        content = content.replace(
+            /^\.option-header h1 \{/gmu,
+            '#option-list .option-header h1 {'
+        );
+        content = content.replace(
+            /^\.option-header h1 span \{/gmu,
+            '#option-list .option-header h1 span {'
+        );
+        content = content.replace(
+            /^\.option-header, \.option \{/gmu,
+            '#option-list .option-header, #option-list .option {'
+        );
+        // Keep DOM structure intact, but hide the legacy global-options snippet.
+        content += '\n#option-trees-wrapper .global-options.options-tree { display: none; }\n';
+        // Make deprecated options easier to spot in both sidebar and details panel.
+        content += '\n' +
+            '.options-tree .deprecated > .title,\n' +
+            '.options-tree .deprecated > .title .type-item,\n' +
+            '.option.deprecated > .title,\n' +
+            '.option.deprecated > .title a,\n' +
+            '.option.deprecated > .title .type-list,\n' +
+            '.option.deprecated > .title .type-list a {\n' +
+            '  text-decoration: line-through;\n' +
+            '  text-decoration-thickness: from-font;\n' +
+            '}\n';
+        content += '\n' +
+            ':root {\n' +
+            '  --grid-pro-badge-border: #8f5fff;\n' +
+            '  --grid-pro-badge-text: #5b3bb8;\n' +
+            '  --grid-pro-badge-bg: #f2ecff;\n' +
+            '}\n' +
+            '@media (prefers-color-scheme: dark) {\n' +
+            '  :root {\n' +
+            '    --grid-pro-badge-border: #b8a3ff;\n' +
+            '    --grid-pro-badge-text: #f0eaff;\n' +
+            '    --grid-pro-badge-bg: #45326f;\n' +
+            '  }\n' +
+            '}\n' +
+            '.product-badge,\n' +
+            '.pro-only {\n' +
+            '  display: inline-block;\n' +
+            '  margin-left: 8px;\n' +
+            '  padding: 1px 6px;\n' +
+            '  border-radius: 10px;\n' +
+            '  border: 1px solid var(--grid-pro-badge-border);\n' +
+            '  color: var(--grid-pro-badge-text);\n' +
+            '  background: var(--grid-pro-badge-bg);\n' +
+            '  font-size: 0.72em;\n' +
+            '  font-weight: 600;\n' +
+            '  text-decoration: none;\n' +
+            '  vertical-align: middle;\n' +
+            '}\n' +
+            '.options-tree .product-badge {\n' +
+            '  margin-left: 6px;\n' +
+            '}\n' +
+            // Show sidebar Pro marker only at the first pro boundary level.
+            '.options-tree .node.gridpro-only .children .node.gridpro-only > .title .product-badge {\n' +
+            '  display: none;\n' +
+            '}\n' +
+            '.option .pro-only {\n' +
+            '  float: right;\n' +
+            '  margin-top: 2px;\n' +
+            '}\n';
 
-    let content = fs.readFileSync(stylePath, 'utf8');
-
-    content = content.replace(
-        /^\.option-header h1 \{/gmu,
-        '#option-list .option-header h1 {'
-    );
-    content = content.replace(
-        /^\.option-header h1 span \{/gmu,
-        '#option-list .option-header h1 span {'
-    );
-    content = content.replace(
-        /^\.option-header, \.option \{/gmu,
-        '#option-list .option-header, #option-list .option {'
-    );
-    // Keep DOM structure intact, but hide the legacy global-options snippet.
-    content += '\n#option-trees-wrapper .global-options.options-tree { display: none; }\n';
-    // Make deprecated options easier to spot in both sidebar and details panel.
-    content += '\n' +
-        '.options-tree .deprecated > .title,\n' +
-        '.options-tree .deprecated > .title .type-item,\n' +
-        '.option.deprecated > .title,\n' +
-        '.option.deprecated > .title a,\n' +
-        '.option.deprecated > .title .type-list,\n' +
-        '.option.deprecated > .title .type-list a {\n' +
-        '  text-decoration: line-through;\n' +
-        '  text-decoration-thickness: from-font;\n' +
-        '}\n';
-    content += '\n' +
-        ':root {\n' +
-        '  --grid-pro-badge-border: #8f5fff;\n' +
-        '  --grid-pro-badge-text: #5b3bb8;\n' +
-        '  --grid-pro-badge-bg: #f2ecff;\n' +
-        '}\n' +
-        '@media (prefers-color-scheme: dark) {\n' +
-        '  :root {\n' +
-        '    --grid-pro-badge-border: #b8a3ff;\n' +
-        '    --grid-pro-badge-text: #f0eaff;\n' +
-        '    --grid-pro-badge-bg: #45326f;\n' +
-        '  }\n' +
-        '}\n' +
-        '.product-badge,\n' +
-        '.pro-only {\n' +
-        '  display: inline-block;\n' +
-        '  margin-left: 8px;\n' +
-        '  padding: 1px 6px;\n' +
-        '  border-radius: 10px;\n' +
-        '  border: 1px solid var(--grid-pro-badge-border);\n' +
-        '  color: var(--grid-pro-badge-text);\n' +
-        '  background: var(--grid-pro-badge-bg);\n' +
-        '  font-size: 0.72em;\n' +
-        '  font-weight: 600;\n' +
-        '  text-decoration: none;\n' +
-        '  vertical-align: middle;\n' +
-        '}\n' +
-        '.options-tree .product-badge {\n' +
-        '  margin-left: 6px;\n' +
-        '}\n' +
-        // Show sidebar Pro marker only at the first pro boundary level.
-        '.options-tree .node.gridpro-only .children .node.gridpro-only > .title .product-badge {\n' +
-        '  display: none;\n' +
-        '}\n' +
-        '.option .pro-only {\n' +
-        '  float: right;\n' +
-        '  margin-top: 2px;\n' +
-        '}\n';
-
-    fs.writeFileSync(stylePath, content, 'utf8');
+        return content;
+    }, { optional: true });
 }
 
 /**
@@ -367,8 +358,8 @@ function postProcessJSONArtifacts(gridDir) {
     }
 
     const treePath = path.join(gridDir, 'tree.json');
-    if (fs.existsSync(treePath)) {
-        const treeData = JSON.parse(fs.readFileSync(treePath, 'utf8'));
+    updateFile(treePath, content => {
+        const treeData = JSON.parse(content);
         delete treeData.plotOptions;
         delete treeData.series;
 
@@ -379,21 +370,21 @@ function postProcessJSONArtifacts(gridDir) {
             collectProducts(node);
         }
 
-        fs.writeFileSync(treePath, JSON.stringify(treeData), 'utf8');
-    }
+        return JSON.stringify(treeData);
+    }, { optional: true });
 
     const searchPath = path.join(gridDir, 'search.json');
-    if (fs.existsSync(searchPath)) {
-        const searchData = JSON.parse(fs.readFileSync(searchPath, 'utf8'));
+    updateFile(searchPath, content => {
+        const searchData = JSON.parse(content);
         const filtered = searchData.filter(
             entry => !entry.startsWith('plotOptions') && !entry.startsWith('series')
         );
-        fs.writeFileSync(searchPath, JSON.stringify(filtered), 'utf8');
-    }
+        return JSON.stringify(filtered);
+    }, { optional: true });
 
     const navPath = path.join(gridDir, 'nav/index.json');
-    if (fs.existsSync(navPath)) {
-        const navData = JSON.parse(fs.readFileSync(navPath, 'utf8'));
+    updateFile(navPath, content => {
+        const navData = JSON.parse(content);
         if (Array.isArray(navData.children)) {
             navData.children = navData.children.filter(
                 entry => (
@@ -403,8 +394,8 @@ function postProcessJSONArtifacts(gridDir) {
                 )
             );
         }
-        fs.writeFileSync(navPath, JSON.stringify(navData), 'utf8');
-    }
+        return JSON.stringify(navData);
+    }, { optional: true });
 
     const navDir = path.join(gridDir, 'nav');
     if (fs.existsSync(navDir)) {
@@ -414,21 +405,23 @@ function postProcessJSONArtifacts(gridDir) {
             }
 
             const filePath = path.join(navDir, file);
-            const json = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-            const nodeName = file.replace(/\.json$/u, '');
+            updateFile(filePath, content => {
+                const json = JSON.parse(content);
+                const nodeName = file.replace(/\.json$/u, '');
 
-            if (typeof productByFullname[nodeName] === 'string') {
-                json.product = productByFullname[nodeName];
-            }
-            annotateEntry(json);
+                if (typeof productByFullname[nodeName] === 'string') {
+                    json.product = productByFullname[nodeName];
+                }
+                annotateEntry(json);
 
-            fs.writeFileSync(filePath, JSON.stringify(json), 'utf8');
+                return JSON.stringify(json);
+            }, { optional: true });
         }
     }
 
     const dumpPath = path.join(gridDir, 'dump.json');
-    if (fs.existsSync(dumpPath)) {
-        const dumpData = JSON.parse(fs.readFileSync(dumpPath, 'utf8'));
+    updateFile(dumpPath, content => {
+        const dumpData = JSON.parse(content);
         const filtered = dumpData.filter(
             entry => (
                 entry &&
@@ -436,8 +429,8 @@ function postProcessJSONArtifacts(gridDir) {
                 entry.fullname !== 'series'
             )
         );
-        fs.writeFileSync(dumpPath, JSON.stringify(filtered), 'utf8');
-    }
+        return JSON.stringify(filtered);
+    }, { optional: true });
 }
 
 /**
@@ -447,26 +440,21 @@ function postProcessJSONArtifacts(gridDir) {
  * Path to the Grid API docs output directory.
  */
 function postProcessSitemap(gridDir) {
-    const fs = require('fs');
     const path = require('path');
     const sitemapPath = path.join(gridDir, 'sitemap.xml');
 
-    if (!fs.existsSync(sitemapPath)) {
-        return;
-    }
+    updateFile(sitemapPath, content => {
+        content = content.replace(
+            /https:\/\/api\.highcharts\.com\/highcharts\//gu,
+            'https://api.highcharts.com/grid/'
+        );
+        content = content.replace(
+            /<url><loc>[^<]*\/(?:plotOptions|series)(?:\.[^<]*)?<\/loc><priority>[^<]*<\/priority><\/url>/gu,
+            ''
+        );
 
-    let content = fs.readFileSync(sitemapPath, 'utf8');
-
-    content = content.replace(
-        /https:\/\/api\.highcharts\.com\/highcharts\//gu,
-        'https://api.highcharts.com/grid/'
-    );
-    content = content.replace(
-        /<url><loc>[^<]*\/(?:plotOptions|series)(?:\.[^<]*)?<\/loc><priority>[^<]*<\/priority><\/url>/gu,
-        ''
-    );
-
-    fs.writeFileSync(sitemapPath, content, 'utf8');
+        return content;
+    }, { optional: true });
 }
 
 /**
