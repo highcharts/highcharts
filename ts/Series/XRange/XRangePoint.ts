@@ -258,6 +258,13 @@ export default XRangePoint;
  * */
 
 /**
+ * The formatted ending x-value (typically date), for use in a tooltip
+ * formatter.
+ *
+ * @name Highcharts.Point#keyEnd
+ */
+
+/**
  * The ending X value of the range point.
  * @name Highcharts.Point#x2
  * @type {number|undefined}

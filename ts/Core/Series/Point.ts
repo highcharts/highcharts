@@ -242,7 +242,6 @@ class Point {
      * For datetime axes the key is a localized time string, formatted according
      * to the [tooltip.dateTimeLabelFormats](#tooltip.dateTimeLabelFormats)
      * option or the [tooltip.xDateFormat](#tooltip.xDateFormat) if defined.
-     * if defined.
      *
      * @name Highcharts.Point#key
      * @type {number|string}
