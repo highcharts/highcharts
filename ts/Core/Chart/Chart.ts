@@ -2112,7 +2112,21 @@ class Chart {
 
         // Get the width and height
         let { width, height } = chart.getChartSize();
+
+        /**
+         * The current pixel width of the chart.
+         *
+         * @name Highcharts.Chart#chartWidth
+         * @type {number}
+         */
         chart.chartWidth = width;
+
+        /**
+         * The current pixel height of the chart.
+         *
+         * @name Highcharts.Chart#chartHeight
+         * @type {number}
+         */
         chart.chartHeight = height;
 
         // Allow table cells and flex-boxes to shrink without the chart
