@@ -405,6 +405,10 @@ export default MouseWheelZoomComposition;
  *            Enable or disable
  * @sample    {highstock} stock/mouse-wheel-zoom/enabled
  *            Enable or disable
+ * @sample    {highcharts} highcharts/mouse-wheel-zoom/mouse-wheel-panning
+ *            Mouse wheel panning
+ * @sample    {highstock} stock/mouse-wheel-zoom/mouse-wheel-panning
+ *            Mouse wheel panning
  * @apioption chart.zooming.mouseWheel
  */
 

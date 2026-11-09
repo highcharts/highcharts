@@ -34,12 +34,20 @@ declare module '../../Core/Chart/ChartOptions'{
          * Core it is enabled if [chart.zooming.type](chart.zooming.type) is
          * set. It can be disabled by setting this option to `false`.
          *
+         * When [chart.panning](#chart.panning) is enabled and the
+         * [chart.panKey](#chart.panKey) is held, scrolling the mouse wheel pans the
+         * chart instead of zooming it.
+         *
          * @since 11.1.0
          * @requires  modules/mouse-wheel-zoom
          * @sample    {highcharts} highcharts/mouse-wheel-zoom/enabled
          *            Enable or disable
          * @sample    {highstock} stock/mouse-wheel-zoom/enabled
          *            Enable or disable
+         * @sample    {highcharts} highcharts/mouse-wheel-zoom/mouse-wheel-panning
+         *            Mouse wheel panning
+         * @sample    {highstock} stock/mouse-wheel-zoom/mouse-wheel-panning
+         *            Mouse wheel panning
          */
         mouseWheel?: (boolean|MouseWheelZoomOptions);
     }

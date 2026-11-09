@@ -720,6 +720,10 @@ export interface ChartOptions {
      *          Zooming and panning
      * @sample  {highstock} stock/chart/panning/
      *          Zooming and xy panning
+     * @sample  {highcharts} highcharts/mouse-wheel-zoom/mouse-wheel-panning
+     *          Mouse wheel panning
+     * @sample  {highstock} stock/mouse-wheel-zoom/mouse-wheel-panning
+     *          Mouse wheel panning
      */
     panning?: ChartPanningOptions;
 
