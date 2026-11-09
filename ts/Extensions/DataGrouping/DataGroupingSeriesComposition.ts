@@ -610,39 +610,23 @@ function wrapApplyKey(
         isNumber(key)
     ) {
         const dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats ||
-            // Fallback to commonOptions (#9693)
-            DataGroupingDefaults.common.dateTimeLabelFormats;
-
-        // If we have grouped data, use the grouping information to get the
-        // right format
-        if (currentDataGrouping) {
-            const labelFormats = dateTimeLabelFormats[
-                currentDataGrouping.unitName
-            ];
-            if (currentDataGrouping.count === 1) {
-                xDateFormat = labelFormats[0];
-            } else {
-                xDateFormat = labelFormats[1];
-                xDateFormatEnd = labelFormats[2];
-            }
-        // If not grouped, and we don't have set the xDateFormat option, get the
-        // best fit, so if the least distance between points is one minute, show
-        // it, but if the least distance is one day, skip hours and minutes etc.
-        } else if (!xDateFormat && dateTimeLabelFormats && dateTime) {
-            xDateFormat = dateTime.getXDateFormat(
-                this.x,
-                tooltipOptions.dateTimeLabelFormats
-            );
-        }
-        const groupStart = series.groupMap?.[this.index].groupStart ?? this.x,
+                // Fallback to commonOptions (#9693)
+                DataGroupingDefaults.common.dateTimeLabelFormats,
+            // Use the grouping information to get the right format
+            labelFormats = dateTimeLabelFormats[currentDataGrouping.unitName],
+            groupStart = series.groupMap?.[this.index].groupStart ?? this.x,
             groupEnd = groupStart + (currentDataGrouping?.totalRange || 0) - 1;
+
+        if (currentDataGrouping.count === 1) {
+            xDateFormat = labelFormats[0];
+        } else {
+            xDateFormat = labelFormats[1];
+            xDateFormatEnd = labelFormats[2];
+        }
 
         key = time.dateFormat(xDateFormat, groupStart);
         if (xDateFormatEnd) {
-            key += time.dateFormat(
-                xDateFormatEnd,
-                groupEnd
-            );
+            key += time.dateFormat(xDateFormatEnd, groupEnd);
         }
 
         return (this.key = key);
