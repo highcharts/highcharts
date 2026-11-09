@@ -1844,6 +1844,50 @@ class Tooltip {
     }
 
     /**
+     * Replace point.key and point.category in a format string with date format
+     * if the x axis is datetime.
+     *
+     * @internal
+     * @function Highcharts.Tooltip#keyReplace
+     */
+    public keyReplace(formatString: string, point: Point): string {
+        const series = point.series,
+            tooltipOptions = series.tooltipOptions,
+            dateTime = series.xAxis?.dateTime;
+
+        if (dateTime && formatString.indexOf('point.') !== -1) {
+
+            // Guess the best date format based on the closest point distance
+            // (#568, #3418)
+            let xDateFormat = tooltipOptions.xDateFormat ||
+                dateTime.getXDateFormat(
+                    point.x,
+                    tooltipOptions.dateTimeLabelFormats
+                );
+
+            if (isObject(xDateFormat)) {
+                const format = xDateFormat;
+                dateFormats[0] = (timestamp): string =>
+                    series.chart.time.dateFormat(format, timestamp);
+                xDateFormat = '%0';
+            }
+
+            // Only numeric keys are dates, a point name stays as is
+            (point.tooltipDateKeys || ['key', 'category']).forEach(
+                (key: string): void => {
+                    if (isNumber(point.getNestedProperty(key))) {
+                        formatString = formatString.replace(
+                            new RegExp('point\\.' + key + '([ \\)}])', 'g'),
+                            `(point.${key}:${xDateFormat as string})$1`
+                        );
+                    }
+                }
+            );
+        }
+        return formatString;
+    }
+
+    /**
      * Format the footer/header of the tooltip
      * #3397: abstraction to enable formatting of footer and header
      *
@@ -1856,48 +1900,20 @@ class Tooltip {
     ): string {
         const series = point.series,
             tooltipOptions = series.tooltipOptions,
-            xAxis = series.xAxis,
-            dateTime = xAxis?.dateTime,
             e: Tooltip.HeaderFormatterEventObject = {
                 isFooter,
                 point
             };
-        let xDateFormat = tooltipOptions.xDateFormat || '',
-            formatString = tooltipOptions[
-                isFooter ? 'footerFormat' : 'headerFormat'
-            ];
+        let formatString = tooltipOptions[
+            isFooter ? 'footerFormat' : 'headerFormat'
+        ];
 
         fireEvent(this, 'headerFormatter', e, function (
             this: Tooltip,
             e: Tooltip.HeaderFormatterEventObject
         ): void {
 
-            // Guess the best date format based on the closest point distance
-            // (#568, #3418)
-            if (dateTime && !xDateFormat && isNumber(point.key)) {
-                xDateFormat = dateTime.getXDateFormat(
-                    point.key,
-                    tooltipOptions.dateTimeLabelFormats
-                );
-            }
-
-            // Insert the footer date format if any
-            if (dateTime && xDateFormat) {
-                if (isObject(xDateFormat)) {
-                    const format = xDateFormat;
-                    dateFormats[0] = (timestamp): string =>
-                        series.chart.time.dateFormat(format, timestamp);
-                    xDateFormat = '%0';
-                }
-                (point.tooltipDateKeys || ['key']).forEach(
-                    (key: string): void => {
-                        formatString = formatString.replace(
-                            new RegExp('point\\.' + key + '([ \\)}])'),
-                            `(point.${key}:${xDateFormat as string})$1`
-                        );
-                    }
-                );
-            }
+            formatString = this.keyReplace(formatString, point);
 
             // Replace default header style with class name
             if (series.chart.styledMode) {

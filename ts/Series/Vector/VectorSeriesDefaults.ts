@@ -81,6 +81,9 @@ const VectorSeriesDefaults: VectorSeriesOptions = {
 
     tooltip: {
 
+        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
+
         /**
          * @default [{point.x}, {point.y}] Length: {point.length} Direction: {point.direction}°
          */

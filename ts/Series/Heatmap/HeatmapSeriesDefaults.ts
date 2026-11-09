@@ -321,6 +321,8 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
     pointRange: null, // Dynamically set to colsize by default
 
     tooltip: {
+        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
         pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
     },
 
