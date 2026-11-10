@@ -17,6 +17,9 @@
  * */
 
 import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
+import type {
+    DataLabelsFilterOptionsObject
+} from '../../../Core/Series/DataLabelOptions';
 import type Point from '../../../Core/Series/Point';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type Series from '../../../Core/Series/Series';
@@ -29,7 +32,7 @@ const { doc, win } = H;
 import LineShader from '../Shaders/LineShader.js';
 import MarkerShader from '../Shaders/MarkerShader.js';
 import { BLOCK, BLOCK_SHIFT } from '../Shaders/Prelude.js';
-import { defined, isNumber } from '../../../Shared/Utilities.js';
+import { defined, isNumber, splat } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -182,6 +185,33 @@ function stepMode(series: Series): number {
     ] || (step ? 3 : 0);
 }
 
+/**
+ * The comparison of `DataLabel.applyFilter`, against a raw column value
+ * rather than a point.
+ *
+ * @internal
+ */
+function passes(
+    value: unknown,
+    filter: DataLabelsFilterOptionsObject
+): boolean {
+    const v = filter.value;
+
+    switch (filter.operator) {
+        case '>': return (value as number) > (v as number);
+        case '<': return (value as number) < (v as number);
+        case '>=': return (value as number) >= (v as number);
+        case '<=': return (value as number) <= (v as number);
+        /* eslint-disable eqeqeq */
+        case '==': return value == v;
+        case '!=': return value != v;
+        /* eslint-enable eqeqeq */
+        case '===': return value === v;
+        case '!==': return value !== v;
+        default: return true;
+    }
+}
+
 /** First index whose x is not below `value`. @internal */
 function lowerBound(xData: Array<number>, value: number): number {
     let low = 0,
@@ -316,6 +346,9 @@ class LineStrategy {
 
     /** @internal */
     private uniformBytes = new ArrayBuffer(UNIFORM_BYTES);
+
+    /** Points carrying a label, by row. @internal */
+    private labelled: Record<number, Point> = {};
 
     /** @internal */
     private bindGroup?: GPUBindGroup;
@@ -1034,40 +1067,124 @@ class LineStrategy {
     }
 
     /**
-     * Creates the `Point` for a single hit, with the `clientX`, `dist`
-     * and `distX` that `Pointer.findNearestKDPoint` ranks the series by.
-     * The core sets those in its k-d tree search, which this path
-     * replaces.
+     * Put a point where the axes currently place it. Separate from
+     * creating it, since a point kept for a label outlives the zoom it
+     * was created in.
+     *
+     * @internal
+     */
+    private place(point: Point, index: number): void {
+        const series = this.series,
+            { xAxis, yAxis } = series,
+            y = series.getColumn('y')[index],
+            plotX = xAxis.toPixels(series.getColumn('x')[index], true);
+
+        // A null value has no position; the hit test treats its
+        // contribution along y as zero rather than as a distance.
+        point.plotX = point.clientX = plotX;
+        point.plotY = isNumber(y) ? yAxis.toPixels(y, true) : void 0;
+        point.isInside = series.isPointInside(point);
+
+        // The hover state and the label are drawn in SVG from the color
+        // of the point, which is the zone's rather than the series' one.
+        point.zone = series.zones.length ? point.getZone() : void 0;
+    }
+
+    /** The `Point` for one row of the series. @internal */
+    private pointAt(index: number): Point {
+        const series = this.series,
+            x = series.getColumn('x')[index],
+            PointClass = series.pointClass,
+            point = new PointClass(
+                series, [x, series.getColumn('y')[index]], x
+            );
+
+        point.index = index;
+        point.category = x as unknown as string;
+        point.key = point.category;
+        this.place(point, index);
+
+        return point;
+    }
+
+    /**
+     * The points the core should label, kept from one draw to the next:
+     * it stores the label element on the point and updates it rather
+     * than building a new one, so a throwaway point would leave the old
+     * label behind.
+     *
+     * @internal
+     */
+    public labelPoints(): Array<Point> {
+        const kept = this.labelled,
+            next: Record<number, Point> = {},
+            points: Array<Point> = [];
+
+        for (const index of this.labelRows()) {
+            const point = kept[index] || this.pointAt(index);
+
+            if (kept[index]) {
+                this.place(point, index);
+            }
+            next[index] = point;
+            points.push(point);
+        }
+
+        for (const index of Object.keys(kept)) {
+            if (!next[index as unknown as number]) {
+                kept[index as unknown as number].destroyElements();
+            }
+        }
+
+        this.labelled = next;
+
+        return points;
+    }
+
+    /**
+     * Rows that carry a label: the ones in view, narrowed by the filter
+     * where it reads a column this path has. The core applies the filter
+     * again, so narrowing here only saves points, never decides them.
+     *
+     * @internal
+     */
+    private labelRows(): Array<number> {
+        const series = this.series,
+            cropStart = series.cropped ? (series.cropStart || 0) : 0,
+            rowCount = series.dataTable.getModified().rowCount,
+            filter = series.options.dataLabels &&
+                splat(series.options.dataLabels)[0]?.filter,
+            onColumn = filter &&
+                (filter.property === 'x' || filter.property === 'y'),
+            column = onColumn ?
+                series.getColumn(filter.property as string) :
+                void 0,
+            rows: Array<number> = [];
+
+        for (let i = cropStart; i < cropStart + rowCount; i++) {
+            if (!column || !filter || passes(column[i], filter)) {
+                rows.push(i);
+            }
+        }
+
+        return rows;
+    }
+
+    /**
+     * Creates the `Point` for a single hit, with the `dist` and `distX`
+     * that `Pointer.findNearestKDPoint` ranks the series by. The core
+     * sets those in its k-d tree search, which this path replaces.
      *
      * @internal
      */
     private materialize(index: number, e: PointerEvent): Point {
         const series = this.series,
             { xAxis, yAxis } = series,
-            xData = series.getColumn('x'),
-            yData = series.getColumn('y'),
-            x = xData[index],
-            y = yData[index],
-            PointClass = series.pointClass,
-            point = new PointClass(series, [x, y], x),
-            plotX = xAxis.toPixels(x, true),
-            // A null value has no position; the search treats its
-            // contribution along y as zero rather than as a distance.
-            plotY = isNumber(y) ? yAxis.toPixels(y, true) : void 0;
-
-        point.index = index;
-        point.category = x as unknown as string;
-        point.key = point.category;
-        point.plotX = point.clientX = plotX;
-        point.plotY = plotY;
-        point.isInside = series.isPointInside(point);
-
-        // The hover state is drawn in SVG from the color of the point,
-        // which is the zone's rather than the series' one.
-        point.zone = series.zones.length ? point.getZone() : void 0;
-
-        const dx = e.chartX - xAxis.pos - plotX,
-            dy = isNumber(plotY) ? e.chartY - yAxis.pos - plotY : 0;
+            point = this.pointAt(index),
+            dx = e.chartX - xAxis.pos - (point.plotX as number),
+            dy = isNumber(point.plotY) ?
+                e.chartY - yAxis.pos - point.plotY :
+                0;
 
         point.dist = Math.sqrt(dx * dx + dy * dy);
         point.distX = Math.abs(dx);
@@ -1077,6 +1194,11 @@ class LineStrategy {
 
     /** @internal */
     public destroy(): void {
+        for (const index of Object.keys(this.labelled)) {
+            this.labelled[index as unknown as number].destroyElements();
+        }
+        this.labelled = {};
+
         this.buffer?.destroy();
         this.uniformBuffer?.destroy();
         this.zoneBuffer?.destroy();

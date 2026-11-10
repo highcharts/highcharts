@@ -283,7 +283,22 @@ function compose(
         }
     });
 
-    // --- 4. animate(): a series still waiting for the device has
+    // --- 4. drawDataLabels(): labels the points this module keeps for
+    //        them, since `series.points` is empty by design. The core
+    //        takes an explicit list, so nothing else has to change.
+    wrap(seriesProto, 'drawDataLabels', function (
+        this: Series,
+        proceed: Function,
+        points?: Array<Point>
+    ): void {
+        if (this.gpu && !points && this.hasDataLabels?.()) {
+            proceed.call(this, this.gpu.labelPoints());
+            return;
+        }
+        proceed.apply(this, [].slice.call(arguments, 1));
+    });
+
+    // --- 5. animate(): a series still waiting for the device has
     //        nothing to reveal, and the entrance animation settles how it
     //        treats the markers the moment it starts, with no way back.
     //        Deferring it to the render that draws keeps the two in step.
@@ -297,7 +312,7 @@ function compose(
         }
     });
 
-    // --- 5. render(): draws on the GPU instead of in SVG.
+    // --- 6. render(): draws on the GPU instead of in SVG.
     wrap(seriesProto, 'render', function (
         this: Series,
         proceed: Function
@@ -307,7 +322,7 @@ function compose(
         this.gpu?.draw();
     });
 
-    // --- 6. searchPoint(): runs ahead of the lazy buildKDTree(), so the
+    // --- 7. searchPoint(): runs ahead of the lazy buildKDTree(), so the
     //        k-d tree and the mock points are never created.
     wrap(seriesProto, 'searchPoint', function (
         this: Series,
@@ -323,7 +338,7 @@ function compose(
         return proceed.apply(this, [].slice.call(arguments, 1));
     });
 
-    // --- 7. getExtremes(): answered from the block index instead of a
+    // --- 8. getExtremes(): answered from the block index instead of a
     //        scan of every row in view.
     wrap(seriesProto, 'getExtremes', function (
         this: Series,

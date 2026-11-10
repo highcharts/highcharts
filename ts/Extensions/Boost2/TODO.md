@@ -3,7 +3,7 @@
 Scope of the current proof of concept: the `line` series, straight or
 stepped, drawn at any width as a ribbon with miter and bevel joins, or as
 a one pixel hairline under `boostHairline`, with optional circular
-markers.
+markers and data labels.
 
 ## Defects
 
@@ -36,8 +36,6 @@ These are not rejected by `isSupported`, so a chart using them is drawn
 without them rather than falling back to SVG. Each needs either support
 or a guard.
 
-- `dataLabels` - `drawDataLabels` iterates `series.points`, which is
-  empty, so no labels appear.
 - `linecap` - caps and joins are butt and miter regardless of the option.
 - `clip: false` applies to the graph, which inherits the series group
   clip, but not to markers, which are drawn whole or not at all by their
@@ -71,6 +69,11 @@ path does not yet draw.
 - Logarithmic axes.
 
 ## Unverified
+
+- Data labels are kept for the rows in view, as SVG keeps them for its
+  cropped points. Nothing bounds that set, so labels on a series zoomed
+  fully out carry the point objects the module exists to avoid. SVG has
+  the same ceiling, but it is worth knowing where it is.
 
 - `hitAt` searches every point, while the core k-d tree is built from
   `series.points`, the cropped set. A point just outside the view can
