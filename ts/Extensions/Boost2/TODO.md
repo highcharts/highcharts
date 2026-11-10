@@ -1,8 +1,9 @@
 # Boost2 - open work
 
-Scope of the current proof of concept: the `line` series, drawn at any
-width as a ribbon with miter and bevel joins, or as a one pixel hairline
-under `boostHairline`, with optional circular markers.
+Scope of the current proof of concept: the `line` series, straight or
+stepped, drawn at any width as a ribbon with miter and bevel joins, or as
+a one pixel hairline under `boostHairline`, with optional circular
+markers.
 
 ## Defects
 
@@ -13,13 +14,28 @@ under `boostHairline`, with optional circular markers.
   series on the GPU shows only `B` in 60. Fix direction: a branch in
   `getHoverData` that asks the strategy instead of scanning `points`.
 
+- **The hover marker appears at full size instead of growing into it.**
+  A point without its own marker element gets the shared
+  `stateMarkerGraphic` of the core, which is placed with `attr` on the
+  normal hover path, since `move` is a parameter of `Point.setState` and
+  only the tooltip-follow callers pass it. SVG animates `point.graphic`
+  from the plain radius to the hover one instead.
+
+  Only applies while markers are visible: with them off the points carry
+  no graphic in SVG either, so both paths take the same element and look
+  the same. Measured on a series of 2000 points, markers on and off.
+
+  Fix direction: wrap `Point.setState`, branch on `series.gpu`, place the
+  state marker at the plain size and animate it to the hover one. No
+  frame loop is involved, the element is SVG. Worth measuring whether the
+  GPU marker underneath shows through while the two sizes are close.
+
 ## Options that silently render differently
 
 These are not rejected by `isSupported`, so a chart using them is drawn
 without them rather than falling back to SVG. Each needs either support
 or a guard.
 
-- `step` - steps are ignored; segments are drawn straight.
 - `dataLabels` - `drawDataLabels` iterates `series.points`, which is
   empty, so no labels appear.
 - `linecap` - caps and joins are butt and miter regardless of the option.
@@ -60,8 +76,6 @@ path does not yet draw.
   `series.points`, the cropped set. A point just outside the view can
   therefore win here and not there, though the distance bound keeps the
   difference to the plot edge.
-- Hover state rendering: `halo` and `states.hover` draw from
-  `point.graphic`, which no longer exists.
 - Series visibility, legend interaction and the inactive state.
 - `series.update` and incremental data: the upload is skipped on column
   array identity, which may be too coarse.

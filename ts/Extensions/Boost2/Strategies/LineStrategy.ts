@@ -38,9 +38,25 @@ import { defined, isNumber } from '../../../Shared/Utilities.js';
  * */
 
 /**
- * Uniform buffer size: the domain span, then the viewport, half width,
- * point count, marker radius, margin and zone count, padded to the 16
- * byte struct alignment.
+ * Everything `struct U` of the shaders holds, under the names it gives
+ * them. A field added there is a compile error here until supplied.
+ *
+ * @internal
+ */
+interface Uniforms {
+    span: [number, number];
+    viewport: [number, number];
+    halfWidth: number;
+    radius: number;
+    pad: number;
+    count: number;
+    zoneCount: number;
+    step: number;
+}
+
+/**
+ * Forty bytes of content, rounded up because a struct in the uniform
+ * address space takes an alignment of 16.
  */
 const UNIFORM_BYTES = 48;
 
@@ -149,6 +165,21 @@ function zonesSupported(series: Series): boolean {
             !zone.fillColor
         )
     );
+}
+
+/**
+ * Step mode of a series, encoded as `Series.getGraphPath` encodes it.
+ * The reversal it applies to the bottom of a stack has no counterpart
+ * here, since a stacked series does not reach the GPU.
+ *
+ * @internal
+ */
+function stepMode(series: Series): number {
+    const step = series.options.step;
+
+    return ({ right: 1, center: 2 } as Record<string, number>)[
+        step as string
+    ] || (step ? 3 : 0);
 }
 
 /** First index whose x is not below `value`. @internal */
@@ -284,7 +315,7 @@ class LineStrategy {
     private uniformBuffer?: GPUBuffer;
 
     /** @internal */
-    private uniformData = new Float32Array(UNIFORM_BYTES / 4);
+    private uniformBytes = new ArrayBuffer(UNIFORM_BYTES);
 
     /** @internal */
     private bindGroup?: GPUBindGroup;
@@ -360,6 +391,31 @@ class LineStrategy {
      *  Functions
      *
      * */
+
+    /**
+     * Pack the uniforms and hand them to the device. The only place
+     * that knows the layout, which runs in the order the shaders
+     * declare it.
+     * @internal
+     */
+    private writeUniforms(u: Uniforms): void {
+        const bytes = this.uniformBytes,
+            floats = new Float32Array(bytes),
+            ints = new Uint32Array(bytes);
+
+        floats[0] = u.span[0];
+        floats[1] = u.span[1];
+        floats[2] = u.viewport[0];
+        floats[3] = u.viewport[1];
+        floats[4] = u.halfWidth;
+        floats[5] = u.radius;
+        floats[6] = u.pad;
+        ints[7] = u.count;
+        ints[8] = u.zoneCount;
+        ints[9] = u.step;
+
+        GPUContext.device!.queue.writeBuffer(this.uniformBuffer!, 0, bytes);
+    }
 
     /**
      * Upload the whole series, not only the visible points: the shader
@@ -678,35 +734,37 @@ class LineStrategy {
         this.ensureResources(hairline, markers, zoned);
 
         const { xAxis, yAxis } = series,
-            uniforms = this.uniformData;
-
-        const xMin = xAxis.min as number,
+            xMin = xAxis.min as number,
             yMin = yAxis.min as number,
-            ratio = win.devicePixelRatio || 1;
+            ratio = win.devicePixelRatio || 1,
+            step = stepMode(series);
 
         this.placeOrigins(xMin, yMin);
 
-        uniforms[0] = (xAxis.max as number) - xMin;
-        uniforms[1] = (yAxis.max as number) - yMin;
-        uniforms[2] = this.surface.width;
-        uniforms[3] = this.surface.height;
-        uniforms[4] = lineWidth * ratio / 2;
-        uniforms[5] = this.count;
-        uniforms[6] = (options.marker?.radius ?? 4) * ratio;
-        uniforms[7] = this.surface.pad;
-        uniforms[8] = this.zoneCount;
+        this.writeUniforms({
+            span: [(xAxis.max as number) - xMin, (yAxis.max as number) - yMin],
+            viewport: [this.surface.width, this.surface.height],
+            halfWidth: lineWidth * ratio / 2,
+            radius: (options.marker?.radius ?? 4) * ratio,
+            pad: this.surface.pad,
+            count: this.count,
+            zoneCount: this.zoneCount,
+            step
+        });
 
-        const device = GPUContext.device!;
-        device.queue.writeBuffer(this.uniformBuffer!, 0, uniforms);
-
-        const encoder = device.createCommandEncoder(),
+        const device = GPUContext.device!,
+            encoder = device.createCommandEncoder(),
             pass = this.surface.beginPass(encoder);
 
         pass.setBindGroup(0, this.bindGroup!);
 
         if (lineWidth > 0) {
+            const vertices = step === 0 || this.count < 2 ?
+                this.count :
+                this.count * (step === 2 ? 3 : 2) - (step === 2 ? 2 : 1);
+
             pass.setPipeline(this.pipeline!);
-            pass.draw(hairline ? this.count : this.count * 4);
+            pass.draw(hairline ? vertices : vertices * 4);
         }
 
         pass.end();
@@ -1040,5 +1098,5 @@ class LineStrategy {
  * */
 
 /** @internal */
-export { markersEnabled, zonesSupported };
+export { markersEnabled, stepMode, zonesSupported };
 export default LineStrategy;

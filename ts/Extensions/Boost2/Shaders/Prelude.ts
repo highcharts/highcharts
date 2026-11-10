@@ -55,14 +55,19 @@ struct U {
     viewport  : vec2f,
     // Half the stroke width, in device pixels
     halfWidth : f32,
-    // Point count; the buffer may be larger than the current series
-    count     : f32,
     // Marker radius, in device pixels
     radius    : f32,
     // Margin between the canvas edge and the plot box, in device pixels
     pad       : f32,
+    // Counts and modes last, so that the two views the host writes
+    // through cover one run of the buffer each.
+    // Point count; the buffer may be larger than the current series
+    count     : u32,
     // Number of entries in the zone buffer, never below one
-    zoneCount : f32,
+    zoneCount : u32,
+    // Step mode, encoded as Series.getGraphPath encodes it: 0 none,
+    // 1 right, 2 center, 3 left
+    step      : u32,
 };
 
 // A band of the y domain, up to its value. The last one has no bound and
@@ -86,8 +91,12 @@ fn offsetAt(i : u32) -> vec2f {
 
 // The canvas may be larger than the plot box, so that a marker at the
 // edge is not cut off; the domain maps to the inset box.
+fn toPixelsAt(d : vec2f) -> vec2f {
+    return u.pad + d / u.span * (u.viewport - 2.0 * u.pad);
+}
+
 fn toPixels(i : u32) -> vec2f {
-    return u.pad + offsetAt(i) / u.span * (u.viewport - 2.0 * u.pad);
+    return toPixelsAt(offsetAt(i));
 }
 
 // A point is in the plot area when its own coordinate is, regardless of
@@ -104,7 +113,7 @@ fn toClip(px : vec2f) -> vec4f {
 
 // The first zone the value falls below, as Point.getZone decides.
 fn tint(value : f32) -> vec4f {
-    let last = u32(u.zoneCount) - 1u;
+    let last = u.zoneCount - 1u;
 
     for (var i = 0u; i < last; i++) {
         if (value < zones[i].value) {
