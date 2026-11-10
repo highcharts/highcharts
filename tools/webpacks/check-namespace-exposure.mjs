@@ -26,6 +26,7 @@ const ALLOWLIST = new Set([
     'SVG_NS',
     'charts',
     'composed',
+    'cssLengthProbes',
     'dateFormats',
     'seriesTypes',
     'symbolSizes',

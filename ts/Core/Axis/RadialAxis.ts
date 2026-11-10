@@ -719,7 +719,7 @@ namespace RadialAxis {
                 '-20%' : void 0
         );
         if (defined(offset)) {
-            this.offset = relativeLength(
+            this.offset = this.chart.relativeLength(
                 offset,
                 this.center[2] / 2
             ) * -1;
@@ -1424,7 +1424,7 @@ namespace RadialAxis {
             ret = axis.getPosition(
                 this.pos,
                 (axis.center[2] / 2) +
-                    relativeLength(
+                    axis.chart.relativeLength(
                         labelOptions.distance ?? 15,
                         axis.center[2] / 2
                     ) +

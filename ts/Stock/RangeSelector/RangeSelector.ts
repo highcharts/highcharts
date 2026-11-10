@@ -1696,7 +1696,9 @@ class RangeSelector {
                     translateY = chart.titleOffset[0];
                 }
 
-                translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
+                translateY += (
+                    (chart.margin[0] ?? chart.spacing[0]) - chart.spacing[0]
+                ) || 0;
 
             } else if (verticalAlign === 'middle') {
                 if (inputPosition.y === buttonPosition.y) {

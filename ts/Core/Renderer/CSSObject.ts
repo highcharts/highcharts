@@ -25,6 +25,9 @@ import ColorType from '../Color/ColorType';
  *
  * */
 
+
+export type CSSLength = string;
+
 export type CursorValue = (
     'alias'|'all-scroll'|'auto'|'cell'|'col-resize'|'context-menu'|
     'copy'|'crosshair'|'default'|'e-resize'|'ew-resize'|'grab'|
@@ -145,9 +148,10 @@ export interface CSSObject {
      */
     fontFamily?: string;
     /**
-     * Font size.
+     * Font size. Accepts a pixel number or a CSS length expression, e.g.
+     * `'1em'` or `'2vw'`.
      */
-    fontSize?: (number|string);
+    fontSize?: (number|CSSLength);
     /**
      * Font style.
      */
@@ -177,9 +181,10 @@ export interface CSSObject {
      */
     lineHeight?: string|0;
     /**
-     * Line width (not a standard CSS property, used internally).
+     * Line width (not a standard CSS property, used internally). Accepts a
+     * pixel number or a CSS length expression, e.g. `'0.1em'` or `'1vw'`.
      */
-    lineWidth?: (number|string);
+    lineWidth?: (number|CSSLength);
     /**
      * List style.
      */
@@ -237,9 +242,10 @@ export interface CSSObject {
      */
     outline?: string;
     /**
-     * Padding.
+     * Padding. Accepts a pixel number or a CSS length expression, e.g.
+     * `'1em'` or `'1vw'`.
      */
-    padding?: number|string;
+    padding?: (number|CSSLength);
     /**
      * Pointer events.
      */
@@ -265,9 +271,10 @@ export interface CSSObject {
      */
     stroke?: ColorType;
     /**
-     * Stroke width.
+     * Stroke width. Accepts a pixel number or a CSS length expression, e.g.
+     * `'0.1em'` or `'1vw'`.
      */
-    'stroke-width'?: (number|string);
+    'stroke-width'?: (number|CSSLength);
     /**
      * Stroke width.
      */

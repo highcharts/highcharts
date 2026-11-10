@@ -52,8 +52,7 @@ import {
     isNumber,
     isObject,
     merge,
-    pushUnique,
-    relativeLength
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -337,10 +336,14 @@ class XRangeSeries extends ColumnSeries {
 
         // Handle individual pointWidth
         if (defined(point.options.pointWidth)) {
-            yOffset -= (
-                (Math.ceil(point.options.pointWidth) - pointHeight) / 2
+            const resolvedPointWidth = Math.ceil(
+                this.chart.relativeLength(
+                    point.options.pointWidth,
+                    pointHeight
+                )
             );
-            pointHeight = Math.ceil(point.options.pointWidth);
+            yOffset -= (resolvedPointWidth - pointHeight) / 2;
+            pointHeight = resolvedPointWidth;
         }
 
         // Apply pointPlacement to the Y axis
@@ -365,11 +368,14 @@ class XRangeSeries extends ColumnSeries {
             width = x2 - x;
 
         const r = Math.min(
-            relativeLength((
-                typeof borderRadius === 'object' ?
-                    (borderRadius as any).radius :
-                    borderRadius || 0
-            ), pointHeight),
+            this.chart.relativeLength(
+                (
+                    typeof borderRadius === 'object' ?
+                        (borderRadius as any).radius :
+                        borderRadius || 0
+                ),
+                pointHeight
+            ),
             Math.min(width, pointHeight) / 2
         );
 

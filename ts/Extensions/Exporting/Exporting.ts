@@ -24,6 +24,7 @@ import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type Axis from '../../Core/Axis/Axis';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { CSSLength } from '../../Core/Renderer/CSSObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../../Core/Callback';
 import type {
@@ -1984,17 +1985,19 @@ export class Exporting {
             top: '-9999em',
             width: chart.chartWidth + 'px',
             height: chart.chartHeight + 'px'
-        }, doc.body);
+        }, chart.renderTo); // Inherit container-scoped CSS variables (#23989)
 
         // Get the source size
         const cssWidth: string = chart.renderTo.style.width,
             cssHeight: string = chart.renderTo.style.height,
-            sourceWidth: number = options.exporting?.sourceWidth ||
-                options.chart.width ||
+            sourceWidth: (number|CSSLength) = options.exporting?.sourceWidth ||
+                (typeof options.chart.width === 'string' ?
+                    chart.chartWidth : options.chart.width) ||
                 (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
                 (options.isGantt ? 800 : 600),
             sourceHeight: (number | string) = options.exporting?.sourceHeight ||
-                options.chart.height ||
+                (typeof options.chart.height === 'string' ?
+                    chart.chartHeight : options.chart.height) ||
                 (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
                 400;
 
@@ -3042,8 +3045,8 @@ export namespace Exporting {
         childNodes: NodeListOf<ChildNode>;
         origDisplay: Array<(string | null)> ;
         resetParams?: [
-            (number | null)?,
-            (number | null)?,
+            (number|CSSLength|null)?,
+            (number|CSSLength|null)?,
             (boolean | Partial<AnimationOptions>)?
         ];
     }

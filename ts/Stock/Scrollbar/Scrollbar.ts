@@ -484,9 +484,7 @@ class Scrollbar {
 
         scroller.chart = chart;
 
-        // Backward compatibility
-        scroller.size = scroller.options.size ??
-            scroller.options.height as any;
+        scroller.updateSize();
 
         // Init
         if (options.enabled) {
@@ -914,6 +912,38 @@ class Scrollbar {
             merge(true, this.options, options),
             this.chart
         );
+    }
+
+    /**
+     * Resolve the size option to pixels, and redraw the scrollbar when it
+     * changes. A relative size follows the chart height (#23989).
+     *
+     * @internal
+     */
+    public updateSize(): number {
+        const scroller = this,
+            { chart, options } = scroller,
+            // `size` takes precedence for backward compatibility
+            size = chart.relativeLength(
+                (options.size ?? options.height) || 0,
+                chart.chartHeight
+            );
+
+        if (size !== scroller.size) {
+            scroller.size = size;
+
+            // The parts are sized when drawn, so redraw them
+            if (scroller.group) {
+                scroller.removeEvents();
+                scroller.group.destroy();
+                scroller.scrollbarButtons = [];
+                scroller.rendered = false;
+                scroller.render();
+                scroller.addEvents();
+            }
+        }
+
+        return size;
     }
 
     /**

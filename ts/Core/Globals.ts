@@ -237,6 +237,10 @@ namespace Globals {
      */
     export const composed: Array<string> = [];
 
+    /** @internal */
+    export const cssLengthProbes: GlobalsBase['cssLengthProbes'] =
+        new WeakMap();
+
     /**
      * A hook for defining additional date format specifiers. New
      * specifiers are defined as key-value pairs by using the

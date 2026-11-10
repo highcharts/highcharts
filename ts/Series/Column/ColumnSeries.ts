@@ -253,9 +253,7 @@ class ColumnSeries extends Series {
      */
     public getColumnMetrics(): ColumnMetricsObject {
         const series = this,
-            options = series.options,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
+            { chart, options, xAxis, yAxis } = series,
             reversedStacks = xAxis.options.reversedStacks,
             // Keep backward compatibility: reversed xAxis had reversed
             // stacks
@@ -271,7 +269,7 @@ class ColumnSeries extends Series {
         if (options.grouping === false) {
             columnCount = 1;
         } else {
-            series.chart.series.forEach(function (otherSeries): void {
+            chart.series.forEach((otherSeries): void => {
                 const otherYAxis = otherSeries.yAxis,
                     otherOptions = otherSeries.options;
                 let columnIndex;
@@ -297,7 +295,7 @@ class ColumnSeries extends Series {
                     } else if (otherOptions.grouping !== false) { // #1162
                         columnIndex = columnCount++;
                     }
-                    (otherSeries as any).columnIndex = columnIndex;
+                    (otherSeries as ColumnSeries).columnIndex = columnIndex;
                 }
             });
         }
@@ -315,13 +313,19 @@ class ColumnSeries extends Series {
             groupPadding = categoryWidth * (options.groupPadding as any),
             groupWidth = categoryWidth - 2 * groupPadding,
             pointOffsetWidth = groupWidth / (columnCount || 1),
-            pointWidth = Math.min(
-                options.maxPointWidth || xAxis.len,
-                (options.pointWidth ?? pointOffsetWidth * (
-                    1 - 2 * (options.pointPadding as any)
-                ))
+            width = Math.min(
+                chart.relativeLength(
+                    options.maxPointWidth,
+                    pointOffsetWidth
+                ) || xAxis.len,
+                chart.relativeLength(
+                    options.pointWidth ?? pointOffsetWidth * (
+                        1 - 2 * (options.pointPadding as any)
+                    ),
+                    pointOffsetWidth
+                )
             ),
-            pointPadding = (pointOffsetWidth - pointWidth) / 2,
+            pointPadding = (pointOffsetWidth - width) / 2,
             // #1251, #3737
             colIndex = (series.columnIndex || 0) + (reverseStacks ? 1 : 0),
             pointXOffset =
@@ -334,7 +338,7 @@ class ColumnSeries extends Series {
 
         // Save it for reading in linked series (Error bars particularly)
         series.columnMetrics = {
-            width: pointWidth,
+            width,
             offset: pointXOffset,
             paddedWidth: pointOffsetWidth,
             columnCount
@@ -596,8 +600,12 @@ class ColumnSeries extends Series {
             // Handle point.options.pointWidth
             // @todo Handle grouping/stacking too. Calculate offset properly
             if (defined(point.options.pointWidth)) {
-                pointWidth = barW =
-                    Math.ceil(point.options.pointWidth as any);
+                pointWidth = barW = Math.ceil(
+                    chart.relativeLength(
+                        point.options.pointWidth,
+                        seriesPointWidth
+                    )
+                );
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
 

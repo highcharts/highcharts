@@ -35,7 +35,7 @@ const { noop } = H;
 import { perspective } from '../../Core/Math3D.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -184,15 +184,12 @@ class Funnel3DSeries extends ColumnSeries {
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             center: Array<(number|string)> = options.center as any,
-            centerX = relativeLength(center[0], plotWidth),
-            centerY = relativeLength(center[1], plotHeight),
-            width = relativeLength(options.width as any, plotWidth),
-            height = relativeLength(options.height as any, plotHeight),
-            neckWidth = relativeLength(options.neckWidth as any, plotWidth),
-            neckHeight = relativeLength(
-                options.neckHeight as any,
-                plotHeight
-            ),
+            centerX = chart.relativeLength(center[0], plotWidth),
+            centerY = chart.relativeLength(center[1], plotHeight),
+            width = chart.relativeLength(options.width, plotWidth),
+            height = chart.relativeLength(options.height, plotHeight),
+            neckWidth = chart.relativeLength(options.neckWidth, plotWidth),
+            neckHeight = chart.relativeLength(options.neckHeight, plotHeight),
             neckY = (centerY - height / 2) + height - neckHeight,
             points = series.points;
 
