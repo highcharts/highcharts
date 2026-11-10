@@ -224,6 +224,14 @@ function compose(
         this: Series,
         proceed: Function
     ): void {
+        const xAxis = this.xAxis;
+
+        // The core fills this in the point walk that this path skips.
+        if (xAxis && !xAxis.logarithmic) {
+            this.closestPointRangePx =
+                (this.closestPointRange ?? 0) * xAxis.transA;
+        }
+
         syncStrategy(this);
 
         if (isPending(this) && !this.boost2Pending) {

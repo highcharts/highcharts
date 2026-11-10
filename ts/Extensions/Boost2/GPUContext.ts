@@ -137,13 +137,14 @@ class GPUContext {
             // WebGPU requires a secure context, so `navigator.gpu` is
             // absent on a plain HTTP host other than localhost.
             this.unavailable = true;
-            const secure = typeof isSecureContext === 'undefined' ?
-                'unknown' :
-                String(isSecureContext);
 
             error(
                 'Highcharts Boost2: WebGPU is not available, falling back ' +
-                'to SVG rendering. Secure context: ' + secure + '.'
+                'to SVG rendering. Secure context: ' + (
+                    typeof isSecureContext === 'undefined' ?
+                        'unknown' :
+                        String(isSecureContext)
+                ) + '.'
             );
             return;
         }

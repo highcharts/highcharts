@@ -98,9 +98,8 @@ function resolveColor(expression: string, container: HTMLElement): Color.RGBA {
         return direct;
     }
 
-    const scheme = win.matchMedia?.('(prefers-color-scheme: dark)').matches ?
-            'dark' : 'light',
-        key = scheme + '|' + expression,
+    const key = (win.matchMedia?.('(prefers-color-scheme: dark)').matches ?
+            'dark' : 'light') + '|' + expression,
         cached = colorCache[key];
 
     if (cached) {
@@ -116,11 +115,9 @@ function resolveColor(expression: string, container: HTMLElement): Color.RGBA {
     probe.style.color = expression;
     container.appendChild(probe);
 
-    const computed = win.getComputedStyle(probe).color;
+    const resolved = Color.parse(win.getComputedStyle(probe).color).rgba;
 
     probe.remove();
-
-    const resolved = Color.parse(computed).rgba;
 
     return (colorCache[key] = resolved.every(isNumber) ?
         resolved :
@@ -128,21 +125,21 @@ function resolveColor(expression: string, container: HTMLElement): Color.RGBA {
 }
 
 /**
- * The rule from `Series.drawPoints`. Its `closestPointRangePx` comes from
- * `translate`, which the GPU path skips, so the same quantity is derived
- * from the closest data distance and the axis scale.
+ * The rule from `Series.drawPoints`, which the core keeps as an
+ * expression rather than a function. `closestPointRangePx` is supplied
+ * in the `translate` branch, so both read the same input.
  *
  * @internal
  */
 function markersEnabled(series: Series): boolean {
     const marker = series.options.marker || {},
-        xAxis = series.xAxis,
-        rangePx = (series.closestPointRange ?? 0) * (xAxis?.transA ?? 0);
+        xAxis = series.xAxis;
 
     return marker.enabled ??
         ((!xAxis || xAxis.isRadial) ? true : null) ??
         // `radius` carries the series default, as it does in the core.
-        (rangePx >= (marker.enabledThreshold ?? 2) * (marker.radius as number));
+        ((series.closestPointRangePx ?? -Infinity) >=
+            (marker.enabledThreshold ?? 2) * (marker.radius as number));
 }
 
 /**
@@ -178,11 +175,12 @@ function zonesSupported(series: Series): boolean {
  * @internal
  */
 function stepMode(series: Series): number {
-    const step = series.options.step;
-
-    return ({ right: 1, center: 2 } as Record<string, number>)[
-        step as string
-    ] || (step ? 3 : 0);
+    return Math.max(0, [
+        void 0,
+        'right',
+        'center',
+        'left'
+    ].indexOf(series.options.step));
 }
 
 /**
@@ -212,38 +210,31 @@ function passes(
     }
 }
 
-/** First index whose x is not below `value`. @internal */
-function lowerBound(xData: Array<number>, value: number): number {
+/**
+ * How many rows of a sorted x column come before `value`, which is also
+ * the index of the first row that reaches it. With `orEqual`, rows equal
+ * to `value` count as before, so the result is one past the last match.
+ *
+ * @internal
+ */
+function rowsBefore(
+    xData: Array<number>,
+    value: number,
+    orEqual?: boolean
+): number {
     let low = 0,
         high = xData.length;
 
     while (low < high) {
         const mid = (low + high) >> 1;
 
-        if (xData[mid] < value) {
+        if (orEqual ? xData[mid] <= value : xData[mid] < value) {
             low = mid + 1;
         } else {
             high = mid;
         }
     }
     return low;
-}
-
-/** Last index whose x is not above `value`. @internal */
-function upperBound(xData: Array<number>, value: number): number {
-    let low = 0,
-        high = xData.length;
-
-    while (low < high) {
-        const mid = (low + high) >> 1;
-
-        if (xData[mid] <= value) {
-            low = mid + 1;
-        } else {
-            high = mid;
-        }
-    }
-    return low - 1;
 }
 
 /**
@@ -762,9 +753,7 @@ class LineStrategy {
             this.markerSurface = void 0;
         }
 
-        const zoned = this.buildZones();
-
-        this.ensureResources(hairline, markers, zoned);
+        this.ensureResources(hairline, markers, this.buildZones());
 
         const { xAxis, yAxis } = series,
             xMin = xAxis.min as number,
@@ -841,8 +830,8 @@ class LineStrategy {
         if (!series.cropped && xAxis) {
             const { min, max } = xAxis.getExtremes();
 
-            lo = Math.max(0, lowerBound(xData, min) - 1);
-            hi = Math.min(xData.length - 1, upperBound(xData, max) + 1);
+            lo = Math.max(0, rowsBefore(xData, min) - 1);
+            hi = Math.min(xData.length - 1, rowsBefore(xData, max, true));
         }
 
         let dataMin = Infinity,
@@ -909,17 +898,7 @@ class LineStrategy {
         // Chart coordinates: `toValue` subtracts the axis position itself.
         const value = series.xAxis.toValue(e.chartX);
 
-        let low = 0,
-            high = xData.length - 1;
-
-        while (low < high) {
-            const mid = (low + high) >> 1;
-            if (xData[mid] < value) {
-                low = mid + 1;
-            } else {
-                high = mid;
-            }
-        }
+        let low = Math.min(rowsBefore(xData, value), xData.length - 1);
 
         if (
             low > 0 &&
@@ -1035,9 +1014,11 @@ class LineStrategy {
 
             // An empty block holds no y at all.
             if (low <= high) {
-                const top = yAxis.toPixels(high, true),
-                    bottom = yAxis.toPixels(low, true),
-                    dy = Math.max(0, top - cy, cy - bottom);
+                const dy = Math.max(
+                    0,
+                    yAxis.toPixels(high, true) - cy,
+                    cy - yAxis.toPixels(low, true)
+                );
 
                 if (Math.sqrt(dx * dx + dy * dy) < bestDist) {
                     scan(b);
@@ -1178,8 +1159,7 @@ class LineStrategy {
      * @internal
      */
     private materialize(index: number, e: PointerEvent): Point {
-        const series = this.series,
-            { xAxis, yAxis } = series,
+        const { xAxis, yAxis } = this.series,
             point = this.pointAt(index),
             dx = e.chartX - xAxis.pos - (point.plotX as number),
             dy = isNumber(point.plotY) ?
