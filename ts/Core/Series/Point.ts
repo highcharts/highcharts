@@ -146,6 +146,7 @@ class Point {
 
         // Set point properties for convenient access in tooltip and data labels
         this.category = series.xAxis?.categories?.[this.x] ?? this.x;
+        this.key = this.name ?? this.category;
 
         fireEvent(this, 'afterInit');
 
@@ -1237,11 +1238,12 @@ class Point {
      * formatted accordingly.
      * @internal
      * */
-    public applyKey(key?: string|number): string|number {
+    public applyKey(
+        key: string|number|undefined = this.key
+    ): string|number|undefined {
         const series = this.series,
             tooltipOptions = series.tooltipOptions,
             dateTime = series.xAxis?.dateTime;
-        key ??= this.name ?? this.category;
 
         if (dateTime && isNumber(key)) {
             key = series.chart.time.dateFormat(

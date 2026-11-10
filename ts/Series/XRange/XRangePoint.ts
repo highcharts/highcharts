@@ -134,7 +134,7 @@ class XRangePoint extends ColumnPoint {
      * Extend the parent function by setting an end key
      * @internal
      * */
-    public applyKey(): string|number {
+    public applyKey(): string|number|undefined {
         this.keyEnd = super.applyKey(this.x2);
         return super.applyKey(this.x);
     }
