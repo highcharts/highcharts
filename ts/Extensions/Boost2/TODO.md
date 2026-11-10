@@ -72,6 +72,15 @@ path does not yet draw.
 
 ## Accepted differences
 
+- Coordinates reach the shader as an offset from the origin of their
+  block of 1024 rows, which only helps while rows next to each other in
+  the buffer are also close in value. Sorted x with even spacing and a
+  y that moves slowly both qualify. A block straddling a long gap in x,
+  or a scatter whose y jumps over a wide range, falls back to the
+  precision of a plain float, which is what the module had before. The
+  upload records the largest offset it wrote on each axis, so whether a
+  given series is served well is a measurement rather than a guess.
+
 - A gap left by nulls is about two pixels wider than the SVG one, since
   a NaN vertex discards every triangle that touches it. Measured on a run
   of ten nulls at four hundred points across a 660 pixel plot: 17 empty

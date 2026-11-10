@@ -53,11 +53,10 @@ fn vsMarker(
     @builtin(vertex_index)   vi : u32,
     @builtin(instance_index) ii : u32
 ) -> MarkerOut {
-    let p      = pts[ii];
-    let center = toPixels(p);
+    let center = toPixels(ii);
     // Collapsing the quad to its center leaves it with no area, which
     // drops the marker whole rather than clipping it.
-    let reach  = select(0.0, u.radius + AA_PAD, inPlotArea(p));
+    let reach  = select(0.0, u.radius + AA_PAD, inPlotArea(ii));
     let corner = vec2f(
         f32(vi & 1u) * 2.0 - 1.0,
         f32(vi >> 1u) * 2.0 - 1.0
@@ -66,7 +65,8 @@ fn vsMarker(
     var out : MarkerOut;
     out.pos = toClip(center + corner);
     out.offset = corner;
-    out.value = p.y;
+    // Zone values are offsets above the lower end of the domain too.
+    out.value = offsetAt(ii).y;
     return out;
 }
 

@@ -28,6 +28,7 @@ import H from '../../../Core/Globals.js';
 const { doc, win } = H;
 import LineShader from '../Shaders/LineShader.js';
 import MarkerShader from '../Shaders/MarkerShader.js';
+import { BLOCK, BLOCK_SHIFT } from '../Shaders/Prelude.js';
 import { defined, isNumber } from '../../../Shared/Utilities.js';
 
 /* *
@@ -37,24 +38,17 @@ import { defined, isNumber } from '../../../Shared/Utilities.js';
  * */
 
 /**
- * Uniform buffer size: the domain, then viewport, half width, point
- * count, marker radius, margin and zone count, padded to the 16 byte
- * struct alignment. Colors live in the zone buffer.
+ * Uniform buffer size: the domain span, then the viewport, half width,
+ * point count, marker radius, margin and zone count, padded to the 16
+ * byte struct alignment.
  */
 const UNIFORM_BYTES = 48;
 
 /** Bytes per zone: a vec4f color and a value, at vec4f alignment. */
 const ZONE_BYTES = 32;
 
-/**
- * Rows per entry of the min/max index, as a shift. Range queries read one
- * entry per block instead of every row it covers.
- * @internal
- */
-const BLOCK_SHIFT = 10;
-
-/** @internal */
-const BLOCK = 1 << BLOCK_SHIFT;
+/** Bytes per block origin: its distance from the domain minimum. */
+const ORIGIN_BYTES = 8;
 
 /**
  * Resolved color expressions, keyed by color scheme and expression. The same
@@ -268,7 +262,14 @@ class LineStrategy {
      * @todo Debugging only, remove.
      * @internal
      */
-    public stats = { uploads: 0, draws: 0, buildMs: 0, drawMs: 0 };
+    public stats = {
+        uploads: 0,
+        draws: 0,
+        buildMs: 0,
+        drawMs: 0,
+        spreadX: 0,
+        spreadY: 0
+    };
 
     /** Graph, in the clipped and animated series group. @internal */
     private surface?: GPUSurface;
@@ -333,12 +334,26 @@ class LineStrategy {
     /** @internal */
     private zoneCount = 0;
 
+    /** @internal */
+    private originBuffer?: GPUBuffer;
+
+    /** @internal */
+    private originCapacity = 0;
+
     /**
-     * Domain origin, kept in f64 and subtracted before conversion to f32.
-     * A raw timestamp exceeds f32 precision; `x - xOrigin` does not.
+     * Origin of each block, in data units and double precision. Their
+     * distance from the domain minimum is what reaches the GPU, and it
+     * changes with every zoom.
      * @internal
      */
-    private xOrigin = 0;
+    private blockOriginX = new Float64Array(0);
+
+    /** @internal */
+    private blockOriginY = new Float64Array(0);
+
+    /** @internal */
+    private originData = new Float32Array(0);
+
 
     /* *
      *
@@ -371,15 +386,19 @@ class LineStrategy {
             return;
         }
 
-        this.xOrigin = length ? xData[0] : 0;
-
         const flat = new Float32Array(length * 2),
-            xOrigin = this.xOrigin,
+            originBlocks = Math.max(1, Math.ceil(length / BLOCK)),
+            originX = new Float64Array(originBlocks),
+            originY = new Float64Array(originBlocks),
             blocks = Math.ceil(length / BLOCK),
             blockMin = new Float64Array(blocks).fill(Infinity),
             blockMax = new Float64Array(blocks).fill(-Infinity);
 
-        let written = 0;
+        let written = 0,
+            baseX = 0,
+            baseY = 0,
+            spreadX = 0,
+            spreadY = 0;
 
         for (let i = 0; i < length; i++) {
             const value = yData[i];
@@ -399,9 +418,26 @@ class LineStrategy {
                 continue;
             }
 
-            flat[written * 2] = xData[i] - xOrigin;
+            // Each block of the buffer carries its own origin, so the
+            // offsets stay small enough for f32 however large the data.
+            if (!(written & (BLOCK - 1))) {
+                const at = written >> BLOCK_SHIFT;
+
+                baseX = originX[at] = xData[i];
+                baseY = originY[at] = isNumber(value) ? value : 0;
+            }
+
+            const offsetX = xData[i] - baseX,
+                offsetY = isNumber(value) ? value - baseY : NaN;
+
+            spreadX = Math.max(spreadX, Math.abs(offsetX));
+            if (isNumber(value)) {
+                spreadY = Math.max(spreadY, Math.abs(offsetY));
+            }
+
+            flat[written * 2] = offsetX;
             // Null and undefined become NaN, which breaks the strip.
-            flat[written * 2 + 1] = value ?? NaN;
+            flat[written * 2 + 1] = offsetY;
             written++;
         }
 
@@ -421,12 +457,55 @@ class LineStrategy {
             this.buffer, 0, flat.subarray(0, written * 2)
         );
 
+        const used = Math.max(1, Math.ceil(written / BLOCK)),
+            originBytes = Math.max(ORIGIN_BYTES, used * ORIGIN_BYTES);
+
+        if (!this.originBuffer || this.originCapacity < originBytes) {
+            this.originBuffer?.destroy();
+            this.originBuffer = GPUContext.createStorageBuffer(originBytes);
+            this.originCapacity = originBytes;
+            this.bindGroup = void 0;
+        }
+
+        this.blockOriginX = originX.subarray(0, used);
+        this.blockOriginY = originY.subarray(0, used);
+        this.originData = new Float32Array(used * 2);
+
+        // The largest offset an entry of the buffer holds. Precision in
+        // pixels is this times 2^-24 over the units a pixel covers, so it
+        // is what tells whether the block origins are tight enough.
+        this.stats.spreadX = spreadX;
+        this.stats.spreadY = spreadY;
+
         this.count = written;
         this.sourceX = xData;
         this.sourceY = yData;
         this.sourceConnect = connect;
         this.stats.uploads++;
         this.stats.buildMs = performance.now() - start;
+    }
+
+    /**
+     * Upload where each block sits above the lower end of the domain.
+     *
+     * The subtraction happens here, in double precision, rather than in
+     * the shader: cancelling two large floats there relies on the
+     * compiler keeping the order of the additions, which it is free not
+     * to do, and a reassociated sum loses every digit the split was
+     * meant to save.
+     * @internal
+     */
+    private placeOrigins(xMin: number, yMin: number): void {
+        const data = this.originData,
+            originX = this.blockOriginX,
+            originY = this.blockOriginY;
+
+        for (let b = 0; b < originX.length; b++) {
+            data[b * 2] = originX[b] - xMin;
+            data[b * 2 + 1] = originY[b] - yMin;
+        }
+
+        GPUContext.device!.queue.writeBuffer(this.originBuffer!, 0, data);
     }
 
     /**
@@ -455,7 +534,11 @@ class LineStrategy {
             data[at + 2] = rgba[2] / 255;
             data[at + 3] = rgba[3];
             // The last zone is never compared against its value.
-            data[at + 4] = isNumber(zone?.value) ? zone.value : Infinity;
+            // Measured from the lower end of the domain, as the shader
+            // reconstructs a fragment's value.
+            data[at + 4] = isNumber(zone?.value) ?
+                zone.value - (series.yAxis.min as number) :
+                Infinity;
         }
 
         if (this.zoneCount !== count) {
@@ -513,7 +596,8 @@ class LineStrategy {
                 entries: [
                     { binding: 0, resource: { buffer: this.uniformBuffer } },
                     { binding: 1, resource: { buffer: this.buffer! } },
-                    { binding: 2, resource: { buffer: this.zoneBuffer! } }
+                    { binding: 2, resource: { buffer: this.zoneBuffer! } },
+                    { binding: 3, resource: { buffer: this.originBuffer! } }
                 ]
             });
         }
@@ -568,19 +652,21 @@ class LineStrategy {
         const { xAxis, yAxis } = series,
             uniforms = this.uniformData;
 
-        uniforms[0] = (xAxis.min as number) - this.xOrigin;
-        uniforms[1] = (xAxis.max as number) - this.xOrigin;
-        uniforms[2] = yAxis.min as number;
-        uniforms[3] = yAxis.max as number;
-        uniforms[4] = this.surface.width;
-        uniforms[5] = this.surface.height;
-        const ratio = win.devicePixelRatio || 1;
+        const xMin = xAxis.min as number,
+            yMin = yAxis.min as number,
+            ratio = win.devicePixelRatio || 1;
 
-        uniforms[6] = lineWidth * ratio / 2;
-        uniforms[7] = this.count;
-        uniforms[8] = (options.marker?.radius ?? 4) * ratio;
-        uniforms[9] = this.surface.pad;
-        uniforms[10] = this.zoneCount;
+        this.placeOrigins(xMin, yMin);
+
+        uniforms[0] = (xAxis.max as number) - xMin;
+        uniforms[1] = (yAxis.max as number) - yMin;
+        uniforms[2] = this.surface.width;
+        uniforms[3] = this.surface.height;
+        uniforms[4] = lineWidth * ratio / 2;
+        uniforms[5] = this.count;
+        uniforms[6] = (options.marker?.radius ?? 4) * ratio;
+        uniforms[7] = this.surface.pad;
+        uniforms[8] = this.zoneCount;
 
         const device = GPUContext.device!;
         device.queue.writeBuffer(this.uniformBuffer!, 0, uniforms);
@@ -903,9 +989,11 @@ class LineStrategy {
         this.buffer?.destroy();
         this.uniformBuffer?.destroy();
         this.zoneBuffer?.destroy();
+        this.originBuffer?.destroy();
         this.surface?.destroy();
         this.markerSurface?.destroy();
-        this.buffer = this.uniformBuffer = this.zoneBuffer = void 0;
+        this.buffer = this.uniformBuffer = void 0;
+        this.zoneBuffer = this.originBuffer = void 0;
         this.bindGroup = void 0;
         this.surface = this.markerSurface = void 0;
     }

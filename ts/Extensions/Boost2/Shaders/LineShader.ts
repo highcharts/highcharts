@@ -59,7 +59,7 @@ struct LineOut {
 @vertex
 fn vsHairline(@builtin(vertex_index) vi : u32) -> LineOut {
     var out : LineOut;
-    out.pos = toClip(toPixels(pts[vi]));
+    out.pos = toClip(toPixels(vi));
     out.off = 0.0;
     return out;
 }
@@ -77,9 +77,9 @@ fn vsLine(@builtin(vertex_index) vi : u32) -> LineOut {
     var out : LineOut;
     out.off = side * reach;
 
-    let curr = toPixels(pts[i]);
-    let dIn  = curr - toPixels(pts[max(i, 1u) - 1u]);
-    let dOut = toPixels(pts[min(i + 1u, last)]) - curr;
+    let curr = toPixels(i);
+    let dIn  = curr - toPixels(max(i, 1u) - 1u);
+    let dOut = toPixels(min(i + 1u, last)) - curr;
 
     let lIn  = length(dIn);
     let lOut = length(dOut);

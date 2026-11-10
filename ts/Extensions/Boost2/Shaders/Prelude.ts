@@ -17,8 +17,24 @@
  * */
 
 /**
+ * Rows per block of the origin and min/max indexes, as a shift. Shared
+ * with the shaders below, so the two cannot drift apart.
+ * @internal
+ */
+const BLOCK_SHIFT = 10;
+
+/** @internal */
+const BLOCK = 1 << BLOCK_SHIFT;
+
+/**
  * Bindings, domain mapping and the antialiasing rule, prepended to the
  * shaders. Declares no entry point, so it is not a shader itself.
+ *
+ * Coordinates are held as an offset from the origin of their block, and
+ * each origin as its distance from the lower end of the domain. That
+ * distance is worked out in double precision on the way in, so the
+ * shader only ever adds two small numbers and never has to cancel two
+ * large ones, which a compiler is free to reassociate away.
  *
  * Each shape measures its own signed distance, which is intrinsic to it,
  * and turns it into coverage through the one rule here.
@@ -30,9 +46,11 @@
  */
 const Prelude: string = `
 
+const BLOCK_SHIFT = ${BLOCK_SHIFT}u;
+
 struct U {
-    // xMin, xMax, yMin, yMax, in the origin-shifted domain
-    domain    : vec4f,
+    // Width and height of the domain
+    span      : vec2f,
     // Canvas size in device pixels
     viewport  : vec2f,
     // Half the stroke width, in device pixels
@@ -58,21 +76,26 @@ struct Zone {
 @group(0) @binding(0) var<uniform> u : U;
 @group(0) @binding(1) var<storage, read> pts : array<vec2f>;
 @group(0) @binding(2) var<storage, read> zones : array<Zone>;
+// Origin of each block, as its distance from the lower end of the domain
+@group(0) @binding(3) var<storage, read> origins : array<vec2f>;
+
+// Where a point sits above the lower end of the domain, in domain units.
+fn offsetAt(i : u32) -> vec2f {
+    return origins[i >> BLOCK_SHIFT] + pts[i];
+}
 
 // The canvas may be larger than the plot box, so that a marker at the
 // edge is not cut off; the domain maps to the inset box.
-fn toPixels(p : vec2f) -> vec2f {
-    return u.pad + vec2f(
-        (p.x - u.domain.x) / (u.domain.y - u.domain.x),
-        (p.y - u.domain.z) / (u.domain.w - u.domain.z)
-    ) * (u.viewport - 2.0 * u.pad);
+fn toPixels(i : u32) -> vec2f {
+    return u.pad + offsetAt(i) / u.span * (u.viewport - 2.0 * u.pad);
 }
 
 // A point is in the plot area when its own coordinate is, regardless of
 // how far the shape drawn at it reaches.
-fn inPlotArea(p : vec2f) -> bool {
-    return p.x >= u.domain.x && p.x <= u.domain.y &&
-        p.y >= u.domain.z && p.y <= u.domain.w;
+fn inPlotArea(i : u32) -> bool {
+    let d = offsetAt(i);
+
+    return d.x >= 0.0 && d.x <= u.span.x && d.y >= 0.0 && d.y <= u.span.y;
 }
 
 fn toClip(px : vec2f) -> vec4f {
@@ -91,11 +114,12 @@ fn tint(value : f32) -> vec4f {
     return zones[last].color;
 }
 
-// Data y of a fragment, from where it sits in the attachment. Fragment
-// coordinates run down from the top, the domain runs up from the bottom.
+// How far a fragment sits above the lower end of the domain, which is
+// what zone values are expressed in. Fragment coordinates run down from
+// the top, the domain runs up from the bottom.
 fn fragValue(pos : vec4f) -> f32 {
     let row = (u.viewport.y - pos.y - u.pad) / (u.viewport.y - 2.0 * u.pad);
-    return u.domain.z + row * (u.domain.w - u.domain.z);
+    return row * u.span.y;
 }
 
 // Device pixels a shape is grown by, to leave room for its own fringe.
@@ -115,6 +139,9 @@ fn coverage(d : f32) -> f32 {
  *  Default Export
  *
  * */
+
+/** @internal */
+export { BLOCK, BLOCK_SHIFT };
 
 /** @internal */
 export default Prelude;
