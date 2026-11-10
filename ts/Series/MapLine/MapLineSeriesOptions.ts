@@ -95,6 +95,8 @@ export interface MapLineSeriesOptions extends MapSeriesOptions {
 
     /**
      * Fill color for the map line shapes
+     *
+     * @default 'none'
      */
     fillColor?: ColorType;
 

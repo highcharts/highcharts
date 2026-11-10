@@ -177,6 +177,8 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
      * @sample {highcharts} highcharts/variable-radius-pie/zmin-zmax/
      *         Series limited by both zMin and zMax
      *
+     * @default undefined
+     *
      * @since 6.0.0
      */
     zMax?: number;
@@ -191,6 +193,8 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
      *
      * @sample {highcharts} highcharts/variable-radius-pie/zmin-zmax/
      *         Series limited by both zMin and zMax
+     *
+     * @default undefined
      *
      * @since 6.0.0
      */

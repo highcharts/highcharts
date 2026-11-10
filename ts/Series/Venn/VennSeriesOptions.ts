@@ -104,7 +104,11 @@ export interface VennSeriesOptions extends ScatterSeriesOptions {
      */
     borderWidth?: number;
 
-    /** @internal */
+    /**
+     * @default 0
+     *
+     * @internal
+     */
     brighten?: number;
 
     brightness?: number;

@@ -145,6 +145,8 @@ export interface MapSeriesOptions
      * @sample maps/series/affectsmapview/
      *         US map with world map backdrop
      *
+     * @default true
+     *
      * @since 10.0.0
      */
     affectsMapView?: boolean;
@@ -184,11 +186,15 @@ export interface MapSeriesOptions
      * @sample {highmaps} maps/demo/mappoint-mapmarker/
      *         Backdrop coastline with round linecap
      *
+     * @default 'round'
+     *
      * @since 10.3.3
      */
     linecap?: ScatterSeriesOptions['linecap'];
 
     /**
+     * @default null
+     *
      * @ignore-option
      */
     marker?: PointMarkerOptions;
@@ -203,6 +209,8 @@ export interface MapSeriesOptions
      *         Null color
      *
      * @type {Highcharts.ColorType}
+     *
+     * @default 'var(--highcharts-neutral-color-3)'
      */
     nullColor?: ColorType;
 
@@ -217,6 +225,8 @@ export interface MapSeriesOptions
     states?: SeriesStatesOptions<MapSeriesOptions>;
 
     /**
+     * @default 0
+     *
      * @ignore-option
      */
     turboThreshold?: number;
