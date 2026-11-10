@@ -547,7 +547,8 @@ class VBPIndicator extends SMAIndicator {
                 }
             );
 
-            if (zoneLinesOptions.enabled) {
+            // Group doesn't exist before the first render (#20298)
+            if (zoneLinesOptions.enabled && indicator.group) {
                 indicator.drawZones(
                     chart,
                     yAxis,
@@ -708,7 +709,8 @@ class VBPIndicator extends SMAIndicator {
         }
 
         if (!defined(lowRange) || !defined(highRange)) {
-            if (this.points.length) {
+            // No points yet when data is set before the first render
+            if (this.points?.length) {
                 this.setData([]);
                 this.zoneStarts = [];
                 if (this.zoneLinesSVG) {

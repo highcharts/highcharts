@@ -350,6 +350,46 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 });
 
+QUnit.test(
+    'Recalculation when the main series has no points yet, #20298',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+                plotOptions: {
+                    series: {
+                        dataGrouping: { forced: true, units: [['day', [1]]] }
+                    }
+                },
+                series: [{ data: [1, 2, 3] }]
+            }),
+            main = chart.addSeries({ id: 'main' }, false),
+            sma = chart.addSeries({
+                type: 'sma',
+                linkedTo: 'main',
+                params: { period: 2 }
+            }, false);
+
+        main.setData([1, 2, 3, 4], false);
+        chart.redraw();
+
+        assert.deepEqual(
+            Array.from(sma.getColumn('y')),
+            [1.5, 2.5, 3.5],
+            'SMA should use the data set before the main series rendered'
+        );
+
+        main.hide();
+        main.setData([10, 20, 30]);
+        main.show();
+
+        assert.deepEqual(
+            Array.from(sma.getColumn('y')),
+            [15, 25],
+            'SMA should use the data set while the grouped main series was ' +
+            'hidden'
+        );
+    }
+);
+
 QUnit.test('Order of series and indicators, #15892.', function (assert) {
     const chart = Highcharts.stockChart('container', {
         navigator: {
