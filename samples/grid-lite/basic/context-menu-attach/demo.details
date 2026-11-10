@@ -1,0 +1,6 @@
+---
+ name: Context menu on your own element
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...

@@ -1,12 +1,10 @@
 import { describe, it, before } from 'node:test';
 import { ok } from 'node:assert';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 
 import { exec } from '../libs/process.js';
 
 async function expectIndex({ indexPath, heading, link }) {
-    ok(await stat(indexPath));
-
     const html = await readFile(indexPath, 'utf8');
 
     ok(
