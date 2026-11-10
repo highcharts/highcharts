@@ -4679,6 +4679,10 @@ class Axis {
     ): void {
         const chart = this.chart;
 
+        // Shallow copy, so that listeners can replace options without
+        // mutating the user's object (#25527)
+        options = { ...options };
+
         fireEvent(this, 'update', { options });
 
         options = merge(this.userOptions, options);

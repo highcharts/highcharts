@@ -30,6 +30,7 @@ import {
     addEvent,
     extend,
     isNumber,
+    merge,
     splat
 } from '../../../Shared/Utilities.js';
 
@@ -264,6 +265,7 @@ namespace PlotLineOrBandAxis {
             addEvent(AxisClass, 'update', function ({
                 options
             }: { options: DeepPartial<Axis['options']> }): void {
+                const PlotItemClass = PlotLineOrBandClass;
 
                 for (const coll of ['plotBands', 'plotLines'] as const) {
 
@@ -271,7 +273,12 @@ namespace PlotLineOrBandAxis {
                     // nothing with existing plot lines and bands
                     if (options[coll]) {
 
-                        const plotItems = this[coll];
+                        // Work on copies, not on the user's options (#25527)
+                        const plotItems = this[coll],
+                            itemsOptions: Array<
+                                PlotBandOptions|PlotLineOptions
+                            > = [];
+
                         splat(options[coll]).forEach(
                             (pOptions = {}, i): void => {
                                 // Match by id
@@ -287,18 +294,22 @@ namespace PlotLineOrBandAxis {
 
                                 // Update
                                 if (pItem) {
-                                    pItem.update(pOptions, false);
-                                    options[coll]![i] = pItem.options;
+                                    pItem.options = merge(
+                                        pItem.options,
+                                        pOptions
+                                    );
 
-                                // Add
+                                // Add, rendered in Axis.render
                                 } else {
-                                    pItem = (this as Composition)[
-                                        coll === 'plotBands' ?
-                                            'addPlotBand' :
-                                            'addPlotLine'
-                                    ](pOptions as PlotBandOptions);
+                                    pItem = new PlotItemClass(
+                                        this as Composition,
+                                        merge(pOptions as PlotBandOptions),
+                                        coll
+                                    );
+                                    plotItems.push(pItem);
                                 }
-                                pItem!.isActive = true;
+                                pItem.isActive = true;
+                                itemsOptions[i] = pItem.options;
                             }
                         );
 
@@ -306,11 +317,14 @@ namespace PlotLineOrBandAxis {
                         let i = plotItems.length;
                         while (i--) {
                             if (!plotItems[i].isActive) {
-                                plotItems[i].remove();
+                                plotItems[i].destroy();
+                                plotItems.splice(i, 1);
                             } else {
                                 delete plotItems[i].isActive;
                             }
                         }
+
+                        options[coll] = itemsOptions;
                     }
                 }
             });
