@@ -57,6 +57,7 @@ export interface PaneBackgroundOptions {
      *
      * @sample   highcharts/pane/background
      *           Pane background options
+     * @default  'var(--highcharts-neutral-color-20)'
      * @since    2.3.0
      * @requires highcharts-more
      */
@@ -67,6 +68,7 @@ export interface PaneBackgroundOptions {
      *
      * @sample   highcharts/series-solidgauge/pane-borderradius
      *           Circular gauge and pane with equal border radius
+     * @default  undefined
      * @since    11.4.2
      * @requires highcharts-more
      */
@@ -76,6 +78,7 @@ export interface PaneBackgroundOptions {
      *
      * @sample   highcharts/pane/background
      *           Pane background options
+     * @default  0
      * @since    2.3.0
      * @requires highcharts-more
      */
@@ -94,7 +97,11 @@ export interface PaneBackgroundOptions {
      * @requires highcharts-more
      */
     className?: string;
-    /** @internal */
+    /**
+     * @default -Number.MAX_VALUE
+     *
+     * @internal
+     */
     from?: number;
     /**
      * The inner radius of the pane background. Can be either numeric
@@ -108,6 +115,8 @@ export interface PaneBackgroundOptions {
      * The outer radius of the circular pane background. Can be either
      * numeric (pixels) or a percentage string.
      *
+     * @default '100%'
+     *
      * @since    2.3.0
      * @requires highcharts-more
      */
@@ -117,11 +126,17 @@ export interface PaneBackgroundOptions {
      * is circular. When `arc`, the background extends only from the min
      * to the max of the value axis.
      *
+     * @default 'arc'
+     *
      * @since    2.3.0
      * @requires highcharts-more
      */
     shape?: PaneBackgroundShapeValue;
-    /** @internal */
+    /**
+     * @default Number.MAX_VALUE
+     *
+     * @internal
+     */
     to?: number;
 }
 

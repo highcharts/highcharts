@@ -6,13 +6,13 @@ module.exports = {
      * Refer to doc by relative path without extension, i.e.: 'maps/drilldown'
      */
     unlisted: [
-        'adr/0001-separate-visual-runner-from-comparison',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
         'maps/latlon'
     ],
     /* List of old paths that should be redirected */
     redirects: [
+        { from: 'grid/cell-context-menu', to: 'grid/context-menu' },
         { from: 'chart-and-series-types/networkgraph', to: 'chart-and-series-types/network-graph' },
         { from: 'chart-and-series-types/technical-indicator-series', to: 'stock/technical-indicator-series' },
         { from: 'advanced-chart-features/highcharts-typescript-beta', to: 'advanced-chart-features/highcharts-typescript-declarations' },

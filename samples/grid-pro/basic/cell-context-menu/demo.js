@@ -1,17 +1,13 @@
-const contextMenu = Grid.CellContextMenuBuiltInActions;
-
-contextMenu.registerBuiltInAction('showCellValue', {
-    getLabel: function () {
-        return 'Show cell value';
-    },
+Grid.ContextMenu.registerItem('showCellValue', {
+    label: 'Show cell value',
     icon: 'checkmark',
-    onClick: function (context) {
+    onClick: function (cell, context) {
         document.getElementById('status').textContent =
-            context.columnId + ': ' + String(context.cell.value);
+            context.target.column.id + ': ' + String(cell.value);
     }
 });
 
-contextMenu.registerBuiltInGroup('sampleActions', {
+Grid.ContextMenu.registerItem('sampleActions', {
     items: ['showCellValue']
 });
 
@@ -30,12 +26,11 @@ Grid.grid('container', {
             contextMenu: {
                 items: [
                     {
-                        type: 'submenu',
                         label: 'Sample actions',
                         items: ['sampleActions']
                     },
                     {
-                        type: 'separator'
+                        separator: true
                     },
                     'pinning',
                     {

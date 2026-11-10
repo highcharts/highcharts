@@ -41,7 +41,9 @@ import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableRow from '../Grid/Core/Table/Body/TableRow.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import CellContextMenuBuiltInActions
-    from '../Grid/Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
+    from '../Grid/Core/ContextMenu/ContextMenuCompat.js';
+import ContextMenu
+    from '../Grid/Core/ContextMenu/ContextMenuRegistry.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
@@ -56,6 +58,7 @@ import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry
 import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.js';
 import LicenseValidationComposition from '../Grid/Pro/License/LicenseValidationComposition.js';
 import RowPinningComposition from '../Grid/Pro/RowPinning/RowPinningComposition.js';
+import RowSelectionComposition from '../Grid/Pro/RowSelection/RowSelectionComposition.js';
 import TableEditingComposition from '../Grid/Pro/TableEditing/TableEditingComposition.js';
 import TreeViewComposition from '../Grid/Pro/TreeView/TreeViewComposition.js';
 import SummaryRowsComposition from '../Grid/Pro/SummaryRows/SummaryRowsComposition.js';
@@ -88,6 +91,7 @@ import '../Data/Modifiers/FilterModifier.js';
 // Compositions
 import '../Grid/Core/Responsive/ResponsiveComposition.js';
 import '../Grid/Pro/RowPinning/RowPinningComposition.js';
+import '../Grid/Pro/RowSelection/RowSelectionComposition.js';
 import '../Grid/Pro/GridEvents.js';
 import '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
@@ -128,6 +132,7 @@ import '../Grid/Pro/Data/RemoteDataProvider.js';
 const G = {
     AST,
     CellContextMenuBuiltInActions,
+    ContextMenu,
     CellContentPro,
     CellRenderer,
     CellRendererRegistry,
@@ -173,6 +178,7 @@ RowPinningComposition.compose(
     G.Grid, G.Table, G.Column,
     G.TableRow, G.TableCell
 );
+RowSelectionComposition.compose(G.Grid, G.Table, G.TableCell);
 TableEditingComposition.compose(G.Grid);
 TreeViewComposition.compose(G.Grid, G.Table, G.TableCell, G.HeaderCell);
 SummaryRowsComposition.compose(G.Grid, G.Table, G.TableCell);
@@ -189,6 +195,7 @@ ResponsiveComposition.compose(G.Grid);
 export {
     AST,
     CellContextMenuBuiltInActions,
+    ContextMenu,
     CellContentPro,
     CellRenderer,
     CellRendererRegistry,

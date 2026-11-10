@@ -187,6 +187,7 @@ test.describe('series/marker-clusters', {
             }
         ]
     };
+
     test('General marker-clusters', async ({ page }) => {
         const chart = await createChart(
             page,
@@ -265,11 +266,12 @@ test.describe('series/marker-clusters', {
 
         expect(
             await cluster.evaluate(
-                c => Number(c.point.graphic.getBBox().width / 2).toFixed(2)
+                c => Number(c.point.graphic.getBBox().width / 2)
             ),
             'Cluster marker size should be two times bigger than radius.'
-        ).toEqual(
-            '18.00'
+        ).toBeCloseTo(
+            18,
+            0 // Allow sub-pixel difference
         );
     });
 

@@ -4221,12 +4221,20 @@ class Chart {
         }
 
         fireEvent(this, 'pan', { originalEvent: event }, (): void => {
+            const {
+                lastPanX = 0, lastPanY = 0, mouseDownX = 0, mouseDownY = 0
+            } = chart;
+
             chart.transform({
                 axes,
                 event,
+                // Zero-size boxes, like a one-finger touch pan
+                from: { x: mouseDownX, y: mouseDownY, width: 0, height: 0 },
                 to: {
-                    x: event.chartX - (chart.mouseDownX || 0),
-                    y: event.chartY - (chart.mouseDownY || 0)
+                    x: mouseDownX + event.chartX - lastPanX,
+                    y: mouseDownY + event.chartY - lastPanY,
+                    width: 0,
+                    height: 0
                 },
                 trigger: 'pan'
             });
@@ -4302,8 +4310,12 @@ class Chart {
                 minPx = move;
 
             // Zooming in multiple panes, zoom only in the pane that receives
-            // the input
-            if (!reset && (fromCenter < 0 || fromCenter > axis.len)) {
+            // the input. Radial axes are not linear in screen space (#21809).
+            if (
+                !reset &&
+                !axis.isRadial &&
+                (fromCenter < 0 || fromCenter > len)
+            ) {
                 continue;
             }
 
@@ -4493,7 +4505,7 @@ class Chart {
                 }
 
                 if (event) {
-                    this[horiz ? 'mouseDownX' : 'mouseDownY'] =
+                    this[horiz ? 'lastPanX' : 'lastPanY'] =
                         event[horiz ? 'chartX' : 'chartY'];
                 }
             }

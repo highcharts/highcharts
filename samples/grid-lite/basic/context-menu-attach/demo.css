@@ -1,0 +1,27 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    padding: 8px;
+}
+
+#actions {
+    margin-bottom: 8px;
+    padding: 6px 12px;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 1px solid color-mix(in srgb, currentcolor 25%, transparent);
+    border-radius: 4px;
+    cursor: context-menu;
+}
