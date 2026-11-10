@@ -75,9 +75,15 @@
     function getSVG(chart) {
         var svg;
         if (chart) {
-            var container = chart.container;
+            var container = chart.container,
+                svgElement = container.querySelector('svg');
             prepareShot(chart);
-            svg = container.querySelector('svg')
+
+            // The palette.colorScheme is set on the container, outside the
+            // serialized SVG
+            svgElement.style.colorScheme = container.style.colorScheme;
+
+            svg = svgElement
                 .outerHTML
                 .replace(
                     /<svg /,

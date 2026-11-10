@@ -20,7 +20,6 @@
 import * as PPath from 'node:path/posix';
 
 import FSLib from '../../libs/fs.js';
-import { debugLog } from '../utilities.mjs';
 
 
 /* *
@@ -49,10 +48,13 @@ const SPDX_LINE = '// SPDX-License-Identifier: LicenseRef-Highcharts';
  * @param {Array<string>} masterImports
  * Master imports to add.
  *
+ * @param {import('webpack').LoaderContext<*>} context
+ * Webpack loader context for reporting warnings.
+ *
  * @return {string}
  * Decorated master content.
  */
-function decorateImports(content, masterImports) {
+function decorateImports(content, masterImports, context) {
     try {
         const importsMatches = content.matchAll(
             /(?:\n|\r\n)import.*?from.*?(['"])(.*?)\1.*?(?:\n|\r\n)/gsu
@@ -107,7 +109,7 @@ function decorateImports(content, masterImports) {
 
         }
     } catch (error) {
-        debugLog(error);
+        context.emitWarning(error);
         content = `/* ERROR: ${error} */\n${content}`;
     }
 
@@ -238,7 +240,7 @@ function mastersLoader(content, map, meta) {
             extractMasterImports(content, contentFolder, requirePrefix);
 
         if (masterImports?.length) {
-            content = decorateImports(content, masterImports);
+            content = decorateImports(content, masterImports, context);
         }
 
         callback(null, content, map, meta);

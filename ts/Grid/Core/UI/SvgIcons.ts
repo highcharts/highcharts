@@ -25,7 +25,7 @@
  *
  * */
 
-import { setHTMLContent } from '../GridUtils.js';
+import { setHTMLContent, warnOnce } from '../GridUtils.js';
 import { defined, isString } from '../../../Shared/Utilities.js';
 
 /* *
@@ -57,7 +57,7 @@ export type GridIconName = (
 /**
  * The registry of all Grid Svg icons with their SVG path data.
  */
-export const icons: Record<GridIconName, SVGDefinition> = {
+const icons: Record<GridIconName, SVGDefinition> = {
     filter: {
         width: 12,
         height: 12,
@@ -415,6 +415,15 @@ export function createGridIcon(
     const value = getIconFromRegistry(name, customIcons);
 
     if (!defined(value)) {
+        // A placeholder rather than nothing, so that the button keeps its
+        // layout, but said out loud: a silent stand-in reads as the icon the
+        // caller asked for.
+        warnOnce(
+            'icon:' + name,
+            `Grid: Unknown icon "${name}", falling back to a placeholder. ` +
+            'Add it through the `rendering.icons` option, or use a built-in ' +
+            'name.'
+        );
         return createSvgFromDefinition(icons.filter);
     }
 

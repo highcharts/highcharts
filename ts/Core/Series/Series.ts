@@ -26,6 +26,7 @@ import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type {
+    CellEvent,
     Column,
     ColumnCollection,
     ColumnEvent,
@@ -67,8 +68,7 @@ import {
     setAnimation
 } from '../Animation/AnimationUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import D from '../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Defaults.js';
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -2139,12 +2139,8 @@ class Series {
                     (): void => chart.renderer && chart.redraw(),
                     0
                 );
-            };
-
-        addEvent(
-            dataTable,
-            'afterSetRows',
-            (e: RowEvent): void => {
+            },
+            onSetRow = (e: CellEvent|RowEvent): void => {
                 const rowIndex = e.rowIndex;
 
                 if (isNumber(rowIndex)) {
@@ -2169,8 +2165,10 @@ class Series {
                         }
                     }
                 }
-            }
-        );
+            };
+
+        addEvent(dataTable, 'afterSetCell', onSetRow);
+        addEvent(dataTable, 'afterSetRows', onSetRow);
 
         addEvent(
             dataTable,
@@ -3984,7 +3982,9 @@ class Series {
         // Call the afterAnimate function on animation complete (but don't
         // overwrite the animation.complete option which should be available
         // to the user).
-        if (!hasRendered) {
+        // An update during the initial animation keeps the pending timeout
+        // (#25439)
+        if (!hasRendered && series.animationTimeout === void 0) {
             // Additional time if defer is defined before afterAnimate
             // will be triggered
             if (animDuration && animOptions.defer) {
@@ -4891,6 +4891,11 @@ class Series {
         // updated, `series.options.data` has correct merged options, use it:
         if (keepPoints && options.data) {
             options.data = series.options.data;
+        }
+
+        // Keep the pending afterAnimate of the initial animation (#25439)
+        if (!series.finishedAnimating) {
+            keepProps.push('animationTimeout');
         }
 
         // Make sure preserved properties are not destroyed (#3094)

@@ -13,6 +13,7 @@ const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
 const childProcess = require('child_process');
+const semver = require('semver');
 const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
 const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
 
@@ -96,19 +97,20 @@ async function runGit(version, push, productName) {
 
     for (const releaseRepo of handledRepos) {
         const commands = [
-            'git add --all',
-            'git commit -m "v' + version + '"',
-            'git tag -a "v' + version + '" -m "Tagged ' + releaseRepo + ' version ' + version + '"',
-            'git push',
-            'git push origin v' + version
+            ['add', '--all'],
+            ['commit', '-m', 'v' + version],
+            ['tag', '-a', 'v' + version, '-m', 'Tagged ' + releaseRepo + ' version ' + version],
+            ['push'],
+            ['push', 'origin', 'v' + version]
         ];
+        const previews = commands.map(args => 'git ' + args.map(arg => JSON.stringify(arg)).join(' '));
 
         const pathToDistRepo = join('..', releaseRepo);
 
         if (push) {
             const answer = await askUser(
                 '\nAbout to run the following commands in ' + pathToDistRepo + ': \n\n' +
-                commands.join('\n') +
+                previews.join('\n') +
                 `\n\nVerify the file changes in ${releaseRepo}. Look specifically \n` +
                 'for removed files. Check updated version numbers in some headers. \n' +
                 'To approve or disapprove, press [Y/n]'
@@ -118,14 +120,46 @@ async function runGit(version, push, productName) {
                 throw new Error(message);
             }
 
-            commands.forEach(command => {
-                log.message('Running command: ' + command);
-                childProcess.execSync(command, { cwd: pathToDistRepo });
+            commands.forEach((args, index) => {
+                log.message('Running command: ' + previews[index]);
+                childProcess.execFileSync('git', args, { cwd: pathToDistRepo });
             });
         } else {
-            log.message('\n-----(Dryrun)------\n Would have ran the following commands:\n\n' + commands.join(' &&\n') + '\n');
+            log.message('\n-----(Dryrun)------\n Would have ran the following commands:\n\n' + previews.join(' &&\n') + '\n');
         }
     }
+}
+
+/**
+ * Select an exact product entry before changing any release repository.
+ * @param {object} products Parsed product manifest.
+ * @param {string} productName Product being released.
+ * @return {string} Validated version shared by all product packages.
+ */
+function getReleaseVersion(products, productName) {
+    const keys = {
+        Highcharts: ['Highcharts'],
+        Grid: ['Highcharts Grid Lite', 'Highcharts Grid Pro'],
+        Dashboards: ['Highcharts Dashboards']
+    };
+    if (!Object.hasOwn(keys, productName)) {
+        throw new Error('Unsupported release product: ' + productName);
+    }
+    const versions = keys[productName].map(key => {
+        const entry = products && Object.hasOwn(products, key) && products[key];
+        const version = entry && entry.nr;
+        const parsed = typeof version === 'string' && semver.parse(version);
+        const canonical = parsed && parsed.version +
+            (parsed.build.length ? '+' + parsed.build.join('.') : '');
+        if (!parsed || canonical !== version) {
+            throw new Error('Missing or invalid release version for ' + key);
+        }
+        return version;
+    });
+    if (versions.some(version => version !== versions[0])) {
+        throw new Error('Grid Lite and Pro release versions must match');
+    }
+    return versions[0];
 }
 
 /**
@@ -543,8 +577,7 @@ async function release() {
 
     // Release
     const products = await getProductsJs();
-    const key = Object.keys(products).find(k => k.includes(productName));
-    const version = products[key].nr;
+    const version = getReleaseVersion(products, productName);
 
     await checkIfCodeExists(productName);
 
