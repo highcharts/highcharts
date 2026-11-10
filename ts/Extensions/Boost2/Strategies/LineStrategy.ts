@@ -1003,6 +1003,10 @@ class LineStrategy {
         point.plotY = plotY;
         point.isInside = series.isPointInside(point);
 
+        // The hover state is drawn in SVG from the color of the point,
+        // which is the zone's rather than the series' one.
+        point.zone = series.zones.length ? point.getZone() : void 0;
+
         const dx = e.chartX - xAxis.pos - plotX,
             dy = isNumber(plotY) ? e.chartY - yAxis.pos - plotY : 0;
 
