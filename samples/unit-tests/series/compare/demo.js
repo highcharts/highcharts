@@ -317,5 +317,50 @@ QUnit.test(
             expectedBase,
             'SMA with compareToMain should use the same grouped base as main'
         );
+
+        // Linked series with its own data + forced grouping
+        const shortData = [],
+            linkedData = [];
+        for (let i = 0; i < 20; i++) {
+            shortData.push([Date.UTC(2020, 0, 1) + i * 864e5, 10 + i]);
+            linkedData.push([Date.UTC(2020, 0, 1) + i * 864e5, 20 + 2 * i]);
+        }
+
+        chart.destroy();
+
+        const linkedChart = Highcharts.stockChart('container', {
+            series: [{
+                id: 'main',
+                data: shortData,
+                compare: 'percent',
+                dataGrouping: {
+                    enabled: false
+                }
+            }, {
+                linkedTo: 'main',
+                data: linkedData,
+                compareStart: true,
+                dataGrouping: {
+                    forced: true,
+                    units: [['day', [2]]]
+                }
+            }]
+        });
+
+        const linked = linkedChart.series[1],
+            linkedY = linked.getColumn('y', true),
+            linkedFirst = linked.points[0],
+            linkedBase = linkedY[0];
+
+        assert.strictEqual(
+            linkedFirst.change,
+            0,
+            'First grouped linked point change should be 0 with compareStart'
+        );
+        assert.strictEqual(
+            linked.dataModify.compareValue,
+            linkedBase,
+            'Linked compareValue should be the first grouped y, not raw data'
+        );
     }
 );

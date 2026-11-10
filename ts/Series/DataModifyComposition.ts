@@ -245,7 +245,6 @@ namespace DataModifyComposition {
 
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'afterGetExtremes', afterGetExtremes);
-            addEvent(SeriesClass, 'afterProcessData', updateCompareValue);
         }
 
         if (!axisProto.setCompare) {
@@ -511,7 +510,7 @@ namespace DataModifyComposition {
 
             if (compareToMain && parentModify?.compareValue) {
                 series.dataModify.compareValue = parentModify.compareValue;
-            } else if (!compareToMain && series.hasGroupedData) {
+            } else if (!compareToMain) {
                 updateCompareValue.call(series);
             }
 
@@ -527,7 +526,7 @@ namespace DataModifyComposition {
      */
     function postProcessData(this: Axis): void {
         for (const series of this.series) {
-            if (!series.linkedParent && series.hasGroupedData) {
+            if (!series.linkedParent) {
                 recalculateCompareValueTree(series);
             }
         }
