@@ -976,9 +976,10 @@ class LineStrategy {
     }
 
     /**
-     * Creates the `Point` for a single hit. `clientX`, `dist` and `distX`
-     * carry the k-d tree contract that `Pointer.findNearestKDPoint` ranks
-     * the series by.
+     * Creates the `Point` for a single hit, with the `clientX`, `dist`
+     * and `distX` that `Pointer.findNearestKDPoint` ranks the series by.
+     * The core sets those in its k-d tree search, which this path
+     * replaces.
      *
      * @internal
      */
