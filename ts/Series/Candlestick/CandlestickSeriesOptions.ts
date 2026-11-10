@@ -149,6 +149,8 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
 
     /**
      *
+     * @default true
+     *
      * @product highstock
      */
     stickyTracking?: boolean;

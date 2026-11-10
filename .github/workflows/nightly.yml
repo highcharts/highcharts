@@ -125,7 +125,7 @@ jobs:
 
       - name: Call Slack webhook
         id: slack
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
         with:
           payload-file-path: "info.json"
           webhook: ${{ secrets.SLACK_NIGHTLY_ERROR_WEBHOOK }}
@@ -442,7 +442,7 @@ jobs:
       - name: Call Slack webhook
         id: slack
         if: ${{ steps.makelist.outputs.lines > 0 }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
         with:
           payload-file-path: "24hoursofhighcharts.json"
           webhook: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}

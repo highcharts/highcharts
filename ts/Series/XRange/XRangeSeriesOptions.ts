@@ -18,6 +18,7 @@
  *
  * */
 
+import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
@@ -73,9 +74,14 @@ import type { XRangePointPartialFillOptions } from './XRangePointOptions';
  */
 export interface XRangeSeriesOptions extends ColumnSeriesOptions {
 
+    /** @default 3 */
+    borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
+
     /**
      * In an X-range series, this option makes all points of the same Y-axis
      * category the same color.
+     *
+     * @default true
      */
     colorByPoint?: boolean;
 
@@ -132,7 +138,11 @@ export interface XRangeSeriesOptions extends ColumnSeriesOptions {
      */
     partialFill?: (number|XRangePointPartialFillOptions);
 
-    /** @internal */
+    /**
+     * @default 0
+     *
+     * @internal
+     */
     pointRange?: number;
 
     states?: SeriesStatesOptions<XRangeSeriesOptions>;

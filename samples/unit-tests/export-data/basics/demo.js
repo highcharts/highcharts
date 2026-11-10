@@ -1835,3 +1835,66 @@ QUnit.test('Lang thousandsSep and decimalPoint in table', function (assert) {
         'lang.decimalPoint should be applied in the data table (#24845).'
     );
 });
+
+QUnit.test('Double quotes in CSV text fields (#25571)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            categories: ['He said "Hi"', '""', 'Plain', 'a,b']
+        },
+        series: [{
+            name: 'Series "A"',
+            data: [1.5, 2, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.exporting.getCSV(),
+        '"Category","Series ""A"""\n' +
+        '"He said ""Hi""",1.5\n' +
+        '"""""",2\n' +
+        '"Plain",3\n' +
+        '"a,b",4',
+        'Embedded double quotes in categories and series names should be ' +
+        'doubled, #25571.'
+    );
+
+    chart.update({
+        exporting: {
+            csv: {
+                itemDelimiter: ';',
+                decimalPoint: ','
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.exporting.getCSV().split('\n')[1],
+        '"He said ""Hi""";1,5',
+        'Quotes should be escaped also with custom delimiters, #25571.'
+    );
+
+    chart.update({
+        exporting: {
+            csv: {
+                itemDelimiter: null,
+                decimalPoint: null
+            }
+        }
+    });
+
+    chart.series[0].remove();
+    chart.addSeries({
+        type: 'pie',
+        name: 'Pie',
+        data: [{
+            name: '12" pizza',
+            y: 1
+        }]
+    });
+
+    assert.strictEqual(
+        chart.exporting.getCSV(),
+        '"Category","Pie"\n"12"" pizza",1',
+        'Embedded double quotes in point names should be doubled, #25571.'
+    );
+});
