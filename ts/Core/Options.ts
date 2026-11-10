@@ -224,6 +224,17 @@ export interface Options {
      * column keys match the point property names (`x`, `y` etc.), in which case
      * the mapping is automatic.
      *
+     * The chart and the data table are linked, so that when the data table is
+     * updated, the chart is updated as well. The data table can be updated
+     * using the `setRow`, `setColumn`, `setColumns`, and `deleteRows` methods.
+     * After updating the data table, the chart will automatically reflect the
+     * changes. To avoid excessive redraws, chart redraws are queued and
+     * performed asynchronously, so that multiple updates to the data table can
+     * be made before the chart is redrawn. The chart redraws are also
+     * debounced, so that if multiple updates are made in quick succession, the
+     * chart will only be redrawn once after a short delay.
+     *
+     *
      * @sample {highstock} stock/datatable/candlestick
      *         Candlestick chart with data table
      * @sample {highstock} stock/datatable/live-candlestick
