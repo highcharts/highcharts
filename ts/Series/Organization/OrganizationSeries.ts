@@ -33,11 +33,9 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import OrganizationPoint from './OrganizationPoint.js';
 import OrganizationSeriesDefaults from './OrganizationSeriesDefaults.js';
+import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import PathUtilities from '../PathUtilities.js';
-const {
-    sankey: SankeySeries
-} = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import {
     crisp,
@@ -57,7 +55,6 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.organization
  *
@@ -72,6 +69,7 @@ class OrganizationSeries extends SankeySeries {
      * */
 
 
+    /** @internal */
     public static defaultOptions = merge(
         SankeySeries.defaultOptions,
         OrganizationSeriesDefaults
@@ -95,6 +93,7 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public alignDataLabel(
         point: OrganizationPoint,
         dataLabel: SVGLabel,
@@ -157,6 +156,7 @@ class OrganizationSeries extends SankeySeries {
         super.alignDataLabel.apply(this, arguments);
     }
 
+    /** @internal */
     public createNode(id: string): OrganizationPoint {
         const node: OrganizationPoint = super.createNode.call(this, id) as any;
 
@@ -167,6 +167,7 @@ class OrganizationSeries extends SankeySeries {
 
     }
 
+    /** @internal */
     public pointAttribs(
         point: OrganizationPoint,
         state?: StatesOptionsKey
@@ -236,6 +237,7 @@ class OrganizationSeries extends SankeySeries {
         return attribs;
     }
 
+    /** @internal */
     public translateLink(point: OrganizationPoint): void {
         const { chart, options } = this,
             fromNode = point.fromNode,
@@ -374,6 +376,7 @@ class OrganizationSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public translateNode(
         node: OrganizationPoint,
         column: SankeyColumnComposition.ArrayComposition<OrganizationPoint>
@@ -451,6 +454,7 @@ class OrganizationSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public drawDataLabels(): void {
         const dlOptions = this.options.dataLabels;
 
@@ -475,10 +479,12 @@ class OrganizationSeries extends SankeySeries {
  * */
 
 interface OrganizationSeries {
+    /** @internal */
     pointClass: typeof OrganizationPoint;
 }
 extend(OrganizationSeries.prototype, {
-    pointClass: OrganizationPoint
+    pointClass: OrganizationPoint,
+    useCircularLayout: false
 });
 
 /* *

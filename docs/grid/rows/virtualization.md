@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Virtualization"
+description: >-
+  Reduce DOM work for large datasets by rendering visible rows and an overscan
+  buffer, set when virtualization activates, and choose tradeoffs for
+  scrolling, copying, and browser search.
 ---
 
 # Row virtualization

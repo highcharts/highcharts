@@ -87,9 +87,17 @@ const functionRegExp = /^([A-Z][A-Z\d\.]*)\(/;
 
 
 /**
+ * Maximum nesting level of parentheses and function arguments. Deeper
+ * formulas would exceed the call stack of the recursive parser.
  * @private
  */
-const operatorRegExp = /^(?:[+\-*\/^<=>]|<=|=>)/;
+const MAX_NESTING_LEVEL = 256;
+
+
+/**
+ * @private
+ */
+const operatorRegExp = /^(?:<=|>=|[+\-*\/^<=>])/;
 
 
 /**
@@ -254,12 +262,16 @@ function extractString(
  * @param {boolean} alternativeSeparators
  * Whether to expect `;` as argument separator and `,` as decimal separator.
  *
+ * @param {number} nestingLevel
+ * Current nesting level of the parsed formula.
+ *
  * @return {Formula|Function|Range|Reference|Value}
  * The recognized term structure.
  */
 function parseArgument(
     text: string,
-    alternativeSeparators: boolean
+    alternativeSeparators: boolean,
+    nestingLevel: number
 ): (Formula|Function|Range|Reference|Value) {
     let match: (RegExpMatchArray|null);
 
@@ -366,7 +378,7 @@ function parseArgument(
     }
 
     // Fallback to formula processing for other pattern types
-    const formula = parseFormula(text, alternativeSeparators);
+    const formula = parseFormula(text, alternativeSeparators, nestingLevel);
     return (
         formula.length === 1 && typeof formula[0] !== 'string' ?
             formula[0] :
@@ -386,12 +398,16 @@ function parseArgument(
  * @param {boolean} alternativeSeparators
  * Whether to expect `;` as argument separator and `,` as decimal separator.
  *
+ * @param {number} nestingLevel
+ * Current nesting level of the parsed formula.
+ *
  * @return {Highcharts.FormulaArguments}
  * Parsed arguments array.
  */
 function parseArguments(
     text: string,
-    alternativeSeparators: boolean
+    alternativeSeparators: boolean,
+    nestingLevel: number
 ): Arguments {
     const args: Arguments = [],
         argumentsSeparator = (alternativeSeparators ? ';' : ',');
@@ -414,7 +430,7 @@ function parseArguments(
             !parantheseLevel &&
             term
         ) {
-            args.push(parseArgument(term, alternativeSeparators));
+            args.push(parseArgument(term, alternativeSeparators, nestingLevel));
             term = '';
 
         // Check for a quoted string before skip logic
@@ -440,7 +456,7 @@ function parseArguments(
 
     // Look for left-overs from last argument
     if (!parantheseLevel && term) {
-        args.push(parseArgument(term, alternativeSeparators));
+        args.push(parseArgument(term, alternativeSeparators, nestingLevel));
     }
 
     return args;
@@ -478,13 +494,28 @@ function negativeReference(formula: Formula): boolean {
  * * `false` to expect `,` between arguments and `.` in decimals.
  * * `true` to expect `;` between arguments and `,` in decimals.
  *
+ * @param {number} [nestingLevel]
+ * Current nesting level of the parsed formula. Formulas nested deeper than
+ * 256 levels are rejected.
+ *
  * @return {Formula.Formula}
  * Formula array representing the string.
  */
 function parseFormula(
     text: string,
-    alternativeSeparators: boolean
+    alternativeSeparators: boolean,
+    nestingLevel: number = 0
 ): Formula {
+    if (nestingLevel > MAX_NESTING_LEVEL) {
+        const error = new Error(
+            'Formula nested deeper than ' + MAX_NESTING_LEVEL + ' levels.'
+        ) as FormulaParserError;
+
+        error.name = 'FormulaParseError';
+
+        throw error;
+    }
+
     const decimalRegExp = (
             alternativeSeparators ?
                 decimal2RegExp :
@@ -601,7 +632,8 @@ function parseFormula(
         // Check for a number value
         match = next.match(decimalRegExp);
         if (match) {
-            let number = parseFloat(match[0]);
+            // `parseFloat` stops at a comma decimal separator
+            let number = parseFloat(match[0].replace(',', '.'));
             // If the current value is multiplication-related and the previous
             // one is a minus sign, set the current value to negative and remove
             // the minus sign.
@@ -637,7 +669,11 @@ function parseFormula(
             formula.push({
                 type: 'function',
                 name: match[1],
-                args: parseArguments(parantheses, alternativeSeparators)
+                args: parseArguments(
+                    parantheses,
+                    alternativeSeparators,
+                    nestingLevel + 1
+                )
             });
 
             next = next.substring(parantheses.length + 2).trim();
@@ -650,8 +686,11 @@ function parseFormula(
             const parentheses = extractParentheses(next);
 
             if (parentheses) {
-                formula
-                    .push(parseFormula(parentheses, alternativeSeparators));
+                formula.push(parseFormula(
+                    parentheses,
+                    alternativeSeparators,
+                    nestingLevel + 1
+                ));
 
                 next = next.substring(parentheses.length + 2).trim();
 

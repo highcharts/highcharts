@@ -34,7 +34,6 @@ export interface BaseGeometry {
     properties?: Record<string, string|number>;
 }
 
-/** @internal */
 export interface GeoJSONGeometryPoint extends BaseGeometry {
     type: 'Point';
     coordinates: LonLatArray;

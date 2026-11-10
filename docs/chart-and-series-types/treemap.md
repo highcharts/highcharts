@@ -1,3 +1,10 @@
+---
+description: >-
+  Structure values as a tree and choose a layout algorithm to size its
+  rectangles. Learn how to style by level, traverse branches with
+  breadcrumbs, add headers or color axes, and group small points.
+---
+
 Treemap
 ===
 

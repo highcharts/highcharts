@@ -1,3 +1,10 @@
+---
+description: >-
+  Filter Morningstar's global investment database with data-point criteria,
+  including sustainability, analyst rating, fair value, and style-box fields,
+  then configure result columns, sorting, and pagination for returned results.
+---
+
 # Investment Screener
 
 Using Morningstar **Investment Screener** endpoint allows you to filter

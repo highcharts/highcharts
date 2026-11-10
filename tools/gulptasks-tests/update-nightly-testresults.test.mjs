@@ -1,0 +1,614 @@
+import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import {
+    access,
+    mkdtemp,
+    mkdir,
+    readFile,
+    rm,
+    writeFile
+} from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import test from 'node:test';
+
+const require = createRequire(import.meta.url);
+const { require: requireTS } = require('tsx/cjs/api');
+const {
+    aggregateCandidateResults,
+    appendError,
+    recordCandidateResult,
+    resetVisualRun,
+    writeReference
+} = requireTS('../../tests/visual/visual-results.ts', import.meta.url);
+const VisualReporter = requireTS(
+    '../../tests/visual/visual-reporter.ts', import.meta.url
+).default;
+const workflow = require('js-yaml').safeLoad(await readFile(
+    new URL('../../.github/workflows/nightly.yml', import.meta.url), 'utf8'
+));
+const visualSteps = workflow.jobs.nightly_visual_diff.steps;
+const releaseWorkflow = require('js-yaml').safeLoad(await readFile(
+    new URL('../../.github/workflows/post-release.yml', import.meta.url), 'utf8'
+));
+const commandArgv = { _: [], $0: 'node' };
+Object.defineProperty(require('yargs'), 'argv', {
+    value: commandArgv
+});
+
+const nightlyTestResults = await import('../gulptasks/update-nightly-testresults.js');
+const {
+    assertSeparateRoots,
+    copyNightlyReferences,
+    createNightlySubmissionSamples,
+    hasVisualTestErrors,
+    readTestResultsFile,
+    syncNightlyReferences,
+    TRANSPARENT_GIF
+} = nightlyTestResults;
+const updateNightlyTestResults = nightlyTestResults.default.default;
+
+function response(status = 200, body = '') {
+    const bytes = Buffer.isBuffer(body) ? body : Buffer.from(String(body));
+    return {
+        ok: status >= 200 && status < 300,
+        status,
+        headers: { get: () => null },
+        async arrayBuffer() {
+            return bytes.buffer.slice(
+                bytes.byteOffset,
+                bytes.byteOffset + bytes.byteLength
+            );
+        },
+        async json() {
+            return JSON.parse(bytes.toString());
+        },
+        async text() {
+            return bytes.toString();
+        }
+    };
+}
+
+async function writeSample(root, sampleName, files) {
+    const samplePath = join(root, ...sampleName.split('/'));
+    await mkdir(samplePath, { recursive: true });
+    await Promise.all(Object.entries(files).map(([name, contents]) =>
+        writeFile(join(samplePath, name), contents)
+    ));
+}
+
+test('creates nightly API samples from generated reference files', async () => {
+    const sampleRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-samples-'));
+    try {
+        await writeSample(sampleRoot, 'highcharts/demo/changed', {
+            'reference.svg': '<svg>old</svg>',
+            'candidate.svg': '<svg>new</svg>',
+            'diff.gif': 'GIF89a'
+        });
+        await writeSample(sampleRoot, 'highcharts/demo/unchanged', {
+            'reference.svg': '<svg>same</svg>'
+        });
+
+        assert.deepEqual(
+            createNightlySubmissionSamples({
+                sampleRoot,
+                testResults: {
+                    'highcharts/demo/changed': 12,
+                    'highcharts/demo/unchanged': 0
+                }
+            }),
+            [
+                {
+                    name: 'highcharts/demo/changed',
+                    comparisonValue: 12,
+                    artifacts: {
+                        reference: Buffer.from('<svg>old</svg>')
+                    }
+                },
+                {
+                    name: 'highcharts/demo/unchanged',
+                    comparisonValue: 0,
+                    artifacts: {
+                        reference: Buffer.from('<svg>same</svg>'),
+                        candidate: Buffer.from('<svg>same</svg>'),
+                        difference: TRANSPARENT_GIF
+                    }
+                }
+            ]
+        );
+    } finally {
+        await rm(sampleRoot, { recursive: true, force: true });
+    }
+});
+
+test('copies generated references to a clean reference root', async () => {
+    const sampleRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-copy-'));
+    const referenceRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-reference-'));
+    try {
+        await writeSample(sampleRoot, 'highcharts/demo/basic-line', {
+            'reference.svg': '<svg>current</svg>'
+        });
+        await writeSample(referenceRoot, 'stale/sample', {
+            'reference.svg': '<svg>stale</svg>'
+        });
+
+        copyNightlyReferences({ referenceRoot, sampleRoot });
+
+        await assert.rejects(
+            readFile(join(referenceRoot, 'stale', 'sample', 'reference.svg'))
+        );
+        assert.equal(
+            await readFile(
+                join(referenceRoot, 'highcharts', 'demo', 'basic-line', 'reference.svg'),
+                'utf8'
+            ),
+            '<svg>current</svg>'
+        );
+    } finally {
+        await rm(sampleRoot, { recursive: true, force: true });
+        await rm(referenceRoot, { recursive: true, force: true });
+    }
+});
+
+test('rejects overlapping sample and reference roots', () => {
+    assert.throws(
+        () => assertSeparateRoots('samples', 'samples'),
+        /must be separate/u
+    );
+    assert.throws(
+        () => assertSeparateRoots('samples', 'samples/references'),
+        /must be separate/u
+    );
+    assert.throws(
+        () => assertSeparateRoots('samples', '.'),
+        /must be separate/u
+    );
+});
+
+test('fails when results or error logs cannot be read safely', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'highcharts-nightly-errors-'));
+    const malformedResults = join(root, 'malformed.json');
+    try {
+        await writeFile(malformedResults, '{');
+
+        assert.throws(
+            () => readTestResultsFile(join(root, 'missing.json')),
+            error => error.code === 'ENOENT'
+        );
+        assert.throws(
+            () => readTestResultsFile(malformedResults),
+            SyntaxError
+        );
+        assert.throws(
+            () => hasVisualTestErrors('\0'),
+            error => error.code === 'ERR_INVALID_ARG_VALUE'
+        );
+    } finally {
+        await rm(root, { recursive: true, force: true });
+    }
+});
+
+test('syncs current references from the latest nightly archive', async () => {
+    const sampleRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-sync-'));
+    const referenceRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-reference-'));
+    const requests = [];
+    let archiveRoot;
+    try {
+        await writeSample(referenceRoot, 'highcharts/demo/basic-line', {
+            'reference.svg': '<svg>new</svg>'
+        });
+        await writeSample(referenceRoot, 'highcharts/demo/new sample#1', {
+            'reference.svg': '<svg>new-only</svg>'
+        });
+        await writeSample(sampleRoot, 'highcharts/demo/basic-line', {
+            'reference.svg': '<svg>new</svg>'
+        });
+        await writeSample(sampleRoot, 'highcharts/demo/new sample#1', {
+            'reference.svg': '<svg>new-only</svg>'
+        });
+
+        await syncNightlyReferences({
+            apiKey: 'test-api-key',
+            apiUrl: 'https://vrevs.test',
+            dependencies: {
+                minRequestInterval: 0,
+                sleep: async () => {}
+            },
+            unzipImpl: async (command, args) => {
+                assert.equal(command, 'unzip');
+                assert.deepEqual(args.slice(0, 2), ['-q', '-o']);
+                const archivePath = args[2];
+                archiveRoot = args[4];
+                assert.equal(args[3], '-d');
+                assert.equal(await readFile(archivePath, 'utf8'), 'archive-bytes');
+                await writeSample(archiveRoot, 'highcharts/demo/basic-line', {
+                    'reference.svg': '<svg>current</svg>',
+                    'candidate.svg': '<svg>candidate</svg>'
+                });
+                await writeSample(archiveRoot, 'retired/sample', {
+                    'reference.svg': '<svg>retired</svg>'
+                });
+            },
+            fetchImpl: async (url, options) => {
+                requests.push({ options, url });
+                return requests.length === 1 ?
+                    response(200, JSON.stringify([{
+                        version: '13.0.1',
+                        runId: '9007199254740994',
+                        runAttempt: '2',
+                        runNumber: '1234',
+                        finalizedTs: 0,
+                        sampleCount: 2
+                    }])) :
+                    response(200, 'archive-bytes');
+            },
+            referenceRoot,
+            sampleRoot
+        });
+
+        assert.deepEqual(requests.map(request => request.url), [
+            'https://vrevs.test/api/reviews/nightly/latest',
+            'https://vrevs.test/api/ingestion/nightly/submissions/' +
+                '9007199254740994/attempts/2/artifacts.zip'
+        ]);
+        assert.deepEqual(requests.map(request => request.options.headers), [
+            {
+                accept: 'application/json'
+            },
+            {
+                accept: 'application/zip',
+                authorization: 'Bearer test-api-key'
+            }
+        ]);
+        assert.equal(
+            await readFile(
+                join(sampleRoot, 'highcharts', 'demo', 'basic-line', 'reference.svg'),
+                'utf8'
+            ),
+            '<svg>current</svg>'
+        );
+        assert.equal(
+            await readFile(
+                join(sampleRoot, 'highcharts', 'demo', 'new sample#1', 'reference.svg'),
+                'utf8'
+            ),
+            '<svg>new-only</svg>'
+        );
+        await assert.rejects(
+            access(join(sampleRoot, 'retired', 'sample', 'reference.svg')),
+            error => error.code === 'ENOENT'
+        );
+        await assert.rejects(
+            access(archiveRoot),
+            error => error.code === 'ENOENT'
+        );
+    } finally {
+        await rm(sampleRoot, { recursive: true, force: true });
+        await rm(referenceRoot, { recursive: true, force: true });
+    }
+});
+
+test('keeps generated references when no prior nightly archive exists', async () => {
+    const sampleRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-sync-'));
+    const referenceRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-reference-'));
+    const requests = [];
+    try {
+        await writeSample(referenceRoot, 'highcharts/demo/new-sample', {
+            'reference.svg': '<svg>new</svg>'
+        });
+        await writeSample(sampleRoot, 'highcharts/demo/new-sample', {
+            'reference.svg': '<svg>new</svg>'
+        });
+
+        await syncNightlyReferences({
+            apiKey: null,
+            apiUrl: 'https://vrevs.test',
+            dependencies: {
+                fetchImpl: async (url, options) => {
+                    requests.push({ options, url });
+                    return response(200, '[]');
+                }
+            },
+            unzipImpl: async () => {
+                assert.fail('No archive should be extracted');
+            },
+            referenceRoot,
+            sampleRoot
+        });
+
+        assert.deepEqual(requests, [{
+            options: { headers: { accept: 'application/json' } },
+            url: 'https://vrevs.test/api/reviews/nightly/latest'
+        }]);
+        assert.equal(
+            await readFile(
+                join(sampleRoot, 'highcharts', 'demo', 'new-sample', 'reference.svg'),
+                'utf8'
+            ),
+            '<svg>new</svg>'
+        );
+    } finally {
+        await rm(sampleRoot, { recursive: true, force: true });
+        await rm(referenceRoot, { recursive: true, force: true });
+    }
+});
+
+test('fails when the selected nightly archive is no longer current', async () => {
+    const sampleRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-sync-'));
+    const referenceRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-reference-'));
+    let requests = 0;
+    try {
+        await writeSample(referenceRoot, 'highcharts/demo/basic-line', {
+            'reference.svg': '<svg>new</svg>'
+        });
+        await writeSample(sampleRoot, 'highcharts/demo/basic-line', {
+            'reference.svg': '<svg>new</svg>'
+        });
+
+        await assert.rejects(syncNightlyReferences({
+            apiKey: 'test-api-key',
+            apiUrl: 'https://vrevs.test',
+            dependencies: {
+                minRequestInterval: 0,
+                sleep: async () => {}
+            },
+            unzipImpl: async () => {
+                assert.fail('A missing archive should not be extracted');
+            },
+            fetchImpl: async () => ++requests === 1 ?
+                response(200, JSON.stringify([{
+                    runId: '9007199254740994',
+                    runAttempt: '2'
+                }])) :
+                response(404, 'Nightly artifact archive not found'),
+            referenceRoot,
+            sampleRoot
+        }), error => (
+            error.name === 'VisualReviewApiError' &&
+            error.status === 404
+        ));
+        assert.equal(requests, 2);
+    } finally {
+        await rm(sampleRoot, { recursive: true, force: true });
+        await rm(referenceRoot, { recursive: true, force: true });
+    }
+});
+
+test('submits nightly visual results with GitHub Actions metadata', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'highcharts-nightly-submit-'));
+    const sampleRoot = join(root, 'samples');
+    const referenceRoot = join(root, 'tmp/nightly-reference-samples');
+    const resultsPath = join(root, 'test/visual-test-results.json');
+    const errorsPath = join(root, 'test/visual-test-errors.log');
+    const previousEnvironment = {
+        GITHUB_RUN_ATTEMPT: process.env.GITHUB_RUN_ATTEMPT,
+        GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
+        GITHUB_RUN_NUMBER: process.env.GITHUB_RUN_NUMBER,
+        VISUAL_REVIEW_API_KEY: process.env.VISUAL_REVIEW_API_KEY,
+        VISUAL_REVIEW_API_URL: process.env.VISUAL_REVIEW_API_URL
+    };
+    const previousArgv = Object.fromEntries(
+        Object.entries(commandArgv).map(([key, value]) => [
+            key,
+            key === '_' ? [...value] : value
+        ])
+    );
+    const previousFetch = globalThis.fetch;
+    const requests = [];
+
+    try {
+        const id = 'highcharts/demo/basic-line';
+        writeReference(root, id, '<svg>new</svg>');
+        copyNightlyReferences({ sampleRoot, referenceRoot });
+        await writeSample(sampleRoot, id, {
+            'reference.svg': '<svg>old</svg>'
+        });
+        resetVisualRun(root, [id]);
+        recordCandidateResult(root, id, 12, '<svg>new</svg>', Buffer.from('GIF89a'));
+        aggregateCandidateResults(root);
+
+        process.env.GITHUB_RUN_ATTEMPT = '2';
+        process.env.GITHUB_RUN_ID = '9876';
+        process.env.GITHUB_RUN_NUMBER = '1234';
+        process.env.VISUAL_REVIEW_API_KEY = 'test-api-key';
+        process.env.VISUAL_REVIEW_API_URL = 'https://vrevs.test';
+
+        for (const key of Object.keys(commandArgv)) {
+            delete commandArgv[key];
+        }
+        Object.assign(commandArgv, {
+            _: [],
+            errorsPath,
+            referenceRoot,
+            resultsPath,
+            sampleRoot,
+            tag: '13.0.1'
+        });
+
+        globalThis.fetch = async (...args) => {
+            requests.push(args);
+            return response();
+        };
+
+        assert.equal(await updateNightlyTestResults(), true);
+        assert.equal(requests.length, 3);
+        assert.equal(
+            requests[0][0],
+            'https://vrevs.test/api/ingestion/submissions/9876/attempts/2'
+        );
+        const manifest = JSON.parse(requests[0][1].body);
+        assert.deepEqual(manifest.subject, { kind: 'nightly' });
+        assert.equal(manifest.workflow, 'Nightly visual tests');
+        assert.equal(manifest.runNumber, '1234');
+        assert.equal(manifest.productVersion, '13.0.1');
+        assert.deepEqual(manifest.testReport, {
+            meta: {
+                version: '13.0.1'
+            },
+            'highcharts/demo/basic-line': 12
+        });
+        assert.deepEqual(manifest.sampleResults, [{
+            name: 'highcharts/demo/basic-line',
+            comparisonValue: 12,
+            artifactRoles: ['reference', 'candidate', 'difference']
+        }]);
+        assert.deepEqual(
+            JSON.parse(requests[1][1].body).artifacts.map(artifact => [
+                artifact.role,
+                artifact.data
+            ]),
+            [
+                ['reference', Buffer.from('<svg>new</svg>').toString('base64')],
+                ['candidate', Buffer.from('<svg>new</svg>').toString('base64')],
+                ['difference', Buffer.from('GIF89a').toString('base64')]
+            ]
+        );
+        appendError(root, 'Sample execution failed');
+        assert.equal(await updateNightlyTestResults(), false);
+        assert.equal(requests.length, 3, 'Sample errors must prevent publication');
+    } finally {
+        await rm(root, { recursive: true, force: true });
+        if (previousFetch === undefined) {
+            delete globalThis.fetch;
+        } else {
+            globalThis.fetch = previousFetch;
+        }
+        for (const key of Object.keys(commandArgv)) {
+            delete commandArgv[key];
+        }
+        Object.assign(commandArgv, previousArgv);
+        for (const [key, value] of Object.entries(previousEnvironment)) {
+            if (value === undefined) {
+                delete process.env[key];
+            } else {
+                process.env[key] = value;
+            }
+        }
+    }
+});
+
+test('release references produce a publishable report without candidate results', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'highcharts-release-reference-'));
+    const id = 'highcharts/demo/basic-line';
+    const steps = releaseWorkflow.jobs.generate_release_reference_images.steps;
+    const prepareReport = steps.find(step => step.name === 'Prepare release reference report');
+    try {
+        const reporter = new VisualReporter({ root, referenceMode: true });
+        const sample = {
+            title: id,
+            location: { file: '/tests/visual/visual.spec.ts' },
+            results: [{ status: 'passed' }],
+            annotations: []
+        };
+        reporter.onBegin({}, { allTests: () => [sample] });
+        reporter.onTestBegin(sample);
+        writeReference(root, id, '<svg>release</svg>');
+        assert.ok(!reporter.onEnd({ status: 'passed' }));
+
+        const resultsPath = join(root, 'test/visual-test-results.json');
+        assert.throws(() => readTestResultsFile(resultsPath), { code: 'ENOENT' });
+        const result = spawnSync('bash', ['-e', '-c', prepareReport.run], {
+            cwd: root,
+            encoding: 'utf8'
+        });
+        assert.ifError(result.error);
+        assert.equal(result.status, 0, result.stdout + result.stderr);
+        const testResults = readTestResultsFile(resultsPath);
+        assert.deepEqual(testResults, {});
+        const samples = createNightlySubmissionSamples({
+            sampleRoot: join(root, 'samples'),
+            testResults
+        });
+        assert.equal(samples.length, 1);
+        assert.equal(samples[0].name, id);
+        assert.equal(samples[0].comparisonValue, 0);
+        assert.equal(samples[0].artifacts.reference.toString(), '<svg>release</svg>');
+        assert.deepEqual(samples[0].artifacts.candidate, samples[0].artifacts.reference);
+        assert.deepEqual(samples[0].artifacts.difference, TRANSPARENT_GIF);
+        assert.ok(!('if' in prepareReport), 'Requires successful reference generation');
+        assert.ok(!('continue-on-error' in prepareReport));
+        assert.ok(steps.indexOf(prepareReport) > steps.findIndex(step =>
+            step.name === 'Generate release reference images'));
+        assert.ok(steps.indexOf(prepareReport) < steps.findIndex(step =>
+            step.name === 'Publish release reference images'));
+    } finally {
+        await rm(root, { recursive: true, force: true });
+    }
+});
+
+test('nightly selects every eligible product sample and gates publication', () => {
+    const { selectVisualSamples } = requireTS(
+        '../../tests/visual/visual-samples.ts', import.meta.url
+    );
+    const job = workflow.jobs.nightly_visual_diff;
+    assert.deepEqual(
+        selectVisualSamples(process.cwd(), {
+            manifest: job.env?.VISUAL_TEST_MANIFEST,
+            filter: job.env?.VISUAL_TEST_PATH
+        }).map(sample => sample.id).sort(),
+        selectVisualSamples(process.cwd()).map(sample => sample.id).sort()
+    );
+    const orderedNames = [
+        'Generate nightly references',
+        'Preserve generated reference images',
+        'Sync references from Visual Review API',
+        'Run nightly visual comparison',
+        'Verify nightly visual completion',
+        'Publish nightly visual results'
+    ];
+    const steps = visualSteps.filter(step => orderedNames.includes(step.name));
+    assert.deepEqual(steps.map(step => step.name), orderedNames);
+    for (const step of steps) {
+        assert.equal(step['continue-on-error'], undefined);
+        assert.equal(step.if, undefined, 'Each step requires prior success');
+    }
+    assert.equal(steps[0].env.VISUAL_TEST_REFERENCE, '1');
+    assert.equal(job.env?.VISUAL_TEST_REFERENCE, undefined);
+    assert.equal(steps[3].env?.VISUAL_TEST_REFERENCE, undefined);
+});
+
+test('nightly completion gate handles actual Playwright reporter outcomes', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'highcharts-nightly-completion-'));
+    const id = 'highcharts/demo/basic-line';
+    const gate = visualSteps.find(step =>
+        step.name === 'Verify nightly visual completion'
+    ).run;
+    try {
+        for (const scenario of ['success', 'sample-error', 'terminal-error']) {
+            const reporter = new VisualReporter({ root, referenceMode: false });
+            const sample = {
+                title: id,
+                location: { file: '/tests/visual/visual.spec.ts' },
+                results: [{ status: scenario === 'sample-error' ? 'failed' : 'passed' }],
+                annotations: scenario === 'sample-error' ?
+                    [{ type: 'visual-sample-error' }] : []
+            };
+            reporter.onBegin({}, { allTests: () => [sample] });
+            reporter.onTestBegin(sample);
+            writeReference(root, id, '<svg/>');
+            if (scenario === 'sample-error') {
+                appendError(root, 'Sample execution failed');
+            } else {
+                recordCandidateResult(root, id, 0);
+            }
+            if (scenario === 'terminal-error') {
+                reporter.onError({ message: 'Browser terminated' });
+            }
+            reporter.onEnd({ status: scenario === 'success' ? 'passed' : 'failed' });
+            assert.equal(
+                spawnSync('bash', ['-e', '-c', gate], { cwd: root }).status,
+                scenario === 'success' ? 0 : 1,
+                scenario
+            );
+            const completion = readFile(join(root, 'test/visual-test-complete'));
+            if (scenario === 'terminal-error') {
+                await assert.rejects(completion, { code: 'ENOENT' });
+            } else {
+                assert.equal((await completion).length, 0);
+            }
+        }
+    } finally {
+        await rm(root, { recursive: true, force: true });
+    }
+});

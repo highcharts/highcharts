@@ -1,3 +1,10 @@
+---
+description: >-
+  Extend Highcharts with class or instance events and wrapped prototype
+  methods. Learn how to contain plugin code and follow an example that adds
+  trackball markers through tooltip hooks.
+---
+
 # Extending Highcharts
 
 Since version 2.3, Highcharts is built in a modular way with extensions in mind. 

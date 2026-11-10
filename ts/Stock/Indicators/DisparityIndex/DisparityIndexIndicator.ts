@@ -28,10 +28,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     correctFloat,
     defined,
@@ -49,7 +47,6 @@ import {
 /**
  * The Disparity Index series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.disparityindex
  *
@@ -77,9 +74,10 @@ class DisparityIndexIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/disparity-index
+     * @requires     indicators/indicators
+     * @requires     indicators/disparity-index
      * @optionparent plotOptions.disparityindex
+     * @internal
      */
     public static defaultOptions: DisparityIndexOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -109,6 +107,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public averageIndicator!: typeof SMAIndicator;
     public data!: Array<DisparityIndexPoint>;
     public options!: DisparityIndexOptions;
@@ -120,6 +119,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         const args = arguments,
             ctx = this, // Disparity Index indicator
@@ -131,6 +131,7 @@ class DisparityIndexIndicator extends SMAIndicator {
         ctx.averageIndicator.prototype.init.apply(ctx, args);
     }
 
+    /** @internal */
     public calculateDisparityIndex(
         curPrice: number,
         periodAverage: number
@@ -138,6 +139,7 @@ class DisparityIndexIndicator extends SMAIndicator {
         return correctFloat(curPrice - periodAverage) / periodAverage * 100;
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DisparityIndexParamsOptions
@@ -196,7 +198,6 @@ class DisparityIndexIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface DisparityIndexIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -214,7 +215,6 @@ extend(DisparityIndexIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         disparityindex: typeof DisparityIndexIndicator;
@@ -229,7 +229,6 @@ SeriesRegistry.registerSeriesType('disparityindex', DisparityIndexIndicator);
  *
  * */
 
-/** @internal */
 export default DisparityIndexIndicator;
 
 /* *
@@ -246,11 +245,11 @@ export default DisparityIndexIndicator;
  * @extends   series,plotOptions.disparityindex
  * @since 9.1.0
  * @product   highstock
- * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
- *            navigatorOptions, pointInterval, pointIntervalUnit,
- *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/disparity-index
+ * @excluding allAreas, colorAxis, joinBy, keys, navigatorOptions,
+ *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
+ *            pointStart, showInNavigator, stacking
+ * @requires  indicators/indicators
+ * @requires  indicators/disparity-index
  * @apioption series.disparityindex
  */
 

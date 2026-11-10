@@ -30,14 +30,10 @@ import Color from '../../Core/Color/Color.js';
 import ColorMapComposition from '../ColorMapComposition.js';
 import HeatmapPoint from './HeatmapPoint.js';
 import HeatmapSeriesDefaults from './HeatmapSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries,
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 
@@ -81,7 +77,6 @@ declare module '../../Core/Series/SeriesBase' {
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.heatmap
  *
@@ -95,6 +90,7 @@ class HeatmapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: HeatmapSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         HeatmapSeriesDefaults
@@ -106,10 +102,13 @@ class HeatmapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public canvas?: HTMLCanvasElement;
 
+    /** @internal */
     public colorAxis!: ColorAxis;
 
+    /** @internal */
     public context?: CanvasRenderingContext2D;
 
     public data!: Array<HeatmapPoint>;
@@ -118,12 +117,16 @@ class HeatmapSeries extends ScatterSeries {
 
     public points!: Array<HeatmapPoint>;
 
+    /** @internal */
     public valueData?: Array<number>;
 
+    /** @internal */
     public valueMax: number = NaN;
 
+    /** @internal */
     public valueMin: number = NaN;
 
+    /** @internal */
     public isDirtyCanvas: boolean = true;
 
     /* *
@@ -554,9 +557,11 @@ addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
  *
  * */
 
+/** @internal */
 interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
+    /** @internal */
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     getSymbol: typeof Series.prototype.getSymbol;
     image?: SVGElement;

@@ -4,5 +4,16 @@
     },
     "env": {
         "node": true
-    }
+    },
+    "overrides": [{
+        "files": ["docs-preview/docusaurus.config.js"],
+        "parserOptions": {
+            "sourceType": "module"
+        },
+        "rules": {
+            "node/no-unsupported-features/es-syntax": ["error", {
+                "ignores": ["modules"]
+            }]
+        }
+    }]
 }

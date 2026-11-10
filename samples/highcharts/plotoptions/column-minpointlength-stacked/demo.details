@@ -1,0 +1,6 @@
+---
+ name: Stack-aware minPointLength
+ authors:
+   - Andrzej Bułeczka
+ js_wrap: b
+...

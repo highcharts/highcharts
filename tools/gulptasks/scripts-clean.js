@@ -12,8 +12,7 @@ const gulp = require('gulp');
 
 const PATHS_TO_DELETE = [
     'build',
-    'code',
-    'webpack.log'
+    'code'
 ];
 
 /* *

@@ -24,18 +24,11 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import ColumnRangePoint from './ColumnRangePoint.js';
 import ColumnRangeSeriesDefaults from './ColumnRangeSeriesDefaults.js';
+import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        arearange: AreaRangeSeries,
-        column: ColumnSeries,
-        column: {
-            prototype: columnProto
-        }
-    }
-} = SeriesRegistry;
 import {
     addEvent,
     clamp,
@@ -53,7 +46,6 @@ import {
 /**
  * The ColumnRangeSeries class
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.columnrange
  *
@@ -68,6 +60,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ColumnRangeSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         AreaRangeSeries.defaultOptions,
@@ -80,6 +73,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
      *
      * */
 
+    /** @internal */
     public setOptions(): ColumnRangeSeriesOptions {
         // #14359 Prevent side-effect from stacking.
         merge(true, arguments[0], { stacking: void 0 });
@@ -90,36 +84,57 @@ class ColumnRangeSeries extends AreaRangeSeries {
     // Overrides from modules that may be loaded after this module
     // @todo move to compositions
 
+    /** @internal */
     public translate(): void {
-        return columnProto.translate.apply(this);
+        return ColumnSeries.prototype.translate.apply(this);
     }
 
     // Public crispCol(): BBoxObject {
-    //     return columnProto.crispCol.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.crispCol.apply(this, arguments as any);
     // }
     // public drawPoints(): void {
-    //     return columnProto.drawPoints.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.drawPoints.apply(
+    //         this, arguments as any
+    //     );
     // }
     // public drawTracker(): void {
-    //     return columnProto.drawTracker.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.drawTracker.apply(
+    //         this, arguments as any
+    //     );
     // }
     // public getColumnMetrics(): ColumnMetricsObject {
-    //     return columnProto.getColumnMetrics.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.getColumnMetrics.apply(
+    //         this, arguments as any
+    //     );
     // }
+    /** @internal */
     public pointAttribs(): SVGAttributes {
-        return columnProto.pointAttribs.apply(this, arguments as any);
+        return ColumnSeries.prototype.pointAttribs.apply(
+            this,
+            arguments as any
+        );
     }
     // Public adjustForMissingColumns(): number {
-    //     return columnProto.adjustForMissingColumns.apply(this, arguments);
+    //     return ColumnSeries.prototype.adjustForMissingColumns.apply(
+    //         this, arguments
+    //     );
     // }
     // public animate(): void {
-    //     return columnProto.animate.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.animate.apply(this, arguments as any);
     // }
+    /** @internal */
     public translate3dPoints(): void {
-        return columnProto.translate3dPoints.apply(this, arguments as any);
+        return ColumnSeries.prototype.translate3dPoints.apply(
+            this,
+            arguments as any
+        );
     }
+    /** @internal */
     public translate3dShapes(): void {
-        return columnProto.translate3dShapes.apply(this, arguments as any);
+        return ColumnSeries.prototype.translate3dShapes.apply(
+            this,
+            arguments as any
+        );
     }
 
     /**
@@ -232,26 +247,33 @@ addEvent(ColumnRangeSeries, 'afterColumnTranslate', function (): void {
 /** @internal */
 interface ColumnRangeSeries {
     options: ColumnRangeSeriesOptions;
+    /** @internal */
     pointClass: typeof ColumnRangePoint;
     points: Array<ColumnRangePoint>;
-    adjustForMissingColumns: typeof columnProto.adjustForMissingColumns;
-    animate: typeof columnProto.animate,
-    crispCol: typeof columnProto.crispCol;
-    drawPoints: typeof columnProto.drawPoints,
-    getColumnMetrics: typeof columnProto.getColumnMetrics;
+    /** @internal */
+    adjustForMissingColumns:
+        typeof ColumnSeries.prototype.adjustForMissingColumns;
+    /** @internal */
+    animate: typeof ColumnSeries.prototype.animate,
+    /** @internal */
+    crispCol: typeof ColumnSeries.prototype.crispCol;
+    /** @internal */
+    drawPoints: typeof ColumnSeries.prototype.drawPoints,
+    /** @internal */
+    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
 }
 extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     pointClass: ColumnRangePoint,
     trackerGroups: ['group', 'dataLabelsGroup'],
-    adjustForMissingColumns: columnProto.adjustForMissingColumns,
-    animate: columnProto.animate,
-    crispCol: columnProto.crispCol,
+    adjustForMissingColumns: ColumnSeries.prototype.adjustForMissingColumns,
+    animate: ColumnSeries.prototype.animate,
+    crispCol: ColumnSeries.prototype.crispCol,
     drawGraph: noop,
-    drawPoints: columnProto.drawPoints,
+    drawPoints: ColumnSeries.prototype.drawPoints,
     getSymbol: noop,
-    drawTracker: columnProto.drawTracker,
-    getColumnMetrics: columnProto.getColumnMetrics
+    drawTracker: ColumnSeries.prototype.drawTracker,
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics
 });
 
 /* *
@@ -260,9 +282,6 @@ extend(ColumnRangeSeries.prototype, {
  *
  * */
 
-/**
- * @internal
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         columnrange: typeof ColumnRangeSeries;
@@ -277,5 +296,4 @@ SeriesRegistry.registerSeriesType('columnrange', ColumnRangeSeries);
  *
  * */
 
-/** @internal */
 export default ColumnRangeSeries;

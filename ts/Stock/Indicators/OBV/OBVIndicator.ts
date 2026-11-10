@@ -24,11 +24,9 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import type Series from '../../../Core/Series/Series';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, isNumber, merge } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -41,7 +39,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The OBV series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.obv
  *
@@ -67,12 +64,13 @@ class OBVIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        9.1.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/obv
+     * @requires     indicators/indicators
+     * @requires     indicators/obv
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.obv
+     * @internal
      */
     public static defaultOptions: OBVOptions = merge(SMAIndicator.defaultOptions, {
         marker: {
@@ -112,6 +110,7 @@ class OBVIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: OBVParamsOptions
@@ -193,7 +192,6 @@ class OBVIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface OBVIndicator {
     nameComponents: Array<string>|undefined;
     pointClass: typeof OBVPoint;
@@ -209,7 +207,6 @@ extend(OBVIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         obv: typeof OBVIndicator;
@@ -224,7 +221,6 @@ SeriesRegistry.registerSeriesType('obv', OBVIndicator);
  *
  * */
 
-/** @internal */
 export default OBVIndicator;
 
 /* *
@@ -240,9 +236,8 @@ export default OBVIndicator;
  * @extends   series,plotOptions.obv
  * @since     9.1.0
  * @product   highstock
- * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/obv
+ * @requires  indicators/indicators
+ * @requires  indicators/obv
  * @apioption series.obv
  */
 

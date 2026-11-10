@@ -1,3 +1,10 @@
+---
+description: >-
+  Add plot bands and lines to chart axes, with labels and mouse events. Learn
+  how to update them dynamically and how their shapes change in polar charts
+  and gauges.
+---
+
 Plot bands and plot lines
 =========================
 

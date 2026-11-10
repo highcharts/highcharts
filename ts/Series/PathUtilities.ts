@@ -139,7 +139,7 @@ function getCurvedPath(pathParams: PathParams): SVGPath {
 }
 /**
  * General function to apply corner radius to a path
- * @private
+ * @internal
  */
 function applyRadius(path: SVGPath, r?: number): SVGPath {
     const d: SVGPath = [];
@@ -200,9 +200,11 @@ function applyRadius(path: SVGPath, r?: number): SVGPath {
     }
     return d;
 }
+/** @internal */
 const PathUtilities = {
     applyRadius,
     getLinkPath
 };
 
+/** @internal */
 export default PathUtilities;

@@ -1,3 +1,10 @@
+---
+description: >-
+  Add the Accessibility module to a chart with its React component, pass
+  accessibility API options as props, and follow an example that enables
+  descriptions for a single line series.
+---
+
 # Accessibility
 
 You can add the [accessibility module](https://www.highcharts.com/docs/accessibility/accessibility-module) to your chart using the `Accessibility` component:

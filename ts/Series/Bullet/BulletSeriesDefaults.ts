@@ -111,7 +111,7 @@ const BulletSeriesDefaults: BulletSeriesOptions = {
  * @extends   series,plotOptions.bullet
  * @since     6.0.0
  * @product   highcharts
- * @excluding dataParser, dataURL, marker, boostThreshold,
+ * @excluding marker, boostThreshold,
  *            boostBlending
  * @requires  modules/bullet
  * @apioption series.bullet

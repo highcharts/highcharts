@@ -1,3 +1,10 @@
+---
+description: >-
+  Add a legend that explains bubble sizes in a chart. Learn how automatic
+  ranges relate to series data and how to define custom ranges, dimensions,
+  and styling.
+---
+
 Bubble legend
 ===
 

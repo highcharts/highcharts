@@ -1,3 +1,10 @@
+---
+description: >-
+  Load open, high, low, close, and volume time-series values for a single
+  security by setting the OHLCV series type, then use the returned data in a
+  Highcharts Stock OHLC chart.
+---
+
 # OHLCV
 
 This type yields OHLCV time series data for a single or multiple securities.
@@ -27,12 +34,6 @@ const ohlcvConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector(
     }]
 });
 ```
-
-## Relevant demos
-
-- **Highcharts Stock + Morningstar OHLCV TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve `OHLCV` time series and display in an OHLC
-chart.
 
 ## Morningstar API Reference
 

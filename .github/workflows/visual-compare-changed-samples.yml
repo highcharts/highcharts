@@ -56,11 +56,14 @@ jobs:
           fi
 
           product_globs=''
+          visual_paths=''
           while IFS= read -r product; do
             if [[ -n "$product_globs" ]]; then
               product_globs+=','
+              visual_paths+=','
             fi
             product_globs+="$product/*/*"
+            visual_paths+="samples/$product/"
           done < "$products_file"
 
           has_products=false
@@ -70,8 +73,11 @@ jobs:
           else
             printf '%s\n' 'No supported changed products selected.'
           fi
-          printf 'has_products=%s\n' "$has_products" >> "$GITHUB_OUTPUT"
-          printf 'product_globs=%s\n' "$product_globs" >> "$GITHUB_OUTPUT"
+          {
+            printf 'has_products=%s\n' "$has_products"
+            printf 'product_globs=%s\n' "$product_globs"
+            printf 'visual_paths=%s\n' "$visual_paths"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Use Node.js lts/*
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
@@ -84,18 +90,19 @@ jobs:
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
         run: npm ci
 
-      - name: Build Highcharts
-        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
-        run: npx gulp scripts
-
       - name: Generate changed samples
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
         env:
           PRODUCT_GLOBS: ${{ steps.changed_samples.outputs.product_globs }}
         run: npx gulp generate-samples --samples "$PRODUCT_GLOBS"
 
-      - name: Render changed samples
+      - name: Install Playwright Chromium
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        run: npx playwright install --with-deps chromium
+
+      - name: Generate changed sample references
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
         env:
-          PRODUCT_GLOBS: ${{ steps.changed_samples.outputs.product_globs }}
-        run: npx karma start test/karma-conf.js --tests "$PRODUCT_GLOBS" --ts --reference --browsercount 2
+          VISUAL_TEST_PATH: ${{ steps.changed_samples.outputs.visual_paths }}
+          VISUAL_TEST_REFERENCE: '1'
+        run: npm run test:pw:visual

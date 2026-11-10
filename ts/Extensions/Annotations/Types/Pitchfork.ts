@@ -13,8 +13,10 @@
 
 import type { AnnotationPointType } from '../AnnotationSeries';
 import type {
+    AnnotationMockPointFunction,
     AnnotationShapeOptionsOptions
 } from '../AnnotationOptions';
+import type Controllable from '../Controllables/Controllable';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 
@@ -23,7 +25,8 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
-import { merge } from '../../../Shared/Utilities.js';
+import { isNumber, merge } from '../../../Shared/Utilities.js';
+import { interpolateAxisValue } from '../AnnotationUtilities.js';
 
 if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.pitchfork = merge(
@@ -87,9 +90,11 @@ class Pitchfork extends InfinityLine {
      *
      * */
 
-    private static outerLineEdgePoint(firstPointIndex: number): Function {
-        return function (target: any): PositionObject {
-            const annotation: Pitchfork = target.annotation,
+    private static outerLineEdgePoint(
+        firstPointIndex: number
+    ): AnnotationMockPointFunction {
+        return function (target: Controllable): PositionObject {
+            const annotation = target.annotation as Pitchfork,
                 points = annotation.points;
 
             return Pitchfork.findEdgePoint(
@@ -101,6 +106,42 @@ class Pitchfork extends InfinityLine {
                     annotation.midPointOptions()
                 )
             );
+        };
+    }
+
+    /**
+     * Returns a point in the middle between the annotation point at the given
+     * index and the pitchfork's mid point. Used for the inner background
+     * shape.
+     * @internal
+     */
+    private static innerBackgroundPoint(
+        pointIndex: number
+    ): AnnotationMockPointFunction {
+        return function (target: Controllable): MockPointOptions {
+            const annotation = target.annotation as Pitchfork,
+                point = annotation.points[pointIndex],
+                midPointOptions = annotation.midPointOptions();
+
+            if (
+                isNumber(point.x) &&
+                isNumber(point.y) &&
+                isNumber(midPointOptions.x) &&
+                isNumber(midPointOptions.y)
+            ) {
+                const yAxis = annotation.points[0].series.yAxis;
+
+                return {
+                    x: (point.x + midPointOptions.x) / 2,
+                    y: interpolateAxisValue(
+                        point.y, midPointOptions.y, 0.5, yAxis
+                    ),
+                    xAxis: midPointOptions.xAxis,
+                    yAxis
+                };
+            }
+
+            return {};
         };
     }
 
@@ -145,13 +186,14 @@ class Pitchfork extends InfinityLine {
      * */
 
     public midPointOptions(): MockPointOptions {
-        const points = this.points;
+        const points = this.points,
+            yAxis = points[0].series.yAxis;
 
         return {
             x: ((points[1].x as any) + (points[2].x as any)) / 2,
-            y: ((points[1].y as any) + (points[2].y as any)) / 2,
+            y: interpolateAxisValue(points[1].y, points[2].y, 0.5, yAxis),
             xAxis: points[0].series.xAxis,
-            yAxis: points[0].series.yAxis
+            yAxis
         };
     }
 
@@ -198,32 +240,10 @@ class Pitchfork extends InfinityLine {
             merge(typeOptions.innerBackground, {
                 type: 'path',
                 points: [
-                    function (target: any): MockPointOptions {
-                        const annotation = target.annotation,
-                            points = annotation.points,
-                            midPointOptions = annotation.midPointOptions();
-
-                        return {
-                            x: (points[1].x + midPointOptions.x) / 2,
-                            y: (points[1].y + midPointOptions.y) / 2,
-                            xAxis: midPointOptions.xAxis,
-                            yAxis: midPointOptions.yAxis
-                        };
-                    },
+                    Pitchfork.innerBackgroundPoint(1),
                     shapes[1].points[1],
                     shapes[2].points[1],
-                    function (target: any): MockPointOptions {
-                        const annotation = target.annotation,
-                            points = annotation.points,
-                            midPointOptions = annotation.midPointOptions();
-
-                        return {
-                            x: (midPointOptions.x + points[2].x) / 2,
-                            y: (midPointOptions.y + points[2].y) / 2,
-                            xAxis: midPointOptions.xAxis,
-                            yAxis: midPointOptions.yAxis
-                        };
-                    }
+                    Pitchfork.innerBackgroundPoint(2)
                 ],
                 className: 'highcharts-pitchfork-inner-background'
             }),

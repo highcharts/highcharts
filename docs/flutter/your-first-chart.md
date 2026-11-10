@@ -1,3 +1,10 @@
+---
+description: >-
+  Build a Flutter bar chart with HighchartsChart, add series as tuple or point
+  objects, set chart colors, and configure the legend, tooltip, and
+  point-click callback with typed options.
+---
+
 # Your first chart
 
 With Highcharts Flutter included in your app (See [getting started](https://www.highcharts.com/docs/flutter/getting-started)) you are ready to create your first chart.

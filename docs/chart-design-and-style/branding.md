@@ -1,3 +1,10 @@
+---
+description: >-
+  Apply brand colors, typography, and credits across charts using global
+  options. Configure light and dark palettes, refine individual elements, and
+  add a logo with a link to your site.
+---
+
 Branding Highcharts
 ===================
 

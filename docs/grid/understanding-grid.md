@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn how data providers, column options, and row rendering fit together in
+  Highcharts Grid, then navigate to focused guides for data handling,
+  interaction, styling, accessibility, and framework setup.
+---
+
 # Understanding Highcharts Grid
 
 Highcharts Grid displays structured data in columns and rows, using a standard
@@ -138,6 +145,7 @@ Start with:
 - [Row data](https://www.highcharts.com/docs/grid/rows/data)
 - [Pagination](https://www.highcharts.com/docs/grid/rows/pagination)
 - [Pinning](https://www.highcharts.com/docs/grid/rows/pinning)
+- [Selection](https://www.highcharts.com/docs/grid/rows/selection)
 - [Tree view](https://www.highcharts.com/docs/grid/rows/tree-view)
 - [Virtualization](https://www.highcharts.com/docs/grid/rows/virtualization)
 - [Performance and rendering](https://www.highcharts.com/docs/grid/rows/performance)
@@ -187,7 +195,7 @@ Start with:
 - [Frameworks](https://www.highcharts.com/docs/grid/frameworks/index)
 - [Angular](https://www.highcharts.com/docs/grid/frameworks/angular)
 - [Next.js](https://www.highcharts.com/docs/grid/frameworks/nextjs)
-- [React](https://www.highcharts.com/docs/grid/frameworks/react)
+- [React](https://www.highcharts.com/docs/grid/frameworks/react/getting-started)
 - [Vue](https://www.highcharts.com/docs/grid/frameworks/vue)
 
 ## Additional topics

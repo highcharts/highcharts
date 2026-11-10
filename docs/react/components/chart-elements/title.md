@@ -1,3 +1,9 @@
+---
+description: >-
+  Customize chart title text with the Title component, pass title API options
+  as props, and supply the displayed text as child content inside the chart.
+---
+
 # Title
 
 You can customize the [chart title](https://www.highcharts.com/docs/chart-concepts/title-and-subtitle) using the `Title` component:

@@ -1,3 +1,10 @@
+---
+description: >-
+  Update module imports from /options to /modules, replace bundled /esm
+  imports with /es-modules/masters, adjust Vite development dependency
+  optimization when needed, and rename HighchartsOptionsType to ChartOptions.
+---
+
 # v5 Migration Guide
 
 This guide walks you through all breaking changes introduced in `v5.0.0` to help you migrate from `v4.x`.

@@ -47,7 +47,7 @@ let error429 = false;
 async function cloudflarePurgeCode(files) {
     const argv = require('yargs').argv;
 
-    if (!argv.useGitIgnoreMe) {
+    if (!argv.useGitIgnoreMe || argv.dryrun) {
         return;
     }
 
@@ -111,6 +111,7 @@ function toS3FilePath(filePath, localPath, cdnPath, version = false) {
 function uploadProductPackage(productProps, options = {}) {
     const { distpath: localPath, name: prettyName, version, cdnpath } = productProps;
     const promises = [];
+    const skipRoot = options.skipRoot;
     const fromDir = `${DIST_DIR}${localPath}`;
     const zipFilePaths = glob.sync(`${DIST_DIR}/${prettyName.replace(/ /g, '-')}-${version}.zip`);
     const cdnFiles = [
@@ -158,50 +159,50 @@ function uploadProductPackage(productProps, options = {}) {
     const zipWithoutVersion = structuredClone(zipFile);
     zipWithoutVersion.to =
         zipWithoutVersion.to.replace('-' + version, '-latest');
+    const zipFiles = skipRoot ? [zipFile] : [zipFile, zipWithoutVersion];
 
     promises.push(uploadFiles({
         bucket: options.bucket,
         dryrun: options.dryrun,
-        files: [
-            zipFile,
-            zipWithoutVersion
-        ],
+        files: zipFiles,
         name: prettyName
     }));
 
     if (cdnpath || cdnpath === '') {
-        const rootJSFiles = gzippedFilesToRootDir.filter(
-            path => !isDirectory(path.from) && !isDotEntry(path.from)
-        );
-        cdnFiles.push.apply(cdnFiles, rootJSFiles);
-        promises.push(uploadFiles({
-            bucket: options.bucket,
-            dryrun: options.dryrun,
-            files: rootJSFiles,
-            name: prettyName,
-            s3Params: {
-                ...options.s3Params,
-                CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
-                Expires: HTTP_EXPIRES.oneDay,
-                ContentEncoding: 'gzip'
-            }
-        }));
+        if (!skipRoot) {
+            const rootJSFiles = gzippedFilesToRootDir.filter(
+                path => !isDirectory(path.from) && !isDotEntry(path.from)
+            );
+            cdnFiles.push.apply(cdnFiles, rootJSFiles);
+            promises.push(uploadFiles({
+                bucket: options.bucket,
+                dryrun: options.dryrun,
+                files: rootJSFiles,
+                name: prettyName,
+                s3Params: {
+                    ...options.s3Params,
+                    CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
+                    Expires: HTTP_EXPIRES.oneDay,
+                    ContentEncoding: 'gzip'
+                }
+            }));
 
-        const rootGfxFiles = gfxFilesToRootDir.filter(
-            path => !isDirectory(path.from) && !isDotEntry(path.from)
-        );
-        cdnFiles.push.apply(cdnFiles, rootGfxFiles);
-        promises.push(uploadFiles({
-            bucket: options.bucket,
-            dryrun: options.dryrun,
-            files: rootGfxFiles,
-            name: prettyName,
-            s3Params: {
-                ...options.s3Params,
-                CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
-                Expires: HTTP_EXPIRES.oneDay
-            }
-        }));
+            const rootGfxFiles = gfxFilesToRootDir.filter(
+                path => !isDirectory(path.from) && !isDotEntry(path.from)
+            );
+            cdnFiles.push.apply(cdnFiles, rootGfxFiles);
+            promises.push(uploadFiles({
+                bucket: options.bucket,
+                dryrun: options.dryrun,
+                files: rootGfxFiles,
+                name: prettyName,
+                s3Params: {
+                    ...options.s3Params,
+                    CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
+                    Expires: HTTP_EXPIRES.oneDay
+                }
+            }));
+        }
 
         const versionJSFiles = gzippedFilesToVersionDir.filter(
             path => !isDirectory(path.from) && !isDotEntry(path.from)
@@ -296,20 +297,26 @@ function distUploadCode() {
             return Promise.reject(new Error(`Could not find entry in build-properties.json for: ${productName}`));
         }
         const productProps = { name: productName, ...products[productName], version: properties.version };
-        return uploadProductPackage(productProps, { bucket, dryrun: argv.dryrun });
-    });
-
-    for (const file of ['products.js', 'products.json']) {
-        promises.push(uploadFiles({
-            files: [{
-                from: `${DIST_DIR}/${file}`,
-                to: file
-            }],
-            name: file,
+        return uploadProductPackage(productProps, {
             bucket,
             dryrun: argv.dryrun,
-            profile: argv.profile
-        }));
+            skipRoot: argv.skipRoot
+        });
+    });
+
+    if (!argv.skipRoot) {
+        for (const file of ['products.js', 'products.json']) {
+            promises.push(uploadFiles({
+                dryrun: argv.dryrun,
+                files: [{
+                    from: `${DIST_DIR}/${file}`,
+                    to: file
+                }],
+                name: file,
+                bucket,
+                profile: argv.profile
+            }));
+        }
     }
 
     return Promise.all(promises);
@@ -324,6 +331,7 @@ distUploadCode.flags = {
         'product=Highcharts, e.g highcharts,highmaps (optional - default is all products defined in proper build-properties.json).',
     '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
         'standard AWS environment variables for credentials will be used. (optional)',
+    '--skip-root': 'Skip uploads to the CDN root and only upload versioned paths. Useful for hotfixes on older majors. (optional)',
     '--use-git-ignore-me': 'Will look for bucket in git-ignore-me.properties file (fallback as previously used by ant build). Required if ---bucket not specified.'
 };
 

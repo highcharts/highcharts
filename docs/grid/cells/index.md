@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Overview"
+description: >-
+  Review how cell options control body-cell appearance and formatted content,
+  then find focused guides for applying CSS classes, inline styles, theme
+  variables, template strings, and formatter callbacks.
 ---
 
 # Cells overview

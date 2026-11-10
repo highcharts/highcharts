@@ -9,6 +9,7 @@
 import * as Grid from '@highcharts/grid/es-modules/masters/grid-pro.src';
 
 test_grid();
+test_composedModuleAugmentations();
 
 /**
  * Tests grid options.
@@ -43,6 +44,22 @@ function test_grid() {
             items: ['showCellValue']
         }
     );
+
+    Grid.ContextMenu.registerItem('showColumnId', {
+        icon: 'checkmark',
+        label: (context): string => context.target.column.id,
+        targets: ['cell'],
+        visible: (context): boolean => context.target.row.id !== void 0,
+        onClick: function (cell): void {
+            cell.row.id;
+        }
+    });
+
+    Grid.ContextMenu.registerItem('sampleGroup', {
+        defaultIn: ['cell'],
+        items: ['showColumnId', 'showCellValue'],
+        label: 'Sample group'
+    });
 
     const grid = Grid.grid('container', {
         data: {
@@ -186,6 +203,24 @@ function test_grid() {
                     header: ['x']
                 }
             }]
+        },
+        rowSelection: {
+            enabled: true,
+            mode: 'multiple',
+            trigger: 'both',
+            clickAction: 'toggle',
+            modifierKey: 'ctrlOrMeta',
+            checkbox: {
+                enabled: true
+            }
+        },
+        events: {
+            afterRowSelectionChange: function (e): void {
+                void this.rowSelection?.getSelectedRowIds();
+                void e.selectedRowIds;
+                void e.addedRowIds;
+                void e.removedRowIds;
+            }
         }
     });
 
@@ -196,4 +231,95 @@ function test_grid() {
     grid.rowPinning?.unpin('A');
     grid.rowPinning?.getPinnedRows();
     grid.tableEditing?.isEnabled();
+
+    grid.rowSelection?.select('A');
+    grid.rowSelection?.select(['A', 'B']);
+    grid.rowSelection?.deselect('A');
+    grid.rowSelection?.toggle('A');
+    grid.rowSelection?.isSelected('A');
+    grid.rowSelection?.getSelectedRowIds();
+    grid.rowSelection?.clear();
+
+    const detach = grid.contextMenu.attach(document.createElement('button'), {
+        items: [
+            {
+                label: 'Rename this button',
+                onClick: function (button): void {
+                    button.textContent = 'Renamed';
+                }
+            },
+            {
+                separator: true
+            },
+            {
+                label: 'Branch',
+                items: [{
+                    label: 'Leaf',
+                    visible: context => context.target.type === 'element',
+                    onClick: function (): void {
+                        this.blur();
+                    }
+                }]
+            }
+        ]
+    });
+
+    detach();
+}
+
+/**
+ * Every module composed in `grid-pro.src.ts` has to be side-effect imported
+ * there as well. Without the bare import, TypeScript elides the module from
+ * the emitted master `.d.ts` and its `declare module` augmentations never
+ * reach the user, even though the feature works at runtime.
+ */
+function test_composedModuleAugmentations() {
+
+    const grid = Grid.grid('container', {
+        // LicenseValidationComposition
+        gridKey: 'XXXX-XXXX-XXXX-AYYY-ZZZZ-WWWW',
+        // TreeViewComposition
+        treeView: {
+            enabled: true,
+            treeColumn: 'x'
+        },
+        // SummaryRowsComposition
+        summaryRows: [{
+            id: 'total',
+            aggregator: 'SUM'
+        }],
+        // PaginationComposition
+        pagination: {
+            enabled: true,
+            events: {
+                afterPageChange: function (e): void {
+                    e.currentPage;
+                }
+            }
+        },
+        lang: {
+            // ValidatorComposition
+            validationNotifications: {
+                notEmpty: 'Value cannot be empty'
+            }
+        },
+        columnDefaults: {
+            cells: {
+                editMode: {
+                    // ValidatorComposition and TreeViewValidation
+                    validationRules: ['notEmpty', 'treeViewPathSyntax']
+                }
+            }
+        },
+        columns: [{
+            id: 'total',
+            // SummaryColumnsComposition
+            columnAggregator: 'SUM',
+            aggregatedColumns: ['x', 'y']
+        }]
+    });
+
+    grid.treeView?.expandAll();
+    grid.summaryRows?.getRows();
+    grid.viewport?.validator?.errorCell;
 }

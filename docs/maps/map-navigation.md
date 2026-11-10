@@ -1,3 +1,11 @@
+---
+description: >-
+  Enable zooming and panning with map-navigation buttons, touch gestures,
+  mousewheel, and double-click behavior. The article shows programmatic view
+  control through MapView and notes how input handling can affect page
+  navigation.
+---
+
 Map navigation
 ===
 

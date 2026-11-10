@@ -42,7 +42,8 @@ import { attr, internalClearTimeout } from '../../Shared/Utilities.js';
 
 /**
  * Internal types.
- * @private
+ *
+ * @internal
  */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
@@ -56,6 +57,7 @@ declare module '../../Core/Chart/ChartBase'{
  *
  * */
 
+/** @internal */
 class Announcer {
 
     /* *
@@ -154,7 +156,9 @@ class Announcer {
  *
  * */
 
+/** @internal */
 namespace Announcer {
+    /** @internal */
     export type Type = ('assertive'|'polite');
 }
 
@@ -164,4 +168,5 @@ namespace Announcer {
  *
  * */
 
+/** @internal */
 export default Announcer;

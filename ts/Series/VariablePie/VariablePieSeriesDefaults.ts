@@ -127,7 +127,7 @@ const VariablePieSeriesDefaults: VariablePieSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.variablepie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/variable-pie
@@ -183,16 +183,6 @@ const VariablePieSeriesDefaults: VariablePieSeriesOptions = {
  * @product   highcharts
  * @apioption series.variablepie.data
  */
-
-/**
-* The z value of the point.
-*
-* @type {(number| null)}
-*
-* @product highcharts
-*
-* @apioption series.variablepie.data.z
-*/
 
 ''; // Keeps doclets above separate
 

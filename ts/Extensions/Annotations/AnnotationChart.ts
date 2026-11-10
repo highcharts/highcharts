@@ -216,7 +216,8 @@ function chartCallback(
                 {}).columnHeaderFormatter,
             // If second row doesn't have xValues
             // then it is a title row thus multiple level header is in use.
-            multiLevelHeaders = !event.dataRows[1].xValues,
+            // The row is missing altogether when the chart has no data, #25090.
+            multiLevelHeaders = !event.dataRows[1]?.xValues,
             annotationHeader = (
                 chart.options.lang &&
                 chart.options.lang.exportData &&

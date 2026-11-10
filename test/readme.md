@@ -22,6 +22,9 @@ npx gulp test --modified
 npm test
 ```
 
+For browser selection or individual test paths, use Playwright directly.
+`gulp test` rejects the former Karma browser, filtering and reporter options.
+
 ### Running Timezone Tests
 
 Timezone tests verify that Highcharts handles time conversions correctly across
@@ -31,18 +34,35 @@ different browser timezones:
 npx playwright test --project=setup-highcharts --project=highcharts tests/highcharts/time/
 ```
 
-## Visual Tests (Karma)
+## Visual Tests (Playwright)
 
-Visual comparison tests still use Karma for generating and comparing SVG
-reference images:
+Visual comparison tests run in Chromium through Playwright. Install the
+Playwright browser before running them:
 
 ```bash
-# Generate reference images
-npx karma start test/karma-conf.js --tests highcharts/*/* --reference
-
-# Compare against reference
-npx karma start test/karma-conf.js --tests highcharts/*/* --visualcompare
+npx playwright install chromium
 ```
+
+Playwright discovers eligible samples using the shared visual exclusions in
+`test/visual-test-samples.js`. Same-repository PR runs publish the Playwright
+results to production Visual Review; the latest published run replaces the
+current review for that PR. Generate references and compare candidates with:
+
+```bash
+VISUAL_TEST_REFERENCE=1 \
+npm run test:pw:visual
+
+npm run test:pw:visual
+```
+
+`VISUAL_TEST_MANIFEST` selects exact sample IDs. Explicit IDs excluded by the
+shared visual exclusions are rejected. A manifest cannot be combined with
+`VISUAL_TEST_PATH`, which filters sample paths by substring for focused local
+runs. Without a manifest, new eligible samples are discovered automatically.
+The former `gulp test --reference` and `gulp test --visualcompare` entrypoints
+are retired; use the Playwright commands above. See
+[Playwright production publishing](../tests/README.md#production-publishing)
+for upload and completion requirements.
 
 ## Writing Tests
 

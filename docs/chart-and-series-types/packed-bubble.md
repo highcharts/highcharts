@@ -1,3 +1,10 @@
+---
+description: >-
+  Supply bubble volumes in a flat array or named point objects, tune size
+  bounds, and choose how series interact in the packed layout. The guide
+  covers simulation, dragging between series, and spiral packing.
+---
+
 Packed bubble
 ===
 

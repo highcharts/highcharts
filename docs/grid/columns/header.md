@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Headers"
+description: >-
+  Configure labels and formatting through header[] or per-column options,
+  control rendered order and exclusions, disable the header row when needed,
+  and understand precedence and accessibility tradeoffs.
 ---
 
 # Column headers

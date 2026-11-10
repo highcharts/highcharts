@@ -1,3 +1,10 @@
+---
+description: >-
+  Mark events on a chart with a flags series, set each flag's x position,
+  title, and hover text, and place flags on a series or axis with configurable
+  shapes.
+---
+
 Flag series
 ================
 

@@ -25,6 +25,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type Tick from '../../Core/Axis/Tick';
+import type VariwideSeries from './VariwideSeries';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -37,6 +38,7 @@ import { addEvent, pushUnique, wrap } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Axis/AxisBase' {
     interface AxisBase {
         variwide?: boolean;
@@ -44,6 +46,7 @@ declare module '../../Core/Axis/AxisBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Axis/TickBase' {
     interface TickBase {
         postTranslate(
@@ -61,7 +64,7 @@ declare module '../../Core/Axis/TickBase' {
  * */
 
 /**
- * @private
+ * @internal
  */
 function compose(
     AxisClass: typeof Axis,
@@ -84,7 +87,7 @@ function compose(
 
 /**
  * Same width as the category (#8083)
- * @private
+ * @internal
  */
 function onAxisAfterDrawCrosshair(
     this: Axis,
@@ -102,7 +105,7 @@ function onAxisAfterDrawCrosshair(
 
 /**
  * On a vertical axis, apply anti-collision logic to the labels.
- * @private
+ * @internal
  */
 function onAxisAfterRender(
     this: Axis
@@ -125,7 +128,7 @@ function onAxisAfterRender(
 }
 
 /**
- * @private
+ * @internal
  */
 function onTickAfterGetPosition(
     this: Tick,
@@ -144,7 +147,7 @@ function onTickAfterGetPosition(
 }
 
 /**
- * @private
+ * @internal
  */
 function tickPostTranslate(
     this: Tick,
@@ -154,21 +157,24 @@ function tickPostTranslate(
 ): void {
     const axis = this.axis;
 
-    let pos = xy[xOrY] - axis.pos;
+    if (axis.variwide) {
+        let pos = xy[xOrY] - axis.pos;
 
-    if (!axis.horiz) {
-        pos = axis.len - pos;
-    }
-    pos = (axis.series[0] as any).postTranslate(index, pos);
+        if (!axis.horiz) {
+            pos = axis.len - pos;
+        }
+        pos = (axis.series[0] as VariwideSeries|undefined)
+            ?.postTranslate?.(index, pos) ?? pos;
 
-    if (!axis.horiz) {
-        pos = axis.len - pos;
+        if (!axis.horiz) {
+            pos = axis.len - pos;
+        }
+        xy[xOrY] = axis.pos + pos;
     }
-    xy[xOrY] = axis.pos + pos;
 }
 
 /**
- * @private
+ * @internal
  */
 function wrapTickGetLabelPosition(
     this: Tick,
@@ -209,8 +215,10 @@ function wrapTickGetLabelPosition(
  *
  * */
 
+/** @internal */
 const VariwideComposition = {
     compose
 };
 
+/** @internal */
 export default VariwideComposition;

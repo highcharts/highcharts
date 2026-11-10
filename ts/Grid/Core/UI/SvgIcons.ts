@@ -25,7 +25,7 @@
  *
  * */
 
-import { setHTMLContent } from '../GridUtils.js';
+import { setHTMLContent, warnOnce } from '../GridUtils.js';
 import { defined, isString } from '../../../Shared/Utilities.js';
 
 /* *
@@ -57,7 +57,7 @@ export type GridIconName = (
 /**
  * The registry of all Grid Svg icons with their SVG path data.
  */
-export const icons: Record<GridIconName, SVGDefinition> = {
+const icons: Record<GridIconName, SVGDefinition> = {
     filter: {
         width: 12,
         height: 12,
@@ -247,6 +247,17 @@ export const pathDefaults: Partial<PathDefinition> = {
     'stroke-linejoin': 'round'
 };
 
+const allowedPathAttributes: Array<keyof PathDefinition> = [
+    'd',
+    'fill',
+    'opacity',
+    'stroke',
+    'stroke-width',
+    'stroke-linecap',
+    'stroke-linejoin',
+    'transform'
+];
+
 
 /* *
 *
@@ -259,11 +270,13 @@ export const pathDefaults: Partial<PathDefinition> = {
  */
 export interface PathDefinition {
     d: string;
+    fill?: string;
     stroke?: string;
     'stroke-width'?: number;
     'stroke-linecap'?: string;
     'stroke-linejoin'?: string;
     opacity?: number;
+    transform?: string;
 }
 
 /**
@@ -341,12 +354,7 @@ function createSvgFromDefinition(
     for (const childDefinition of children ?? []) {
         const path = createElement('path');
 
-        const attrKeys = new Set<keyof PathDefinition>([
-            ...Object.keys(childDefinition) as Array<keyof PathDefinition>,
-            ...Object.keys(pathDefaults) as Array<keyof PathDefinition>
-        ]);
-
-        for (const attr of attrKeys) {
+        for (const attr of allowedPathAttributes) {
             const value = childDefinition[attr] ?? pathDefaults[attr];
             if (value !== void 0) {
                 path.setAttribute(attr, value.toString());
@@ -407,6 +415,15 @@ export function createGridIcon(
     const value = getIconFromRegistry(name, customIcons);
 
     if (!defined(value)) {
+        // A placeholder rather than nothing, so that the button keeps its
+        // layout, but said out loud: a silent stand-in reads as the icon the
+        // caller asked for.
+        warnOnce(
+            'icon:' + name,
+            `Grid: Unknown icon "${name}", falling back to a placeholder. ` +
+            'Add it through the `rendering.icons` option, or use a built-in ' +
+            'name.'
+        );
         return createSvgFromDefinition(icons.filter);
     }
 

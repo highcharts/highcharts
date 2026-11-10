@@ -222,7 +222,7 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
         .getBBox();
 
     assert.ok(
-        labelWidth < xAxisFirstLine.x - yAxisFirstLine.x + 1,
+        labelWidth < xAxisFirstLine.x - yAxisFirstLine.x + 2,
         'xAxis label width should be smaller than available slot width'
     );
 

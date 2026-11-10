@@ -29,10 +29,8 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import ItemPoint from './ItemPoint.js';
 import ItemSeriesDefaults from './ItemSeriesDefaults.js';
+import PieSeries from '../Pie/PieSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
 import {
     defined,
     extend,
@@ -54,7 +52,6 @@ import {
  *
  * @requires modules/item-series
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.item
  *
@@ -68,6 +65,7 @@ class ItemSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ItemSeriesOptions = merge(
         PieSeries.defaultOptions,
         ItemSeriesDefaults
@@ -79,16 +77,19 @@ class ItemSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public borderWidth?: number;
 
     public data!: Array<ItemPoint>;
 
+    /** @internal */
     public itemSize?: number;
 
     public options!: ItemSeriesOptions;
 
     public points!: Array<ItemPoint>;
 
+    /** @internal */
     public slots?: Array<ItemSeries.GeometryObject>;
 
     /* *

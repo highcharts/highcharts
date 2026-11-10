@@ -16,9 +16,15 @@ QUnit.test('Standalone navigator general tests', function (assert) {
     });
 
     assert.strictEqual(
-        navigator.navigator.chart.container.offsetHeight,
+        navigator.navigator.height,
         150,
-        'Standalone navigator container should have correct height, #21268.'
+        'Standalone navigator should have correct height, #21268.'
+    );
+
+    assert.strictEqual(
+        navigator.navigator.chart.container.offsetHeight,
+        180,
+        'Container should leave room for the navigator, #21268, #24714.'
     );
 
     navigator.update({
@@ -26,10 +32,16 @@ QUnit.test('Standalone navigator general tests', function (assert) {
     });
 
     assert.strictEqual(
-        navigator.navigator.chart.container.offsetHeight,
+        navigator.navigator.height,
         200,
-        `Standalone navigator container should have correct height after update,
-        #21268.`
+        'Standalone navigator should have correct height after update, #21268.'
+    );
+
+    assert.strictEqual(
+        navigator.navigator.chart.container.offsetHeight,
+        230,
+        `Container should leave room for the navigator after update, #21268,
+        #24714.`
     );
 
     // #23809
@@ -101,6 +113,43 @@ QUnit.test('DataTable in Standalone Navigator.', function (assert) {
         dataTable.rowCount,
         'Standalone navigator should render points from DataTable options.'
     );
+
+    standaloneNavigator.destroy();
+
+    const chartLevelNavigator = Highcharts.navigator('container', {
+        chartOptions: {
+            dataTable
+        },
+        series: [{}]
+    });
+
+    assert.strictEqual(
+        chartLevelNavigator.navigator.series[0]?.points.length,
+        dataTable.rowCount,
+        `Standalone navigator should render points from the chart-level
+        DataTable, #25603.`
+    );
+
+    chartLevelNavigator.destroy();
+
+    const chart = Highcharts.stockChart('container', {
+        dataTable,
+        series: [{}],
+        navigator: {
+            series: [{}]
+        }
+    });
+
+    chart.series[0].setData([[1, 1], [2, 2], [3, 3]]);
+
+    assert.deepEqual(
+        chart.navigator.series.map(s => s.points.length),
+        [3],
+        `With a base series, the navigator should not add a series for the
+        chart-level DataTable, and should follow base series updates, #25603.`
+    );
+
+    chart.destroy();
 });
 
 QUnit.test(
@@ -150,7 +199,7 @@ QUnit.test(
         });
 
         const navigator = Highcharts.navigator('nav-ypan', {
-            chart: {
+            chartOptions: {
                 chart: {
                     inverted: true,
                     height: 400,

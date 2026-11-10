@@ -459,17 +459,19 @@ export interface ExportingOptions {
     url?: string;
 
     /**
-     * The pixel width of charts exported to PNG or JPG. As of Highcharts
-     * 3.0, the default pixel width is a function of the [chart.width](
-     * #chart.width) or [exporting.sourceWidth](#exporting.sourceWidth) and the
-     * [exporting.scale](#exporting.scale).
+     * The pixel width of charts exported to PNG or JPG. Deprecated and
+     * without effect, as the option is no longer forwarded to the export
+     * server. The same result is achieved with [exporting.sourceWidth](
+     * #exporting.sourceWidth) combined with [exporting.scale](
+     * #exporting.scale).
      *
      * @sample {highcharts} highcharts/exporting/width/
      *         Export to 200px wide images
      * @sample {highstock} highcharts/exporting/width/
      *         Export to 200px wide images
      *
-     * @since 2.0
+     * @deprecated next
+     * @since      2.0
      */
     width?: number;
 }
@@ -653,7 +655,7 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-symbolfill/
      *         Blue symbol stroke for one of the buttons
      *
-     * @default ${palette.neutralColor60}
+     * @default 'var(--highcharts-neutral-color-60)'
      * @since 2.0
      */
     symbolFill?: ColorString;

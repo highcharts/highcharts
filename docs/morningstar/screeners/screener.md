@@ -1,3 +1,10 @@
+---
+description: >-
+  Review the Screener connector's filtering capabilities and supported
+  data-point breadth, then follow links to configure investment screens or
+  find securities with characteristics similar to an existing investment.
+---
+
 # Screener
 
 Filter thousands of investments to quickly find those matching your criteria.

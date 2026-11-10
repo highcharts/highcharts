@@ -728,6 +728,43 @@ QUnit.test('Monthly ticks (#3500)', function (assert) {
         expectedTicksText,
         'Monthly X axis ticks is not correct'
     );
+
+    chart.update({
+        chart: {
+            width: 1200,
+            marginRight: 0
+        }
+    });
+
+    const ticksWithoutFlags = chart.xAxis[0].tickPositions.slice();
+
+    chart.addSeries({
+        type: 'flags',
+        data: []
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions,
+        ticksWithoutFlags,
+        'Empty flags series should not change monthly tick positions (#23555).'
+    );
+
+    chart.series[1].update({
+        visible: false,
+        data: [{
+            x: Date.UTC(2014, 2, 15),
+            title: 'A',
+            text: 'A'
+        }]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions,
+        ticksWithoutFlags,
+        'Hidden flags with data should not change monthly tick positions ' +
+        '(#23555).'
+    );
+
     // Reset
     Highcharts.setOptions(resetTo);
 });
@@ -1298,6 +1335,17 @@ QUnit.test('Tick and label overflow (#16307)', assert => {
         chart.xAxis[0].ticks['11'].mark.opacity,
         0,
         'After redraw, the last tick mark should still not be visible'
+    );
+
+    chart.update({
+        xAxis: {
+            tickWidth: 3
+        }
+    });
+    assert.strictEqual(
+        chart.xAxis[0].ticks['11'].mark.attr('stroke-width'),
+        3,
+        'After update, the last tick mark should have a stroke width of 3'
     );
 
 });

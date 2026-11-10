@@ -1,3 +1,10 @@
+---
+description: >-
+  Add or customize chart credits with the Credits component, pass credits API
+  options as props, and provide the credit text as child content inside a
+  Chart.
+---
+
 # Credits
 
 You can customize the chart credits using the `Credits` component:

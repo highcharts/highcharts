@@ -1,7 +1,7 @@
 import { defineConfig } from 'cypress';
 import { lighthouse, prepareAudit } from '@cypress-audit/lighthouse';
 
-import { writeFile, mkdirSync, existsSync, readFileSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 
 import defaultConfig from '../../../cypress.config.mjs';
@@ -28,12 +28,12 @@ export default defineConfig({
                         .replace(config.baseUrl, '')
                         .replaceAll('/', '-');
 
-                    writeFile(
+                    writeFileSync(
                         join(
                             outputDir,
                             `${demo}.json`
                         ),
-                        lighthouseReport.report
+                        JSON.stringify(lighthouseReport.lhr)
                     );
 
                     if (config.env.type === 'actual') {

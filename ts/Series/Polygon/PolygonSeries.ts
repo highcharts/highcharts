@@ -25,12 +25,10 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import PolygonSeriesDefaults from './PolygonSeriesDefaults.js';
+import AreaSeries from '../Area/AreaSeries.js';
+import LineSeries from '../Line/LineSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    area: AreaSeries,
-    line: LineSeries,
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -47,6 +45,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: PolygonSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         PolygonSeriesDefaults
@@ -58,6 +57,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public areaPath?: SVGPath;
     public data!: Array<PolygonPoint>;
     public options!: PolygonSeriesOptions;
@@ -69,6 +69,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public getGraphPath(): SVGPath {
         const graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this);
 
@@ -84,6 +85,7 @@ class PolygonSeries extends ScatterSeries {
         return graphPath;
     }
 
+    /** @internal */
     public drawGraph(): void {
         // Borrow the fill logic from area.drawGraph, honoring `fillOpacity`
         // and an optional `fillColor`
@@ -99,7 +101,9 @@ class PolygonSeries extends ScatterSeries {
  * */
 
 interface PolygonSeries {
+    /** @internal */
     pointClass: typeof PolygonPoint;
+    /** @internal */
     type: string;
 }
 

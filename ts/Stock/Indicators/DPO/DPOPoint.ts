@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class DPOPoint extends SMAPoint {
+    /** @internal */
     public series: DPOIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class DPOPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default DPOPoint;

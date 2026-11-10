@@ -18,7 +18,7 @@ export default {
         path: 'yAxis.stackLabels.borderRadius',
         value: 5,
         min: 0,
-        max: 10
+        max: 12
     }],
     templates: ['categories-12'],
     chartOptionsExtra: {

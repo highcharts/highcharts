@@ -29,11 +29,9 @@ import DependencyWheelSeriesDefaults from './DependencyWheelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
+import PieSeries from '../Pie/PieSeries.js';
+import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: PieSeries,
-    sankey: SankeySeries
-} = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import { composeTextPath } from '../../Extensions/TextPath.js';
 import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
@@ -46,7 +44,6 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dependencywheel
  *
@@ -60,6 +57,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DependencyWheelSeriesOptions = merge(
         SankeySeries.defaultOptions,
         DependencyWheelSeriesDefaults
@@ -75,8 +73,10 @@ class DependencyWheelSeries extends SankeySeries {
 
     public options!: DependencyWheelSeriesOptions;
 
+    /** @internal */
     public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>>;
 
+    /** @internal */
     public nodes!: Array<DependencyWheelPoint>;
 
     public points!: Array<DependencyWheelPoint>;
@@ -87,6 +87,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public animate(init?: boolean): void {
         const series = this;
 
@@ -124,6 +125,7 @@ class DependencyWheelSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public createNode(id: string): DependencyWheelPoint {
         const node = super.createNode(id) as DependencyWheelPoint;
 
@@ -390,16 +392,19 @@ class DependencyWheelSeries extends SankeySeries {
  *
  * */
 
-/** @internal */
 interface DependencyWheelSeries {
+    /** @internal */
     getCenter: typeof PieSeries.prototype.getCenter;
+    /** @internal */
     orderNodes: boolean;
+    /** @internal */
     pointClass: typeof DependencyWheelPoint;
 }
 extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
     pointArrayMap: ['from', 'to', 'weight', 'weightTo'],
-    getCenter: PieSeries.prototype.getCenter
+    getCenter: PieSeries.prototype.getCenter,
+    useCircularLayout: false
 });
 
 /* *
@@ -408,7 +413,6 @@ extend(DependencyWheelSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dependencywheel: typeof DependencyWheelSeries;
@@ -423,5 +427,4 @@ SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
  *
  * */
 
-/** @internal */
 export default DependencyWheelSeries;

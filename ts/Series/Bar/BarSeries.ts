@@ -34,7 +34,6 @@ import { extend, merge } from '../../Shared/Utilities.js';
 /**
  * Bar series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.bar
  *
@@ -58,6 +57,7 @@ class BarSeries extends ColumnSeries {
      * @extends      plotOptions.column
      * @product      highcharts
      * @optionparent plotOptions.bar
+     * @internal
      */
     public static defaultOptions: BarSeriesOptions = merge(ColumnSeries.defaultOptions, {
         // Nothing here yet
@@ -81,7 +81,6 @@ class BarSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface BarSeries {
     inverted?: boolean;
     pointClass: typeof BarPoint;
@@ -96,7 +95,6 @@ extend(BarSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bar: typeof BarSeries;
@@ -110,7 +108,6 @@ SeriesRegistry.registerSeriesType('bar', BarSeries);
  *
  * */
 
-/** @internal */
 export default BarSeries;
 
 /* *
@@ -124,7 +121,7 @@ export default BarSeries;
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.bar
- * @excluding connectNulls, dashStyle, dataParser, dataURL, gapSize, gapUnit,
+ * @excluding connectNulls, dashStyle, gapSize, gapUnit,
  *            linecap, lineWidth, marker, connectEnds, step
  * @product   highcharts
  * @apioption series.bar

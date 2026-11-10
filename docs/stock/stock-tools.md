@@ -1,3 +1,10 @@
+---
+description: >-
+  Load the Stock Tools modules and styles in order to add the default chart
+  toolbar for annotations and indicators, then review how to build a custom
+  interface for chart interactions.
+---
+
 Stock tools
 ===
 

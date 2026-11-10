@@ -174,7 +174,7 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.area
- * @excluding dataParser, dataURL, useOhlcData
+ * @excluding useOhlcData
  * @product   highcharts highstock
  * @apioption series.area
  */

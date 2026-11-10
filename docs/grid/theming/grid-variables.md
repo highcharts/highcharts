@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Grid variables"
+description: >-
+  Set global and section-specific CSS variables for Grid typography, colors,
+  borders, padding, links, hover states, and synchronized highlights; use
+  fallback chains and tune summary separators.
 ---
 
 # Grid variables
@@ -259,6 +263,7 @@ The following global variables are available for hover states on cells, rows, co
 | --hcg-header-hover            | Header cells                      | --hcg-column-hover   |
 | --hcg-cell-hover              | Body cells                        | --hcg-row OR --hcg-column   |
 | --hcg-row-hover               | Rows                              | None   |
+| --hcg-row-selected            | Selected rows (Grid Pro)          | None   |
 | --hcg-column-hover            | Columns                           | None |
 | --hcg-column-hover-header     | Header cells when hovering column | --hcg-column-hover   |
 

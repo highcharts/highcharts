@@ -1,3 +1,10 @@
+---
+description: >-
+  Display a period's high and low as a vertical range with a tick for the
+  closing value, and choose HLC data or OHLC data with useOhlcData when
+  configuring the series.
+---
+
 HLC chart
 ================
 

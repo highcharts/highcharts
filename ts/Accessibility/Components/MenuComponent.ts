@@ -52,16 +52,15 @@ const {
 
 /**
  * Get the wrapped export button element of a chart.
- * @private
+ *
+ * @internal
  */
 function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
     return chart.exporting?.svgElements?.[0];
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function exportingShouldHaveA11y(chart: Chart): boolean {
     const exportingOpts = chart.options.exporting,
         exportButton = getExportMenuButtonElement(chart);
@@ -87,9 +86,10 @@ function exportingShouldHaveA11y(chart: Chart): boolean {
 /**
  * The MenuComponent class
  *
- * @private
  * @class
  * @name Highcharts.MenuComponent
+ *
+ * @internal
  */
 class MenuComponent extends AccessibilityComponent {
 
@@ -129,9 +129,7 @@ class MenuComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public onMenuHidden(): void {
         const menu: Exporting.DivElement|undefined =
             this.chart.exporting?.contextMenuEl;
@@ -144,9 +142,7 @@ class MenuComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public onMenuShown(): void {
         const chart = this.chart,
             menu = chart.exporting?.contextMenuEl;
@@ -160,10 +156,7 @@ class MenuComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     * @param {string} stateStr
-     */
+    /** @internal */
     public setExportButtonExpandedState(
         stateStr: string
     ): void {
@@ -203,9 +196,7 @@ class MenuComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public proxyMenuButton(): void {
         const chart = this.chart;
         const proxyProvider = this.proxyProvider;
@@ -232,9 +223,7 @@ class MenuComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public createProxyGroup(): void {
         const chart = this.chart;
         if (chart && this.proxyProvider) {
@@ -243,9 +232,7 @@ class MenuComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public addAccessibleContextMenuAttribs(): void {
         const chart = this.chart,
             exportList = chart.exporting?.divElements;
@@ -284,7 +271,8 @@ class MenuComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @private
+     *
+     * @internal
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes,
@@ -358,9 +346,9 @@ class MenuComponent extends AccessibilityComponent {
 
 
     /**
-     * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
      * @return {number} Response code
+     *
+     * @internal
      */
     public onKbdPrevious(
         keyboardNavigationHandler: KeyboardNavigationHandler
@@ -388,9 +376,9 @@ class MenuComponent extends AccessibilityComponent {
 
 
     /**
-     * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
      * @return {number} Response code
+     *
+     * @internal
      */
     public onKbdNext(
         keyboardNavigationHandler: KeyboardNavigationHandler
@@ -421,9 +409,9 @@ class MenuComponent extends AccessibilityComponent {
 
 
     /**
-     * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
      * @return {number} Response code
+     *
+     * @internal
      */
     public onKbdClick(
         keyboardNavigationHandler: KeyboardNavigationHandler
@@ -456,6 +444,7 @@ class MenuComponent extends AccessibilityComponent {
  * */
 
 
+/** @internal */
 interface MenuComponent {
     chart: MenuComponent.ChartComposition;
 }
@@ -467,6 +456,7 @@ interface MenuComponent {
  *
  * */
 
+/** @internal */
 namespace MenuComponent {
 
 
@@ -477,6 +467,7 @@ namespace MenuComponent {
      * */
 
 
+    /** @internal */
     export declare class ChartComposition extends Accessibility.ChartComposition {
         public highlightedExportItemIx?: number;
         /** @requires modules/accessibility */
@@ -497,9 +488,7 @@ namespace MenuComponent {
      * */
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart
     ): void {
@@ -517,8 +506,9 @@ namespace MenuComponent {
     /**
      * Show the export menu and focus the first item (if exists).
      *
-     * @private
      * @function Highcharts.Chart#showExportMenu
+     *
+     * @internal
      */
     function chartShowExportMenu(
         this: ChartComposition
@@ -536,8 +526,9 @@ namespace MenuComponent {
     }
 
     /**
-     * @private
      * @function Highcharts.Chart#hideExportMenu
+     *
+     * @internal
      */
     function chartHideExportMenu(
         this: ChartComposition
@@ -572,8 +563,9 @@ namespace MenuComponent {
     /**
      * Highlight export menu item by index.
      *
-     * @private
      * @function Highcharts.Chart#highlightExportItem
+     *
+     * @internal
      */
     function chartHighlightExportItem(
         this: ChartComposition,
@@ -617,8 +609,9 @@ namespace MenuComponent {
     /**
      * Try to highlight the last valid export menu item.
      *
-     * @private
      * @function Highcharts.Chart#highlightLastExportItem
+     *
+     * @internal
      */
     function chartHighlightLastExportItem(
         this: ChartComposition
@@ -644,4 +637,5 @@ namespace MenuComponent {
  *
  * */
 
+/** @internal */
 export default MenuComponent;

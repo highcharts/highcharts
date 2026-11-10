@@ -28,8 +28,10 @@ The custom implementations have the following requirements:
    doclet text. The first word following the tag has to be the product key in
    curly brackets.
 
-8. `@since` and `@deprecated` support usage of `next` as the version number
-   that is resolved on the next release when the next code version is known.
+8. `@since` and `@deprecated` support `next` as a pending version number.
+   The `prep-release` task replaces it only for a plain `x.y.z` release, such
+   as `13.2.0`.
+
    When used in a public doclet - any block comment starting with `/**` that do
    not have `@internal` (nor its legacy alias `@private`) tag,
    **must have a value** - a version number or `next`. This is guarded by
@@ -53,6 +55,9 @@ When documenting a TS type, interface, or class some additional rules apply:
 - All internal types and doclets must be tagged with `@internal`.
 
 - Do not use `@type` in the doclet - the type is already set in code.
+
+- `@requires` supports product-specific values like `@default` and `@sample`,
+  e.g. `@requires {highcharts} modules/heatmap`.
 
 - Doclet placed on an interface or class should be about the interface or class
   itself, not the related API option that is using it.
@@ -80,15 +85,15 @@ interface FakeAxis { ...props... }
 Interface without the tags.
 ```ts
 interface FakeAxis extends Axis {
-   ...props...
+    ...props...
 
-   /* *
-    *
-    *  Excluded
-    *
-    * */
+    /* *
+     *
+     *  Excluded
+     *
+     * */
 
-   linkedTo?: undefined;
-   maxZoom?: undefined;
+    linkedTo?: undefined;
+    maxZoom?: undefined;
 }
 ```

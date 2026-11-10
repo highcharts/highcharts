@@ -22,27 +22,20 @@ import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    },
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        },
-        dumbbell: {
-            prototype: {
-                pointClass: DumbbellPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const Point = Series.prototype.pointClass;
+const ScatterPoint = ScatterSeries.prototype.pointClass;
+const DumbbellPoint = DumbbellSeries.prototype.pointClass;
 
 /* *
  *
@@ -58,10 +51,14 @@ class LollipopPoint extends Point {
      *
      * */
 
+    /** @internal */
     public connector?: SVGElement;
     public options!: LollipopPointOptions;
+    /** @internal */
     public series!: LollipopSeries;
+    /** @internal */
     public plotX!: number;
+    /** @internal */
     public pointWidth!: number;
 }
 
@@ -71,6 +68,7 @@ class LollipopPoint extends Point {
  *
  * */
 
+/** @internal */
 interface LollipopPoint {
     destroy: typeof DumbbellPoint.prototype['destroy'],
     pointSetState: typeof ScatterPoint.prototype['setState'],

@@ -25,7 +25,7 @@ import type Scrollbar from '../Scrollbar/Scrollbar';
 import type Series from '../../Core/Series/Series';
 
 import H from '../../Core/Globals.js';
-const { isTouchDevice } = H;
+const { composed, isTouchDevice } = H;
 import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
@@ -64,8 +64,6 @@ declare module '../../Core/Series/SeriesBase' {
  *
  * */
 
-const composedMembers: Array<unknown> = [];
-
 /* *
  *
  *  Variables
@@ -85,14 +83,14 @@ function compose(
     ChartClass: typeof Chart,
     NavigatorClass: typeof Navigator
 ): void {
-
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, 'Navigator.Chart')) {
         const chartProto = ChartClass.prototype;
         NavigatorConstructor = NavigatorClass;
 
         chartProto.callbacks.push(onChartCallback);
 
-        addEvent(ChartClass, 'afterAddSeries', onChartAfterAddSeries);
+        addEvent(ChartClass, 'afterAddSeries', resetBaseSeries);
+        addEvent(ChartClass, 'afterDrillUp', resetBaseSeries);
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
         addEvent(ChartClass, 'afterUpdate', onChartAfterUpdate);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
@@ -102,15 +100,14 @@ function compose(
 }
 
 /**
- * Handle adding new series.
+ * Reset the base series.
  * @internal
  */
-function onChartAfterAddSeries(
+function resetBaseSeries(
     this: Chart
 ): void {
     if (this.navigator) {
-        // Recompute which series should be shown in navigator, and add them
-        this.navigator.setBaseSeries(null as any, false);
+        this.navigator.setBaseSeries(void 0, false);
     }
 }
 

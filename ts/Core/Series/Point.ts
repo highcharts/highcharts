@@ -39,8 +39,7 @@ import type { DeepPartial } from '../../Shared/Types';
 
 import AST from '../Renderer/HTML/AST.js';
 import { animObject } from '../Animation/AnimationUtilities.js';
-import D from '../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Defaults.js';
 import F from '../Templating.js';
 const { format } = F;
 import {
@@ -244,6 +243,15 @@ class Point {
      */
     public key: string|number;
 
+    /**
+     * Decides which data label is kept when two of them overlap. The label
+     * with the highest rank wins. Series where the point value is not a
+     * measure of size set this explicitly.
+     *
+     * @internal
+     */
+    public labelrank?: number;
+
     /** @internal */
     public marker?: PointMarkerOptions;
 
@@ -341,9 +349,8 @@ class Point {
      * The attributes of the rendered SVG shape like in `column` or `pie`
      * series.
      *
-     * @readonly
      * @name Highcharts.Point#shapeArgs
-     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     * @type {Highcharts.SVGAttributes|undefined}
      */
     public shapeArgs?: SVGAttributes;
 
@@ -530,9 +537,8 @@ class Point {
      * The attributes of the rendered SVG shape like in `column` or `pie`
      * series.
      *
-     * @readonly
      * @name Highcharts.Point#shapeArgs
-     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     * @type {Highcharts.SVGAttributes|undefined}
      */
     /**
      * Defines the tooltip's position for a data point in a chart. It is an
@@ -730,6 +736,11 @@ class Point {
              * @internal
              */
             const destroyPoint = (): void => {
+                const i = series.condemnedPoints?.indexOf(point) ?? -1;
+                if (i > -1) {
+                    series.condemnedPoints.splice(i, 1);
+                }
+
                 // Remove all events and elements
                 if (
                     point.graphic ||
@@ -759,8 +770,8 @@ class Point {
                 if (!hoverPoints.length) {
                     chart.hoverPoints = void 0;
                 }
-
             }
+
             if (point === chart.hoverPoint) {
                 point.onMouseOut();
             }
@@ -1159,7 +1170,8 @@ class Point {
     /**
      * Set a value in an object, on the property defined by key. The key
      * supports nested properties using dot notation. The function modifies the
-     * input object and does not make a copy.
+     * input object and does not make a copy. Paths containing `__proto__` or
+     * `constructor` are ignored.
      *
      * @function Highcharts.Point#setNestedProperty<T>
      *
@@ -1182,6 +1194,13 @@ class Point {
     ): T {
         const nestedKeys = key.split('.');
 
+        // Reject nested keys that would allow prototype pollution
+        if (nestedKeys.some((nestedKey): boolean => (
+            nestedKey === '__proto__' || nestedKey === 'constructor'
+        ))) {
+            return object;
+        }
+
         nestedKeys.reduce(function (
             result: any,
             key: string,
@@ -1193,7 +1212,10 @@ class Point {
             result[key] = (
                 isLastKey ?
                     value :
-                    isObject(result[key], true) ?
+                    // Inherited objects are shared with everything else on
+                    // that prototype, so start a fresh one instead
+                    isObject(result[key], true) &&
+                    Object.hasOwnProperty.call(result, key) ?
                         result[key] :
                         {}
             );
@@ -1312,16 +1334,10 @@ class Point {
 
             point.applyOptions(options);
 
-            // Update visuals, #4146
-            // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic,
-                index = point.index;
-            const shouldDestroyGraphic = point.y === null ?
-                !hasMockGraphic :
-                hasMockGraphic;
-            if (graphic && shouldDestroyGraphic) {
+            // Update visuals, #4146. The a11y mock graphic is exempt, it is
+            // maintained by the accessibility module, #12718.
+            if (graphic && point.y === null && !point.hasMockGraphic) {
                 point.graphic = graphic.destroy();
-                delete point.hasMockGraphic;
             }
 
             if (isObject(options, true)) {
@@ -1340,7 +1356,8 @@ class Point {
                 }
             }
 
-            const pointOptions = point.optionsToObject(options) as AnyRecord;
+            const index = point.index,
+                pointOptions = point.optionsToObject(options) as AnyRecord;
 
             if (!series.hasProcessedDataTable) {
                 // Record changes in the data table (#24451)

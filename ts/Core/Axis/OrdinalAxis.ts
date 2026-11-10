@@ -167,7 +167,6 @@ namespace OrdinalAxis {
                 'foundExtremes',
                 onAxisFoundExtremes
             );
-            addEvent(AxisClass, 'afterSetScale', onAxisAfterSetScale);
             addEvent(
                 AxisClass,
                 'initialAxisTranslation',
@@ -571,22 +570,6 @@ namespace OrdinalAxis {
         }
     }
 
-    /**
-     * For ordinal axis, that loads data async, redraw axis after data is
-     * loaded. If we don't do that, axis will have the same extremes as
-     * previously, but ordinal positions won't be calculated. See #10290
-     * @internal
-     */
-    function onAxisAfterSetScale(this: Axis): void {
-        const axis = this;
-
-        if (axis.horiz && !axis.isDirty) {
-            axis.isDirty = axis.isOrdinal &&
-                axis.chart.navigator &&
-                !(axis.chart.navigator as any).adaptToUpdatedData;
-        }
-    }
-
     /** @internal */
     function onAxisInitialAxisTranslation(this: Axis): void {
         const axis = this;
@@ -627,7 +610,7 @@ namespace OrdinalAxis {
             (!e.touches || e.touches.length <= 1)
         ) {
 
-            const mouseDownX = chart.mouseDownX,
+            const { lastPanX = 0 } = chart,
                 extremes = xAxis.getExtremes(),
                 dataMin = extremes.dataMin,
                 dataMax = extremes.dataMax,
@@ -644,7 +627,7 @@ namespace OrdinalAxis {
                 ),
                 // How many ordinal units did we move?
                 movedUnits = Math.round(
-                    ((mouseDownX as any) - chartX) / pointPixelWidth
+                    (lastPanX - chartX) / pointPixelWidth
                 ),
                 // Get index of all the chart's points
                 extendedOrdinalPositions = xAxis.ordinal.getExtendedPositions(),
@@ -741,7 +724,7 @@ namespace OrdinalAxis {
                     );
                 }
 
-                chart.mouseDownX = chartX; // Set new reference for next run
+                chart.lastPanX = chartX; // Set new reference for next run
                 css(chart.container, { cursor: 'move' });
             }
 

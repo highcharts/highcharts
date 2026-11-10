@@ -25,16 +25,15 @@ import type { MapBounds } from '../../Maps/MapViewOptions';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
+import type { SymbolFunction } from '../../Core/Renderer/SVG/SymbolType';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
 import MapPointSeriesDefaults from './MapPointSeriesDefaults.js';
+import MapSeries from '../Map/MapSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    map: MapSeries,
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
@@ -47,7 +46,6 @@ import { extend, fireEvent, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.mappoint
  *
@@ -61,6 +59,7 @@ class MapPointSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: MapPointSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         MapPointSeriesDefaults
@@ -71,6 +70,7 @@ class MapPointSeries extends ScatterSeries {
      *  Properties
      *
      * */
+    /** @internal */
     public chart!: MapChart;
 
     public data!: Array<MapPointPoint>;
@@ -79,6 +79,7 @@ class MapPointSeries extends ScatterSeries {
 
     public points!: Array<MapPointPoint>;
 
+    /** @internal */
     public clearBounds = MapSeries.prototype.clearBounds;
 
     /* *
@@ -88,6 +89,7 @@ class MapPointSeries extends ScatterSeries {
      * */
 
 
+    /** @internal */
     public drawDataLabels(): void {
         super.drawDataLabels();
 
@@ -100,7 +102,7 @@ class MapPointSeries extends ScatterSeries {
      * Resolve `lon`, `lat` or `geometry` options and project the resulted
      * coordinates.
      *
-     * @private
+     * @internal
      */
     public projectPoint(
         pointOptions: MapPointPointOptions
@@ -127,6 +129,7 @@ class MapPointSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public translate(): void {
         const mapView = this.chart.mapView;
 
@@ -144,6 +147,10 @@ class MapPointSeries extends ScatterSeries {
             this.points.forEach((p): void => {
 
                 let { x = void 0, y = void 0 } = p;
+
+                // Map points have no size, and `y` is a coordinate or a color
+                // value, so rank all data labels equally (#23585)
+                p.labelrank = p.options.labelrank ?? 0;
                 const svgTransform = (
                     isNumber(p.insetIndex) &&
                     mapView.insets[p.insetIndex].getSVGTransform()
@@ -212,8 +219,10 @@ class MapPointSeries extends ScatterSeries {
  *
  * */
 
-/* *
+/**
  * The mapmarker symbol
+ *
+ * @internal
  */
 const mapmarker = (
     x: number,
@@ -259,7 +268,7 @@ const mapmarker = (
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Highcharts Maps */
-        mapmarker: typeof mapmarker;
+        mapmarker: SymbolFunction;
     }
 }
 SVGRenderer.prototype.symbols.mapmarker = mapmarker;
@@ -271,7 +280,9 @@ SVGRenderer.prototype.symbols.mapmarker = mapmarker;
  * */
 
 interface MapPointSeries {
+    /** @internal */
     bounds: MapBounds | undefined;
+    /** @internal */
     pointClass: typeof MapPointPoint;
 }
 extend(MapPointSeries.prototype, {

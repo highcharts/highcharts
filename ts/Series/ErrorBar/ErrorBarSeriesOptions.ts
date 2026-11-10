@@ -52,7 +52,7 @@ import { BoxPlotSeriesTooltipOptions } from '../BoxPlot/BoxPlotSeriesOptions';
  *
  * @excluding borderRadius, boostBlending, boostThreshold
  *
- * @excluding dataParser, dataURL, stack, stacking, boostThreshold,
+ * @excluding stack, stacking, boostThreshold,
  *            boostBlending
  *
  * @product highcharts
@@ -69,7 +69,7 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @default var(--highcharts-neutral-color-100)
+     * @default 'var(--highcharts-neutral-color-100)'
      *
      * @since 3.0
      *
@@ -184,8 +184,6 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
     boostBlending?: undefined;
     boostThreshold?: undefined;
     borderRadius?: undefined;
-    dataParser?: undefined;
-    dataURL?: undefined;
     stack?: undefined;
     stacking?: undefined;
 

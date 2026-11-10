@@ -49,8 +49,8 @@ export interface MACDGappedExtensionOptions {
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/macd
+ * @requires     indicators/indicators
+ * @requires     indicators/macd
  * @interface Highcharts.MACDOptions
  */
 export interface MACDOptions extends SMAOptions {

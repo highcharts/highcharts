@@ -1,3 +1,10 @@
+---
+description: >-
+  Retrieve growth time-series data for one or more securities and prepare it
+  for charting by setting the Growth series type on TimeSeriesConnector;
+  multi-security requests use the first security's start date.
+---
+
 # Growth
 
 This type yields growth time series data for single or multiple securities.
@@ -34,9 +41,7 @@ For more details, see [Morningstar’s Time Series API - Growth].
 
 ## Relevant demos
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve Price time series. Specify type
-`Growth`.
+- [Highcharts Stock + Morningstar Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
 
 ## Morningstar API Reference
 

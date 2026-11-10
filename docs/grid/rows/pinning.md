@@ -1,6 +1,10 @@
 ---
 sidebar_label: "Pinning"
 tags: ["grid-pro"]
+description: >-
+  Keep selected Grid Pro rows in top or bottom sections, configure or compute
+  pin state, update rows through the runtime API, handle events, and
+  understand sorting and filtering behavior.
 ---
 
 # Row pinning
@@ -191,7 +195,7 @@ Available built-in actions are:
 - `unpinRow`
 
 For configuration and customization details, see
-[Cell context menu](https://www.highcharts.com/docs/grid/cell-context-menu).
+[Context menu](https://www.highcharts.com/docs/grid/context-menu).
 
 These actions appear in the default cell context menu when
 `pinning.enabled` is `true`. If you define custom `contextMenu.items`, add the
