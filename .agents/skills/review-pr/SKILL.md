@@ -45,6 +45,10 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 - Require unit/regression tests.
 - Prefer adding to existing test files.
 - If not automatable, require a manual test plan.
+- For PRs and branch reviews, check whether passing CI covers the current target branch (`master` by default). Record the PR head, current target SHA, and the head/base or merge SHA actually tested; resolve the tested base from that run, rather than assuming the PR's current base was tested.
+- Inspect target-branch changes since the tested base for interactions with the PR: test assertions, discovery globs and file renames, runners/configuration, workflow triggers, build steps, dependencies and lockfiles. Include merged side-branch changes; matching filenames alone is not enough to establish coverage or overlap.
+- For a concrete interaction, explain what the older run missed and identify the affected checks. For example, renaming `.d.ts` to `.ts` can expose stale doclets to a newly expanded checker on master. Use existing CI evidence or permitted local validation; keep external PR execution within the Inputs restrictions. Treat a confirmed combined-tree failure as blocking until fixed and validated. Being behind the target alone is not a finding.
+- Report the checked SHAs and any interaction found, or state that no relevant interaction was found. Put unavailable evidence under skipped checks. Older green checks alone do not verify the current combination. Keep the review read-only: ask the author to update and validate the branch; do not merge, rebase or rerun CI yourself.
 
 7. For PRs from outside the team, check the rules in `CONTRIBUTING.md`. Needs PR data from GitHub; without it, skip this step.
 - Team or external: the author's permission on the repository. Authors with `admin`, `maintain` or `write` are the team; skip this step for them and for bots the team uses, such as `dependabot[bot]`. If the permission is unknown, ask.
@@ -77,6 +81,12 @@ When making this suggestion, recommend an available plugin to the user with a sc
 Keep source within approved access and data-handling boundaries; do not upload it elsewhere or expose secrets. Plugin review complements tests, existing SAST and human review. Validate findings against `SECURITY.md` and reachable code before treating them as vulnerabilities. Applying fixes or publishing findings needs authorization; the recommendation grants neither.
 
 ## Output format
+
+When step 6 finds an interaction with target-branch changes that requires fresh validation, start the review summary with this author action:
+
+> Please merge the latest <target branch> into this PR branch, fix <specific issue>, and rerun <named checks> before merging this PR.
+
+Use the actual branch and check names. Include the fix clause only for a confirmed defect, naming that defect. For Copilot's fixed review template, put this action in the approval assessment explanation directly below the readiness heading. Preserve the merge request and named checks when shortening or aggregating the review, including re-reviews with no new inline findings. Then explain the interaction and the tested revisions. The final summary must contain the merge request and named checks; a generic request for validation does not satisfy it.
 
 For each finding:
 
