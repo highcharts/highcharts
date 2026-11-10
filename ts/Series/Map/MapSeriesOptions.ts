@@ -39,85 +39,87 @@ import type {
  *
  * */
 
-/**
- * The border color of the map areas.
- *
- * In styled mode, the border stroke is given in the `.highcharts-point`
- * class.
- *
- * @sample {highmaps} maps/plotoptions/series-border/
- *         Borders demo
- *
- * @type {Highcharts.ColorType}
- *
- * @default #cccccc
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.borderColor
- */
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
 
-/**
- * The border width of each map area.
- *
- * In styled mode, the border stroke width is given in the
- * `.highcharts-point` class.
- *
- * @sample maps/plotoptions/series-border/
- *         Borders demo
- *
- * @type {number}
- *
- * @default 1
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.borderWidth
- */
+        /**
+         * The border color of the map areas.
+         *
+         * In styled mode, the border stroke is given in the
+         * `.highcharts-point` class.
+         *
+         * @sample {highmaps} maps/plotoptions/series-border/
+         *         Borders demo
+         *
+         * @default '#cccccc'
+         *
+         * @product highmaps
+         *
+         * @requires MapSeries
+         */
+        borderColor?: ColorType;
 
-/**
- * What property to join the `mapData` to the value data. For example,
- * if joinBy is "code", the mapData items with a specific code is merged
- * into the data with the same code. For maps loaded from GeoJSON, the
- * keys may be held in each point's `properties` object.
- *
- * The joinBy option can also be an array of two values, where the first
- * points to a key in the `mapData`, and the second points to another
- * key in the `data`.
- *
- * When joinBy is `null`, the map items are joined by their position in
- * the array, which performs much better in maps with many data points.
- * This is the recommended option if you are printing more than a
- * thousand data points and have a backend that can preprocess the data
- * into a parallel array of the mapData.
- *
- * @sample maps/plotoptions/series-border/
- *         Joined by "code"
- *
- * @sample maps/demo/geojson/
- *         GeoJSON joined by an array
- *
- * @sample maps/series/joinby-null/
- *         Simple data joined by null
- *
- * @type {string|Array<string>}
- *
- * @default hc-key
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.joinBy
- */
+        /**
+         * The border width of each map area.
+         *
+         * In styled mode, the border stroke width is given in the
+         * `.highcharts-point` class.
+         *
+         * @sample maps/plotoptions/series-border/
+         *         Borders demo
+         *
+         * @default 1
+         *
+         * @product highmaps
+         *
+         * @requires MapSeries
+         */
+        borderWidth?: number;
 
-/**
- * Define the z index of the series.
- *
- * @type {number}
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.zIndex
- */
+        /**
+         * What property to join the `mapData` to the value data. For
+         * example, if joinBy is "code", the mapData items with a specific
+         * code is merged into the data with the same code. For maps loaded
+         * from GeoJSON, the keys may be held in each point's `properties`
+         * object.
+         *
+         * The joinBy option can also be an array of two values, where the
+         * first points to a key in the `mapData`, and the second points to
+         * another key in the `data`.
+         *
+         * When joinBy is `null`, the map items are joined by their position
+         * in the array, which performs much better in maps with many data
+         * points. This is the recommended option if you are printing more
+         * than a thousand data points and have a backend that can
+         * preprocess the data into a parallel array of the mapData.
+         *
+         * @sample maps/plotoptions/series-border/
+         *         Joined by "code"
+         *
+         * @sample maps/demo/geojson/
+         *         GeoJSON joined by an array
+         *
+         * @sample maps/series/joinby-null/
+         *         Simple data joined by null
+         *
+         * @default 'hc-key'
+         *
+         * @product highmaps
+         *
+         * @requires MapSeries
+         */
+        joinBy?: (string|Array<string>);
+
+        /**
+         * Define the z index of the series.
+         *
+         * @product highmaps
+         *
+         * @requires MapSeries
+         */
+        zIndex?: number;
+    }
+}
 
 /**
  * The map series is used for basic choropleth maps, where each map area has
