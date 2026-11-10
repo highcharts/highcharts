@@ -52,6 +52,8 @@ export interface FlowMapSeriesOptions extends MapLineSeriesOptions {
      *
      * @sample {highmaps} maps/series-flowmap/curve-factor Setting different
      *         values for curveFactor
+     *
+     * @default undefined
      */
     curveFactor?: number;
 
@@ -134,6 +136,8 @@ export interface FlowMapSeriesOptions extends MapLineSeriesOptions {
 
     /**
      * Specify the `lineWidth` of the links if they are not specified.
+     *
+     * @default undefined
      */
     lineWidth?: number;
 

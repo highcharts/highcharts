@@ -280,6 +280,8 @@ export interface NetworkgraphSeriesOptions
 
     /**
      * Flag to determine if nodes are draggable or not.
+     *
+     * @default true
      */
     draggable?: boolean;
 
