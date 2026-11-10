@@ -175,4 +175,9 @@ QUnit.test('Sync between data table and series', async assert => {
         'After deleting a row in the DataTable, only one point ' +
         'should be removed from the series'
     );
+
+    dataTable.setColumn('Cost', [10, 1, 2]);
+    dataTable.setColumn('Revenue', [1, 10, 20]);
+
+    assert.ok('No errors should be thrown when updating columns subsequently');
 });
