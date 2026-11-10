@@ -505,7 +505,7 @@ async function renderChart() {
                     verticalAlign: 'bottom',
                     x: -5,
                     y: -10,
-                    format: '{point.key}'
+                    format: '{point.name}'
                 }, {
                     align: 'right',
                     allowOverlap: true,
@@ -803,7 +803,7 @@ async function renderChart() {
                 verticalAlign: 'bottom',
                 x: -5,
                 y: -10,
-                format: '{point.key}'
+                format: '{point.name}'
             }, {
                 align: 'right',
                 allowOverlap: true,

@@ -467,7 +467,13 @@ class Point {
      */
     /**
      * The point's name if it is defined, or its category in case of a category,
-     * otherwise the x value. Convenient for tooltip and data label formatting.
+     * otherwise the x value or datetime. Convenient for tooltip formatting,
+     * where it is used in the default header. The key is applied just in time
+     * for the tooltip formatting.
+     *
+     * For datetime axes the key is a localized time string, formatted according
+     * to the [tooltip.dateTimeLabelFormats](#tooltip.dateTimeLabelFormats)
+     * option or the [tooltip.xDateFormat](#tooltip.xDateFormat) if defined.
      *
      * @name Highcharts.Point#key
      * @type {number|string}
