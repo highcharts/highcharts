@@ -1060,6 +1060,9 @@ class Data {
      *
      * @function Highcharts.Data#parseCSV
      *
+     * @param {Highcharts.DataOptions} [inOptions]
+     *        The data options.
+     *
      * @return {Array<Array<Highcharts.DataValueType>>}
      *         The parsed columns.
      */
