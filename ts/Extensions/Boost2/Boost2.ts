@@ -283,16 +283,31 @@ function compose(
         }
     });
 
-    // --- 4. render(): draws on the GPU instead of in SVG.
+    // --- 4. animate(): a series still waiting for the device has
+    //        nothing to reveal, and the entrance animation settles how it
+    //        treats the markers the moment it starts, with no way back.
+    //        Deferring it to the render that draws keeps the two in step.
+    wrap(seriesProto, 'animate', function (
+        this: Series,
+        proceed: Function,
+        init?: boolean
+    ): void {
+        if (!this.boost2Pending) {
+            proceed.call(this, init);
+        }
+    });
+
+    // --- 5. render(): draws on the GPU instead of in SVG.
     wrap(seriesProto, 'render', function (
         this: Series,
         proceed: Function
     ): void {
+        this.gpu?.prepareMarkers();
         proceed.call(this);
         this.gpu?.draw();
     });
 
-    // --- 5. searchPoint(): runs ahead of the lazy buildKDTree(), so the
+    // --- 6. searchPoint(): runs ahead of the lazy buildKDTree(), so the
     //        k-d tree and the mock points are never created.
     wrap(seriesProto, 'searchPoint', function (
         this: Series,
@@ -308,7 +323,7 @@ function compose(
         return proceed.apply(this, [].slice.call(arguments, 1));
     });
 
-    // --- 6. getExtremes(): answered from the block index instead of a
+    // --- 7. getExtremes(): answered from the block index instead of a
     //        scan of every row in view.
     wrap(seriesProto, 'getExtremes', function (
         this: Series,

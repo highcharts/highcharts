@@ -486,6 +486,34 @@ class LineStrategy {
     }
 
     /**
+     * Put the marker surface in place before the series renders.
+     *
+     * `Series.animate` reveals the marker group along with the graph
+     * only when it already holds something, which it reads once, before
+     * anything is drawn. A surface created later leaves the group with
+     * the entrance clip applied and never advanced, so the markers stay
+     * hidden until the animation ends.
+     * @internal
+     */
+    public prepareMarkers(): void {
+        const series = this.series;
+
+        if (!GPUContext.ready || !markersEnabled(series)) {
+            return;
+        }
+
+        series.markerGroup ||= series.plotGroup(
+            'markerGroup',
+            'markers',
+            series.visible ? 'inherit' : 'hidden',
+            series.options.zIndex,
+            series.chart.seriesGroup
+        );
+
+        this.markerSurface ||= new GPUSurface(series, series.markerGroup);
+    }
+
+    /**
      * Upload where each block sits above the lower end of the domain.
      *
      * The subtraction happens here, in double precision, rather than in
