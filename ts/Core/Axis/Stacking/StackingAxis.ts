@@ -19,7 +19,9 @@
  * */
 
 import type Chart from '../../Chart/Chart';
+import type Point from '../../Series/Point';
 import type { StackOverflowValue } from './StackingOptions';
+import type { StackTempPoint } from './StackItem';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 
 import { getDeferredAnimation } from '../../Animation/AnimationUtilities.js';
@@ -79,12 +81,9 @@ declare module '../../Series/SeriesBase' {
             index: number,
             key?: string
         ): StackItemIndicatorObject;
+        getStackItem(point: Point): StackItem | undefined;
         modifyStacks(): void;
-        percentStacker(
-            pointExtremes: Array<number>,
-            stack: StackItem,
-            i: number
-        ): void;
+        percentStacker: StackerFunction;
         setGroupedPoints(
             axis: StackingAxis
         ): void;
@@ -99,7 +98,7 @@ declare module '../../Series/SeriesBase' {
 interface StackerFunction {
     (
         this: Series,
-        pointExtremes: Array<number>,
+        point: StackTempPoint,
         stack: StackItem,
         i: number
     ): void;
@@ -217,6 +216,32 @@ function seriesGetStackIndicator(
 }
 
 /**
+ * Get stack indicator, according to it's x-value, to determine points with the
+ * same x-value
+ *
+ * @internal
+ * @function Highcharts.Series#getStackIndicator
+ */
+function seriesGetStackItem(
+    this: Series,
+    point: Point
+): StackItem|undefined {
+    const { options, stackKey = '' } = this,
+        stacks = options.stacking && this.yAxis?.stacking?.stacks;
+
+    if (stacks) {
+        const negKey = '-' + stackKey,
+            x = point.x,
+            isNegative = this.negStacks &&
+                (point.y || 0) < (options.threshold || 0),
+            key = isNegative ? negKey : stackKey;
+
+        return stacks[key]?.[x];
+    }
+
+}
+
+/**
  * Iterate over all stacks and compute the absolute values to percent
  *
  * @internal
@@ -241,7 +266,7 @@ function seriesModifyStacks(
             let i = processedXData.length,
                 x,
                 stackItem: StackItem|undefined,
-                pointExtremes;
+                point: StackTempPoint|undefined;
 
             while (i--) {
                 x = processedXData[i];
@@ -252,9 +277,9 @@ function seriesModifyStacks(
                     key
                 );
                 stackItem = stacks[key]?.[x];
-                pointExtremes = stackItem?.points[stackIndicator.key || ''];
-                if (pointExtremes) {
-                    stacker.call(series, pointExtremes, stackItem, i);
+                point = stackItem?.points[stackIndicator.key || ''];
+                if (point) {
+                    stacker.call(series, point, stackItem, i);
                 }
             }
         });
@@ -269,17 +294,19 @@ function seriesModifyStacks(
  */
 function seriesPercentStacker(
     this: Series,
-    pointExtremes: Array<number>,
+    point: StackTempPoint,
     stack: StackItem,
     i: number
 ): void {
     const totalFactor = stack.total ? 100 / stack.total : 0;
 
     // Y bottom value
-    pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor);
+    point.low = correctFloat((point.low || 0) * totalFactor);
     // Y value
-    pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor);
-    (this.stackedYData as any)[i] = pointExtremes[1];
+    point.stackY = correctFloat(
+        (point.stackY || 0) * totalFactor
+    );
+    (this.stackedYData as any)[i] = point.stackY;
 }
 
 /**
@@ -406,9 +433,9 @@ function seriesSetStackedPoints(
         // If the StackItem doesn't exist, create it first
         stack = stacks[key][x];
         if (y !== null) {
-            stack.points[pointKey] = stack.points[series.index] = [
-                (stack.cumulative ?? stackThreshold)
-            ];
+            stack.points[pointKey] = stack.points[series.index] = {
+                low: stack.cumulative ?? stackThreshold
+            };
 
             // Record the base of the stack
             if (!defined(stack.cumulative)) {
@@ -419,9 +446,9 @@ function seriesSetStackedPoints(
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
             if (stackIndicator.index > 0 && series.singleStacks === false) {
-                stack.points[pointKey][0] = stack.points[
+                stack.points[pointKey].low = stack.points[
                     series.index + ',' + x + ',0'
-                ][0];
+                ].low;
             }
 
         // When updating to null, reset the point stack (#7493)
@@ -455,6 +482,7 @@ function seriesSetStackedPoints(
         } else {
             total = correctFloat(total + yNumber);
         }
+        stack.tip = pointKey;
 
         if (type === 'group') {
             // This point's index within the stack, pushed to stack.points[1]
@@ -467,7 +495,7 @@ function seriesSetStackedPoints(
         stack.total = total;
 
         if (y !== null) {
-            stack.points[pointKey].push(stack.cumulative);
+            stack.points[pointKey].stackY = stack.cumulative;
             stackedYData[i] = stack.cumulative;
             stack.hasValidPoints = true;
         }
@@ -710,6 +738,7 @@ namespace StackingAxis {
             chartProto.getStacks = chartGetStacks;
 
             seriesProto.getStackIndicator = seriesGetStackIndicator;
+            seriesProto.getStackItem = seriesGetStackItem;
             seriesProto.modifyStacks = seriesModifyStacks;
             seriesProto.percentStacker = seriesPercentStacker;
             seriesProto.setGroupedPoints = seriesSetGroupedPoints;

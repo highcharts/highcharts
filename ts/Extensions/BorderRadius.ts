@@ -21,6 +21,7 @@
 
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type PieSeries from '../Series/Pie/PieSeries';
+import type Point from '../Core/Series/Point';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
@@ -366,7 +367,6 @@ function seriesOnAfterColumnTranslate(
         !(this.chart.is3d && this.chart.is3d())
     ) {
         const { options, yAxis } = this,
-            percent = options.stacking === 'percent',
             seriesDefault = defaultOptions.plotOptions
                 ?.[this.type]
                 ?.borderRadius,
@@ -398,28 +398,33 @@ function seriesOnAfterColumnTranslate(
                     borderRadius.scope === 'stack' &&
                     point.stackTotal
                 ) {
-                    const stackEnd = yAxis.translate(
-                            percent ? 100 : point.stackTotal,
-                            false,
-                            true,
-                            false,
-                            true
-                        ),
-                        stackThreshold = yAxis.translate(
-                            options.threshold || 0,
-                            false,
-                            true,
-                            false,
-                            true
-                        ),
-                        box = this.crispCol(
-                            0,
-                            Math.min(stackEnd, stackThreshold),
-                            0,
-                            Math.abs(stackEnd - stackThreshold)
-                        );
-                    brBoxY = box.y;
-                    brBoxHeight = box.height;
+                    const stackItem = this.getStackItem(point);
+                    if (stackItem) {
+                        const { height = 0, y = 0 } = (
+                                (stackItem.points[stackItem.tip || ''] as Point)
+                                    ?.shapeArgs || {}
+                            ),
+                            // Use the pre-translated position (#24454)
+                            stackTip = (stackItem.total || 0) < 0 ?
+                                y + height :
+                                y || 0,
+
+                            stackThreshold = yAxis.translate(
+                                options.threshold || 0,
+                                false,
+                                true,
+                                false,
+                                true
+                            ),
+                            box = this.crispCol(
+                                0,
+                                Math.min(stackTip, stackThreshold),
+                                0,
+                                Math.abs(stackTip - stackThreshold)
+                            );
+                        brBoxY = box.y;
+                        brBoxHeight = box.height;
+                    }
                 }
 
                 const flip = (point.negative ? -1 : 1) *

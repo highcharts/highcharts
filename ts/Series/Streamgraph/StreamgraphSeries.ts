@@ -20,6 +20,7 @@
  *
  * */
 
+import type { StackTempPoint } from '../../Core/Axis/Stacking/StackItem';
 import type StreamgraphPoint from './StreamgraphPoint';
 import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions';
 
@@ -72,20 +73,23 @@ class StreamgraphSeries extends AreaSplineSeries {
     // down in order to center the full stack vertically.
     /** @internal */
     public streamStacker(
-        pointExtremes: Array<number>,
+        point: StackTempPoint,
         stack: Record<string, number>,
         i: number
     ): void {
         // Y bottom value
-        pointExtremes[0] -= stack.total / 2;
+        point.low = (point.low || 0) - stack.total / 2;
         // Y value
-        pointExtremes[1] -= stack.total / 2;
+        point.stackY = (point.stackY || 0) - stack.total / 2;
 
         // Record the Y data for use when getting axis extremes. Register only
         // the max. This is picked up in the `afterGetExtremes` event, and the
         // dataMin property is reflected.
         if (this.stackedYData) {
-            this.stackedYData[i] = Math.max.apply(0, pointExtremes);
+            this.stackedYData[i] = Math.max(
+                point.low || 0,
+                point.stackY || 0
+            );
         }
     }
 }

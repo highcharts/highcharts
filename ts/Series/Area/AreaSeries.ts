@@ -23,6 +23,7 @@ import type AreaSeriesOptions from './AreaSeriesOptions';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
+import type { StackTempPoint } from '../../Core/Axis/Stacking/StackItem';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
@@ -222,9 +223,9 @@ class AreaSeries extends LineSeries {
 
                 if (stackedValues && (cliffVal || nullVal)) {
                     top = (
-                        nullVal ? stackedValues[0] : stackedValues[1]
+                        nullVal ? stackedValues.low : stackedValues.stackY
                     ) + cliffVal;
-                    bottom = stackedValues[0] + cliffVal;
+                    bottom = stackedValues.low + cliffVal;
                     isNull = !!nullVal;
 
                 } else if (
@@ -394,8 +395,8 @@ class AreaSeries extends LineSeries {
 
             keys.forEach(function (x: string, idx: number): void {
                 let y = 0,
-                    stackPoint,
-                    stackedValues;
+                    stackPoint: StackTempPoint,
+                    stackedValues: StackTempPoint|undefined;
 
                 if (pointMap[x] && !pointMap[x].isNull) {
                     segment.push(pointMap[x]);
@@ -438,8 +439,8 @@ class AreaSeries extends LineSeries {
                                         stackedValues = stack[x].points[si];
                                         if (stackedValues) {
                                             cliff -= (
-                                                stackedValues[1] -
-                                                stackedValues[0]
+                                                (stackedValues.stackY || 0) -
+                                                (stackedValues.low || 0)
                                             );
                                         }
                                     }
@@ -465,7 +466,7 @@ class AreaSeries extends LineSeries {
                         const si = yAxisSeries[i].index;
                         stackPoint = stack[x].points[si];
                         if (stackPoint) {
-                            y = stackPoint[1];
+                            y = stackPoint.stackY || 0;
                             break;
                         }
                         // When reversedStacks is true, loop up, else loop
