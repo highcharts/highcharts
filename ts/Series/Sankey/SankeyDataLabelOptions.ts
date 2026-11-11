@@ -40,6 +40,7 @@ export interface SankeyDataLabelFormatterContext {
 }
 
 export interface SankeyDataLabelOptions extends DataLabelOptions {
+    /** @default undefined */
     nodeFormat?: string;
     nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
     linkTextPath?: DataLabelOptions['textPath'];
