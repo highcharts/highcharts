@@ -97,7 +97,8 @@ Grid.grid('container', {
                                     crop: false,
                                     overflow: 'allow',
                                     enabled: true,
-                                    format: '{y:.2f}%'
+                                    useHTML: true,
+                                    format: '<span class="spark-label">{y:.2f}%</span>'
                                 }
                             },
                             series: {
