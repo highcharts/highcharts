@@ -1311,6 +1311,87 @@ QUnit.test(
 );
 
 QUnit.test(
+    '#25527: Axis update should not mutate plot lines and bands options',
+    assert => {
+        const plotBands = [{
+                id: 'band1',
+                from: 1,
+                to: 2,
+                label: { text: 'A' }
+            }, {
+                id: 'band2',
+                from: 3,
+                to: 4
+            }],
+            plotLines = [{ value: 5 }],
+            otherBands = [
+                { from: 0, to: 1 },
+                { from: 5, to: 6 },
+                { from: 6, to: 7 }
+            ],
+            snapshot = () => JSON.stringify(
+                { plotBands, plotLines, otherBands }
+            ),
+            original = snapshot(),
+            chart = Highcharts.chart('container', {
+                xAxis: { plotBands, plotLines },
+                series: [{
+                    data: [1, 3, 2, 4, 3, 5, 4]
+                }]
+            }),
+            axis = chart.xAxis[0];
+
+        for (let i = 1; i <= 2; i++) {
+            axis.update({ plotBands: [], plotLines: [] });
+            assert.strictEqual(
+                axis.plotBands.length + axis.plotLines.length,
+                0,
+                `Plot lines and bands should be hidden, toggle ${i}`
+            );
+
+            axis.update({ plotBands, plotLines });
+            assert.strictEqual(
+                axis.plotBands.length,
+                2,
+                `Plot bands should be restored, toggle ${i}`
+            );
+            assert.strictEqual(
+                axis.plotLines.length,
+                1,
+                `Plot lines should be restored, toggle ${i}`
+            );
+        }
+
+        axis.update({ plotBands: otherBands });
+        axis.update({ plotBands });
+        assert.strictEqual(
+            axis.plotBands.length,
+            2,
+            'Plot bands should be restored after switching between sets'
+        );
+        assert.strictEqual(
+            snapshot(),
+            original,
+            'User options should not be mutated by axis updates'
+        );
+
+        axis.removePlotBand('band1');
+        axis.addPlotBand({ from: 6, to: 7 });
+        assert.deepEqual(
+            axis.options.plotBands.map(o => o.from),
+            [3, 6],
+            'Axis options should be kept in sync with the plot bands'
+        );
+        assert.strictEqual(
+            snapshot(),
+            original,
+            'User options should not be mutated by removePlotBand and ' +
+            'addPlotBand'
+        );
+    }
+);
+
+QUnit.test(
     '#6257: Plot band reaching outside the axis is clipped, not fitted',
     function (assert) {
         const chart = Highcharts.chart('container', {
