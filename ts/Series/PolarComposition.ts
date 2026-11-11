@@ -1005,7 +1005,6 @@ function onAfterColumnTranslate(
         tooltipPos,
         pointX,
         pointY,
-        stackValues,
         stack,
         barX,
         innerR,
@@ -1053,18 +1052,19 @@ function onAfterColumnTranslate(
                     stack = yAxis.stacking.stacks[(pointY < 0 ? '-' : '') +
                         series.stackKey];
 
-                    if (series.visible && stack && stack[pointX]) {
-                        if (!point.isNull) {
-                            stackValues = stack[pointX].values[
-                                series.getStackIndicator(
-                                    void 0,
-                                    pointX,
-                                    series.index
-                                ).key as any];
-
+                    if (series.visible && stack?.[pointX] && !point.isNull) {
+                        const stackIndicator = series.getStackIndicator(
+                            void 0,
+                            pointX,
+                            series.index
+                        );
+                        if (stackIndicator.key) {
+                            const { low, stackY } = stack[pointX].points[
+                                stackIndicator.key
+                            ];
                             // Translating to radial values
-                            start = yAxis.translate(stackValues[0]);
-                            end = yAxis.translate(stackValues[1]);
+                            start = yAxis.translate(low || 0);
+                            end = yAxis.translate(stackY || 0);
 
                             // If starting point is beyond the
                             // range, set it to 0

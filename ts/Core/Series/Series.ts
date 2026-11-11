@@ -56,6 +56,7 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
+import type { StackTempPoint } from '../Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -2773,7 +2774,7 @@ class Series {
             const point = points[i],
                 xValue = point.x,
                 stackItem = this.getStackItem(point);
-            let stackValues: (Array<number>|undefined),
+            let stackPoint: StackTempPoint|undefined,
                 yValue = point.y,
                 lowValue = point.low;
 
@@ -2787,17 +2788,25 @@ class Series {
                     series.index
                 );
 
-                if (!point.isNull && stackIndicator.key) {
-                    stackValues = stackItem.values[stackIndicator.key];
+                const stackKey = stackIndicator.key;
+
+                if (!point.isNull && stackKey) {
+                    stackPoint = stackItem.points[stackKey];
                 }
 
-                if (stackItem && isArray(stackValues)) {
-                    lowValue = stackValues[0];
-                    yValue = stackValues[1];
+                if (stackItem && stackPoint && stackKey) {
+
+                    // Replace stack values with the point instance
+                    if (stackPoint !== point) {
+                        extend(point, stackPoint);
+                        stackItem.points[stackKey] = point;
+                    }
+                    lowValue = point.low;
+                    yValue = point.stackY;
 
                     if (
                         lowValue === stackThreshold &&
-                        stackIndicator.key === stackItem.base
+                        stackKey === stackItem.base
                     ) {
                         lowValue = isNumber(threshold) ?
                             threshold :
@@ -2816,7 +2825,6 @@ class Series {
                     point.total = point.stackTotal = stackItem.total ?? void 0;
                     point.percentage = defined(point.y) && stackItem.total ?
                         (point.y / stackItem.total * 100) : void 0;
-                    point.stackY = yValue;
 
                     // In case of variwide series (where widths of points are
                     // different in most cases), stack labels are positioned

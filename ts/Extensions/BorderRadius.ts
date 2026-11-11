@@ -21,6 +21,7 @@
 
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type PieSeries from '../Series/Pie/PieSeries';
+import type Point from '../Core/Series/Point';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
@@ -399,19 +400,10 @@ function seriesOnAfterColumnTranslate(
                 ) {
                     const stackItem = this.getStackItem(point);
                     if (stackItem) {
-
-                        // @todo Refactor to get real points from
-                        // `StackItem.points`
-                        const [
-                                seriesIndex,
-                                x
-                            ] = stackItem.tip?.split(',').map(Number) || [],
-                            { height = 0, y = 0 } = this.chart
-                                .series[seriesIndex]
-                                ?.points
-                                // @todo Get rid of the expensive `find`
-                                ?.find((p): boolean => p.x === x)
-                                ?.shapeArgs || {},
+                        const { height = 0, y = 0 } = (
+                                (stackItem.points[stackItem.tip || ''] as Point)
+                                    ?.shapeArgs || {}
+                            ),
                             // Use the pre-translated position (#24454)
                             stackTip = (stackItem.total || 0) < 0 ?
                                 y + height :

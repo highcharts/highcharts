@@ -69,6 +69,10 @@ export interface StackBoxProps {
     xAxis?: Axis;
     xOffset: number;
 }
+export interface StackTempPoint {
+    low?: number;
+    stackY?: number|null;
+}
 
 /* *
  *
@@ -110,7 +114,7 @@ class StackItem {
 
         // This will keep each points' extremes stored by series.index and point
         // index
-        this.values = {};
+        this.points = {};
         this.hasValidPoints = false;
 
         // Save the stack option on the series configuration object,
@@ -163,6 +167,16 @@ class StackItem {
     /** @internal */
     public padding?: number;
 
+    /**
+     * A keyed object of the temporary and real points that are part of this
+     * stack item. At first, before Point objects are created, the values are
+     * computed and stored as temporary points, in order for the axis to compute
+     * the data extremes. When the Point objects are created, the
+     * Series.translate function replaces the temporary points with real Point
+     * objects.
+     * */
+    public points: Record<string, StackTempPoint>;
+
     /** @internal */
     public rightCliff: number;
 
@@ -190,9 +204,6 @@ class StackItem {
 
     /** @internal */
     public touched?: number;
-
-    /** @internal */
-    public values: Record<string, Array<number>>;
 
     /**
      * Shared x value of the stack

@@ -321,7 +321,7 @@ function renderStackShadow(
 
     // Get first pictorial series
     const stackKeys = Object
-            .keys(stack.values)
+            .keys(stack.points)
             .filter((p): boolean => p.split(',').length > 1),
         allSeries = stack.axis.chart.series,
         seriesIndexes = stackKeys.map((key): number =>
