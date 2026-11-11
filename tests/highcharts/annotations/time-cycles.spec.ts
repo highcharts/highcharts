@@ -36,38 +36,36 @@ test.describe('Stock Tools Time Cicles, #15826', () => {
         page => page.setViewportSize({ width: 1000, height: 500 })
     );
 
-    test('Should create an annotation and check the shape\'s coordinates.', async () => {
+    test('Should create the annotation and update it after dragging.', async () => {
         const page = getPage();
 
-        await selectAnnotation(page, 'highcharts-time-cycles', 'highcharts-fibonacci');
-        await clickChart(page, [[125, 150], [225, 150]], true);
+        await test.step('Should create an annotation and check the shape\'s coordinates.', async () => {
+            await selectAnnotation(page, 'highcharts-time-cycles', 'highcharts-fibonacci');
+            await clickChart(page, [[125, 150], [225, 150]], true);
 
-        const cycles = await getTimeCycles(page);
-        expectClose(cycles.x1, 125, 4, 'First point should be close to the place, where the mouse clicked.');
-        expectClose(cycles.x2, 225, 4, 'Second point should be close to the place, where the mouse clicked.');
-        expectClose(cycles.pixelInterval, 100, 4, 'Pixel interval should be equal to the difference between positions.');
-    });
+            const cycles = await getTimeCycles(page);
+            expectClose(cycles.x1, 125, 4, 'First point should be close to the place, where the mouse clicked.');
+            expectClose(cycles.x2, 225, 4, 'Second point should be close to the place, where the mouse clicked.');
+            expectClose(cycles.pixelInterval, 100, 4, 'Pixel interval should be equal to the difference between positions.');
+        });
 
-    test('Changes annotation\'s properties when the controlPoints are dragged.', async () => {
-        const page = getPage();
+        await test.step('Changes annotation\'s properties when the controlPoints are dragged.', async () => {
+            await dispatchClick(page.locator('.highcharts-annotation').first());
 
-        await dispatchClick(page.locator('.highcharts-annotation').first());
+            await dragTo(page.locator('.highcharts-control-points > *').last(), [370, 100]);
 
-        await dragTo(page.locator('.highcharts-control-points > *').last(), [370, 100]);
+            const cycles = await getTimeCycles(page);
+            expectClose(cycles.x1, 125, 4, 'First point should be close to the place, where it was dragged.');
+            expectClose(cycles.x2, 370, 4, 'Second point should be close to the place, where it was dragged.');
+            expectClose(cycles.pixelInterval, 245, 4, 'Pixel interval should be adjusted to new value.');
+        });
 
-        const cycles = await getTimeCycles(page);
-        expectClose(cycles.x1, 125, 4, 'First point should be close to the place, where it was dragged.');
-        expectClose(cycles.x2, 370, 4, 'Second point should be close to the place, where it was dragged.');
-        expectClose(cycles.pixelInterval, 245, 4, 'Pixel interval should be adjusted to new value.');
-    });
+        await test.step('Dragging control Points should change annotation\'s properties.', async () => {
+            await dragTo(page.locator('.highcharts-annotation').first(), [450, 100], true);
 
-    test('Dragging control Points should change annotation\'s properties.', async () => {
-        const page = getPage();
-
-        await dragTo(page.locator('.highcharts-annotation').first(), [450, 100], true);
-
-        const cycles = await getTimeCycles(page);
-        expectClose(cycles.x1, 85, 4, 'The point1 should change its place.');
-        expectClose(cycles.x2, 330, 4, 'The point1 should change its place.');
+            const cycles = await getTimeCycles(page);
+            expectClose(cycles.x1, 85, 4, 'The point1 should change its place.');
+            expectClose(cycles.x2, 330, 4, 'The point1 should change its place.');
+        });
     });
 });

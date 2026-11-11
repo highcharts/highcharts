@@ -37,48 +37,45 @@ test.describe('Stock Tools annotation popup, #15725', () => {
         ).toBe(0);
     });
 
-    test('#15730: Should close popup after hiding annotation', async () => {
+    test('Popup should close after hiding and stay open after dragging, #15730, #15729, #15727.', async () => {
         const page = getPage();
         const popup = page.locator('.highcharts-popup');
 
-        await page.locator('.highcharts-label-annotation').first().click();
-        await page.locator('.highcharts-container').click();
-        await expect.poll(() => getAnnotationCount(page)).toBe(1);
-        await page.locator('.highcharts-annotation').click();
-        await expect(popup).toBeVisible();
-        await page.locator('.highcharts-toggle-annotations').click();
-        await expect(popup).toBeHidden();
-        await page.locator('.highcharts-toggle-annotations').click();
-    });
+        await test.step('#15730: Should close popup after hiding annotation', async () => {
+            await page.locator('.highcharts-label-annotation').first().click();
+            await page.locator('.highcharts-container').click();
+            await expect.poll(() => getAnnotationCount(page)).toBe(1);
+            await page.locator('.highcharts-annotation').click();
+            await expect(popup).toBeVisible();
+            await page.locator('.highcharts-toggle-annotations').click();
+            await expect(popup).toBeHidden();
+            await page.locator('.highcharts-toggle-annotations').click();
+        });
 
-    test('#15729: Should keep annotation selected after dragging', async () => {
-        const page = getPage();
-        const annotation = page.locator('.highcharts-annotation');
+        await test.step('#15729: Should keep annotation selected after dragging', async () => {
+            const annotation = page.locator('.highcharts-annotation');
 
-        await annotation.click();
-        await dragTo(annotation, [300, 100]);
-        await expect(page.locator('.highcharts-popup')).toBeVisible();
-    });
+            await annotation.click();
+            await dragTo(annotation, [300, 100]);
+            await expect(popup).toBeVisible();
+        });
 
-    test('#15729: Should keep annotation selected after dragging control point', async () => {
-        const page = getPage();
+        await test.step('#15729: Should keep annotation selected after dragging control point', async () => {
+            await dragTo(
+                page.locator('.highcharts-control-points > *').first(),
+                [600, 200]
+            );
+            await expect(popup).toBeVisible();
+        });
 
-        await dragTo(
-            page.locator('.highcharts-control-points > *').first(),
-            [600, 200]
-        );
-        await expect(page.locator('.highcharts-popup')).toBeVisible();
-    });
-
-    test('#15727: Should keep popup open after dragging from input to outside popup', async () => {
-        const page = getPage();
-
-        await page.locator('.highcharts-annotation-edit-button').click();
-        await dragTo(
-            page.locator('.highcharts-popup input').first(),
-            [100, 200]
-        );
-        await expect(page.locator('.highcharts-popup')).toBeVisible();
+        await test.step('#15727: Should keep popup open after dragging from input to outside popup', async () => {
+            await page.locator('.highcharts-annotation-edit-button').click();
+            await dragTo(
+                page.locator('.highcharts-popup input').first(),
+                [100, 200]
+            );
+            await expect(popup).toBeVisible();
+        });
     });
 
     test('#15725: Should use the same axis for all points in multi-step annotation', async () => {
@@ -90,11 +87,13 @@ test.describe('Stock Tools annotation popup, #15725', () => {
             [[100, 210], [120, 260], [140, 210], [160, 260]]
         );
 
-        await expect.poll(() => page.evaluate(
-            () => Highcharts.charts[0].annotations[1].points.every(
+        await expect.poll(() => page.evaluate(() => {
+            const annotations = Highcharts.charts[0].annotations;
+
+            return annotations[annotations.length - 1].points.every(
                 (point: any) => point.y > -50 && point.y < 75
-            )
-        )).toBe(true);
+            );
+        })).toBe(true);
     });
 
     test('#16158: Should use correct default series in popup', async () => {
@@ -132,55 +131,57 @@ test.describe('Stock Tools annotation popup, #15725', () => {
         await addIndicator(page);
     });
 
-    test('#17425: Editing labels of Elliott3 line should not hide the line.', async () => {
-        const page = getPage();
-
-        await page.locator('.highcharts-elliott3').first().click();
-
-        await clickChart(
-            page,
-            [[300, 100], [320, 120], [340, 120], [360, 100]],
-            true
-        );
-
-        await dispatchClick(
-            page.locator('.highcharts-annotation-shapes').last()
-        );
-        await page.locator('.highcharts-annotation-edit-button').click();
-
-        await page.locator('input[name="highcharts-annotation-0"]').fill('1');
-
-        await page.locator('div.highcharts-popup-bottom-row button').click();
-
-        await expect.poll(
-            () => page.evaluate(
-                () => Highcharts.charts[0].annotations[0].graphic.opacity
-            ),
-            '#17425: Editing labels of Elliott3 line should not hide the line.'
-        ).toBe(1);
-    });
-
-    test('#17425: Editing labels of Elliott3 line to number should not change type of input.', async () => {
+    test('#17425: Editing labels of Elliott3 line.', async () => {
         const page = getPage();
         const input = page.locator('input[name="highcharts-annotation-0"]');
 
-        await dispatchClick(
-            page.locator('.highcharts-annotation-shapes').last()
-        );
-        await page.locator('.highcharts-annotation-edit-button').click();
+        await test.step('#17425: Editing labels of Elliott3 line should not hide the line.', async () => {
+            await page.locator('.highcharts-elliott3').first().click();
 
-        await input.fill('(X)');
+            await clickChart(
+                page,
+                [[300, 100], [320, 120], [340, 120], [360, 100]],
+                true
+            );
 
-        await page.locator('div.highcharts-popup-bottom-row button').click();
+            await dispatchClick(
+                page.locator('.highcharts-annotation-shapes').last()
+            );
+            await page.locator('.highcharts-annotation-edit-button').click();
 
-        await dispatchClick(
-            page.locator('.highcharts-annotation-shapes').last()
-        );
-        await page.locator('.highcharts-annotation-edit-button').click();
+            await input.fill('1');
 
-        await expect(input).toHaveValue('(X)');
+            await page.locator('div.highcharts-popup-bottom-row button').click();
 
-        await page.locator('button.highcharts-popup-close').click();
+            await expect.poll(
+                () => page.evaluate(() => {
+                    const annotations = Highcharts.charts[0].annotations;
+
+                    return annotations[annotations.length - 1].graphic.opacity;
+                }),
+                '#17425: Editing labels of Elliott3 line should not hide the line.'
+            ).toBe(1);
+        });
+
+        await test.step('#17425: Editing labels of Elliott3 line to number should not change type of input.', async () => {
+            await dispatchClick(
+                page.locator('.highcharts-annotation-shapes').last()
+            );
+            await page.locator('.highcharts-annotation-edit-button').click();
+
+            await input.fill('(X)');
+
+            await page.locator('div.highcharts-popup-bottom-row button').click();
+
+            await dispatchClick(
+                page.locator('.highcharts-annotation-shapes').last()
+            );
+            await page.locator('.highcharts-annotation-edit-button').click();
+
+            await expect(input).toHaveValue('(X)');
+
+            await page.locator('button.highcharts-popup-close').click();
+        });
     });
 });
 
@@ -190,76 +191,70 @@ test.describe('Indicator popup searchbox, #16019.', () => {
         page => page.setViewportSize({ width: 1000, height: 800 })
     );
 
-    test('Search indicator input should filter and sort the list, #16019.', async () => {
+    test('Search indicator input should filter the list, #16019.', async () => {
         const page = getPage();
         const input = page.locator(searchInput);
         const firstItem = page.locator('.highcharts-indicator-list li').first();
 
-        await openIndicators(page);
+        await test.step('Search indicator input should filter and sort the list, #16019.', async () => {
+            await openIndicators(page);
 
-        // Test if searching works.
-        await input.click();
-        await input.pressSequentially('ac');
-        await expect(page.locator('.highcharts-indicator-list')).toHaveCount(5);
+            // Test if searching works.
+            await input.click();
+            await input.pressSequentially('ac');
+            await expect(page.locator('.highcharts-indicator-list')).toHaveCount(5);
 
-        // Test the sorting.
-        await input.pressSequentially('c');
-        await expect(firstItem).toContainText('Acceleration Bands');
+            // Test the sorting.
+            await input.pressSequentially('c');
+            await expect(firstItem).toContainText('Acceleration Bands');
 
-        // Test if regex works.
-        await input.clear();
-        await input.pressSequentially('cd');
-        await expect(firstItem).toContainText('MACD');
+            // Test if regex works.
+            await input.clear();
+            await input.pressSequentially('cd');
+            await expect(firstItem).toContainText('MACD');
+        });
+
+        await test.step('Clicking the reset button should reset the indicator list, #16019.', async () => {
+            await page.locator('.clear-filter-button').click();
+
+            await expect(input).toHaveValue('');
+
+            await expect(page.locator('.highcharts-indicator-list')).toHaveCount(50);
+        });
+
+        await test.step('Indicators should be accessible through aliases, #16019.', async () => {
+            await input.pressSequentially('boll');
+
+            await expect(firstItem).toContainText('BB');
+        });
+
+        await test.step('Popup should warn when no items are found using the filter, #16019.', async () => {
+            await input.pressSequentially('dada');
+
+            await expect(page.locator('.highcharts-popup-rhs-col-wrapper').first())
+                .toContainText('No match');
+
+            await page.locator('.clear-filter-button').click();
+
+            await expect(firstItem).toContainText('Acceleration Bands');
+        });
     });
 
-    test('Clicking the reset button should reset the indicator list, #16019.', async () => {
+    test('Indicators popup should open after update and close, #17741, #16487.', async () => {
         const page = getPage();
 
-        await page.locator('.clear-filter-button').click();
+        await test.step('Stock-tools should work after update, #17741.', async () => {
+            await page.locator('.highcharts-toggle-toolbar').click();
+            await page.locator('.highcharts-toggle-toolbar').click();
+            await openIndicators(page);
+            await expect(page.locator('.highcharts-popup')).toBeVisible();
+        });
 
-        await expect(page.locator(searchInput)).toHaveValue('');
-
-        await expect(page.locator('.highcharts-indicator-list')).toHaveCount(50);
-    });
-
-    test('Indicators should be accessible through aliases, #16019.', async () => {
-        const page = getPage();
-
-        await page.locator(searchInput).pressSequentially('boll');
-
-        await expect(page.locator('.highcharts-indicator-list li').first())
-            .toContainText('BB');
-    });
-
-    test('Popup should warn when no items are found using the filter, #16019.', async () => {
-        const page = getPage();
-
-        await page.locator(searchInput).pressSequentially('dada');
-
-        await expect(page.locator('.highcharts-popup-rhs-col-wrapper').first())
-            .toContainText('No match');
-
-        await page.locator('.clear-filter-button').click();
-
-        await expect(page.locator('.highcharts-indicator-list li').first())
-            .toContainText('Acceleration Bands');
-    });
-
-    test('Stock-tools should work after update, #17741.', async () => {
-        const page = getPage();
-
-        await page.locator('.highcharts-toggle-toolbar').click();
-        await page.locator('.highcharts-toggle-toolbar').click();
-        await openIndicators(page);
-        await expect(page.locator('.highcharts-popup')).toBeVisible();
-    });
-
-    test('Indicators button should be inactive when popup is closed #16487', async () => {
-        const page = getPage();
-
-        await page.locator('.highcharts-popup-close').click();
-        await expect(page.locator('.highcharts-indicators'))
-            .not.toHaveClass(/\bhighcharts-active\b/);
+        await test.step('Indicators button should be inactive when popup is closed #16487', async () => {
+            await page.locator('.highcharts-popup-close').click();
+            await expect(page.locator('.highcharts-indicators'))
+                .not.toHaveClass(/\bhighcharts-active\b/);
+        });
     });
 });
 
