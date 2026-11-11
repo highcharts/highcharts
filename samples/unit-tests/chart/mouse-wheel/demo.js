@@ -83,3 +83,193 @@ QUnit.test('Mouse wheel zoom on chart', function (assert) {
 
     TestUtilities.lolexRunAndUninstall(clock);
 });
+
+QUnit.test(
+    'Mouse wheel drop timers and pan remainders are isolated per chart ' +
+    '(#25099)',
+    function (assert) {
+        const clock = TestUtilities.lolexInstall();
+        const container1 = document.getElementById('container');
+        const container2 = document.createElement('div');
+
+        [container1, container2].forEach(container => {
+            container.style.width = '600px';
+            container.style.height = '300px';
+        });
+        document.body.append(container2);
+
+        const getChart = container => Highcharts.stockChart(container, {
+            chart: {
+                panning: {
+                    enabled: true,
+                    type: 'x'
+                },
+                panKey: 'shift',
+                zooming: {
+                    mouseWheel: {
+                        type: 'x'
+                    }
+                }
+            },
+            navigator: {
+                enabled: false
+            },
+            rangeSelector: {
+                enabled: false
+            },
+            scrollbar: {
+                enabled: false
+            },
+            xAxis: {
+                min: 14,
+                max: 28,
+                startOnTick: true,
+                endOnTick: true
+            },
+            series: [{
+                // Gaps like weekends make the axis ordinal
+                data: Array.from(Array(42), (_, i) => [i, i])
+                    .filter(([x]) => x % 7 < 5)
+            }]
+        });
+
+        const chart1 = getChart(container1);
+        const chart2 = getChart(container2);
+
+        let drops1 = 0;
+        let drops2 = 0;
+
+        // Count scheduled drops
+        chart1.pointer.drop = () => drops1++;
+        chart2.pointer.drop = () => drops2++;
+
+        try {
+            const axis = chart1.xAxis[0],
+                // Pixel movement per wheel notch, see MouseWheelZoom.ts
+                notch = 15 * 1.1,
+                pointPixelWidth = axis.translationSlope *
+                    (axis.ordinal.slope || axis.closestPointRange),
+                notches = Math.ceil(pointPixelWidth / notch),
+                min = axis.min,
+                wheel = (chart, deltaY, shiftKey) => new TestController(chart)
+                    .mouseWheel(300, 150, {
+                        deltaY,
+                        shiftKey,
+                        target: chart.container
+                    });
+
+            // Accumulate just below one point on the first chart
+            for (let i = 0; i < notches - 1; i++) {
+                wheel(chart1, 120, true);
+            }
+
+            assert.strictEqual(
+                axis.min,
+                min,
+                'Sub-point wheel movement should not pan the first chart'
+            );
+
+            // Wheel pan in the opposite direction on the second chart
+            wheel(chart2, -120, true);
+
+            // One more notch on the first chart completes a whole point
+            wheel(chart1, 120, true);
+
+            assert.notStrictEqual(
+                axis.min,
+                min,
+                'Wheel panning on another chart should not reset the ' +
+                'accumulated pan remainder of the first chart'
+            );
+
+            wheel(chart1, -1000);
+            wheel(chart2, -1000);
+
+            clock.tick(400);
+
+            assert.strictEqual(
+                drops1,
+                1,
+                'First chart delayed drop should run (#25099)'
+            );
+            assert.strictEqual(
+                drops2,
+                1,
+                'Second chart delayed drop should run (#25099)'
+            );
+        } finally {
+            chart1.destroy();
+            chart2.destroy();
+            container1.style.cssText = '';
+            container2.remove();
+            TestUtilities.lolexUninstall(clock);
+        }
+    }
+);
+
+QUnit.test('Mousewheel panning in x direction', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            zooming: {
+                type: 'x'
+            },
+            panning: true,
+            panKey: 'shift'
+        },
+
+        series: [{
+            data: [
+                23,
+                10,
+                50,
+                100,
+                4,
+                10,
+                23,
+                10,
+                50,
+                100,
+                4,
+                10
+            ]
+        }]
+    });
+
+    const controller = new TestController(chart);
+    controller.mouseWheel(200, 100, -10000);
+    controller.mouseWheel(200, 100, { deltaY: 10000, shiftKey: true });
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        -0.05,
+        'It should be possible to wheel pan up to 0'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        4.95,
+        'Wheel panning should keep the zoomed range.'
+    );
+
+    // Test with overscroll
+    chart.xAxis[0].update({
+        overscroll: 3
+    });
+
+    for (let i = 0; i < 100; i++) {
+        controller.mouseWheel(200, 100, { deltaY: -120, shiftKey: true });
+    }
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        chart.xAxis[0].dataMax + 3,
+        'It should be possible to wheel pan to the end of the overscroll'
+    );
+
+    controller.mouseWheel(200, 100, { deltaY: 120, shiftKey: true });
+
+    assert.ok(
+        chart.xAxis[0].max < chart.xAxis[0].dataMax + 3,
+        'Wheel panning should move back from the end of the overscroll'
+    );
+});

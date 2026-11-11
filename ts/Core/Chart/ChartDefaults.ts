@@ -504,8 +504,16 @@ const ChartDefaults: ChartOptions = {
      * will take precedence by default. To prioritize panning, either set
      * [chart.zooming.key](#chart.zooming.key) or panKey.
      *
+     * With the [mouse wheel zoom](#chart.zooming.mouseWheel) enabled, the chart
+     * can also be panned by scrolling the mouse wheel while holding the
+     * [panKey](#chart.panKey).
+     *
      * @sample  {highcharts} highcharts/chart/pankey/ Zooming and panning
      * @sample  {highstock} stock/chart/panning/ Zooming and xy panning
+     * @sample  {highcharts} highcharts/mouse-wheel-zoom/mouse-wheel-panning
+     *          Mouse wheel panning
+     * @sample  {highstock} stock/mouse-wheel-zoom/mouse-wheel-panning
+     *          Mouse wheel panning
      */
     panning: {
         /**
