@@ -21,7 +21,7 @@ async function setupRemoteGrid(
         (window as any).warnings = [];
         const originalWarn = console.warn.bind(console);
         console.warn = (...args: unknown[]): void => {
-            (window as any).warnings.push(args.join(' '));
+            (window as any).warnings.push(args.map(String).join(' '));
             originalWarn(...args);
         };
 

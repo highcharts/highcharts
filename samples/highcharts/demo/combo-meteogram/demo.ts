@@ -656,16 +656,27 @@ class Meteogram {
 
 // On DOM ready...
 
-// Set the hash to the yr.no URL we want to parse
+// Set the hash to a MET compact forecast URL for the desired location.
+const forecastEndpoint =
+    'https://api.met.no/weatherapi/locationforecast/2.0/compact';
 if (!location.hash) {
-    location.hash = 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=51.50853&lon=-0.12574&altitude=25';
+    location.hash =
+        `${forecastEndpoint}?lat=51.50853&lon=-0.12574&altitude=25`;
 }
 
 (async (): Promise<void> => {
-    const url = location.hash.substr(1);
-
     try {
-        const response = await fetch(url, {
+        const url = new URL(location.hash.substring(1));
+        const endpoint = new URL(forecastEndpoint);
+        if (
+            url.origin !== endpoint.origin ||
+            url.pathname !== endpoint.pathname ||
+            url.username || url.password
+        ) {
+            throw new Error('Unsupported forecast URL');
+        }
+        const response = await fetch(`${forecastEndpoint}${url.search}`, {
+            redirect: 'error',
             headers: {
                 'Content-Type': 'text/plain'
             }

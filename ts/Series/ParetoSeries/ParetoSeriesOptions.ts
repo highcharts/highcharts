@@ -85,6 +85,8 @@ interface ParetoSeriesOptions extends LineSeriesOptions {
 
     /**
      * Higher zIndex than column series to draw line above shapes.
+     *
+     * @default 3
      */
     zIndex?: number;
 

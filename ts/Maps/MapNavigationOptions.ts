@@ -287,6 +287,8 @@ export interface MapNavigationOptions {
      * Sensitivity of mouse wheel or trackpad scrolling. 1 is no sensitivity,
      * while with 2, one mouse wheel delta will zoom in 50%.
      *
+     * @default 1.1
+     *
      * @since 4.2.4
      */
     mouseWheelSensitivity?: number;

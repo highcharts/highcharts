@@ -22,20 +22,22 @@ import type Grid from '../../Core/Grid';
 import type { DeepPartial } from '../../../Shared/Types';
 import type Options from '../../Core/Options';
 import type {
-    CellContextMenuContext
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions';
+    CellMenuTarget,
+    MenuContext,
+    TableMenuTarget
+} from '../../Core/ContextMenu/ContextMenuTarget';
 
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
-import {
-    registerBuiltInAction,
-    registerBuiltInGroup
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
+import { registerMenuItem } from '../../Core/ContextMenu/ContextMenuRegistry.js';
 import TableEditingController, {
+    type TableEditingContext,
     type TableEditingOptions
 } from './TableEditingController.js';
 import {
     addEvent,
+    isNumber,
+    isString,
     merge,
     pushUnique
 } from '../../../Shared/Utilities.js';
@@ -54,6 +56,7 @@ export const defaultOptions: DeepPartial<Options> = {
         tableEditing: {
             rows: 'Rows',
             columns: 'Columns',
+            addRow: 'Add row',
             addRowAbove: 'Add row above',
             addRowBelow: 'Add row below',
             deleteRow: 'Delete row',
@@ -84,6 +87,14 @@ export interface TableEditingLangOptions {
      * @default 'Columns'
      */
     columns?: string;
+
+    /**
+     * Label used for the built-in "add row" action, which the menu of a table
+     * holding no row offers.
+     *
+     * @default 'Add row'
+     */
+    addRow?: string;
 
     /**
      * Label used for the built-in "add row above" action.
@@ -151,83 +162,143 @@ export function compose(
  * Registers table editing built-in context menu actions and groups.
  */
 function registerBuiltInActions(): void {
-    registerBuiltInAction('addRowAbove', {
-        getLabel: (context): string =>
-            context.grid.options?.lang?.tableEditing?.addRowAbove || '',
+    registerMenuItem<TableMenuTarget>('addRow', {
+        defaultIn: ['table'],
+        icon: 'addRowBelow',
+        label: (context): string =>
+            context.grid.options?.lang?.tableEditing?.addRow || '',
+        targets: ['table'],
+        visible: (context): boolean =>
+            context.grid.tableEditing?.canAppendRow() === true,
+        onClick: (_target, context): void => {
+            void context.grid.tableEditing?.appendRow();
+        }
+    });
+
+    registerMenuItem<CellMenuTarget>('addRowAbove', {
         icon: 'addRowAbove',
-        isVisible: isRowActionVisible,
-        onClick: (context): void => {
-            void context.grid.tableEditing?.addRowAbove(context);
+        label: (context): string =>
+            context.grid.options?.lang?.tableEditing?.addRowAbove || '',
+        targets: ['cell'],
+        visible: isRowActionVisible,
+        onClick: (_target, context): void => {
+            void context.grid.tableEditing?.addRowAbove(
+                editingContext(context)
+            );
         }
     });
 
-    registerBuiltInAction('addRowBelow', {
-        getLabel: (context): string =>
+    registerMenuItem<CellMenuTarget>('addRowBelow', {
+        icon: 'addRowBelow',
+        label: (context): string =>
             context.grid.options?.lang?.tableEditing?.addRowBelow || '',
-        icon: 'addRowBelow',
-        isVisible: isRowActionVisible,
-        onClick: (context): void => {
-            void context.grid.tableEditing?.addRowBelow(context);
+        targets: ['cell'],
+        visible: isRowActionVisible,
+        onClick: (_target, context): void => {
+            void context.grid.tableEditing?.addRowBelow(
+                editingContext(context)
+            );
         }
     });
 
-    registerBuiltInAction('deleteRow', {
-        getLabel: (context): string =>
+    registerMenuItem<CellMenuTarget>('deleteRow', {
+        icon: 'trash',
+        label: (context): string =>
             context.grid.options?.lang?.tableEditing?.deleteRow || '',
-        icon: 'trash',
-        isVisible: isRowActionVisible,
-        onClick: (context): void => {
-            void context.grid.tableEditing?.deleteRow(context);
+        targets: ['cell'],
+        visible: isRowActionVisible,
+        onClick: (_target, context): void => {
+            void context.grid.tableEditing?.deleteRow(
+                editingContext(context)
+            );
         }
     });
 
-    registerBuiltInAction('addColumnBefore', {
-        getLabel: (context): string =>
-            context.grid.options?.lang?.tableEditing?.addColumnBefore || '',
+    registerMenuItem<CellMenuTarget>('addColumnBefore', {
         icon: 'addColumnLeft',
-        isVisible: isColumnActionVisible,
-        onClick: (context): void => {
-            void context.grid.tableEditing?.addColumnBefore(context);
+        label: (context): string =>
+            context.grid.options?.lang?.tableEditing?.addColumnBefore || '',
+        targets: ['cell'],
+        visible: isColumnActionVisible,
+        onClick: (_target, context): void => {
+            void context.grid.tableEditing?.addColumnBefore(
+                editingContext(context)
+            );
         }
     });
 
-    registerBuiltInAction('addColumnAfter', {
-        getLabel: (context): string =>
+    registerMenuItem<CellMenuTarget>('addColumnAfter', {
+        icon: 'addColumnRight',
+        label: (context): string =>
             context.grid.options?.lang?.tableEditing?.addColumnAfter || '',
-        icon: 'addColumnRight',
-        isVisible: isColumnActionVisible,
-        onClick: (context): void => {
-            void context.grid.tableEditing?.addColumnAfter(context);
+        targets: ['cell'],
+        visible: isColumnActionVisible,
+        onClick: (_target, context): void => {
+            void context.grid.tableEditing?.addColumnAfter(
+                editingContext(context)
+            );
         }
     });
 
-    registerBuiltInAction('deleteColumn', {
-        getLabel: (context): string =>
-            context.grid.options?.lang?.tableEditing?.deleteColumn || '',
+    registerMenuItem<CellMenuTarget>('deleteColumn', {
         icon: 'trash',
-        isVisible: isColumnActionVisible,
-        isDisabled: (context): boolean =>
-            !context.grid.tableEditing?.canDeleteColumn(context),
-        onClick: (context): void => {
-            void context.grid.tableEditing?.deleteColumn(context);
+        label: (context): string =>
+            context.grid.options?.lang?.tableEditing?.deleteColumn || '',
+        targets: ['cell'],
+        visible: isColumnActionVisible,
+        disabled: (context): boolean =>
+            !context.grid.tableEditing?.canDeleteColumn(
+                editingContext(context)
+            ),
+        onClick: (_target, context): void => {
+            void context.grid.tableEditing?.deleteColumn(
+                editingContext(context)
+            );
         }
     });
 
-    registerBuiltInGroup('rows', {
-        getLabel: (context): string =>
-            context.grid.options?.lang?.tableEditing?.rows || '',
+    registerMenuItem<CellMenuTarget>('rows', {
+        defaultIn: ['cell'],
         icon: 'addRowBelow',
-        isVisible: isRowActionVisible,
-        items: ['addRowAbove', 'addRowBelow', 'deleteRow']
-    }, true);
+        items: ['addRowAbove', 'addRowBelow', 'deleteRow'],
+        label: (context): string =>
+            context.grid.options?.lang?.tableEditing?.rows || '',
+        targets: ['cell'],
+        visible: isRowActionVisible
+    });
 
-    registerBuiltInGroup('columns', {
-        getLabel: (context): string =>
-            context.grid.options?.lang?.tableEditing?.columns || '',
+    registerMenuItem<CellMenuTarget>('columns', {
+        defaultIn: ['cell'],
         icon: 'addColumnRight',
-        isVisible: isColumnActionVisible,
-        items: ['addColumnBefore', 'addColumnAfter', 'deleteColumn']
-    }, true);
+        items: ['addColumnBefore', 'addColumnAfter', 'deleteColumn'],
+        label: (context): string =>
+            context.grid.options?.lang?.tableEditing?.columns || '',
+        targets: ['cell'],
+        visible: isColumnActionVisible
+    });
+}
+
+/**
+ * Narrows a menu context down to what the table editing actions need.
+ *
+ * @param context
+ * Context the menu was opened in.
+ *
+ * @return
+ * Table editing context.
+ */
+function editingContext(
+    context: MenuContext<CellMenuTarget>
+): TableEditingContext {
+    const { grid, target } = context;
+    const rowId = target.row.id;
+
+    return {
+        columnId: target.column.id,
+        grid,
+        rowId: isString(rowId) || isNumber(rowId) ? rowId : void 0,
+        sourceColumnId: grid.columnPolicy.getColumnSourceId(target.column.id)
+    };
 }
 
 /**
@@ -243,8 +314,9 @@ function initTableEditing(this: Grid): void {
  * @param context
  * Context menu runtime context.
  */
-function isRowActionVisible(context: CellContextMenuContext): boolean {
-    return context.grid.tableEditing?.canEditRows(context) === true;
+function isRowActionVisible(context: MenuContext<CellMenuTarget>): boolean {
+    return context.grid.tableEditing
+        ?.canEditRows(editingContext(context)) === true;
 }
 
 /**
@@ -253,8 +325,11 @@ function isRowActionVisible(context: CellContextMenuContext): boolean {
  * @param context
  * Context menu runtime context.
  */
-function isColumnActionVisible(context: CellContextMenuContext): boolean {
-    return context.grid.tableEditing?.canEditColumns(context) === true;
+function isColumnActionVisible(
+    context: MenuContext<CellMenuTarget>
+): boolean {
+    return context.grid.tableEditing
+        ?.canEditColumns(editingContext(context)) === true;
 }
 
 /* *
@@ -278,6 +353,7 @@ declare module '../../Core/Options' {
          * Options for built-in structural table editing.
          *
          * @sample grid-pro/basic/table-editing Table editing
+         * @sample grid-pro/options/table-editing-empty Starting from no row
          */
         tableEditing?: TableEditingOptions;
     }
@@ -290,17 +366,15 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
-    interface CellContextMenuBuiltInActionIdRegistry {
+declare module '../../Core/ContextMenu/ContextMenuOptions' {
+    interface MenuItemIdRegistry {
+        addRow: never;
         addRowAbove: never;
         addRowBelow: never;
         deleteRow: never;
         addColumnBefore: never;
         addColumnAfter: never;
         deleteColumn: never;
-    }
-
-    interface CellContextMenuBuiltInGroupIdRegistry {
         rows: never;
         columns: never;
     }

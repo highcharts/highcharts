@@ -77,11 +77,17 @@ import {
 
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         clearBounds?(): void;
+        /** @internal */
         getProjectedBounds?(): MapBounds|undefined;
+        /** @internal */
         mapTitle?: string;
+        /** @internal */
         transformGroups?: Array<SVGElement>|undefined;
+        /** @internal */
         tupleKey?: string;
+        /** @internal */
         useMapGeometry?: boolean;
 
         /**
@@ -113,7 +119,6 @@ declare module '../../Core/Series/SeriesOptions' {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.map
  *
@@ -127,6 +132,7 @@ class MapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         ScatterSeries.defaultOptions,
         MapSeriesDefaults
@@ -179,6 +185,7 @@ class MapSeries extends ScatterSeries {
     /** @internal */
     public valueMin?: number;
 
+    /** @internal */
     public tupleKey = 'hc-key';
 
     /* *
@@ -190,7 +197,7 @@ class MapSeries extends ScatterSeries {
     /**
      * The initial animation for the map series. By default, animation is
      * disabled.
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         const { chart, group } = this,
@@ -231,7 +238,7 @@ class MapSeries extends ScatterSeries {
     /**
      * Allow a quick redraw by just translating the area group. Used for zooming
      * and panning in capable browsers.
-     * @private
+     * @internal
      */
     public doFullTranslate(): boolean {
         return Boolean(
@@ -244,7 +251,7 @@ class MapSeries extends ScatterSeries {
     /**
      * Draw the data labels. Special for maps is the time that the data labels
      * are drawn (after points), and the clipping of the dataLabelsGroup.
-     * @private
+     * @internal
      */
     public drawMapDataLabels(): void {
         super.drawDataLabels();
@@ -257,7 +264,7 @@ class MapSeries extends ScatterSeries {
     /**
      * Use the drawPoints method of column, that is able to handle simple
      * shapeArgs. Extend it by assigning the tooltip position.
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const series = this,
@@ -599,7 +606,7 @@ class MapSeries extends ScatterSeries {
      * object. This function is used by both the map series where the
      * `borderWidth` sets the stroke-width, and the mapline series where the
      * `lineWidth` sets the stroke-width.
-     * @private
+     * @internal
      */
     private getStrokeWidth(
         options: (MapSeriesOptions|MapPointOptions)
@@ -614,7 +621,7 @@ class MapSeries extends ScatterSeries {
     /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has points at all.
-     * @private
+     * @internal
      */
     public hasData(): boolean {
         return !!this.dataTable.getModified().rowCount;
@@ -624,7 +631,7 @@ class MapSeries extends ScatterSeries {
      * Get presentational attributes. In the maps series this runs in both
      * styled and non-styled mode, because colors hold data when a colorAxis is
      * used.
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: MapPoint,
@@ -704,7 +711,7 @@ class MapSeries extends ScatterSeries {
 
     /**
      * Extend setData to call processData and generatePoints immediately.
-     * @private
+     * @internal
      */
     public setData(
         data: Array<(PointOptions|PointShortOptions)>,
@@ -735,7 +742,7 @@ class MapSeries extends ScatterSeries {
      * all areas from the mapData are used, and those that don't correspond to a
      * data value are given null values. The results are stored in a modified
      * data table in order to avoid mutating `data`.
-     * @private
+     * @internal
      */
     public processData(): (boolean|undefined) {
         const options = this.options,
@@ -865,7 +872,7 @@ class MapSeries extends ScatterSeries {
     /**
      * Extend setOptions by picking up the joinBy option and applying it to a
      * series property.
-     * @private
+     * @internal
      */
     public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions {
         const options = super.setOptions(itemOptions);
@@ -888,7 +895,7 @@ class MapSeries extends ScatterSeries {
     /**
      * Add the path option for data points. Find the max value for color
      * calculation.
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,

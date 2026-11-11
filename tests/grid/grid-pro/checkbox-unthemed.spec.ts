@@ -39,9 +39,9 @@ async function probeCheckbox(page: Page, theme?: string): Promise<Probe> {
     );
 
     return await page.evaluate(() => {
-        const el = document.querySelector(
+        const el = document.querySelector<HTMLElement>(
             'tbody input[type="checkbox"]'
-        ) as HTMLElement;
+        );
         const cs = getComputedStyle(el);
         const rect = el.getBoundingClientRect();
         return {

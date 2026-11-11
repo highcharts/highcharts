@@ -1672,7 +1672,11 @@ class Series {
         // same, update one-to-one
         } else if (equalLength && !dataSorting?.enabled) {
             for (i = 0; i < dataTable.rowCount; i++) {
-                if (!oldData[i].destroyed && !oldData[i].condemned) {
+                if (
+                    oldData[i] &&
+                    !oldData[i].destroyed &&
+                    !oldData[i].condemned
+                ) {
                     const pOptions = dataTable.getRowObject(i);
                     if (pOptions) {
                         // Remove undefined properties, but preserve explicit
@@ -2194,7 +2198,8 @@ class Series {
             dataTable,
             'afterSetColumns',
             (e: ColumnEvent): void => {
-                this.setData(e.target);
+                this.setData(e.target, false);
+                queueRedraw();
             }
         );
 
