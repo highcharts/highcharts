@@ -22,6 +22,7 @@
  * */
 
 import type Column from '../Table/Column';
+import type { ContextMenuOptions } from './ContextMenuOptions';
 import type Grid from '../Grid';
 import type TableCell from '../Table/Body/TableCell';
 import type TableRow from '../Table/Body/TableRow';
@@ -75,6 +76,23 @@ export interface ElementMenuTarget {
 }
 
 /**
+ * The table body itself, where no cell was opened on, which is the whole of it
+ * while the table holds no row.
+ */
+export interface TableMenuTarget {
+
+    /**
+     * The table body element the menu belongs to.
+     */
+    element: HTMLElement;
+
+    /**
+     * Discriminator of the target variant.
+     */
+    type: 'table';
+}
+
+/**
  * The surfaces a context menu can open on, keyed by the discriminator of
  * each. A feature adds its own through module augmentation, so that opening
  * menus somewhere new needs no change here:
@@ -102,6 +120,11 @@ export interface MenuTargetRegistry {
      * An element given a menu with `grid.contextMenu.attach()`.
      */
     element: ElementMenuTarget;
+
+    /**
+     * The table body, next to the cells rather than on one.
+     */
+    table: TableMenuTarget;
 }
 
 /**
@@ -133,6 +156,17 @@ export interface MenuContext<T extends MenuTarget = MenuTarget> {
     grid: Grid;
 
     /**
+     * The menu as it was configured, read where the surface keeps it. Left out
+     * by a surface that configures nothing, which leaves the registered items
+     * to make the menu.
+     *
+     * Kept widened, because a context narrowed to one surface has to stay
+     * assignable to a context of any, and the options carry callbacks that
+     * take the context itself.
+     */
+    options?: ContextMenuOptions;
+
+    /**
      * What the menu was opened on.
      */
     target: T;
@@ -158,11 +192,40 @@ export function getCellMenuContext(
 ): MenuContext<CellMenuTarget> {
     return {
         grid: cell.row.viewport.grid,
+        options: cell.column.options.cells?.contextMenu as ContextMenuOptions,
         target: {
             cell,
             column: cell.column,
             row: cell.row,
             type: 'cell'
+        }
+    };
+}
+
+/**
+ * Builds the context of a menu opened on the table body rather than on one of
+ * its cells.
+ *
+ * @param grid
+ * The Grid the menu opens in.
+ *
+ * @param element
+ * The body element the menu opens on.
+ *
+ * @return
+ * The menu context.
+ */
+export function getTableMenuContext(
+    grid: Grid,
+    element: HTMLElement
+): MenuContext<TableMenuTarget> {
+    return {
+        grid,
+        options: grid.options?.rendering?.table?.contextMenu as
+            ContextMenuOptions,
+        target: {
+            element,
+            type: 'table'
         }
     };
 }

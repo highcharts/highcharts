@@ -23,7 +23,8 @@ import type { DeepPartial } from '../../../Shared/Types';
 import type Options from '../../Core/Options';
 import type {
     CellMenuTarget,
-    MenuContext
+    MenuContext,
+    TableMenuTarget
 } from '../../Core/ContextMenu/ContextMenuTarget';
 
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
@@ -55,6 +56,7 @@ export const defaultOptions: DeepPartial<Options> = {
         tableEditing: {
             rows: 'Rows',
             columns: 'Columns',
+            addRow: 'Add row',
             addRowAbove: 'Add row above',
             addRowBelow: 'Add row below',
             deleteRow: 'Delete row',
@@ -85,6 +87,14 @@ export interface TableEditingLangOptions {
      * @default 'Columns'
      */
     columns?: string;
+
+    /**
+     * Label used for the built-in "add row" action, which the menu of a table
+     * holding no row offers.
+     *
+     * @default 'Add row'
+     */
+    addRow?: string;
 
     /**
      * Label used for the built-in "add row above" action.
@@ -152,6 +162,19 @@ export function compose(
  * Registers table editing built-in context menu actions and groups.
  */
 function registerBuiltInActions(): void {
+    registerMenuItem<TableMenuTarget>('addRow', {
+        defaultIn: ['table'],
+        icon: 'addRowBelow',
+        label: (context): string =>
+            context.grid.options?.lang?.tableEditing?.addRow || '',
+        targets: ['table'],
+        visible: (context): boolean =>
+            context.grid.tableEditing?.canAppendRow() === true,
+        onClick: (_target, context): void => {
+            void context.grid.tableEditing?.appendRow();
+        }
+    });
+
     registerMenuItem<CellMenuTarget>('addRowAbove', {
         icon: 'addRowAbove',
         label: (context): string =>
@@ -330,6 +353,7 @@ declare module '../../Core/Options' {
          * Options for built-in structural table editing.
          *
          * @sample grid-pro/basic/table-editing Table editing
+         * @sample grid-pro/options/table-editing-empty Starting from no row
          */
         tableEditing?: TableEditingOptions;
     }
@@ -344,6 +368,7 @@ declare module '../../Core/Options' {
 
 declare module '../../Core/ContextMenu/ContextMenuOptions' {
     interface MenuItemIdRegistry {
+        addRow: never;
         addRowAbove: never;
         addRowBelow: never;
         deleteRow: never;

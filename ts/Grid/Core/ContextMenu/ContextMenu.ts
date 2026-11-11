@@ -100,20 +100,15 @@ class ContextMenu extends Menu {
      * @param clientY
      * Viewport Y coordinate to anchor at.
      *
-     * @param options
-     * Options to use. Left out for a surface that keeps them in the Grid
-     * options.
-     *
      * @return
      * True when the menu was opened.
      */
     public open<T extends MenuTarget>(
         context: MenuContext<T>,
         clientX: number,
-        clientY: number,
-        options?: ContextMenuOptions<T>
+        clientY: number
     ): boolean {
-        const items = resolveContextMenu(context, options);
+        const items = resolveContextMenu(context);
 
         // Nothing to show, or nowhere to show it yet: keep the native menu
         // rather than swallow the event for an empty popup.
@@ -191,6 +186,7 @@ class ContextMenu extends Menu {
     ): () => void {
         const context: MenuContext<ElementMenuTarget> = {
             grid: this.grid,
+            options: options as ContextMenuOptions,
             target: {
                 element,
                 type: 'element'
@@ -198,7 +194,7 @@ class ContextMenu extends Menu {
         };
 
         const onContextMenu = (e: MouseEvent): void => {
-            if (this.open(context, e.clientX, e.clientY, options)) {
+            if (this.open(context, e.clientX, e.clientY)) {
                 e.preventDefault();
             }
         };
@@ -210,7 +206,7 @@ class ContextMenu extends Menu {
 
             const rect = element.getBoundingClientRect();
 
-            if (this.open(context, rect.left + 4, rect.bottom - 2, options)) {
+            if (this.open(context, rect.left + 4, rect.bottom - 2)) {
                 e.preventDefault();
             }
         };
@@ -222,7 +218,7 @@ class ContextMenu extends Menu {
         // turned into one and handled by the listener above like any other.
         const removeLongPress = addLongPressContextMenu(
             element,
-            (): boolean => resolveContextMenu(context, options).length > 0
+            (): boolean => resolveContextMenu(context).length > 0
         );
 
         const detach = (): void => {

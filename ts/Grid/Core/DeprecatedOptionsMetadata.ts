@@ -451,6 +451,90 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
         ],
         'text': 'Use `lang.rowPinning.unpinRow` instead.',
         'version': '3.1.0'
+    },
+    {
+        'docsPath': 'rendering.table.contextMenu.items.actionId',
+        'runtimePath': 'rendering.table.contextMenu.items.actionId',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'rendering'
+            },
+            {
+                'kind': 'property',
+                'name': 'table'
+            },
+            {
+                'kind': 'property',
+                'name': 'contextMenu'
+            },
+            {
+                'kind': 'property',
+                'name': 'items'
+            },
+            {
+                'kind': 'property',
+                'name': 'actionId'
+            }
+        ],
+        'text': 'Use `id` instead.',
+        'version': '3.3.0'
+    },
+    {
+        'docsPath': 'rendering.table.contextMenu.items.groupId',
+        'runtimePath': 'rendering.table.contextMenu.items.groupId',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'rendering'
+            },
+            {
+                'kind': 'property',
+                'name': 'table'
+            },
+            {
+                'kind': 'property',
+                'name': 'contextMenu'
+            },
+            {
+                'kind': 'property',
+                'name': 'items'
+            },
+            {
+                'kind': 'property',
+                'name': 'groupId'
+            }
+        ],
+        'text': 'Use `id` instead.',
+        'version': '3.3.0'
+    },
+    {
+        'docsPath': 'rendering.table.contextMenu.items.type',
+        'runtimePath': 'rendering.table.contextMenu.items.type',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'rendering'
+            },
+            {
+                'kind': 'property',
+                'name': 'table'
+            },
+            {
+                'kind': 'property',
+                'name': 'contextMenu'
+            },
+            {
+                'kind': 'property',
+                'name': 'items'
+            },
+            {
+                'kind': 'property',
+                'name': 'type'
+            }
+        ],
+        'text': 'Leave it out. `items` makes an item a branch and `separator`\nmakes it a divider.',
+        'version': '3.3.0'
     }
 ];
 
