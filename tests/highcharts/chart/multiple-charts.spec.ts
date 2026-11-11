@@ -14,14 +14,18 @@ test.describe('Multiple charts', () => {
     test('#17192, Should not throw when mouse switches chart.', async () => {
         const page = getPage();
 
-        for (const container of ['#container1', '#container2']) {
-            const element = page.locator(container);
-            const box = await element.boundingBox();
+        await expect(page.locator(
+            '#container1 .highcharts-root, #container2 .highcharts-root'
+        )).toHaveCount(2);
 
-            await element.dispatchEvent('mousemove', {
-                clientX: (box?.x ?? 0) + (box?.width ?? 0) / 2,
-                clientY: (box?.y ?? 0) + (box?.height ?? 0) / 2
-            });
+        for (const container of ['#container1', '#container2', '#container1']) {
+            const box = await page.locator(container).boundingBox();
+
+            await page.mouse.move(
+                (box?.x ?? 0) + (box?.width ?? 0) / 2,
+                (box?.y ?? 0) + (box?.height ?? 0) / 2,
+                { steps: 5 }
+            );
         }
 
         expect(

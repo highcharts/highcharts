@@ -12,8 +12,8 @@ const testViewport = { width: 1000, height: 660 };
 const waitTimeout = 10000;
 
 /**
- * Opens one page for all tests in the current `describe`. The tests run in
- * order, each continuing from the page state the previous one left.
+ * Opens one page for all tests in the current `describe`. The tests run
+ * serially, each continuing from the previous one's page state.
  *
  * @param setup
  * Runs before the page opens, e.g. to mock requests.
@@ -27,7 +27,7 @@ export function useSharedPage(
 ): () => Page {
     let page: Page | undefined;
 
-    test.describe.configure({ mode: 'default' });
+    test.describe.configure({ mode: 'serial' });
 
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage({ viewport: testViewport });
