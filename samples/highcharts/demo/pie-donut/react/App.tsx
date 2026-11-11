@@ -1,0 +1,15 @@
+import './App.css';
+import Chart from './Chart';
+
+export default function App() {
+    return (
+        <figure className="highcharts-figure">
+            <Chart />
+            <p className="highcharts-description">
+                In Highcharts, pies can also be hollow, in which case they are
+                commonly referred to as donut charts. This pie also has an inner
+                chart, resulting in a hierarchical type of visualization.
+            </p>
+        </figure>
+    );
+}
