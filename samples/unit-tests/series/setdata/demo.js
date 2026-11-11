@@ -694,6 +694,54 @@ QUnit.test(
 );
 
 QUnit.test(
+    'updatedData when the series has no points yet, #20298',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                series: [{ data: [1, 2, 3] }]
+            }),
+            counts = new Map(),
+            watch = series => {
+                counts.set(series, 0);
+                Highcharts.addEvent(series, 'updatedData', () => {
+                    counts.set(series, counts.get(series) + 1);
+                });
+                return series;
+            };
+
+        const added = watch(chart.addSeries({ data: [1, 2] }, false)),
+            notRendered = watch(chart.addSeries({}, false));
+
+        notRendered.setData([3, 4], false);
+        chart.redraw();
+
+        assert.strictEqual(
+            counts.get(added),
+            0,
+            'The initial data of an added series is not an update'
+        );
+        assert.strictEqual(
+            counts.get(notRendered),
+            1,
+            'setData before the series rendered should fire updatedData'
+        );
+
+        const hidden = watch(chart.addSeries({
+            data: [1, 2],
+            visible: false
+        }));
+
+        hidden.setData([3, 4]);
+
+        assert.strictEqual(
+            counts.get(hidden),
+            1,
+            'setData on a hidden series added after render should fire ' +
+            'updatedData'
+        );
+    }
+);
+
+QUnit.test(
     '#8795: Hovering after zooming in and using setData with redraw ' +
     'set to false threw', assert => {
         const data = () => {

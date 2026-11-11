@@ -963,6 +963,8 @@ class Series {
 
         if (!series.points && !series.data) {
             series.setData(options.data, false);
+            // Initial data is not an update (#20298)
+            series.isDirtyData = false;
         }
 
         fireEvent(this, 'afterInit');
@@ -1879,7 +1881,7 @@ class Series {
 
             // Redraw
             series.isDirty = chart.isDirtyBox = true;
-            series.isDirtyData = !!oldData;
+            series.isDirtyData = !!(oldData || chart.hasRendered);
             animation = false;
         }
 
