@@ -85,6 +85,27 @@ export interface StringCondition {
 }
 
 /**
+ * Condition that checks if the value of the cell is one of the provided
+ * values. Values are compared strictly.
+ */
+export interface InCondition {
+    /**
+     * Type of the operator used in the condition.
+     */
+    operator: 'in';
+
+    /**
+     * Name of the column to compare the value of the cell with.
+     */
+    columnId: string;
+
+    /**
+     * Values to compare the cell with.
+     */
+    value: DataTableCellType[];
+}
+
+/**
  * Condition that combines multiple conditions with logical operators.
  */
 export interface LogicalMultipleCondition {
@@ -138,6 +159,7 @@ export type CallbackCondition = (
 export type SerializableCondition =
     ComparisonCondition |
     StringCondition |
+    InCondition |
     LogicalSingleCondition |
     LogicalMultipleCondition;
 
