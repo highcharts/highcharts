@@ -4,7 +4,8 @@ Scope: instructions for coding/review agents working in this repository.
 
 ## Setup
 
-- Install deps with the package manager matching the existing lockfile (typically `npm install` in this repo).
+- Use Node.js 26 and npm 11, as declared in `devEngines` in `package.json` and in `.nvmrc`.
+- Install deps with `npm ci`, which keeps `package-lock.json` unchanged. Use `npm install` only when the task adds, removes or upgrades dependencies.
 - If the repo still uses `package-lock.json`, do not migrate lockfiles unless explicitly requested.
 - Run commands from repo root unless a task says otherwise.
 
