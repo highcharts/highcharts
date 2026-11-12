@@ -517,5 +517,30 @@ QUnit.test(
             smaBefore[smaIndex],
             'SMA window covering the mutated y should be recalculated'
         );
+
+        // grouped SMA must refresh after parent setData (#25632).
+        const day = 24 * 3600 * 1000,
+            sma = chart.get('sma'),
+            constData = y => Array.from(
+                { length: 50 },
+                (_, i) => [i * day, y]
+            );
+
+        main.update({
+            data: constData(1),
+            dataGrouping: { enabled: true, forced: true }
+        });
+        sma.update({
+            dataGrouping: { enabled: true, forced: true }
+        });
+
+        main.setData(constData(2));
+
+        assert.strictEqual(
+            sma.points[0].y,
+            2,
+            '#25632: SMA should be recalculated and rerendered after ' +
+                'parent setData with dataGrouping'
+        );
     }
 );
