@@ -9,7 +9,7 @@
   </div>
 
   <div id="side-box">
-    <h2 id="demo-title">Map Collection</h2>
+    <h2 id="demo-title">Map Collections</h2>
     <p class="highcharts-description">
       Interactive browser for the Highcharts map collection, from world maps
       down to regions. Search for a map, click to drill down, and download it
@@ -19,9 +19,8 @@
 
     <div id="selector">
       <div id="map-search">
-        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="11" cy="11" r="7"></circle>
-          <path d="M16.5 16.5 21 21"></path>
+        <svg class="search-icon" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M14 14L11.1 11.1M12.6667 7.33333C12.6667 10.2789 10.2789 12.6667 7.33333 12.6667C4.38781 12.6667 2 10.2789 2 7.33333C2 4.38781 4.38781 2 7.33333 2C10.2789 2 12.6667 4.38781 12.6667 7.33333Z"></path>
         </svg>
         <input type="text" id="map-search-input" role="combobox"
           aria-label="Search maps" aria-autocomplete="list"
@@ -30,8 +29,8 @@
         <button type="button" id="map-search-toggle" tabindex="-1"
           aria-label="Show all maps" aria-controls="map-listbox"
           aria-expanded="false">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="m6 9 6 6 6-6"></path>
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M4 6L8 10L12 6"></path>
           </svg>
         </button>
         <div id="map-listbox" role="listbox" aria-label="Maps" hidden></div>
@@ -54,20 +53,16 @@
             aria-expanded="false" aria-controls="view-as-menu"
             aria-labelledby="view-as-label view-as-button">
             Select option
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m6 9 6 6 6-6"></path>
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M3 4.5L6 7.5L9 4.5"></path>
             </svg>
           </button>
-          <div id="view-as-popup" hidden>
-            <div id="view-as-menu" role="menu" aria-labelledby="view-as-label">
-              <a role="menuitem" tabindex="-1" target="_blank" id="clean-demo-link">Clean demo code</a>
-              <div role="separator"></div>
-              <a role="menuitem" tabindex="-1" target="_blank" id="svg-link">SVG</a>
-              <a role="menuitem" tabindex="-1" target="_blank" id="geojson-link">GeoJSON</a>
-              <a role="menuitem" tabindex="-1" target="_blank" id="topojson-link">TopoJSON</a>
-              <a role="menuitem" tabindex="-1" target="_blank" id="javascript-link">JavaScript</a>
-            </div>
-            <div id="map-key">Map key: <code id="map-key-value"></code></div>
+          <div id="view-as-menu" role="menu" aria-labelledby="view-as-label" hidden>
+            <a role="menuitem" tabindex="-1" target="_blank" id="clean-demo-link">Clean demo code</a>
+            <a role="menuitem" tabindex="-1" target="_blank" id="svg-link">SVG</a>
+            <a role="menuitem" tabindex="-1" target="_blank" id="geojson-link">GeoJSON</a>
+            <a role="menuitem" tabindex="-1" target="_blank" id="topojson-link">TopoJSON</a>
+            <a role="menuitem" tabindex="-1" target="_blank" id="javascript-link">JavaScript</a>
           </div>
         </div>
       </div>

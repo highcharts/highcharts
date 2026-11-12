@@ -6,6 +6,16 @@
  *
  */
 
+// Background of the dark mode. The other palette colors are blended from it,
+// and the demo CSS uses them through the CSS variables.
+Highcharts.setOptions({
+    palette: {
+        dark: {
+            backgroundColor: '#1e1e1e'
+        }
+    }
+});
+
 // Get all HTML elements
 const mapSearch = document.getElementById('map-search'),
     input = document.getElementById('map-search-input'),
@@ -19,8 +29,7 @@ const mapSearch = document.getElementById('map-search'),
     dataLabelsCheckbox = document.getElementById('datalabels-checkbox'),
     viewAs = document.getElementById('view-as'),
     viewAsButton = document.getElementById('view-as-button'),
-    viewAsPopup = document.getElementById('view-as-popup'),
-    mapKeyValue = document.getElementById('map-key-value'),
+    viewAsMenu = document.getElementById('view-as-menu'),
     cleanDemoLink = document.getElementById('clean-demo-link'),
     svgLink = document.getElementById('svg-link'),
     geojsonLink = document.getElementById('geojson-link'),
@@ -39,7 +48,9 @@ const baseMapPath = 'https://code.highcharts.com/mapdata/',
     // Hand-picked maps shown on top of the list
     suggestedMaps = [{
         label: 'World map',
-        name: 'World, medium resolution'
+        name: 'World, medium resolution',
+        // Crops the small islands at the far left and right
+        thumbnailZoom: 0.3
     }, {
         label: 'Europe',
         name: 'Europe'
@@ -49,12 +60,57 @@ const baseMapPath = 'https://code.highcharts.com/mapdata/',
     }, {
         label: 'European Union (2020)',
         name: 'European Union (2020)'
-    }, {
-        label: 'California',
-        name: 'California, admin2'
     }];
 
+// Demo data: a percentage per area, scaled down to stay within 100%
+function getData(mapData) {
+    const geometries = mapData.objects.default.geometries,
+        step = Math.min(1, 100 / Math.max(geometries.length - 1, 1));
+
+    return geometries.map((g, i) => ({
+        key: g.properties['hc-key'],
+        drilldown: g.properties['hc-key'],
+        value: Math.round(i * step * 10) / 10
+    }));
+}
+
+// From 0 to a round tick above the highest value, with some space at the
+// ends to keep the tick dots inside the gradient
+function getColorAxisRange(data) {
+    // The values grow, so the last one is the highest
+    const maxValue = data[data.length - 1].value,
+        tickInterval = Highcharts.normalizeTickInterval(
+            Math.max(maxValue, 1) / 5,
+            void 0,
+            void 0,
+            false
+        ),
+        lastTick = Math.max(Math.ceil(maxValue / tickInterval), 1) *
+            tickInterval,
+        padding = lastTick * 0.03;
+
+    return {
+        min: -padding,
+        max: lastTick + padding,
+        tickInterval
+    };
+}
+
+// recommendMapView keeps the padding of the previous map when the new map has
+// none
+function resetMapPadding(chart) {
+    chart.mapView.update({ padding: 0 }, false);
+}
+
+// Without animation, so that the old tick dots don't fly out of the legend
+function updateColorAxis(chart, data) {
+    chart.colorAxis[0].update(getColorAxisRange(data), false);
+    chart.redraw(false);
+}
+
 let currentMapName,
+    // All maps, or the suggested maps when picked from that group
+    mapOrder = mapNames,
     activeOption,
     optionCount = 0;
 
@@ -70,6 +126,9 @@ function addListGroup(label, maps, suggested) {
             option.className = 'map-option';
             option.textContent = map.label;
             option.dataset.name = map.name;
+            if (suggested) {
+                option.dataset.suggested = 'true';
+            }
             option.setAttribute('role', 'option');
             option.setAttribute('aria-selected', 'false');
             return option;
@@ -107,7 +166,8 @@ for (const [groupName, maps] of Object.entries(Highcharts.mapDataIndex)) {
 }
 
 // Leave out suggested maps that are missing from the map index
-const availableSuggestedMaps = suggestedMaps.filter(map => allMaps[map.name]);
+const availableSuggestedMaps = suggestedMaps.filter(map => allMaps[map.name]),
+    suggestedNames = availableSuggestedMaps.map(map => map.name);
 
 addListGroup('Suggested', availableSuggestedMaps, true);
 indexGroups.forEach(([label, maps]) => addListGroup(label, maps));
@@ -141,10 +201,22 @@ const thumbnails = availableSuggestedMaps.slice(0, 3).map(map => {
             chart: {
                 animation: false,
                 backgroundColor: 'transparent',
-                spacing: [0, 0, 0, 0]
+                spacing: [0, 0, 0, 0],
+                events: {
+                    load() {
+                        if (map.thumbnailZoom) {
+                            this.mapView.zoomBy(map.thumbnailZoom);
+                        }
+                    }
+                }
             },
             colorAxis: {
-                min: 0
+                minColor: 'var(--map-thumbnail-min-color)',
+                maxColor: 'var(--map-thumbnail-max-color)',
+                min: 0,
+                // End at the highest value, so that every map uses the full
+                // color range
+                endOnTick: false
             },
             credits: {
                 enabled: false
@@ -153,12 +225,10 @@ const thumbnails = availableSuggestedMaps.slice(0, 3).map(map => {
                 enabled: false
             },
             series: [{
-                data: mapData.objects.default.geometries.map((g, value) => ({
-                    key: g.properties['hc-key'],
-                    value
-                })),
+                data: getData(mapData),
                 mapData,
                 joinBy: ['hc-key', 'key'],
+                borderColor: 'var(--map-border-color)',
                 borderWidth: 0.2,
                 enableMouseTracking: false
             }],
@@ -183,7 +253,7 @@ function setAttributes(el, attrs) {
     }
 }
 
-function fillInfo(mapName, mapKey) {
+function fillInfo(mapName, mapKey, order = mapNames) {
     const paths = [{
         type: 'svg',
         elem: svgLink,
@@ -215,15 +285,19 @@ function fillInfo(mapName, mapKey) {
         href: `https://jsfiddle.net/gh/get/jquery/1.11.0/highcharts/highcharts/tree/master/samples/mapdata/${mapKey}`
     });
 
-    mapKeyValue.textContent = mapKey;
-
     // The search field shows the name of the current map
     currentMapName = mapName;
+    mapOrder = order;
     input.value = mapName;
+    input.setSelectionRange(0, 0);
+    input.scrollLeft = 0;
+
+    // Mark the current map in the group that the order comes from
     listGroups.forEach(group => group.options.forEach(option => {
         option.classList.toggle(
             'current',
-            option.dataset.name === mapName
+            option.dataset.name === mapName &&
+                !!option.dataset.suggested === (order === suggestedNames)
         );
     }));
     thumbnails.forEach(thumbnail => {
@@ -235,16 +309,35 @@ function fillInfo(mapName, mapKey) {
     });
 }
 
+// Bottom of the visible area: the window, or a parent that cuts off content
+function getVisibleBottom(element) {
+    let bottom = window.innerHeight;
+    let parent = element.parentElement;
+    while (parent) {
+        if (getComputedStyle(parent).overflowY !== 'visible') {
+            bottom = Math.min(bottom, parent.getBoundingClientRect().bottom);
+        }
+        parent = parent.parentElement;
+    }
+    return bottom;
+}
+
 // "View demo as" menu button
-const menuItems = [...viewAsPopup.querySelectorAll('[role="menuitem"]')];
+const menuItems = [...viewAsMenu.querySelectorAll('[role="menuitem"]')];
 
 function openMenu(focusLast) {
-    viewAsPopup.hidden = false;
+    viewAsMenu.hidden = false;
     viewAsButton.setAttribute('aria-expanded', 'true');
 
-    // Open upwards when there is no room below
+    // Open upwards only when there is no room below and more room above
+    const bottom = getVisibleBottom(viewAs),
+        button = viewAsButton.getBoundingClientRect();
+
     viewAs.classList.remove('open-up');
-    if (viewAsPopup.getBoundingClientRect().bottom > window.innerHeight) {
+    if (
+        viewAsMenu.getBoundingClientRect().bottom > bottom &&
+        button.top > bottom - button.bottom
+    ) {
         viewAs.classList.add('open-up');
     }
 
@@ -252,7 +345,7 @@ function openMenu(focusLast) {
 }
 
 function closeMenu(focusButton) {
-    viewAsPopup.hidden = true;
+    viewAsMenu.hidden = true;
     viewAsButton.setAttribute('aria-expanded', 'false');
     if (focusButton) {
         viewAsButton.focus();
@@ -260,7 +353,7 @@ function closeMenu(focusButton) {
 }
 
 viewAsButton.addEventListener('click', () => {
-    if (viewAsPopup.hidden) {
+    if (viewAsMenu.hidden) {
         openMenu();
     } else {
         closeMenu();
@@ -274,7 +367,7 @@ viewAsButton.addEventListener('keydown', e => {
     }
 });
 
-viewAsPopup.addEventListener('keydown', e => {
+viewAsMenu.addEventListener('keydown', e => {
     const index = menuItems.indexOf(document.activeElement),
         count = menuItems.length,
         focusItem = i => menuItems[(i + count) % count].focus();
@@ -308,14 +401,14 @@ viewAsPopup.addEventListener('keydown', e => {
 });
 
 // Close the menu after following a link or when clicking outside it
-viewAsPopup.addEventListener('click', e => {
+viewAsMenu.addEventListener('click', e => {
     if (e.target.closest('[role="menuitem"]')) {
         closeMenu();
     }
 });
 
 document.addEventListener('pointerdown', e => {
-    if (!viewAsPopup.hidden && !viewAs.contains(e.target)) {
+    if (!viewAsMenu.hidden && !viewAs.contains(e.target)) {
         closeMenu();
     }
 });
@@ -401,10 +494,33 @@ function setActiveOption(option) {
     }
 }
 
+function getCurrentOption() {
+    return getVisibleOptions().find(
+        option => option.classList.contains('current')
+    );
+}
+
 function openList(showAll) {
     if (showAll) {
         filterOptions('');
-        listbox.scrollTop = 0;
+    }
+
+    // Fit the list in the visible area
+    listbox.style.maxHeight = Math.max(
+        120,
+        Math.min(
+            320,
+            getVisibleBottom(listbox) - listbox.getBoundingClientRect().top - 8
+        )
+    ) + 'px';
+
+    if (showAll) {
+        // Show the current map in the middle of the list
+        const current = getCurrentOption();
+        listbox.scrollTop = current ?
+            current.offsetTop -
+                (listbox.clientHeight - current.offsetHeight) / 2 :
+            0;
     }
     setActiveOption(null);
     mapSearch.classList.add('open');
@@ -423,11 +539,14 @@ function closeList() {
 
     // Show the current map name again if the search was abandoned
     input.value = currentMapName;
+    input.setSelectionRange(0, 0);
+    input.scrollLeft = 0;
 }
 
 function moveActiveOption(step) {
     const options = getVisibleOptions(),
-        index = options.indexOf(activeOption);
+        // Without an active option, step from the current map
+        index = options.indexOf(activeOption || getCurrentOption());
 
     if (options.length) {
         setActiveOption(
@@ -446,7 +565,11 @@ function moveActiveOption(step) {
             .then(response => response.json())
             .catch(e => console.log('Error', e));
 
-    fillInfo(initialMapName, initialMapKey);
+    const initialOrder = suggestedNames.includes(initialMapName) ?
+        suggestedNames :
+        mapNames;
+
+    fillInfo(initialMapName, initialMapKey, initialOrder);
 
     // On point click, look for a detailed map to drill into
     const drilldown = async function (e) {
@@ -479,12 +602,7 @@ function moveActiveOption(step) {
                 `https://code.highcharts.com/mapdata/${mapKey}.topo.json`
             ).then(response => response.json());
 
-            const data =
-                topology.objects.default.geometries.map((g, value) => ({
-                    key: g.properties['hc-key'],
-                    drilldown: g.properties['hc-key'],
-                    value
-                }));
+            const data = getData(topology);
 
             // Data labels formatter. Use shorthand codes for world and US
             const formatter = function () {
@@ -499,6 +617,7 @@ function moveActiveOption(step) {
             // Hide loading and add series
             chart.hideLoading();
             clearTimeout(fail);
+            resetMapPadding(chart);
             chart.addSeriesAsDrilldown(e.point, {
                 mapData: topology,
                 name: e.point.name,
@@ -513,27 +632,30 @@ function moveActiveOption(step) {
                 }
             });
 
-            // Update credits in afterDrilldown. The chart is not ready yet.
+            // Update the color axis and credits in afterDrilldown. The
+            // chart is not ready yet.
         }
     };
 
     // On drill up, reset to the top-level map view
     const afterDrillUp = function (e) {
+        // Before the recommended map view is applied
+        resetMapPadding(this);
+
         const {
             mapName,
-            mapKey
+            mapKey,
+            suggested
         } = e.seriesOptions.custom;
         if (mapName && mapKey) {
-            fillInfo(mapName, mapKey);
+            fillInfo(mapName, mapKey, suggested ? suggestedNames : mapNames);
         }
+        // The drilled series is still in the chart
+        updateColorAxis(this, e.seriesOptions.data);
         this.credits.update();
     };
 
-    const data = mapData.objects.default.geometries.map((g, value) => ({
-        key: g.properties['hc-key'],
-        drilldown: g.properties['hc-key'],
-        value
-    }));
+    const data = getData(mapData);
 
     const chart = Highcharts.mapChart('container', {
         accessibility: {
@@ -549,18 +671,39 @@ function moveActiveOption(step) {
                 drilldown,
                 afterDrillUp,
                 afterDrilldown: function () {
+                    updateColorAxis(this, this.series[0].options.data);
                     this.credits.update();
                 }
             }
         },
 
         colorAxis: {
-            min: 0
+            stops: [
+                [0, 'var(--map-min-color)'],
+                [0.5, 'var(--map-mid-color)'],
+                [1, 'var(--map-max-color)']
+            ],
+            // The grid lines are drawn as a dot on each tick, with the CSS
+            // in demo.css
+            gridLineColor: '#ffffff',
+            gridLineWidth: 5,
+            gridLineDashStyle: '0, 100',
+            width: 11,
+            height: '50%',
+            ...getColorAxisRange(data),
+            startOnTick: false,
+            endOnTick: false,
+            labels: {
+                format: '{value}%',
+                style: {
+                    fontSize: '0.75rem'
+                }
+            }
         },
 
         drilldown: {
             activeDataLabelStyle: {
-                color: '#fff',
+                color: 'contrast',
                 fontWeight: 'normal',
                 textDecoration: 'none'
             }
@@ -570,18 +713,36 @@ function moveActiveOption(step) {
             enabled: true,
             buttonOptions: {
                 alignTo: 'spacingBox',
-                x: 10
+                width: 12,
+                height: 12,
+                padding: 8,
+                style: {
+                    color: 'var(--highcharts-neutral-color-80)'
+                },
+                // The outline of both buttons is drawn in demo.css
+                theme: {
+                    r: 8,
+                    'stroke-width': 0
+                }
             }
         },
 
         legend: {
             layout: 'vertical',
             align: 'left',
-            verticalAlign: 'bottom'
+            verticalAlign: 'bottom',
+            backgroundColor: 'var(--highcharts-background-color)',
+            borderColor: 'var(--demo-border-color)',
+            borderWidth: 1,
+            borderRadius: 10,
+            padding: 12,
+            // Rounded ends of the color axis gradient
+            symbolRadius: 5.5
         },
 
         plotOptions: {
             map: {
+                borderColor: 'var(--map-border-color)',
                 dataLabels: {
                     enabled: dataLabelsCheckbox.checked
                 }
@@ -601,12 +762,17 @@ function moveActiveOption(step) {
             },
             custom: {
                 mapName: initialMapName,
-                mapKey: initialMapKey
+                mapKey: initialMapKey,
+                suggested: initialOrder === suggestedNames
             }
         }],
 
         title: {
             text: null
+        },
+
+        tooltip: {
+            valueSuffix: '%'
         },
 
         responsive: {
@@ -618,7 +784,9 @@ function moveActiveOption(step) {
                 },
                 chartOptions: {
                     colorAxis: {
-                        layout: 'horizontal'
+                        layout: 'horizontal',
+                        width: '50%',
+                        height: 11
                     },
                     legend: {
                         align: 'center'
@@ -637,13 +805,13 @@ function moveActiveOption(step) {
     // switching quickly with Prev and Next
     let updateRequest = 0;
 
-    async function updateChart(mapName) {
+    async function updateChart(mapName, order) {
         const mapKey = allMaps[mapName].slice(0, -3),
             request = ++updateRequest;
 
         chart.showLoading('Loading...');
 
-        fillInfo(mapName, mapKey);
+        fillInfo(mapName, mapKey, order);
 
         const mapData = await fetch(`${baseMapPath}${mapKey}.topo.json`)
             .then(response => response.json())
@@ -668,60 +836,69 @@ function moveActiveOption(step) {
                 this.point.name;
         };
 
-        const data = mapData.objects.default.geometries.map((g, value) => ({
-            key: g.properties['hc-key'],
-            drilldown: g.properties['hc-key'],
-            value
-        }));
+        const data = getData(mapData);
 
-        chart.series[0].update({
+        // Before the series is replaced, as recommendMapView redraws with
+        // animation, which would move the new map in from the old view
+        resetMapPadding(chart);
+        chart.mapView.recommendMapView(chart, [mapData], true);
+
+        // Series.update would merge the new map data into the old
+        chart.series[0].remove(false);
+        chart.addSeries({
             mapData,
             data,
+            joinBy: ['hc-key', 'key'],
             name: mapName,
+            animation: false,
             dataLabels: {
                 formatter
             },
             custom: {
                 mapName,
-                mapKey
+                mapKey,
+                // Used to restore the order after drilling up
+                suggested: order === suggestedNames
             }
         }, false);
+        chart.colorAxis[0].update(getColorAxisRange(data), false);
 
-        // Apply the projection recommended for the new map, it is not
-        // updated together with the series map data
-        chart.mapView.recommendMapView(chart, [mapData], true);
+        // The whole new map, also after zooming in on the previous one
+        chart.mapView.fitToBounds(void 0, void 0, true, false);
 
         chart.hideLoading();
         chart.credits.update();
     }
 
-    function selectMap(mapName) {
+    function selectMap(mapName, order) {
         closeList();
 
+        // Load the map directly. Drilldown, with its breadcrumbs, is only used
+        // when clicking an area on the map.
         if (allMaps[mapName] && mapName !== currentMapName) {
-            const pointOnCurrentMap =
-                chart.series[0].points.find(point => point.name === mapName);
-
-            if (pointOnCurrentMap) {
-                pointOnCurrentMap.doDrilldown();
-            } else {
-                resetDrilldown(chart);
-                updateChart(mapName);
-            }
+            resetDrilldown(chart);
+            updateChart(mapName, order);
+        } else if (mapName === currentMapName && order !== mapOrder) {
+            // Same map from the other group, only the order changes
+            fillInfo(mapName, allMaps[mapName].slice(0, -3), order);
         }
     }
 
-    // Switch to the previous or next map in the list
+    function getOrder(option) {
+        return option.dataset.suggested ? suggestedNames : mapNames;
+    }
+
+    // Switch to the previous or next map in the current order
     function stepMap(step) {
-        const index = mapNames.indexOf(currentMapName),
-            count = mapNames.length;
+        const index = mapOrder.indexOf(currentMapName),
+            count = mapOrder.length;
 
         resetDrilldown(chart);
-        updateChart(mapNames[
+        updateChart(mapOrder[
             index < 0 ?
                 (step > 0 ? 0 : count - 1) :
                 (index + step + count) % count
-        ]);
+        ], mapOrder);
     }
 
     // Map search events
@@ -766,7 +943,10 @@ function moveActiveOption(step) {
         case 'Enter':
             if (isOpen() && activeOption) {
                 e.preventDefault();
-                selectMap(activeOption.dataset.name);
+                selectMap(
+                    activeOption.dataset.name,
+                    getOrder(activeOption)
+                );
             }
             break;
         case 'Escape':
@@ -798,14 +978,15 @@ function moveActiveOption(step) {
     listbox.addEventListener('click', function (e) {
         const option = e.target.closest('[role="option"]');
         if (option) {
-            selectMap(option.dataset.name);
+            selectMap(option.dataset.name, getOrder(option));
         }
     });
 
     thumbnailBox.addEventListener('click', function (e) {
         const thumbnail = e.target.closest('.map-thumbnail');
         if (thumbnail) {
-            selectMap(thumbnail.dataset.name);
+            // The quick picks are suggested maps
+            selectMap(thumbnail.dataset.name, suggestedNames);
         }
     });
 
