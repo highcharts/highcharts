@@ -4,7 +4,7 @@ Paths relative to `ts/Grid/Pro/`.
 
 ## How Pro attaches
 
-- `ts/masters-grid/grid-pro.src.ts` calls each feature's `compose()` once, in this order, which is also the order their listeners run unless one passes `addEvent`'s `order` option (summary rows run their `projectPresentationTable` listener first this way): GridEvents, CellEditing, CreditsPro, Exporting, Validator, CellRenderers, Pagination, LicenseValidation, RowPinning, TableEditing, TreeView, SummaryRows, SummaryColumns, Responsive.
+- `ts/masters-grid/grid-pro.src.ts` calls each feature's `compose()` once, in this order, which is also the order their listeners run unless one passes `addEvent`'s `order` option (summary rows run their `projectPresentationTable` listener first this way): AdvancedFiltering, GridEvents, CellEditing, CreditsPro, Exporting, Validator, CellRenderers, Pagination, LicenseValidation, RowPinning, TableEditing, TreeView, SummaryRows, SummaryColumns, Responsive.
 - A `compose()` is guarded by `pushUnique(Globals.composed, '<Name>')`, merges its option and lang defaults into `defaultOptions`, and adds `addEvent` listeners on Core classes. Option types use `declare module '../../Core/Options'`; new properties use `declare module` on the class.
 - The only prototype override is `Column.prototype.createCellContent`, replaced by CellRenderers. Row pinning and summary rows also use the `RowsVirtualizer` hook slots and `Table.afterUpdateRowsHooks`, and add their own `<tbody>` with `Table.registerBodySection`.
 - Events only Pro fires: `cellMouseOver` and `cellMouseOut` (Dashboards highlight sync listens to them), `startedEditing`, `stoppedEditing`, `beforeRowPin`, `afterRowPin`, `beforeTreeRowToggle`, `afterTreeRowToggle`.
@@ -13,6 +13,7 @@ Paths relative to `ts/Grid/Pro/`.
 
 | Feature | Files | Attaches to |
 |---|---|---|
+| Advanced filtering | `AdvancedFiltering/` | Grid `getFilterConditions` (adds the root `filtering` tree to the column conditions), `beforeUpdate` (replaces the whole `filtering` state), `processUpdateDiff` (requery instead of re-render). Local data only |
 | Events | `GridEvents.ts` | Grid `beforeLoad`, `afterLoad`, `beforeUpdate`, `afterUpdate`, `beforeRedraw`, `afterRedraw` to root `events`; Column `afterResize`, `beforeSort`, `afterSort`, `beforeFilter`, `afterFilter` to column `events`; TableCell `click`, `dblClick`, `mouseOver`, `mouseOut`, `afterRender` to column `cells.events`; HeaderCell `click`, `afterRender` to column `header.events`. Grid `processUpdateDiff` removes every `events` group from update diffs |
 | Cell editing | `CellEditing/` | Table `beforeInit` (`viewport.cellEditing`), Column `afterInit` (edit-mode renderer), TableCell `dblClick`, `keyDown`, `afterRender`. Option `cells.editMode` |
 | Validation | `ColumnTypes/Validator*.ts` | Table `beforeInit` (`viewport.validator`), `afterDestroy`. Rules in `Validator.rulesRegistry`; defaults per data type and renderer in `predefinedRules` |

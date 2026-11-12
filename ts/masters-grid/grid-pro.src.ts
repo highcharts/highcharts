@@ -48,6 +48,7 @@ import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
 
+import AdvancedFilteringComposition from '../Grid/Pro/AdvancedFiltering/AdvancedFilteringComposition.js';
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
@@ -90,6 +91,7 @@ import '../Data/Modifiers/FilterModifier.js';
 
 // Compositions
 import '../Grid/Core/Responsive/ResponsiveComposition.js';
+import '../Grid/Pro/AdvancedFiltering/AdvancedFilteringComposition.js';
 import '../Grid/Pro/RowPinning/RowPinningComposition.js';
 import '../Grid/Pro/RowSelection/RowSelectionComposition.js';
 import '../Grid/Pro/GridEvents.js';
@@ -166,6 +168,7 @@ const G = {
     win: Globals.win
 } as const;
 
+AdvancedFilteringComposition.compose(G.Grid);
 GridEvents.compose(G.Grid, G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
 CreditsProComposition.compose(G.Grid);
