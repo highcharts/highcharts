@@ -89,8 +89,6 @@ export async function selectAnnotation(
 ): Promise<void> {
     if (parentClassName) {
         await page.locator(`.${parentClassName} > *`).nth(1).click();
-        // Wait a bit for the DOM to settle
-        await page.waitForTimeout(100);
     }
     await page.locator(`.${annotationClassName}`).click();
 }
