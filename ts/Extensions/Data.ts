@@ -641,6 +641,31 @@ function hasURLOption(options: DataOptions): boolean {
     return !!(options.rowsURL || options.csvURL || options.columnsURL);
 }
 
+/**
+ * Gets the polling interval in milliseconds from the `dataRefreshRate`
+ * option. Missing, invalid or nonfinite rates fall back to two seconds
+ * (#25572).
+ *
+ * @internal
+ *
+ * @param {Highcharts.DataOptions} options
+ * The data options to read the refresh rate from.
+ *
+ * @param {number} minimum
+ * The minimum polling interval in milliseconds.
+ *
+ * @return {number}
+ * The polling interval in milliseconds.
+ */
+function getRefreshInterval(options: DataOptions, minimum: number): number {
+    const refreshRate = Number(options.dataRefreshRate);
+
+    return Math.max(
+        (isNumber(refreshRate) && refreshRate || 2) * 1000,
+        minimum
+    );
+}
+
 /* *
  *
  *  Class
@@ -1660,17 +1685,15 @@ class Data {
             options = this.options,
             maxRetries = 3,
             pollingEnabled = options.enablePolling,
-            originalOptions = merge(options);
+            originalOptions = merge(options),
+            // Do not allow polling more than once a second
+            updateIntervalMs = getRefreshInterval(options, 1000);
 
-        let currentRetries = 0,
-            updateIntervalMs = (options.dataRefreshRate || 2) * 1000;
+        let currentRetries = 0;
 
         if (!hasURLOption(options)) {
             return false;
         }
-
-        // Do not allow polling more than once a second
-        updateIntervalMs = Math.max(updateIntervalMs, 1000);
 
         delete options.csvURL;
         delete options.rowsURL;
@@ -1841,7 +1864,7 @@ class Data {
             options = this.options,
             googleSpreadsheetKey = options.googleSpreadsheetKey,
             chart = this.chart,
-            refreshRate = Math.max((options.dataRefreshRate || 2) * 1000, 4000);
+            refreshRate = getRefreshInterval(options, 4000);
 
         /**
          * Form the `values` field after range settings, unless the
