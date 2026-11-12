@@ -105,6 +105,11 @@ class FilterModifier extends DataModifier {
                 const sub = this.compile(condition.condition);
                 return (row, table, i): boolean => !sub(row, table, i);
             }
+            case 'in': {
+                const { columnId } = condition,
+                    values = new Set(condition.value);
+                return (row): boolean => values.has(row[columnId]);
+            }
         }
 
         const { columnId: col, value } = condition;
