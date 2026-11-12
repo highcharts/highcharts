@@ -4,7 +4,7 @@ Paths relative to `ts/Grid/Pro/`.
 
 ## How Pro attaches
 
-- `ts/masters-grid/grid-pro.src.ts` calls each feature's `compose()` once, in this order, which is also the order their listeners run unless one passes `addEvent`'s `order` option (summary rows run their `projectPresentationTable` listener first this way): AdvancedFiltering, GridEvents, CellEditing, CreditsPro, Exporting, Validator, CellRenderers, Pagination, LicenseValidation, RowPinning, TableEditing, TreeView, SummaryRows, SummaryColumns, Responsive.
+- `ts/masters-grid/grid-pro.src.ts` calls each feature's `compose()` once, in this order, which is also the order their listeners run unless one passes `addEvent`'s `order` option (summary rows run their `projectPresentationTable` listener first this way): GridEvents, AdvancedFiltering, CellEditing, CreditsPro, Exporting, Validator, CellRenderers, Pagination, LicenseValidation, RowPinning, TableEditing, TreeView, SummaryRows, SummaryColumns, Responsive.
 - A `compose()` is guarded by `pushUnique(Globals.composed, '<Name>')`, merges its option and lang defaults into `defaultOptions`, and adds `addEvent` listeners on Core classes. Option types use `declare module '../../Core/Options'`; new properties use `declare module` on the class.
 - The only prototype override is `Column.prototype.createCellContent`, replaced by CellRenderers. Row pinning and summary rows also use the `RowsVirtualizer` hook slots and `Table.afterUpdateRowsHooks`, and add their own `<tbody>` with `Table.registerBodySection`.
 - Events only Pro fires: `cellMouseOver` and `cellMouseOut` (Dashboards highlight sync listens to them), `startedEditing`, `stoppedEditing`, `beforeRowPin`, `afterRowPin`, `beforeTreeRowToggle`, `afterTreeRowToggle`.

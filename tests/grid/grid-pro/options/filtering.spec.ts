@@ -157,19 +157,24 @@ test.describe('Advanced filtering', () => {
     test('filters by hidden row grouping columns', async ({ page }) => {
         await page.evaluate(async (): Promise<void> => {
             const grid = (window as any).grid;
-            const conditions = [{
+            const pl = {
                 columnId: 'country',
                 operator: 'equals',
                 value: 'PL'
-            }];
+            };
 
             await grid.update({
                 rowGrouping: { enabled: true, groupBy: ['country'] },
-                filtering: { conditions }
+                filtering: { conditions: [pl] }
             });
-            await grid.update({ filtering: { logic: 'or', conditions } });
+            await grid.update({
+                filtering: {
+                    logic: 'or',
+                    conditions: [pl, { ...pl, value: 'DE' }]
+                }
+            });
         });
 
-        await expect(page.locator('tbody .hcg-row')).toHaveCount(1);
+        await expect(page.locator('tbody .hcg-row')).toHaveCount(2);
     });
 });

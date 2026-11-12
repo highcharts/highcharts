@@ -168,8 +168,8 @@ const G = {
     win: Globals.win
 } as const;
 
-AdvancedFilteringComposition.compose(G.Grid);
 GridEvents.compose(G.Grid, G.Column, G.HeaderCell, G.TableCell);
+AdvancedFilteringComposition.compose(G.Grid);
 CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
 CreditsProComposition.compose(G.Grid);
 ExportingComposition.compose(G.Grid);

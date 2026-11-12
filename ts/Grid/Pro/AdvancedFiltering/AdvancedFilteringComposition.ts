@@ -54,6 +54,11 @@ export interface AdvancedFilteringRule extends FilteringRule {
      * The id of the column to filter.
      */
     columnId: string;
+
+    /**
+     * The operator to use for filtering the column.
+     */
+    operator: NonNullable<FilteringRule['operator']>;
 }
 
 /**
@@ -174,8 +179,8 @@ function mapGroup(
                 item.columnId
             );
 
-            // Hidden `groupBy` columns exist only in the source table and
-            // generated columns only in the presentation table.
+            // Hidden `groupBy` columns exist only in the source table,
+            // materialized summary columns only in the queried one.
             if (
                 sourceColumnId && (
                     table.hasColumns([sourceColumnId]) ||
