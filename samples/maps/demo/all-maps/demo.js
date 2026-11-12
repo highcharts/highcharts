@@ -38,7 +38,7 @@ const mapSearch = document.getElementById('map-search'),
 
 // Base path to maps
 const baseMapPath = 'https://code.highcharts.com/mapdata/',
-    allMaps = {}, // Map name => path
+    mapKeys = {}, // Map name => map key, like custom/world
     mapNames = [], // Map names in list order, used by Prev and Next
     mapsToSkip = /(Eckert III|Robinson) projection/,
     // Readable names for the groups in the map index
@@ -72,6 +72,22 @@ function getData(mapData) {
         drilldown: g.properties['hc-key'],
         value: Math.round(i * step * 10) / 10
     }));
+}
+
+// Loaded maps by map key, shared by the thumbnails and the chart
+const loadedMaps = {};
+
+function loadMap(mapKey) {
+    if (!loadedMaps[mapKey]) {
+        loadedMaps[mapKey] = fetch(`${baseMapPath}${mapKey}.topo.json`)
+            .then(response => response.json())
+            .catch(e => {
+                // Try again next time
+                delete loadedMaps[mapKey];
+                throw e;
+            });
+    }
+    return loadedMaps[mapKey];
 }
 
 // From 0 to a round tick above the highest value, with some space at the
@@ -156,7 +172,7 @@ for (const [groupName, maps] of Object.entries(Highcharts.mapDataIndex)) {
             // Remove unwanted text from the display name
             const name = indexName.replace(', Miller projection', '');
             if (!mapsToSkip.test(name)) {
-                allMaps[name] = path;
+                mapKeys[name] = path.slice(0, -3);
                 mapNames.push(name);
                 groupMaps.push({ label: name, name });
             }
@@ -166,8 +182,23 @@ for (const [groupName, maps] of Object.entries(Highcharts.mapDataIndex)) {
 }
 
 // Leave out suggested maps that are missing from the map index
-const availableSuggestedMaps = suggestedMaps.filter(map => allMaps[map.name]),
+const availableSuggestedMaps = suggestedMaps.filter(map => mapKeys[map.name]),
     suggestedNames = availableSuggestedMaps.map(map => map.name);
+
+// The same for every way of loading a map
+function getSeriesOptions(mapName, mapKey, mapData, order = mapNames) {
+    return {
+        mapData,
+        data: getData(mapData),
+        name: mapName,
+        custom: {
+            mapName,
+            mapKey,
+            // Used to restore the order after drilling up
+            suggested: order === suggestedNames
+        }
+    };
+}
 
 addListGroup('Suggested', availableSuggestedMaps, true);
 indexGroups.forEach(([label, maps]) => addListGroup(label, maps));
@@ -179,8 +210,7 @@ input.placeholder = `Search ${mapNames.length} maps`;
 const thumbnails = availableSuggestedMaps.slice(0, 3).map(map => {
     const button = document.createElement('button'),
         preview = document.createElement('span'),
-        label = document.createElement('span'),
-        mapKey = allMaps[map.name].slice(0, -3);
+        label = document.createElement('span');
 
     preview.className = 'map-thumbnail-chart';
     preview.setAttribute('aria-hidden', 'true');
@@ -192,8 +222,7 @@ const thumbnails = availableSuggestedMaps.slice(0, 3).map(map => {
     button.append(preview, label);
     thumbnailBox.append(button);
 
-    fetch(`${baseMapPath}${mapKey}.topo.json`)
-        .then(response => response.json())
+    loadMap(mapKeys[map.name])
         .then(mapData => Highcharts.mapChart(preview, {
             accessibility: {
                 enabled: false
@@ -244,53 +273,25 @@ const thumbnails = availableSuggestedMaps.slice(0, 3).map(map => {
     return button;
 });
 
-// Helper functions
-function setAttributes(el, attrs) {
-    for (const key in attrs) {
-        if (Object.prototype.hasOwnProperty.call(attrs, key)) {
-            el.setAttribute(key, attrs[key]);
-        }
-    }
+// The search field shows the name of the current map
+function showCurrentMapName() {
+    input.value = currentMapName;
+    input.setSelectionRange(0, 0);
+    input.scrollLeft = 0;
 }
 
 function fillInfo(mapName, mapKey, order = mapNames) {
-    const paths = [{
-        type: 'svg',
-        elem: svgLink,
-        path: `${baseMapPath}${mapKey}.svg`
-    }, {
-        type: 'geojson',
-        elem: geojsonLink,
-        path: `${baseMapPath}${mapKey}.geo.json`
-    }, {
-        type: 'topojson',
-        elem: topojsonLink,
-        path: `${baseMapPath}${mapKey}.topo.json`
-    }, {
-        type: 'javascript',
-        elem: javascriptLink,
-        path: `${baseMapPath}${mapKey}.js`
-    }];
+    const path = baseMapPath + mapKey;
 
-    paths.forEach(({
-        elem,
-        path
-    }) => {
-        setAttributes(elem, {
-            href: path
-        });
-    });
+    svgLink.href = `${path}.svg`;
+    geojsonLink.href = `${path}.geo.json`;
+    topojsonLink.href = `${path}.topo.json`;
+    javascriptLink.href = `${path}.js`;
+    cleanDemoLink.href = `https://jsfiddle.net/gh/get/jquery/1.11.0/highcharts/highcharts/tree/master/samples/mapdata/${mapKey}`;
 
-    setAttributes(cleanDemoLink, {
-        href: `https://jsfiddle.net/gh/get/jquery/1.11.0/highcharts/highcharts/tree/master/samples/mapdata/${mapKey}`
-    });
-
-    // The search field shows the name of the current map
     currentMapName = mapName;
     mapOrder = order;
-    input.value = mapName;
-    input.setSelectionRange(0, 0);
-    input.scrollLeft = 0;
+    showCurrentMapName();
 
     // Mark the current map in the group that the order comes from
     listGroups.forEach(group => group.options.forEach(option => {
@@ -538,9 +539,7 @@ function closeList() {
     toggleButton.setAttribute('aria-expanded', 'false');
 
     // Show the current map name again if the search was abandoned
-    input.value = currentMapName;
-    input.setSelectionRange(0, 0);
-    input.scrollLeft = 0;
+    showCurrentMapName();
 }
 
 function moveActiveOption(step) {
@@ -560,76 +559,49 @@ function moveActiveOption(step) {
 // Initial creation of the chart
 (async () => {
     const initialMapName = 'World, medium resolution',
-        initialMapKey = 'custom/world',
-        mapData = await fetch(`https://code.highcharts.com/mapdata/${initialMapKey}.topo.json`)
-            .then(response => response.json())
-            .catch(e => console.log('Error', e));
+        initialMapKey = mapKeys[initialMapName],
+        initialOrder = suggestedNames.includes(initialMapName) ?
+            suggestedNames :
+            mapNames;
 
-    const initialOrder = suggestedNames.includes(initialMapName) ?
-        suggestedNames :
-        mapNames;
+    let mapData;
+    try {
+        mapData = await loadMap(initialMapKey);
+    } catch {
+        document.getElementById('container').textContent = 'Map not found';
+        return;
+    }
 
     fillInfo(initialMapName, initialMapKey, initialOrder);
 
     // On point click, look for a detailed map to drill into
     const drilldown = async function (e) {
-        const map = Object.entries(allMaps).find(map =>
-            map[0] === e.point.name
-        ) || Object.entries(allMaps).find(map =>
-            map[0].indexOf(e.point.name) === 0
-        );
-        if (!e.seriesOptions && map) {
-            const chart = this,
-                mapName = map[0],
-                mapKey = map[1].slice(0, -3);
+        const pointName = e.point.name,
+            mapName = mapKeys[pointName] ?
+                pointName :
+                mapNames.find(name => name.startsWith(pointName));
 
-            // Handle error, the timeout is cleared on success
-            let fail = setTimeout(() => {
-                if (!Highcharts.maps[mapKey]) {
-                    chart.showLoading('Map not found');
-                    fail = setTimeout(() => {
-                        chart.hideLoading();
-                    }, 1000);
-                }
-            }, 3000);
+        if (!e.seriesOptions && mapName) {
+            const chart = this,
+                mapKey = mapKeys[mapName];
 
             chart.showLoading('Loading...');
 
+            let topology;
+            try {
+                topology = await loadMap(mapKey);
+            } catch {
+                chart.showLoading('Map not found');
+                setTimeout(() => chart.hideLoading(), 1000);
+                return;
+            }
+
             fillInfo(mapName, mapKey);
-
-            // Load the drilldown map
-            const topology = await fetch(
-                `https://code.highcharts.com/mapdata/${mapKey}.topo.json`
-            ).then(response => response.json());
-
-            const data = getData(topology);
-
-            // Data labels formatter. Use shorthand codes for world and US
-            const formatter = function () {
-                return (
-                    mapKey === 'custom/world' ||
-                    mapKey === 'countries/us/us-all'
-                ) ?
-                    (this.point.properties && this.point.properties['hc-a2']) :
-                    this.point.name;
-            };
-
-            // Hide loading and add series
             chart.hideLoading();
-            clearTimeout(fail);
             resetMapPadding(chart);
             chart.addSeriesAsDrilldown(e.point, {
-                mapData: topology,
-                name: e.point.name,
-                data,
-                joinBy: ['hc-key', 'key'],
-                dataLabels: {
-                    formatter
-                },
-                custom: {
-                    mapName,
-                    mapKey
-                }
+                ...getSeriesOptions(mapName, mapKey, topology),
+                name: pointName
             });
 
             // Update the color axis and credits in afterDrilldown. The
@@ -655,7 +627,12 @@ function moveActiveOption(step) {
         this.credits.update();
     };
 
-    const data = getData(mapData);
+    const series = getSeriesOptions(
+        initialMapName,
+        initialMapKey,
+        mapData,
+        initialOrder
+    );
 
     const chart = Highcharts.mapChart('container', {
         accessibility: {
@@ -690,7 +667,7 @@ function moveActiveOption(step) {
             gridLineDashStyle: '0, 100',
             width: 11,
             height: '50%',
-            ...getColorAxisRange(data),
+            ...getColorAxisRange(series.data),
             startOnTick: false,
             endOnTick: false,
             labels: {
@@ -742,30 +719,28 @@ function moveActiveOption(step) {
 
         plotOptions: {
             map: {
+                joinBy: ['hc-key', 'key'],
                 borderColor: 'var(--map-border-color)',
                 dataLabels: {
-                    enabled: dataLabelsCheckbox.checked
+                    enabled: dataLabelsCheckbox.checked,
+                    // Short codes for the world and the US
+                    formatter: function () {
+                        const { mapKey } = this.series.options.custom;
+                        return (
+                            mapKey === 'custom/world' ||
+                            mapKey === 'countries/us/us-all'
+                        ) ?
+                            (
+                                this.point.properties &&
+                                this.point.properties['hc-a2']
+                            ) :
+                            this.point.name;
+                    }
                 }
             }
         },
 
-        series: [{
-            data,
-            mapData,
-            joinBy: ['hc-key', 'key'],
-            name: initialMapName,
-            dataLabels: {
-                formatter: function () {
-                    return this.point.properties && this.point.properties[
-                        'hc-a2'];
-                }
-            },
-            custom: {
-                mapName: initialMapName,
-                mapKey: initialMapKey,
-                suggested: initialOrder === suggestedNames
-            }
-        }],
+        series: [series],
 
         title: {
             text: null
@@ -806,37 +781,28 @@ function moveActiveOption(step) {
     let updateRequest = 0;
 
     async function updateChart(mapName, order) {
-        const mapKey = allMaps[mapName].slice(0, -3),
+        const mapKey = mapKeys[mapName],
             request = ++updateRequest;
 
         chart.showLoading('Loading...');
 
         fillInfo(mapName, mapKey, order);
 
-        const mapData = await fetch(`${baseMapPath}${mapKey}.topo.json`)
-            .then(response => response.json())
-            .catch(e => console.log('Error', e));
+        let mapData;
+        try {
+            mapData = await loadMap(mapKey);
+        } catch {
+            if (request === updateRequest) {
+                chart.showLoading('Map not found');
+            }
+            return;
+        }
 
         if (request !== updateRequest) {
             return;
         }
 
-        if (!mapData) {
-            chart.showLoading('Map not found');
-            return;
-        }
-
-        // Data labels formatter. Use shorthand codes for world and US
-        const formatter = function () {
-            return (
-                mapKey === 'custom/world' ||
-                mapKey === 'countries/us/us-all'
-            ) ?
-                (this.point.properties && this.point.properties['hc-a2']) :
-                this.point.name;
-        };
-
-        const data = getData(mapData);
+        const seriesOptions = getSeriesOptions(mapName, mapKey, mapData, order);
 
         // Before the series is replaced, as recommendMapView redraws with
         // animation, which would move the new map in from the old view
@@ -845,23 +811,11 @@ function moveActiveOption(step) {
 
         // Series.update would merge the new map data into the old
         chart.series[0].remove(false);
-        chart.addSeries({
-            mapData,
-            data,
-            joinBy: ['hc-key', 'key'],
-            name: mapName,
-            animation: false,
-            dataLabels: {
-                formatter
-            },
-            custom: {
-                mapName,
-                mapKey,
-                // Used to restore the order after drilling up
-                suggested: order === suggestedNames
-            }
-        }, false);
-        chart.colorAxis[0].update(getColorAxisRange(data), false);
+        chart.addSeries({ ...seriesOptions, animation: false }, false);
+        chart.colorAxis[0].update(
+            getColorAxisRange(seriesOptions.data),
+            false
+        );
 
         // The whole new map, also after zooming in on the previous one
         chart.mapView.fitToBounds(void 0, void 0, true, false);
@@ -875,12 +829,12 @@ function moveActiveOption(step) {
 
         // Load the map directly. Drilldown, with its breadcrumbs, is only used
         // when clicking an area on the map.
-        if (allMaps[mapName] && mapName !== currentMapName) {
+        if (mapKeys[mapName] && mapName !== currentMapName) {
             resetDrilldown(chart);
             updateChart(mapName, order);
         } else if (mapName === currentMapName && order !== mapOrder) {
             // Same map from the other group, only the order changes
-            fillInfo(mapName, allMaps[mapName].slice(0, -3), order);
+            fillInfo(mapName, mapKeys[mapName], order);
         }
     }
 
