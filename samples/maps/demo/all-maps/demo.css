@@ -258,105 +258,170 @@ body {
     outline-offset: 2px;
 }
 
-#checkbox-wrapper {
+/* Settings: "View demo as" menu and "Show labels" switch */
+#settings {
+    margin-top: auto;
+    border: 1px solid var(--highcharts-neutral-color-10);
+    border-radius: 8px;
+}
+
+.settings-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 48px;
+    padding: 0 16px;
 }
 
-#checkbox-wrapper #datalabels-checkbox {
-    appearance: none;
-    background-color: #dfe1e4;
-    border-radius: 72px;
-    border-style: none;
-    flex-shrink: 0;
-    height: 20px;
-    margin: 0;
+.settings-row + .settings-row {
+    border-top: 1px solid var(--highcharts-neutral-color-10);
+}
+
+#view-as {
     position: relative;
-    width: 30px;
 }
 
-#checkbox-wrapper #datalabels-checkbox::before {
-    bottom: -6px;
-    content: "";
-    left: -6px;
+#view-as-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 0;
+    font: inherit;
+    font-weight: 600;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#view-as-button svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+#view-as-button[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+}
+
+#view-as-button:focus-visible,
+#view-as-menu a:focus-visible {
+    outline: 2px solid var(--highcharts-highlight-color-100);
+    outline-offset: -2px;
+    border-radius: 4px;
+}
+
+#view-as-popup {
     position: absolute;
-    right: -6px;
-    top: -6px;
+    z-index: 10;
+    top: calc(100% + 4px);
+    right: -8px;
+    min-width: 200px;
+    background: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-neutral-color-10);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+    overflow: hidden;
 }
 
-#checkbox-wrapper #datalabels-checkbox,
-#checkbox-wrapper #datalabels-checkbox::after {
-    transition: all 100ms ease-out;
+#view-as.open-up #view-as-popup {
+    top: auto;
+    bottom: calc(100% + 4px);
 }
 
-#checkbox-wrapper #datalabels-checkbox::after {
-    background-color: #fff;
-    border-radius: 50%;
+#view-as-menu a {
+    display: block;
+    padding: 10px 16px;
+    color: inherit;
+    text-decoration: none;
+    border-top: 1px solid var(--highcharts-neutral-color-5);
+}
+
+#view-as-menu a:first-child {
+    border-top: none;
+}
+
+#view-as-menu a:hover,
+#view-as-menu a:focus {
+    background: var(--highcharts-highlight-color-10);
+}
+
+#view-as-menu [role="separator"] {
+    height: 1px;
+    background: var(--highcharts-neutral-color-20);
+}
+
+#view-as-menu [role="separator"] + a {
+    border-top: none;
+}
+
+#map-key {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    color: var(--highcharts-neutral-color-60);
+    background: var(--highcharts-neutral-color-3);
+    border-top: 1px solid var(--highcharts-neutral-color-10);
+    user-select: all;
+}
+
+#map-key code {
+    color: var(--highcharts-neutral-color-100);
+}
+
+/* Switch, with enough contrast in both light and dark mode */
+#datalabels-checkbox {
+    appearance: none;
+    position: relative;
+    flex: none;
+    width: 40px;
+    height: 24px;
+    margin: 0;
+    background: var(--highcharts-neutral-color-40);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 100ms ease-out;
+}
+
+#datalabels-checkbox::after {
     content: "";
-    height: 14px;
-    left: 3px;
     position: absolute;
     top: 3px;
-    width: 14px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+    transition: transform 100ms ease-out;
 }
 
-#checkbox-wrapper #datalabels-checkbox:hover {
-    background-color: #c9cbcd;
-    transition-duration: 0s;
+#datalabels-checkbox:hover {
+    background: var(--highcharts-neutral-color-60);
 }
 
-#checkbox-wrapper #datalabels-checkbox:checked {
-    background-color: #6e79d6;
+#datalabels-checkbox:checked {
+    background: var(--highcharts-highlight-color-100);
 }
 
-#checkbox-wrapper #datalabels-checkbox:checked::after {
-    background-color: #fff;
-    left: 13px;
+#datalabels-checkbox:checked:hover {
+    background: var(--highcharts-highlight-color-80);
 }
 
-.checkbox-wrapper-2 :focus:not(.focus-visible) {
-    outline: 0;
+#datalabels-checkbox:checked::after {
+    transform: translateX(16px);
 }
 
-#checkbox-wrapper #datalabels-checkbox:checked:hover {
-    background-color: #535db3;
+#datalabels-checkbox:focus-visible {
+    outline: 2px solid var(--highcharts-highlight-color-100);
+    outline-offset: 2px;
 }
 
-#info-box #clean-demo-btn {
-    background: #00766f;
-    display: inline-block;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    outline: none;
-    text-decoration: none;
-    text-align: center;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-    font-size: 1rem;
-    line-height: 140%;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    padding: 8px 16px;
-}
-
-#info-box #clean-demo-btn:hover {
-    opacity: 0.8;
-}
-
-.links {
-    transition: all 250ms;
-    touch-action: manipulation;
-}
-
-.links a {
-    line-height: 1.5rem;
-}
-
-.links:hover {
-    font-size: 1.1rem;
+.settings-row label {
+    cursor: pointer;
 }
 
 @media (max-width: 768px) {

@@ -46,23 +46,34 @@
 
     <div id="map-thumbnails" role="group" aria-label="Quick picks"></div>
 
-    <div id="checkbox-wrapper">
-      <input type="checkbox" id="datalabels-checkbox" />
-      <label for="datalabels-checkbox">Data labels</label>
-    </div>
-
-    <div id="info-box">
-      <div id="download">
-        <a id="clean-demo-btn" target="_blank">View clean demo</a>
-        <div>
-          <p>... or view as</p>
-          <ul>
-            <li class='links'><a target="_blank" href="" id="svg-link">SVG</a></li>
-            <li class='links'><a target="_blank" href="" id="geojson-link">GeoJSON</a></li>
-            <li class='links'><a target="_blank" href="" id="topojson-link">TopoJSON</a></li>
-            <li class='links'><a target="_blank" href="" id="javascript-link">JavaScript</a></li>
-          </ul>
+    <div id="settings">
+      <div class="settings-row">
+        <span id="view-as-label">View demo as</span>
+        <div id="view-as">
+          <button type="button" id="view-as-button" aria-haspopup="menu"
+            aria-expanded="false" aria-controls="view-as-menu"
+            aria-labelledby="view-as-label view-as-button">
+            Select option
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"></path>
+            </svg>
+          </button>
+          <div id="view-as-popup" hidden>
+            <div id="view-as-menu" role="menu" aria-labelledby="view-as-label">
+              <a role="menuitem" tabindex="-1" target="_blank" id="clean-demo-link">Clean demo code</a>
+              <div role="separator"></div>
+              <a role="menuitem" tabindex="-1" target="_blank" id="svg-link">SVG</a>
+              <a role="menuitem" tabindex="-1" target="_blank" id="geojson-link">GeoJSON</a>
+              <a role="menuitem" tabindex="-1" target="_blank" id="topojson-link">TopoJSON</a>
+              <a role="menuitem" tabindex="-1" target="_blank" id="javascript-link">JavaScript</a>
+            </div>
+            <div id="map-key">Map key: <code id="map-key-value"></code></div>
+          </div>
         </div>
+      </div>
+      <div class="settings-row">
+        <label for="datalabels-checkbox">Show labels</label>
+        <input type="checkbox" id="datalabels-checkbox" role="switch" />
       </div>
     </div>
   </div>

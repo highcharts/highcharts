@@ -17,7 +17,11 @@ const mapSearch = document.getElementById('map-search'),
     prevMapButton = document.getElementById('prev-map-btn'),
     nextMapButton = document.getElementById('next-map-btn'),
     dataLabelsCheckbox = document.getElementById('datalabels-checkbox'),
-    cleanDemoButton = document.getElementById('clean-demo-btn'),
+    viewAs = document.getElementById('view-as'),
+    viewAsButton = document.getElementById('view-as-button'),
+    viewAsPopup = document.getElementById('view-as-popup'),
+    mapKeyValue = document.getElementById('map-key-value'),
+    cleanDemoLink = document.getElementById('clean-demo-link'),
     svgLink = document.getElementById('svg-link'),
     geojsonLink = document.getElementById('geojson-link'),
     topojsonLink = document.getElementById('topojson-link'),
@@ -207,9 +211,11 @@ function fillInfo(mapName, mapKey) {
         });
     });
 
-    setAttributes(cleanDemoButton, {
+    setAttributes(cleanDemoLink, {
         href: `https://jsfiddle.net/gh/get/jquery/1.11.0/highcharts/highcharts/tree/master/samples/mapdata/${mapKey}`
     });
+
+    mapKeyValue.textContent = mapKey;
 
     // The search field shows the name of the current map
     currentMapName = mapName;
@@ -228,6 +234,91 @@ function fillInfo(mapName, mapKey) {
         }
     });
 }
+
+// "View demo as" menu button
+const menuItems = [...viewAsPopup.querySelectorAll('[role="menuitem"]')];
+
+function openMenu(focusLast) {
+    viewAsPopup.hidden = false;
+    viewAsButton.setAttribute('aria-expanded', 'true');
+
+    // Open upwards when there is no room below
+    viewAs.classList.remove('open-up');
+    if (viewAsPopup.getBoundingClientRect().bottom > window.innerHeight) {
+        viewAs.classList.add('open-up');
+    }
+
+    menuItems[focusLast ? menuItems.length - 1 : 0].focus();
+}
+
+function closeMenu(focusButton) {
+    viewAsPopup.hidden = true;
+    viewAsButton.setAttribute('aria-expanded', 'false');
+    if (focusButton) {
+        viewAsButton.focus();
+    }
+}
+
+viewAsButton.addEventListener('click', () => {
+    if (viewAsPopup.hidden) {
+        openMenu();
+    } else {
+        closeMenu();
+    }
+});
+
+viewAsButton.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        openMenu(e.key === 'ArrowUp');
+    }
+});
+
+viewAsPopup.addEventListener('keydown', e => {
+    const index = menuItems.indexOf(document.activeElement),
+        count = menuItems.length,
+        focusItem = i => menuItems[(i + count) % count].focus();
+
+    switch (e.key) {
+    case 'ArrowDown':
+        e.preventDefault();
+        focusItem(index + 1);
+        break;
+    case 'ArrowUp':
+        e.preventDefault();
+        focusItem(index - 1);
+        break;
+    case 'Home':
+        e.preventDefault();
+        focusItem(0);
+        break;
+    case 'End':
+        e.preventDefault();
+        focusItem(count - 1);
+        break;
+    case 'Escape':
+        e.preventDefault();
+        closeMenu(true);
+        break;
+    case 'Tab':
+        closeMenu();
+        break;
+    default:
+    }
+});
+
+// Close the menu after following a link or when clicking outside it
+viewAsPopup.addEventListener('click', e => {
+    if (e.target.closest('[role="menuitem"]')) {
+        closeMenu();
+    }
+});
+
+document.addEventListener('pointerdown', e => {
+    if (!viewAsPopup.hidden && !viewAs.contains(e.target)) {
+        closeMenu();
+    }
+});
 
 function resetDrilldown(chart) {
     // Reset drilldown functionalities
