@@ -881,11 +881,11 @@ class Series {
             visible = options.visible !== false;
 
         // Create the data table
-        this.dataTable ??= (
-            isArray(options.dataTable) || options.dataTable?.isDataTable
-        ) ?
-            new DataTableCore() :
-            new DataTableCore(options.dataTable);
+        this.dataTable ??= new DataTableCore(
+            isArray(options.dataTable) || options.dataTable?.isDataTable ?
+                void 0 :
+                options.dataTable
+        );
 
         /**
          * All child series that are linked to the current series through the

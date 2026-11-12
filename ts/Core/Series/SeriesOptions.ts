@@ -810,14 +810,16 @@ export interface SeriesOptions {
     dataSorting?: SeriesDataSortingOptions;
 
     /**
+     * Deprecated since next. Use the chart-level
+     * [dataTable](#dataTable) with
+     * [dataMapping](#plotOptions.series.dataMapping) instead.
+     *
      * Options for a specific series-level data table or an array of data
      * tables. The `dataTable` option can be either a configuration object or an
-     * instance of the `DataTable` class. If a configuration object is passed,
-     * a new `DataTable` instance will be created based on the provided
-     * configuration. Even if a `DataTable` instance is passed, the series
-     * creates its own `DataTable` for the resolved data, so that it never
-     * writes back into the provided one. Changes to the provided table are
-     * still reflected in the series.
+     * instance of the `DataTable` class. The series always creates its own
+     * `DataTable` for the resolved data, reading from the given configuration
+     * or table. Changes to a given table are reflected in the series, while
+     * the series never writes back into it.
      *
      * @sample {highcharts} highcharts/datatable/series-datatable/
      *        Series with one data table each
@@ -830,7 +832,8 @@ export interface SeriesOptions {
      * @sample {highmaps} maps/datatable/series-datatable
      *        Series-level data table
      *
-     * @since 13.0.0
+     * @since      13.0.0
+     * @deprecated next
      */
     dataTable?: (
         DataTableCore|
