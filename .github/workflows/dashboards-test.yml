@@ -15,6 +15,9 @@ on:
       - 'ts/Grid/**'
       - 'ts/masters-dashboards/**'
       - 'ts/masters-grid/**'
+      - 'tests/dashboards/**'
+      - 'tests/fixtures.ts'
+      - 'tests/helpers.ts'
 
 permissions:
   contents: read

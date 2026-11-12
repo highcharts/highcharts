@@ -1,6 +1,0 @@
----
-name: Highcharts multiple charts hover event demo for cypress test
-authors:
-  - Kent Wincent Holt
-js_wrap: b
-...

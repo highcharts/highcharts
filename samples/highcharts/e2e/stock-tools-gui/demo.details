@@ -1,0 +1,7 @@
+---
+name: Stock tools gui demo
+authors:
+  - Paweł Lysy
+skipTest: true
+js_wrap: b
+...
