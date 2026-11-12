@@ -1,3 +1,16 @@
+/* Let the Highcharts color variables follow the theme outside the chart too */
+:root {
+    color-scheme: light dark;
+}
+
+.highcharts-light {
+    color-scheme: light;
+}
+
+.highcharts-dark {
+    color-scheme: dark;
+}
+
 body {
     font-family:
         -apple-system,
@@ -15,63 +28,183 @@ body {
 }
 
 #demo-wrapper {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 10px auto;
-    height: 560px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#selector {
-    display: flex;
-    align-items: center;
-    height: 40px;
-    width: 60%;
-}
-
-#selector .prev-next {
-    padding: 0 20px;
-    font-size: 30px;
-    line-height: 20px;
-    background: white;
-    font-weight: bold;
-    opacity: 0;
-    color: #999;
-    border: none;
-}
-
-#selector #map-datalist-input {
-    width: 100%;
-    height: 32px;
-    font-size: 14px;
-    border: 1px solid silver;
-    border-radius: 3px;
-    padding: 1px 5px 1px 30px;
-    background: url("https://www.highcharts.com/samples/graphics/search.png") 5px 8px no-repeat white;
+    gap: 32px;
 }
 
 #map-box {
-    display: flex;
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 #container {
-    flex: 0.8;
     height: 500px;
 }
 
 #side-box {
-    flex: 0.2;
-    margin: 100px 1% 0;
-    padding-left: 1%;
-    border-left: 1px solid silver;
+    flex: 0 0 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.loading {
-    margin-top: 10em;
-    text-align: center;
-    color: gray;
+#demo-title {
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+#side-box .highcharts-description {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* Map search with Prev and Next */
+#selector {
+    display: flex;
+    gap: 8px;
+    height: 44px;
+}
+
+#selector svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+#map-search {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    background: var(--highcharts-neutral-color-3);
+    border: 1px solid var(--highcharts-neutral-color-10);
+    border-radius: 8px;
+}
+
+#map-search:focus-within {
+    border-color: var(--highcharts-highlight-color-100);
+}
+
+#map-search .search-icon {
+    flex: none;
+    margin-left: 12px;
+    pointer-events: none;
+}
+
+#map-search-input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 8px;
+    font: inherit;
+    color: inherit;
+    text-overflow: ellipsis;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+#map-search-input::placeholder {
+    color: var(--highcharts-neutral-color-60);
+}
+
+#map-search-toggle {
+    flex: none;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 12px;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#map-search.open #map-search-toggle svg {
+    transform: rotate(180deg);
+}
+
+#map-listbox,
+#map-search-empty {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 4px);
+    left: -1px;
+    right: -1px;
+    background: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-neutral-color-10);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+}
+
+#map-listbox {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+#map-search-empty {
+    padding: 12px 16px;
+    color: var(--highcharts-neutral-color-60);
+}
+
+.map-group-label {
+    padding: 8px 16px 4px;
+    font-size: 0.875rem;
+    color: var(--highcharts-neutral-color-60);
+}
+
+.map-option {
+    padding: 10px 16px;
+    cursor: pointer;
+    border-top: 1px solid var(--highcharts-neutral-color-5);
+}
+
+.map-group-label + .map-option {
+    border-top: none;
+}
+
+.map-option:hover,
+.map-option.active {
+    background: var(--highcharts-highlight-color-10);
+}
+
+.map-option.current {
+    font-weight: bold;
+}
+
+#selector .prev-next {
+    flex: none;
+    padding: 0 14px;
+    font: inherit;
+    color: inherit;
+    background: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-neutral-color-10);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#selector .prev-next:hover {
+    background: var(--highcharts-neutral-color-3);
+}
+
+#selector .prev-next:focus-visible {
+    outline: 2px solid var(--highcharts-highlight-color-100);
+    outline-offset: 1px;
 }
 
 #checkbox-wrapper {
@@ -176,11 +309,7 @@ body {
 }
 
 @media (max-width: 768px) {
-    #selector {
-        width: 100%;
-    }
-
-    #map-box {
+    #demo-wrapper {
         flex-direction: column;
     }
 
@@ -189,9 +318,7 @@ body {
     }
 
     #side-box {
-        margin-top: 0;
-        padding-top: 16px;
-        border-left: none;
-        border-top: 1px solid silver;
+        flex-basis: auto;
+        order: -1;
     }
 }

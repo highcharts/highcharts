@@ -7,12 +7,15 @@
  */
 
 // Get all HTML elements
-const datalist = document.getElementById('maps'),
-    input = document.getElementById('map-datalist-input'),
+const mapSearch = document.getElementById('map-search'),
+    input = document.getElementById('map-search-input'),
+    toggleButton = document.getElementById('map-search-toggle'),
+    listbox = document.getElementById('map-listbox'),
+    emptyMessage = document.getElementById('map-search-empty'),
+    searchStatus = document.getElementById('map-search-status'),
     prevMapButton = document.getElementById('prev-map-btn'),
     nextMapButton = document.getElementById('next-map-btn'),
     dataLabelsCheckbox = document.getElementById('datalabels-checkbox'),
-    mapNameHeader = document.getElementById('map-name-header'),
     cleanDemoButton = document.getElementById('clean-demo-btn'),
     svgLink = document.getElementById('svg-link'),
     geojsonLink = document.getElementById('geojson-link'),
@@ -21,45 +24,82 @@ const datalist = document.getElementById('maps'),
 
 // Base path to maps
 const baseMapPath = 'https://code.highcharts.com/mapdata/',
-    options = [], // Options elements
-    allMaps = {},
-    mapsToSkip = [
-        'World, Eckert III projection, high resolution',
-        'World, Eckert III projection, low resolution',
-        'World, Eckert III projection, medium resolution',
-        'World, Robinson projection, high resolution',
-        'World, Robinson projection, low resolution',
-        'World, Robinson projection, medium resolution'
-    ];
+    allMaps = {}, // Map name => path
+    mapNames = [], // Map names in list order, used by Prev and Next
+    mapsToSkip = /(Eckert III|Robinson) projection/,
+    // Readable names for the groups in the map index
+    groupNames = {
+        Custom: 'World and regions'
+    },
+    // Hand-picked maps shown on top of the list
+    suggestedMaps = [{
+        label: 'World map',
+        name: 'World, medium resolution'
+    }, {
+        label: 'Europe',
+        name: 'Europe'
+    }, {
+        label: 'United States of America',
+        name: 'United States of America'
+    }, {
+        label: 'European Union (2020)',
+        name: 'European Union (2020)'
+    }, {
+        label: 'California',
+        name: 'California, admin2'
+    }];
 
-// Populate dropdown options
-for (const [mapGroup, maps] of Object.entries(Highcharts.mapDataIndex)) {
-    if (mapGroup !== 'version') {
-        Highcharts.merge(true, allMaps, maps);
+let currentMapName,
+    activeOption,
+    optionCount = 0;
+
+// Build the grouped list of maps
+const listGroups = [];
+
+function addListGroup(label, maps, suggested) {
+    const group = document.createElement('div'),
+        heading = document.createElement('div'),
+        options = maps.map(map => {
+            const option = document.createElement('div');
+            option.id = `map-option-${optionCount++}`;
+            option.className = 'map-option';
+            option.textContent = map.label;
+            option.dataset.name = map.name;
+            option.setAttribute('role', 'option');
+            option.setAttribute('aria-selected', 'false');
+            return option;
+        });
+
+    heading.id = `map-group-${listGroups.length}`;
+    heading.className = 'map-group-label';
+    heading.textContent = label;
+    heading.setAttribute('role', 'presentation');
+
+    group.setAttribute('role', 'group');
+    group.setAttribute('aria-labelledby', heading.id);
+    group.append(heading, ...options);
+    listbox.append(group);
+
+    listGroups.push({ element: group, options, suggested });
+}
+
+addListGroup('Suggested', suggestedMaps, true);
+
+for (const [groupName, maps] of Object.entries(Highcharts.mapDataIndex)) {
+    if (groupName !== 'version') {
+        const groupMaps = [];
+        for (const [name, path] of Object.entries(maps)) {
+            if (!mapsToSkip.test(name)) {
+                allMaps[name] = path;
+                mapNames.push(name);
+                groupMaps.push({ label: name, name });
+            }
+        }
+        addListGroup(groupNames[groupName] || groupName, groupMaps);
     }
 }
 
-// Remove unwanted text from maps display name
-for (const key of Object.keys(allMaps)) {
-    if (key.includes(', Miller projection')) {
-        allMaps[key.replace(', Miller projection', '')] = allMaps[key];
-        delete allMaps[key];
-    }
-}
-
-for (const [desc, path] of Object.entries(allMaps)) {
-    if (!mapsToSkip.includes(desc)) {
-        const option = document.createElement('option');
-        option.value = desc; // Display name
-        option.dataset.value = path; // Desired value
-        options.push(option);
-    }
-}
-
-datalist.append(...options);
-
-const searchText = `Search ${Object.keys(options).length} maps`;
-input.placeholder = searchText;
+input.placeholder = `Search ${mapNames.length} maps`;
 
 // Helper functions
 function setAttributes(el, attrs) {
@@ -102,7 +142,15 @@ function fillInfo(mapName, mapKey) {
         href: `https://jsfiddle.net/gh/get/jquery/1.11.0/highcharts/highcharts/tree/master/samples/mapdata/${mapKey}`
     });
 
-    mapNameHeader.innerText = mapName;
+    // The search field shows the name of the current map
+    currentMapName = mapName;
+    input.value = mapName;
+    listGroups.forEach(group => group.options.forEach(option => {
+        option.classList.toggle(
+            'current',
+            option.dataset.name === mapName
+        );
+    }));
 }
 
 function resetDrilldown(chart) {
@@ -112,6 +160,114 @@ function resetDrilldown(chart) {
         delete chart.breadcrumbs;
         delete chart.drilldown;
         delete chart.drilldownLevels;
+    }
+}
+
+// Map search, a combobox that filters the list while typing
+function isOpen() {
+    return input.getAttribute('aria-expanded') === 'true';
+}
+
+function getVisibleOptions() {
+    return listGroups
+        .filter(group => !group.element.hidden)
+        .flatMap(group => group.options.filter(option => !option.hidden));
+}
+
+function filterOptions(text) {
+    const query = text.trim().toLowerCase();
+    let count = 0;
+
+    listGroups.forEach(group => {
+        let groupCount = 0;
+        group.options.forEach(option => {
+            // Suggested maps are only shown in the full list
+            const match = query ?
+                !group.suggested &&
+                    option.textContent.toLowerCase().includes(query) :
+                true;
+            option.hidden = !match;
+            if (match) {
+                groupCount++;
+            }
+        });
+        group.element.hidden = !groupCount;
+        if (!group.suggested) {
+            count += groupCount;
+        }
+    });
+
+    listbox.hidden = !count;
+    emptyMessage.hidden = !!count;
+    searchStatus.textContent = query ?
+        `${count} map${count === 1 ? '' : 's'} found` :
+        '';
+}
+
+function setActiveOption(option) {
+    if (activeOption) {
+        activeOption.classList.remove('active');
+        activeOption.setAttribute('aria-selected', 'false');
+    }
+    activeOption = option;
+
+    if (option) {
+        option.classList.add('active');
+        option.setAttribute('aria-selected', 'true');
+        input.setAttribute('aria-activedescendant', option.id);
+
+        // Scroll the option into view, with its group label if it is the
+        // first option in the group
+        const target = option.previousElementSibling.matches(
+                '.map-group-label'
+            ) ? option.parentElement : option,
+            top = target.offsetTop,
+            bottom = option.offsetTop + option.offsetHeight;
+
+        if (top < listbox.scrollTop) {
+            listbox.scrollTop = top;
+        } else if (bottom > listbox.scrollTop + listbox.clientHeight) {
+            listbox.scrollTop = bottom - listbox.clientHeight;
+        }
+    } else {
+        input.removeAttribute('aria-activedescendant');
+    }
+}
+
+function openList(showAll) {
+    if (showAll) {
+        filterOptions('');
+        listbox.scrollTop = 0;
+    }
+    setActiveOption(null);
+    mapSearch.classList.add('open');
+    input.setAttribute('aria-expanded', 'true');
+    toggleButton.setAttribute('aria-expanded', 'true');
+}
+
+function closeList() {
+    setActiveOption(null);
+    listbox.hidden = true;
+    emptyMessage.hidden = true;
+    searchStatus.textContent = '';
+    mapSearch.classList.remove('open');
+    input.setAttribute('aria-expanded', 'false');
+    toggleButton.setAttribute('aria-expanded', 'false');
+
+    // Show the current map name again if the search was abandoned
+    input.value = currentMapName;
+}
+
+function moveActiveOption(step) {
+    const options = getVisibleOptions(),
+        index = options.indexOf(activeOption);
+
+    if (options.length) {
+        setActiveOption(
+            index < 0 ?
+                options[step > 0 ? 0 : options.length - 1] :
+                options[(index + step + options.length) % options.length]
+        );
     }
 }
 
@@ -140,23 +296,16 @@ function resetDrilldown(chart) {
             // Handle error, the timeout is cleared on success
             let fail = setTimeout(() => {
                 if (!Highcharts.maps[mapKey]) {
-                    chart.showLoading(
-                        '<i class="fa fa-frown"></i> Map not ' +
-                        'found'
-                    );
+                    chart.showLoading('Map not found');
                     fail = setTimeout(() => {
                         chart.hideLoading();
                     }, 1000);
                 }
             }, 3000);
 
-            // Show the Font Awesome spinner
-            chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>');
+            chart.showLoading('Loading...');
 
             fillInfo(mapName, mapKey);
-            input.value = mapName;
-            prevMapButton.style.opacity = 1;
-            nextMapButton.style.opacity = 1;
 
             // Load the drilldown map
             const topology = await fetch(
@@ -209,7 +358,6 @@ function resetDrilldown(chart) {
         } = e.seriesOptions.custom;
         if (mapName && mapKey) {
             fillInfo(mapName, mapKey);
-            input.value = mapName;
         }
         this.credits.update();
     };
@@ -220,7 +368,6 @@ function resetDrilldown(chart) {
         value
     }));
 
-    console.time('map');
     const chart = Highcharts.mapChart('container', {
         accessibility: {
             series: {
@@ -318,13 +465,16 @@ function resetDrilldown(chart) {
             }]
         }
     });
-    console.timeEnd('map');
+
+    // Used to ignore responses of maps that are no longer requested, when
+    // switching quickly with Prev and Next
+    let updateRequest = 0;
 
     async function updateChart(mapName) {
-        const mapKey = allMaps[mapName].slice(0, -3);
+        const mapKey = allMaps[mapName].slice(0, -3),
+            request = ++updateRequest;
 
-        // Show loading
-        chart.showLoading('<i class="fa fa-spinner fa-spin fa-2x"></i>');
+        chart.showLoading('Loading...');
 
         fillInfo(mapName, mapKey);
 
@@ -332,8 +482,12 @@ function resetDrilldown(chart) {
             .then(response => response.json())
             .catch(e => console.log('Error', e));
 
+        if (request !== updateRequest) {
+            return;
+        }
+
         if (!mapData) {
-            chart.showLoading('<i class="fa fa-frown"></i> Map not found');
+            chart.showLoading('Map not found');
             return;
         }
 
@@ -369,20 +523,107 @@ function resetDrilldown(chart) {
         chart.credits.update();
     }
 
-    // Change map on input change
-    input.addEventListener('input', async function () {
-        if (allMaps[this.value]) {
-            prevMapButton.style.opacity = 1;
-            nextMapButton.style.opacity = 1;
+    function selectMap(mapName) {
+        closeList();
+
+        if (allMaps[mapName] && mapName !== currentMapName) {
             const pointOnCurrentMap =
-                chart.series[0].points.find(point => point.name === this.value);
+                chart.series[0].points.find(point => point.name === mapName);
 
             if (pointOnCurrentMap) {
                 pointOnCurrentMap.doDrilldown();
             } else {
                 resetDrilldown(chart);
-                updateChart(this.value);
+                updateChart(mapName);
             }
+        }
+    }
+
+    // Switch to the previous or next map in the list
+    function stepMap(step) {
+        const index = mapNames.indexOf(currentMapName),
+            count = mapNames.length;
+
+        resetDrilldown(chart);
+        updateChart(mapNames[
+            index < 0 ?
+                (step > 0 ? 0 : count - 1) :
+                (index + step + count) % count
+        ]);
+    }
+
+    // Map search events
+    input.addEventListener('click', function () {
+        if (!isOpen()) {
+            openList(true);
+            this.select();
+        }
+    });
+
+    input.addEventListener('input', function () {
+        filterOptions(this.value);
+        openList(false);
+
+        // Pressing Enter picks the first match
+        if (this.value.trim()) {
+            setActiveOption(getVisibleOptions()[0]);
+        }
+    });
+
+    input.addEventListener('keydown', function (e) {
+        switch (e.key) {
+        case 'ArrowDown':
+        case 'ArrowUp':
+            e.preventDefault();
+            if (!isOpen()) {
+                openList(true);
+            }
+            if (!e.altKey) {
+                moveActiveOption(e.key === 'ArrowDown' ? 1 : -1);
+            }
+            break;
+        case 'Enter':
+            if (isOpen() && activeOption) {
+                e.preventDefault();
+                selectMap(activeOption.dataset.name);
+            }
+            break;
+        case 'Escape':
+            if (isOpen()) {
+                e.preventDefault();
+                closeList();
+                this.select();
+            }
+            break;
+        default:
+        }
+    });
+
+    // Keep focus in the input while using the mouse in the list
+    [toggleButton, listbox, emptyMessage].forEach(element => {
+        element.addEventListener('mousedown', e => e.preventDefault());
+    });
+
+    toggleButton.addEventListener('click', function () {
+        if (isOpen()) {
+            closeList();
+        } else {
+            openList(true);
+            input.focus();
+            input.select();
+        }
+    });
+
+    listbox.addEventListener('click', function (e) {
+        const option = e.target.closest('[role="option"]');
+        if (option) {
+            selectMap(option.dataset.name);
+        }
+    });
+
+    mapSearch.addEventListener('focusout', function (e) {
+        if (isOpen() && !this.contains(e.relatedTarget)) {
+            closeList();
         }
     });
 
@@ -399,29 +640,6 @@ function resetDrilldown(chart) {
         });
     });
 
-    // Switch to previous map on button click
-    prevMapButton.addEventListener('click', function () {
-        const desiredIndex = Object.keys(allMaps).indexOf(input.value) - 1,
-            [mapName] = Object.entries(allMaps)[
-                desiredIndex < 0 ?
-                    Object.keys(allMaps).length - 1 :
-                    desiredIndex
-            ];
-        resetDrilldown(chart);
-        updateChart(mapName);
-        input.value = mapName;
-    });
-
-    // Switch to next map on button click
-    nextMapButton.addEventListener('click', function () {
-        const desiredIndex = Object.keys(allMaps).indexOf(input.value) + 1,
-            [mapName] = Object.entries(allMaps)[
-                desiredIndex > Object.keys(allMaps).length - 1 ?
-                    0 :
-                    desiredIndex
-            ];
-        resetDrilldown(chart);
-        updateChart(mapName);
-        input.value = mapName;
-    });
+    prevMapButton.addEventListener('click', () => stepMap(-1));
+    nextMapButton.addEventListener('click', () => stepMap(1));
 })();
