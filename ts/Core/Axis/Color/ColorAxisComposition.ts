@@ -364,6 +364,29 @@ export namespace ColorAxisComposition {
                             point.color || series.color
                 );
 
+            // Points created while their data class is toggled off in the
+            // legend must inherit its hidden state (#25083)
+            const item = colorAxis?.legendItem?.labels?.[
+                    point.dataClass as number
+                ] as ColorAxis.LegendItemObject|undefined,
+                hidden = item?.visible === false,
+                // Only take back the points that were hidden this way
+                visible = !hidden &&
+                    !!(point.visible || point.hiddenInDataClass);
+
+            if (item) {
+                item.isDirtyPoints = hidden;
+            }
+
+            if (point.visible !== visible) {
+                point.hiddenInDataClass = hidden;
+                point.visible = point.options.visible = visible;
+                if (visible) {
+                    // Hidden by a legend click, drawPoints won't show it
+                    point.graphic?.show();
+                }
+            }
+
             if (color && point.color !== color) {
                 point.color = color;
 

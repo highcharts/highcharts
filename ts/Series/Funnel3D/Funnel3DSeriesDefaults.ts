@@ -37,7 +37,14 @@ const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
 
     animation: false,
 
-    /** @ignore-option */
+    /**
+     * The center of the series. By default, it is centered in the middle
+     * of the plot area, so it fills the plot area height.
+     *
+     * @type    {Array<number|string>}
+     * @default ["50%", "50%"]
+     * @since   7.1.0
+     */
     center: ['50%', '50%'],
 
     colorByPoint: true,
@@ -71,6 +78,8 @@ const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
      * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
      */
     height: '100%',
+
+    ignoreHiddenPoint: false,
 
     /**
      * The height of the neck, the lower part of the funnel. A number

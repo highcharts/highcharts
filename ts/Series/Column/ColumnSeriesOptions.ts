@@ -131,6 +131,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample highcharts/plotoptions/series-border-radius
      *         Column and pie with rounded border
      *
+     * @default 3
+     *
      * @product highcharts highstock gantt
      */
     borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
@@ -146,6 +148,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-borderwidth/
      *         2px black border
      *
+     * @default undefined
+     *
      * @product highcharts highstock gantt
      */
     borderWidth?: number;
@@ -158,49 +162,13 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/series-column/centerincategory/
      *         Center in category
      *
+     * @default false
+     *
      * @since 8.0.1
      *
      * @product highcharts highstock gantt
      */
     centerInCategory?: boolean;
-
-    /**
-     * When using automatic point colors pulled from the global
-     * [colors](colors) or series-specific
-     * [plotOptions.column.colors](series.colors) collections, this option
-     * determines whether the chart should receive one color per series or
-     * one color per point.
-     *
-     * In styled mode, the `colors` or `series.colors` arrays are not
-     * supported, and instead this option gives the points individual color
-     * class names on the form `highcharts-color-{n}`.
-     *
-     * @see [series colors](#plotOptions.column.colors)
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
-     *         False by default
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
-     *         True
-     *
-     * @default false
-     *
-     * @since 2.0
-     *
-     * @product highcharts highstock gantt
-     */
-    colorByPoint?: boolean;
-
-    /**
-     * A series specific or series type specific color set to apply instead
-     * of the global [colors](#colors) when [colorByPoint](
-     * #plotOptions.column.colorByPoint) is true.
-     *
-     * @since 3.0
-     *
-     * @product highcharts highstock gantt
-     */
-    colors?: Array<ColorType>;
 
     /**
      * When the series contains less points than the crop threshold, all
@@ -211,6 +179,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * the crop threshold, the series data is cropped to only contain points
      * that fall within the plot area. The advantage of cropping away
      * invisible points is to increase performance on large series.
+     *
+     * @default 50
      *
      * @product highcharts highstock gantt
      */
@@ -320,10 +290,13 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-grouppadding-none/
      *         No group padding - all columns are evenly spaced
      *
+     * @default 0.2
+     *
      * @product highcharts highstock gantt
      */
     groupPadding?: number;
 
+    /** @default null */
     marker?: PointMarkerOptions;
 
     /**
@@ -363,6 +336,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength-stacked/
      *         Stack-aware minimum length
      *
+     * @default 0
+     *
      * @product highcharts highstock gantt
      */
     minPointLength?: number;
@@ -381,6 +356,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/pie-pointpadding/
      *         Pie point padding plugin
+     *
+     * @default 0.1
      *
      * @product highcharts highstock gantt
      */
@@ -401,6 +378,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-pointrange/
      *         Set the point range to one day on a data set with one week
      *         between the points
+     *
+     * @default null
      *
      * @since 2.3
      *
@@ -427,8 +406,10 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      */
     pointWidth?: number;
 
+    /** @default false */
     stickyTracking?: boolean;
 
+    /** @default true */
     startFromThreshold?: boolean;
 
     states?: SeriesStatesOptions<ColumnSeriesOptions>;
@@ -437,6 +418,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * The Y axis value to serve as the base for the columns, for
      * distinguishing between values above and below a threshold. If `null`,
      * the columns extend from the padding Y axis minimum.
+     *
+     * @default 0
      *
      * @since 2.0
      *

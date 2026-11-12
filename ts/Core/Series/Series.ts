@@ -26,6 +26,7 @@ import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type {
+    CellEvent,
     Column,
     ColumnCollection,
     ColumnEvent,
@@ -67,8 +68,7 @@ import {
     setAnimation
 } from '../Animation/AnimationUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import D from '../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Defaults.js';
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -541,7 +541,12 @@ class Series {
      */
     public linkedSeries!: Array<Series>;
 
-    /** @internal */
+    /**
+     * The SVG group containing point marker elements that should not be
+     * clipped.
+     *
+     * @readonly
+     */
     public markerGroup?: SVGElement;
 
     /**
@@ -743,6 +748,14 @@ class Series {
      *
      * @name Highcharts.Series#linkedSeries
      * @type {Array<Highcharts.Series>}
+     * @readonly
+     */
+    /**
+     * The SVG group containing point marker elements that should not be
+     * clipped.
+     *
+     * @name Highcharts.Series#markerGroup
+     * @type {Highcharts.SVGElement}
      * @readonly
      */
     /**
@@ -1659,7 +1672,11 @@ class Series {
         // same, update one-to-one
         } else if (equalLength && !dataSorting?.enabled) {
             for (i = 0; i < dataTable.rowCount; i++) {
-                if (!oldData[i].destroyed && !oldData[i].condemned) {
+                if (
+                    oldData[i] &&
+                    !oldData[i].destroyed &&
+                    !oldData[i].condemned
+                ) {
                     const pOptions = dataTable.getRowObject(i);
                     if (pOptions) {
                         // Remove undefined properties, but preserve explicit
@@ -2124,12 +2141,8 @@ class Series {
                     (): void => chart.renderer && chart.redraw(),
                     0
                 );
-            };
-
-        addEvent(
-            dataTable,
-            'afterSetRows',
-            (e: RowEvent): void => {
+            },
+            onSetRow = (e: CellEvent|RowEvent): void => {
                 const rowIndex = e.rowIndex;
 
                 if (isNumber(rowIndex)) {
@@ -2154,8 +2167,10 @@ class Series {
                         }
                     }
                 }
-            }
-        );
+            };
+
+        addEvent(dataTable, 'afterSetCell', onSetRow);
+        addEvent(dataTable, 'afterSetRows', onSetRow);
 
         addEvent(
             dataTable,
@@ -2181,7 +2196,8 @@ class Series {
             dataTable,
             'afterSetColumns',
             (e: ColumnEvent): void => {
-                this.setData(e.target);
+                this.setData(e.target, false);
+                queueRedraw();
             }
         );
 
@@ -3968,7 +3984,9 @@ class Series {
         // Call the afterAnimate function on animation complete (but don't
         // overwrite the animation.complete option which should be available
         // to the user).
-        if (!hasRendered) {
+        // An update during the initial animation keeps the pending timeout
+        // (#25439)
+        if (!hasRendered && series.animationTimeout === void 0) {
             // Additional time if defer is defined before afterAnimate
             // will be triggered
             if (animDuration && animOptions.defer) {
@@ -4877,6 +4895,11 @@ class Series {
             options.data = series.options.data;
         }
 
+        // Keep the pending afterAnimate of the initial animation (#25439)
+        if (!series.finishedAnimating) {
+            keepProps.push('animationTimeout');
+        }
+
         // Make sure preserved properties are not destroyed (#3094)
         keepProps = groups.concat(keepProps);
         keepProps.forEach(function (prop: string): void {
@@ -5667,6 +5690,75 @@ export default Series;
  * Defaults to the first data table.
  * @name Highcharts.DataMappingItemObject#dataTable
  * @type {number|string|undefined}
+ */
+
+
+/**
+ * Function callback when adding a point
+ *
+ * @callback Highcharts.SeriesAddPointCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesAddPointEventObject} event
+ *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
+ */
+
+/**
+ * Event information regarding adding a point to a series.
+ *
+ * @interface Highcharts.SeriesAddPointEventObject
+ *//**
+ * Point that was added to the series.
+ * @name Highcharts.SeriesAddPointEventObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * Series to which the point was added.
+ * @name Highcharts.SeriesAddPointEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesAddPointEventObject#type
+ * @type {"addPoint"}
+ */
+
+/**
+ * Function callback when the series has set its options.
+ *
+ * @callback Highcharts.SeriesAfterSetOptionsCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesAfterSetOptionsEventObject} event
+ *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
+ */
+
+/**
+ * Event information regarding the options after a series has been set.
+ *
+ * @interface Highcharts.SeriesAfterSetOptionsEventObject
+ *//**
+ * Series whose options were updated.
+ * @name Highcharts.SeriesAfterSetOptionsEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * The final merged series options.
+ * @name Highcharts.SeriesAfterSetOptionsEventObject#options
+ * @type {Highcharts.SeriesOptionsType}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesAfterSetOptionsEventObject#type
+ * @type {"afterSetOptions"}
  */
 
 /**

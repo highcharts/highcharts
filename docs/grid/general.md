@@ -24,8 +24,8 @@ This minimal example creates a working **Grid Lite** instance:
     <head>
         <meta charset="utf-8" />
         <title>My First Grid</title>
-        <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css" />
+        <script src="https://code.highcharts.com/grid-lite/grid-lite.js"></script>
+        <link rel="stylesheet" href="https://code.highcharts.com/grid-lite/css/grid-lite.css" />
     </head>
     <body>
         <div id="container"></div>
@@ -47,8 +47,8 @@ This minimal example creates a working **Grid Lite** instance:
 ### 1. Import required JS and CSS
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css" />
+<script src="https://code.highcharts.com/grid-lite/grid-lite.js"></script>
+<link rel="stylesheet" href="https://code.highcharts.com/grid-lite/css/grid-lite.css" />
 ```
 
 Load the required JS and CSS from the public CDN. See [Installation](https://www.highcharts.com/docs/grid/installation) for other setup options.

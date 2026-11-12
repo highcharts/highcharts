@@ -31,6 +31,8 @@ export interface SeriesLabelOptions {
     /**
      * An array of boxes to avoid when laying out the labels. Each item has a
      * `left`, `right`, `top` and `bottom` property.
+     *
+     * @default []
      */
     boxesToAvoid?: Array<LabelIntersectBoxObject>;
 
@@ -65,6 +67,8 @@ export interface SeriesLabelOptions {
      * `name`, `options.xxx`, `color` and other members from the `series`
      * object. Use this option also to set a static text for the label.
      *
+     * @default undefined
+     *
      * @since    8.1.0
      */
     format?: string;
@@ -73,6 +77,8 @@ export interface SeriesLabelOptions {
      * Callback function to format each of the series' labels. The `this`
      * keyword refers to the series object. By default the `formatter` is
      * undefined and the `series.name` is rendered.
+     *
+     * @default undefined
      *
      * @since    8.1.0
      */

@@ -39,8 +39,7 @@ import type { DeepPartial } from '../../Shared/Types';
 
 import AST from '../Renderer/HTML/AST.js';
 import { animObject } from '../Animation/AnimationUtilities.js';
-import D from '../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Defaults.js';
 import F from '../Templating.js';
 const { format } = F;
 import {
@@ -350,9 +349,8 @@ class Point {
      * The attributes of the rendered SVG shape like in `column` or `pie`
      * series.
      *
-     * @readonly
      * @name Highcharts.Point#shapeArgs
-     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     * @type {Highcharts.SVGAttributes|undefined}
      */
     public shapeArgs?: SVGAttributes;
 
@@ -539,9 +537,8 @@ class Point {
      * The attributes of the rendered SVG shape like in `column` or `pie`
      * series.
      *
-     * @readonly
      * @name Highcharts.Point#shapeArgs
-     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     * @type {Highcharts.SVGAttributes|undefined}
      */
     /**
      * Defines the tooltip's position for a data point in a chart. It is an
@@ -739,6 +736,11 @@ class Point {
              * @internal
              */
             const destroyPoint = (): void => {
+                const i = series.condemnedPoints?.indexOf(point) ?? -1;
+                if (i > -1) {
+                    series.condemnedPoints.splice(i, 1);
+                }
+
                 // Remove all events and elements
                 if (
                     point.graphic ||
@@ -768,8 +770,8 @@ class Point {
                 if (!hoverPoints.length) {
                     chart.hoverPoints = void 0;
                 }
-
             }
+
             if (point === chart.hoverPoint) {
                 point.onMouseOut();
             }
@@ -932,10 +934,8 @@ class Point {
      *         The zone item, or `undefined` if the series has no zones.
      */
     public getZone(): Series.ZoneObject|undefined {
-        const series = this.series,
-            zones = series.zones,
-            zoneAxis = series.zoneAxis || 'y';
-        let zone,
+        const { zoneAxis = 'y', zones } = this.series;
+        let zone: Series.ZoneObject|undefined,
             i = 0;
 
         zone = zones[i];
@@ -947,15 +947,11 @@ class Point {
         }
 
         // For resetting or reusing the point (#8100)
-        if (!this.nonZonedColor) {
-            this.nonZonedColor = this.color;
-        }
+        this.nonZonedColor ||= this.color;
 
-        if (zone?.color && !this.options.color) {
-            this.color = zone.color;
-        } else {
-            this.color = this.nonZonedColor;
-        }
+        this.color = zone?.color && !this.options.color ?
+            zone.color :
+            this.nonZonedColor;
 
         return zone;
     }
@@ -966,10 +962,10 @@ class Point {
      * @internal
      */
     public hasNewShapeType(): boolean|undefined {
-        const point = this;
-        const oldShapeType = point.graphic &&
-            (point.graphic.symbolName || point.graphic.element.nodeName);
-        return oldShapeType !== this.shapeType;
+        const { graphic } = this;
+        return (
+            graphic?.symbolName || graphic?.element.nodeName
+        ) !== this.shapeType;
     }
 
     /**

@@ -299,7 +299,7 @@ class MockPoint {
     public target: (ControlTarget|null);
     public ttBelow?: boolean;
     public visible?: boolean;
-    public x?: number;
+    public x?: number|string;
     public y?: (number|null);
 
     /* *
@@ -599,10 +599,10 @@ export default MockPoint;
  *
  * @interface Highcharts.AnnotationMockPointOptionsObject
  *//**
- * The x position of the point. Units can be either in axis
- * or chart pixel coordinates.
+ * The x position of the point. Units can be either in axis or chart pixel
+ * coordinates. Date strings can be used for datetime axes.
  *
- * @type      {number}
+ * @type      {number|string}
  * @name      Highcharts.AnnotationMockPointOptionsObject.x
  *//**
  * The y position of the point. Units can be either in axis
@@ -617,7 +617,7 @@ export default MockPoint;
  * is not found the point's x coordinate refers to the chart
  * pixels.
  *
- * @type      {number|string|null}
+ * @type      {number|string|null|undefined}
  * @name      Highcharts.AnnotationMockPointOptionsObject.xAxis
  *//**
  * This option defines which `yAxis` the point is connected to.
@@ -626,7 +626,7 @@ export default MockPoint;
  * is not found the point's y coordinate refers to the chart
  * pixels.
  *
- * @type      {number|string|null}
+ * @type      {number|string|null|undefined}
  * @name      Highcharts.AnnotationMockPointOptionsObject.yAxis
  */
 

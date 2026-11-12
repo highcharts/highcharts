@@ -1,0 +1,83 @@
+Highcharts.chart('container', {
+
+    chart: {
+        type: 'gauge',
+        height: '80%'
+    },
+
+    title: {
+        text: 'Speedometer'
+    },
+
+    pane: {
+        startAngle: -90,
+        endAngle: 90,
+        borderRadius: '50%'
+    },
+
+    // the value axis
+    yAxis: {
+        min: 0,
+        max: 200,
+        tickPixelInterval: 72,
+        gridLineColor: 'var(--highcharts-background-color, #FFFFFF)',
+        gridLineWidth: 2,
+        labels: {
+            distance: 20,
+            style: {
+                fontSize: '14px'
+            }
+        },
+        plotBands: [{
+            from: 0,
+            to: 120,
+            color: '#55BF3B' // green
+        }, {
+            from: 120,
+            to: 160,
+            color: '#DDDF0D' // yellow
+        }, {
+            from: 160,
+            to: 200,
+            color: '#DF5353' // red
+        }]
+    },
+
+    series: [{
+        name: 'Speed',
+        data: [80],
+        tooltip: {
+            valueSuffix: ' km/h'
+        },
+        dataLabels: {
+            format: '{y} km/h',
+            borderWidth: 0,
+            color: (
+                Highcharts.defaultOptions.title &&
+                Highcharts.defaultOptions.title.style &&
+                Highcharts.defaultOptions.title.style.color
+            ) || '#333333',
+            style: {
+                fontSize: '16px'
+            }
+        }
+    }]
+
+} satisfies Highcharts.Options);
+
+// Add some life
+setInterval(() => {
+    const chart = Highcharts.charts[0];
+    if (chart && !chart.renderer.forExport) {
+        const point = chart.series[0].points[0],
+            inc = Math.round((Math.random() - 0.5) * 20);
+
+        let newVal = point.y + inc;
+        if (newVal < 0 || newVal > 200) {
+            newVal = point.y - inc;
+        }
+
+        point.update(newVal);
+    }
+
+}, 3000);

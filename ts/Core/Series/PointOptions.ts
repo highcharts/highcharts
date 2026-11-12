@@ -705,7 +705,10 @@ export interface PointMarkerStateHoverOptions extends StateHoverOptions {
 }
 
 export interface PointMarkerStateInactiveOptions extends StateInactiveOptions {
-    /** @internal */
+
+    /**
+     * Opacity of inactive markers.
+     */
     opacity?: number;
 }
 
