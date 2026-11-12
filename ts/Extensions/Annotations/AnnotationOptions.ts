@@ -150,7 +150,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * by options in a specific control point.
      *
      * @declare  Highcharts.AnnotationControlPointOptionsObject
-     * @requires modules/annotations
      */
     controlPointOptions?: ControlPointOptions;
 
@@ -178,8 +177,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
 
     /**
      * Events available in annotations.
-     *
-     * @requires modules/annotations
      */
     events?: AnnotationEventsOptions;
 
@@ -200,8 +197,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * Options for annotation's labels. Each label inherits options
      * from the labelOptions object. An option from the labelOptions
      * can be overwritten by config for a specific label.
-     *
-     * @requires modules/annotations
      */
     labelOptions?: AnnotationLabelOptionsOptions;
 
@@ -223,8 +218,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * Options for annotation's shapes. Each shape inherits options
      * from the shapeOptions object. An option from the shapeOptions
      * can be overwritten by config for a specific shape.
-     *
-     * @requires  modules/annotations
      */
     shapeOptions?: AnnotationShapeOptionsOptions;
 
@@ -256,7 +249,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
      *
      * Additional options for an annotation with the type.
      *
-     * @requires  modules/annotations
      * @apioption annotations.typeOptions
      */
     typeOptions?: AnnotationTypeOptions;
@@ -807,7 +799,6 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
      *         Attach annotation to a mock point with different ways
      *
      * @extends   annotations.labels.point
-     * @requires  modules/annotations
      * @apioption annotations.shapes.point
      */
     point?: AnnotationMockPointOptions;

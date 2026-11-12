@@ -58,7 +58,8 @@ declare module '../Core/Series/DataLabelOptions' {
          * the `modules/textpath.js` file. However, it is included in the script
          * files of those series types that use it by default.
          *
-         * @since 7.1.0
+         * @since    7.1.0
+         * @requires modules/textpath
          */
         textPath?: DeepPartial<DataLabelTextPathOptions>;
     }
@@ -472,6 +473,7 @@ export function composeTextPath(SVGElementClass: typeof SVGElement): void {
  *
  * @declare   Highcharts.DataLabelsTextPathOptionsObject
  * @since     7.1.0
+ * @requires  modules/textpath
  * @apioption plotOptions.series.dataLabels.textPath
  */
 

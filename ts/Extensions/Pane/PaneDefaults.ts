@@ -42,7 +42,6 @@ const { defaultOptions } = D;
  *         Solid gauge with background settings
  *
  * @type         {null|*|Array<*>}
- * @requires     highcharts-more
  * @optionparent pane.background
  */
 const background: PaneBackgroundOptions = {
@@ -59,7 +58,6 @@ const background: PaneBackgroundOptions = {
      *
      * @type      {string}
      * @since     5.0.0
-     * @requires  highcharts-more
      * @apioption pane.background.className
      */
 
@@ -71,7 +69,6 @@ const background: PaneBackgroundOptions = {
      * @type    {Highcharts.PaneBackgroundShapeValue}
      * @since   2.3.0
      * @product highcharts
-     * @requires highcharts-more
      */
     shape: 'arc',
 
@@ -85,7 +82,6 @@ const background: PaneBackgroundOptions = {
      *          and pane with equal border radius
      * @product highcharts
      * @type    {number|string}
-     * @requires highcharts-more
      */
     borderRadius: void 0,
 
@@ -96,7 +92,6 @@ const background: PaneBackgroundOptions = {
      *           Pane background options
      * @since 2.3.0
      * @product highcharts
-     * @requires highcharts-more
      */
     borderWidth: 0,
 
@@ -108,7 +103,6 @@ const background: PaneBackgroundOptions = {
      * @type    {Highcharts.ColorType}
      * @since   2.3.0
      * @product highcharts
-     * @requires highcharts-more
      */
     borderColor: 'var(--highcharts-neutral-color-20)',
 
@@ -120,7 +114,6 @@ const background: PaneBackgroundOptions = {
      * @type    {Highcharts.ColorType}
      * @since   2.3.0
      * @product highcharts
-     * @requires highcharts-more
      */
     backgroundColor: 'var(--highcharts-neutral-color-3)',
 
@@ -134,7 +127,6 @@ const background: PaneBackgroundOptions = {
      * @type    {number|string}
      * @since   2.3.0
      * @product highcharts
-     * @requires highcharts-more
      * @apioption pane.background.innerRadius
      */
 
@@ -148,7 +140,6 @@ const background: PaneBackgroundOptions = {
      * @type     {number|string}
      * @since    2.3.0
      * @product  highcharts
-     * @requires highcharts-more
      */
     outerRadius: '100%'
 
@@ -182,7 +173,6 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @type      {number}
      * @since     2.3.0
      * @product   highcharts
-     * @requires  highcharts-more
      * @apioption pane.endAngle
      */
 
@@ -217,7 +207,6 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @default ["50%", undefined]
      * @since   2.3.0
      * @product highcharts
-     * @requires highcharts-more
      * @apioption pane.center
      */
 
@@ -233,7 +222,6 @@ const pane: PaneOptions|Array<PaneOptions> = {
      *
      * @type    {number|string}
      * @product highcharts
-     * @requires highcharts-more
      * @apioption pane.innerSize
      */
 
@@ -271,7 +259,6 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @since   2.3.0
      * @product highcharts
      * @type      {number}
-     * @requires highcharts-more
      * @apioption pane.startAngle
      */
 
@@ -286,7 +273,6 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @since    13.0.0
      * @product  highcharts
      * @type     {number}
-     * @requires highcharts-more
      * @apioption pane.thickness
      */
 

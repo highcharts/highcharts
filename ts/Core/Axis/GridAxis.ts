@@ -1590,6 +1590,7 @@ export default GridAxis;
  *
  * @since     6.2.0
  * @product   gantt
+ * @requires  modules/grid-axis
  * @apioption xAxis.grid
  */
 

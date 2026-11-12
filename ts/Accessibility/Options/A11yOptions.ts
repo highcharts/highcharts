@@ -890,7 +890,6 @@ export interface LegendAccessibilityOptions {
      * Options for keyboard navigation for the legend.
      *
      * @since    7.1.0
-     * @requires modules/accessibility
      */
     keyboardNavigation: LegendAccessibilityKeyboardNavigationOptions;
 }
@@ -1033,7 +1032,6 @@ export interface SeriesAccessibilityOptions {
      * Point accessibility options for a series.
      *
      * @since    9.3.0
-     * @requires modules/accessibility
      */
     point: AccessibilityPointOptions;
 }

@@ -232,7 +232,6 @@ export interface AnnotationInDataTableOptions {
      * combined in one export-data table cell.
      *
      * @since    8.2.0
-     * @requires modules/annotations
      */
     itemDelimiter?: string;
 
@@ -244,7 +243,6 @@ export interface AnnotationInDataTableOptions {
      *         Concatenate point annotations with itemDelimiter set.
      *
      * @since    8.2.0
-     * @requires modules/annotations
      */
     join?: boolean;
 }
@@ -277,7 +275,6 @@ export interface ExportingCsvOptions {
      * Options for annotations in the export-data table.
      *
      * @since    8.2.0
-     * @requires modules/export-data
      * @requires modules/annotations
      */
     annotations?: AnnotationInDataTableOptions;

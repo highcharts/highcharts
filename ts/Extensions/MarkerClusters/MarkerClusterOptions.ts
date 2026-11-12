@@ -115,7 +115,6 @@ export interface MarkerClusterEventsOptions {
      *
      * @product   highcharts highmaps
      * @see       [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
-     * @requires  modules/marker-clusters
      */
     drillToCluster: MarkerClusterDrillCallbackFunction;
 }
@@ -129,7 +128,6 @@ export interface MarkerClusterLayoutAlgorithmOptions {
      * defining a percentage of the plot area width.
      *
      * @default 40
-     * @requires modules/marker-clusters
      */
     distance: number|string;
 
@@ -140,7 +138,6 @@ export interface MarkerClusterLayoutAlgorithmOptions {
      * of the plot area width.
      *
      * @default 50
-     * @requires modules/marker-clusters
      */
     gridSize: number|string;
 
@@ -148,8 +145,6 @@ export interface MarkerClusterLayoutAlgorithmOptions {
      * When `type` is set to `kmeans`,
      * `iterations` are the number of iterations that this algorithm will be
      * repeated to find clusters positions.
-     *
-     * @requires modules/marker-clusters
      */
     iterations?: number;
 
@@ -160,7 +155,6 @@ export interface MarkerClusterLayoutAlgorithmOptions {
      * large datasets and better clusters arrangement after the zoom.
      *
      * @default 100
-     * @requires modules/marker-clusters
      */
     kmeansThreshold: number;
 
@@ -243,7 +237,6 @@ export interface MarkerClusterLayoutAlgorithmOptions {
      *         Custom algorithm
      *
      * @see [cluster.minimumClusterSize](#plotOptions.scatter.cluster.minimumClusterSize)
-     * @requires modules/marker-clusters
      */
     type?: (MarkerClusterAlgorithmValue | Function);
 }
@@ -276,8 +269,6 @@ export interface MarkerClusterStateHoverOptions extends PointMarkerStateHoverOpt
      * The fill color of the cluster marker in hover state. When
      * `undefined`, the series' or point's fillColor for normal
      * state is used.
-     *
-     * @requires modules/marker-clusters
      */
     fillColor?: PointMarkerStateHoverOptions['fillColor'];
 }
@@ -297,21 +288,17 @@ export interface MarkerClusterOptions {
      *         Prevent overlapping
      *
      * @default true
-     * @requires modules/marker-clusters
      */
     allowOverlap?: boolean;
 
     /**
      * Options for the cluster marker animation.
      * @default { "duration": 500 }
-     * @requires modules/marker-clusters
      */
     animation?: (boolean|Partial<AnimationOptions>);
 
     /**
      * Options for the cluster data labels.
-     *
-     * @requires modules/marker-clusters
      */
     dataLabels?: DataLabelOptions & {
         /** @default true */
@@ -337,7 +324,6 @@ export interface MarkerClusterOptions {
      * Zoom the plot area to the cluster points range when a cluster is clicked.
      *
      * @default true
-     * @requires modules/marker-clusters
      */
     drillToCluster?: boolean;
 
@@ -350,14 +336,11 @@ export interface MarkerClusterOptions {
      *         Scatter marker clusters
      *
      * @default false
-     * @requires modules/marker-clusters
      */
     enabled?: boolean;
 
     /**
      * Event callbacks for marker clusters.
-     *
-     * @requires modules/marker-clusters
      */
     events?: MarkerClusterEventsOptions;
 
@@ -367,7 +350,6 @@ export interface MarkerClusterOptions {
      * distance or iterations.
      *
      * @default {"gridSize": 50, "distance": 40, "kmeansThreshold": 100}
-     * @requires modules/marker-clusters
      */
     layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
 
@@ -376,8 +358,6 @@ export interface MarkerClusterOptions {
      *
      * Defaults to a cluster symbol with radius 15, no line, and a line color
      * matching the chart background.
-     *
-     * @requires modules/marker-clusters
      */
     marker: MarkerClusterMarkerOptions;
 
@@ -389,14 +369,11 @@ export interface MarkerClusterOptions {
      *         At least three points in the cluster
      *
      * @default 2
-     * @requires modules/marker-clusters
      */
     minimumClusterSize?: number;
 
     /**
      * Options for cluster states.
-     *
-     * @requires modules/marker-clusters
      */
     states?: MarkerClusterStatesOptions;
 
@@ -414,7 +391,6 @@ export interface MarkerClusterOptions {
      *         Zones on maps
      *
      * @product   highcharts highmaps
-     * @requires  modules/marker-clusters
      */
     zones?: Array<MarkerClusterZonesOptions>;
 }
@@ -425,8 +401,6 @@ export interface MarkerClusterZonesOptions {
      *
      * @sample highcharts/css/color-zones/
      *         Zones styled by class name
-     *
-     * @requires  modules/marker-clusters
      */
     className?: string;
 
@@ -434,7 +408,6 @@ export interface MarkerClusterZonesOptions {
      * The value where the zone starts.
      *
      * @product   highcharts highmaps
-     * @requires  modules/marker-clusters
      */
     from: number;
 
@@ -444,7 +417,6 @@ export interface MarkerClusterZonesOptions {
      * @see [cluster.marker](#plotOptions.scatter.cluster.marker)
      * @extends   plotOptions.scatter.cluster.marker
      * @product   highcharts highmaps
-     * @requires  modules/marker-clusters
      */
     marker: PointMarkerOptions;
 
@@ -452,7 +424,6 @@ export interface MarkerClusterZonesOptions {
      * The value where the zone ends.
      *
      * @product   highcharts highmaps
-     * @requires  modules/marker-clusters
      */
     to: number;
 

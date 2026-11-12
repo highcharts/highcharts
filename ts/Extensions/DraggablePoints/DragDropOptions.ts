@@ -324,7 +324,6 @@ declare module '../../Core/Chart/ChartOptions' {
          *
          * @since      6.2.0
          * @deprecated 10.2.1
-         * @requires   modules/draggable-points
          */
         zoomKey?: 'alt' | 'ctrl' | 'meta' | 'shift';
     }
@@ -340,7 +339,6 @@ declare module '../../Core/Chart/ChartOptions' {
          * either set zooming key or [chart.panKey](#chart.panKey).
          *
          * @since    10.2.1
-         * @requires modules/draggable-points
          */
         key?: 'alt' | 'ctrl' | 'meta' | 'shift';
     }

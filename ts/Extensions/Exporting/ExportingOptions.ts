@@ -185,8 +185,6 @@ export interface ExportingOptions {
      * to the default buttons listed here, custom buttons can be added.
      * See [navigation.buttonOptions](#navigation.buttonOptions) for general
      * options.
-     *
-     * @requires modules/exporting
      */
     buttons?: ExportingButtonsOptions;
 
@@ -237,7 +235,6 @@ export interface ExportingOptions {
      * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
      *
      * @since     5.0.0
-     * @requires  modules/exporting
      * @requires  modules/offline-exporting
      */
     error?: Exporting.ErrorCallbackFunction;
@@ -262,7 +259,6 @@ export interface ExportingOptions {
      *
      * @default  true
      * @since    4.1.8
-     * @requires modules/exporting
      * @requires modules/offline-exporting
      */
     fallbackToExportServer?: boolean;
@@ -337,7 +333,6 @@ export interface ExportingOptions {
      *
      * @default  true
      * @since    12.3.0
-     * @requires modules/exporting
      */
     local?: boolean;
 
@@ -742,8 +737,6 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-theme/
      *         Theming the buttons
      *
-     * @requires modules/exporting
-     *
      * @since 3.0
      */
     theme?: ButtonThemeObject;
@@ -823,7 +816,6 @@ export interface ExportingButtonsOptions {
      *
      * @declare  Highcharts.ExportingButtonsOptionsObject
      * @extends  navigation.buttonOptions
-     * @requires modules/exporting
      */
     contextButton: ExportingButtonOptions;
 }
