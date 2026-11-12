@@ -1,0 +1,375 @@
+/* *
+ *
+ *  (c) 2026 Highsoft AS
+ *
+ *  Boost2: WebGPU renderer for series marks.
+ *
+ *  License: highcharts.com/license
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Chart from '../../Core/Chart/Chart';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type Point from '../../Core/Series/Point';
+import type PointerEvent from '../../Core/PointerEvent';
+import type Series from '../../Core/Series/Series';
+import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
+
+import GPUContext from './GPUContext.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
+import LineStrategy, {
+    markersEnabled,
+    zonesSupported
+} from './Strategies/LineStrategy.js';
+import { fireEvent, pushUnique, wrap } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/** @internal */
+declare module '../../Core/Series/SeriesBase' {
+    /** @internal */
+    interface SeriesBase {
+        /**
+         * GPU draw strategy. The only series field this module writes to;
+         * absent means the series renders in SVG.
+         * @internal
+         */
+        gpu?: LineStrategy;
+        /**
+         * Set while the series waits for the device, so that at most one
+         * waiter is registered per series.
+         * @internal
+         */
+        boost2Pending?: boolean;
+    }
+}
+
+/** @internal */
+declare module '../../Core/Series/SeriesOptions' {
+    /** @internal */
+    interface SeriesOptions {
+        /**
+         * Draw the graph one device pixel wide, ignoring `lineWidth` and
+         * joins, from a quarter of the vertices.
+         * @internal
+         */
+        boostHairline?: boolean;
+    }
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Point count above which the GPU path is used, when `boostThreshold` is
+ * not set. Below it the fixed setup cost outweighs the gain.
+ * @internal
+ */
+const DEFAULT_THRESHOLD = 10000;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Capability check. A series that fails it renders in SVG rather than
+ * differently.
+ *
+ * @internal
+ */
+function isSupported(series: Series): boolean {
+    const options = series.options,
+        marker = options.marker,
+        // Shared with the boost module: 0 disables, 1 forces.
+        threshold = options.boostThreshold ?? DEFAULT_THRESHOLD;
+
+    if (
+        threshold === 0 ||
+        series.type !== 'line' ||
+        options.dashStyle ||
+        options.stacking ||
+        // `negativeColor` arrives here as a pair of zones too.
+        !zonesSupported(series) ||
+        // Only circles in the series color are drawn, and the automatic
+        // rule decides by zoom whether markers appear at all.
+        (markersEnabled(series) && (
+            series.symbol !== 'circle' ||
+            marker?.fillColor ||
+            marker?.lineWidth
+        )) ||
+        // `hitAt` assumes a sorted x column.
+        !series.requireSorting ||
+        series.chart.inverted ||
+        series.xAxis?.logarithmic ||
+        series.yAxis?.logarithmic
+    ) {
+        return false;
+    }
+
+    // The count in view, not of the whole series. `processData` crops
+    // only above `cropThreshold`, below which the threshold has no effect.
+    return series.dataTable.getModified().rowCount >= threshold;
+}
+
+/** @internal */
+function isEligible(series: Series): boolean {
+    return GPUContext.ready && isSupported(series);
+}
+
+/**
+ * True while an eligible series waits for the device. Drawing it in SVG
+ * meanwhile produces output the device would immediately replace.
+ *
+ * @internal
+ */
+function isPending(series: Series): boolean {
+    return !series.gpu &&
+        !GPUContext.ready &&
+        !GPUContext.unavailable &&
+        isSupported(series);
+}
+
+/**
+ * Whether the reduced `getExtremes` contract applies. Series needing
+ * `activeYData`, a custom y source, extremes from all data or non-default
+ * y keys fall through to the core implementation.
+ *
+ * @internal
+ */
+function canServeExtremes(series: Series): boolean {
+    const options = series.options;
+
+    return !series.getExtremesFromAll &&
+        !options.getExtremesFromAll &&
+        !options.cumulative &&
+        !options.stacking &&
+        !series.stackedYData &&
+        !series.keysAffectYAxis &&
+        !series.pointArrayMap;
+}
+
+/**
+ * Attach or detach the strategy by current eligibility, which zooming can
+ * change at any redraw.
+ *
+ * Detaching restores no state, since the strategy writes none. Attaching
+ * discards the SVG output of an earlier render, which `drawGraph` and
+ * `drawPoints` would otherwise never reach again.
+ *
+ * @internal
+ */
+function syncStrategy(series: Series): void {
+    if (isEligible(series)) {
+        if (!series.gpu) {
+            series.gpu = new LineStrategy(series);
+
+            // `points` is emptied below, so nothing else reaches these.
+            for (const point of series.points || []) {
+                point?.destroyElements?.();
+            }
+
+            series.graph = series.graph?.destroy();
+            series.area = series.area?.destroy();
+            series.tracker = series.tracker?.destroy();
+            series.graphPath = series.areaPath = void 0;
+        }
+    } else if (series.gpu) {
+        series.gpu.destroy();
+        series.gpu = void 0;
+    }
+}
+
+/**
+ * Wire the strategy into the series. Each branch belongs in `Series`
+ * itself as an `if (this.gpu)` check; a module cannot change the core,
+ * hence `wrap`.
+ *
+ * @internal
+ */
+function compose(
+    SeriesClass: typeof Series,
+    seriesTypes: typeof SeriesRegistry.seriesTypes
+): void {
+
+    if (!pushUnique(composed, 'Boost2')) {
+        return;
+    }
+
+    const seriesProto = SeriesClass.prototype,
+        lineProto = seriesTypes.line?.prototype;
+
+    void GPUContext.init();
+
+    // --- 1. translate(): runs ahead of generatePoints(), so no Point
+    //        objects are created.
+    wrap(seriesProto, 'translate', function (
+        this: Series,
+        proceed: Function
+    ): void {
+        syncStrategy(this);
+
+        if (isPending(this) && !this.boost2Pending) {
+            // `redraw()` alone does not call `translate()`, so without the
+            // dirty flag eligibility would not be re-evaluated.
+            const series = this;
+
+            series.boost2Pending = true;
+
+            GPUContext.whenReady((): void => {
+                series.boost2Pending = false;
+
+                const chart: Chart|undefined = series.chart;
+
+                // `chart.index` is cleared when the chart is destroyed.
+                if (chart && typeof chart.index !== 'undefined') {
+                    series.isDirty = true;
+                    chart.redraw(false);
+                }
+            });
+        }
+
+        if (this.gpu) {
+            this.gpu.buildBuffer();
+            this.points = [];
+            return;
+        }
+
+        // Still waiting for the device; see `isPending`.
+        if (this.boost2Pending) {
+            this.points = [];
+            return;
+        }
+
+        proceed.call(this);
+    });
+
+    // --- 2. drawGraph(): does not build the `d` attribute.
+    if (lineProto) {
+        wrap(lineProto, 'drawGraph', function (
+            this: Series,
+            proceed: Function
+        ): void {
+            if (!this.gpu && !this.boost2Pending) {
+                proceed.call(this);
+            }
+        });
+    }
+
+    // --- 3. drawPoints(): does not create marker elements.
+    wrap(seriesProto, 'drawPoints', function (
+        this: Series,
+        proceed: Function
+    ): void {
+        if (!this.gpu && !this.boost2Pending) {
+            proceed.apply(this, [].slice.call(arguments, 1));
+        }
+    });
+
+    // --- 4. animate(): a series still waiting for the device has
+    //        nothing to reveal, and the entrance animation settles how it
+    //        treats the markers the moment it starts, with no way back.
+    //        Deferring it to the render that draws keeps the two in step.
+    wrap(seriesProto, 'animate', function (
+        this: Series,
+        proceed: Function,
+        init?: boolean
+    ): void {
+        if (!this.boost2Pending) {
+            proceed.call(this, init);
+        }
+    });
+
+    // --- 5. render(): draws on the GPU instead of in SVG.
+    wrap(seriesProto, 'render', function (
+        this: Series,
+        proceed: Function
+    ): void {
+        this.gpu?.prepareMarkers();
+        proceed.call(this);
+        this.gpu?.draw();
+    });
+
+    // --- 6. searchPoint(): runs ahead of the lazy buildKDTree(), so the
+    //        k-d tree and the mock points are never created.
+    wrap(seriesProto, 'searchPoint', function (
+        this: Series,
+        proceed: Function,
+        e: PointerEvent,
+        compareX?: boolean
+    ): (Point|undefined) {
+        if (this.gpu) {
+            // Chart coordinates: `toValue` subtracts the axis position,
+            // and `axis.pos` differs from `chart.plotLeft` with panes.
+            return this.gpu.hitAt(e, compareX);
+        }
+        return proceed.apply(this, [].slice.call(arguments, 1));
+    });
+
+    // --- 7. getExtremes(): answered from the block index instead of a
+    //        scan of every row in view.
+    wrap(seriesProto, 'getExtremes', function (
+        this: Series,
+        proceed: Function,
+        yData?: unknown,
+        forceExtremesFromAll?: boolean
+    ): DataExtremesObject {
+        if (
+            !this.gpu ||
+            yData ||
+            forceExtremesFromAll ||
+            !canServeExtremes(this)
+        ) {
+            return proceed.apply(this, [].slice.call(arguments, 1));
+        }
+
+        const dataExtremes = this.gpu.extremes();
+
+        fireEvent(this, 'afterGetExtremes', { dataExtremes });
+
+        return dataExtremes;
+    });
+
+    wrap(seriesProto, 'destroy', function (
+        this: Series,
+        proceed: Function
+    ): void {
+        this.gpu?.destroy();
+        this.gpu = void 0;
+
+        proceed.apply(this, [].slice.call(arguments, 1));
+    });
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+/** @internal */
+const Boost2 = {
+    compose,
+    isEligible,
+    GPUContext
+};
+
+/** @internal */
+export default Boost2;
