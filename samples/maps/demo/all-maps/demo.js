@@ -11,6 +11,7 @@ const mapSearch = document.getElementById('map-search'),
     input = document.getElementById('map-search-input'),
     toggleButton = document.getElementById('map-search-toggle'),
     listbox = document.getElementById('map-listbox'),
+    thumbnailBox = document.getElementById('map-thumbnails'),
     emptyMessage = document.getElementById('map-search-empty'),
     searchStatus = document.getElementById('map-search-status'),
     prevMapButton = document.getElementById('prev-map-btn'),
@@ -83,23 +84,91 @@ function addListGroup(label, maps, suggested) {
     listGroups.push({ element: group, options, suggested });
 }
 
-addListGroup('Suggested', suggestedMaps, true);
+const indexGroups = [];
 
 for (const [groupName, maps] of Object.entries(Highcharts.mapDataIndex)) {
     if (groupName !== 'version') {
         const groupMaps = [];
-        for (const [name, path] of Object.entries(maps)) {
+        for (const [indexName, path] of Object.entries(maps)) {
+            // Remove unwanted text from the display name
+            const name = indexName.replace(', Miller projection', '');
             if (!mapsToSkip.test(name)) {
                 allMaps[name] = path;
                 mapNames.push(name);
                 groupMaps.push({ label: name, name });
             }
         }
-        addListGroup(groupNames[groupName] || groupName, groupMaps);
+        indexGroups.push([groupNames[groupName] || groupName, groupMaps]);
     }
 }
 
+// Leave out suggested maps that are missing from the map index
+const availableSuggestedMaps = suggestedMaps.filter(map => allMaps[map.name]);
+
+addListGroup('Suggested', availableSuggestedMaps, true);
+indexGroups.forEach(([label, maps]) => addListGroup(label, maps));
+
 input.placeholder = `Search ${mapNames.length} maps`;
+
+// Thumbnails of the first suggested maps, as quick picks. Each one is a small
+// static map chart.
+const thumbnails = availableSuggestedMaps.slice(0, 3).map(map => {
+    const button = document.createElement('button'),
+        preview = document.createElement('span'),
+        label = document.createElement('span'),
+        mapKey = allMaps[map.name].slice(0, -3);
+
+    preview.className = 'map-thumbnail-chart';
+    preview.setAttribute('aria-hidden', 'true');
+    label.textContent = map.label;
+
+    button.type = 'button';
+    button.className = 'map-thumbnail';
+    button.dataset.name = map.name;
+    button.append(preview, label);
+    thumbnailBox.append(button);
+
+    fetch(`${baseMapPath}${mapKey}.topo.json`)
+        .then(response => response.json())
+        .then(mapData => Highcharts.mapChart(preview, {
+            accessibility: {
+                enabled: false
+            },
+            chart: {
+                animation: false,
+                backgroundColor: 'transparent',
+                spacing: [0, 0, 0, 0]
+            },
+            colorAxis: {
+                min: 0
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
+            },
+            series: [{
+                data: mapData.objects.default.geometries.map((g, value) => ({
+                    key: g.properties['hc-key'],
+                    value
+                })),
+                mapData,
+                joinBy: ['hc-key', 'key'],
+                borderWidth: 0.2,
+                enableMouseTracking: false
+            }],
+            title: {
+                text: null
+            },
+            tooltip: {
+                enabled: false
+            }
+        }))
+        .catch(e => console.log('Error', e));
+
+    return button;
+});
 
 // Helper functions
 function setAttributes(el, attrs) {
@@ -151,6 +220,13 @@ function fillInfo(mapName, mapKey) {
             option.dataset.name === mapName
         );
     }));
+    thumbnails.forEach(thumbnail => {
+        if (thumbnail.dataset.name === mapName) {
+            thumbnail.setAttribute('aria-current', 'true');
+        } else {
+            thumbnail.removeAttribute('aria-current');
+        }
+    });
 }
 
 function resetDrilldown(chart) {
@@ -518,7 +594,12 @@ function moveActiveOption(step) {
                 mapName,
                 mapKey
             }
-        });
+        }, false);
+
+        // Apply the projection recommended for the new map, it is not
+        // updated together with the series map data
+        chart.mapView.recommendMapView(chart, [mapData], true);
+
         chart.hideLoading();
         chart.credits.update();
     }
@@ -564,9 +645,18 @@ function moveActiveOption(step) {
         filterOptions(this.value);
         openList(false);
 
-        // Pressing Enter picks the first match
-        if (this.value.trim()) {
-            setActiveOption(getVisibleOptions()[0]);
+        // Pressing Enter picks the best match: the exact name, a name that
+        // starts with the query, or the first match
+        const query = this.value.trim().toLowerCase();
+        if (query) {
+            const options = getVisibleOptions(),
+                text = option => option.textContent.toLowerCase();
+
+            setActiveOption(
+                options.find(option => text(option) === query) ||
+                options.find(option => text(option).startsWith(query)) ||
+                options[0]
+            );
         }
     });
 
@@ -618,6 +708,13 @@ function moveActiveOption(step) {
         const option = e.target.closest('[role="option"]');
         if (option) {
             selectMap(option.dataset.name);
+        }
+    });
+
+    thumbnailBox.addEventListener('click', function (e) {
+        const thumbnail = e.target.closest('.map-thumbnail');
+        if (thumbnail) {
+            selectMap(thumbnail.dataset.name);
         }
     });
 
