@@ -107,6 +107,9 @@ const XRangeSeriesDefaults: XRangeSeriesOptions = {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
     },
 
+    /**
+     * @type {number|string|Highcharts.BorderRadiusOptionsObject}
+     */
     borderRadius: 3,
 
     pointRange: 0

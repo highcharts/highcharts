@@ -18,6 +18,7 @@
  *
  * */
 
+import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
@@ -74,7 +75,7 @@ import type { XRangePointPartialFillOptions } from './XRangePointOptions';
 export interface XRangeSeriesOptions extends ColumnSeriesOptions {
 
     /** @default 3 */
-    borderRadius?: number;
+    borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
 
     /**
      * In an X-range series, this option makes all points of the same Y-axis

@@ -1059,6 +1059,12 @@ class Data {
      * Parse a CSV input string
      *
      * @function Highcharts.Data#parseCSV
+     *
+     * @param {Highcharts.DataOptions} [inOptions]
+     *        The data options.
+     *
+     * @return {Array<Array<Highcharts.DataValueType>>}
+     *         The parsed columns.
      */
     public parseCSV(inOptions?: DataOptions): NonNullable<Data['columns']> {
         const self = this,
@@ -2976,6 +2982,13 @@ export default Data;
  *
  * @param {Highcharts.Options} chartOptions
  *        The chart options that were used.
+ */
+
+/**
+ * The final parsed columns.
+ *
+ * @name Highcharts.Data#columns
+ * @type {Array<Array<Highcharts.DataValueType>>|undefined}
  */
 
 /**
