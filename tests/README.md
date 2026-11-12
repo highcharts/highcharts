@@ -31,7 +31,7 @@ This directory contains the Playwright test suite for Highcharts products.
 ## Installation
 
 ```sh
-npm i
+npm ci
 ```
 
 ```sh

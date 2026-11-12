@@ -16,6 +16,9 @@ Use this skill for changes in `tools/`, build scripts, test runners, or reposito
 2. Keep stack consistency:
 - Prefer Node-based scripts for cross-platform support unless shell behavior is explicitly required.
 - Avoid adding repo-wide dependencies for one-off automation.
+- When changing the required Node.js or npm version, update `devEngines` in
+  `package.json`, `.nvmrc`, `readme.md` ("Build and debug") and `AGENTS.md`
+  together.
 
 3. Keep automation safe and predictable:
 - Default scripts to non-destructive behavior.
