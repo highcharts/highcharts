@@ -459,7 +459,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
-     * Deprecated since next. Use the chart-level
+     * Deprecated. Use the chart-level
      * [dataTable](#dataTable) with
      * [dataMapping](#plotOptions.series.dataMapping) instead.
      *
