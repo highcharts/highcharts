@@ -1,3 +1,51 @@
+/* Let the Highcharts color variables follow the theme outside the chart too */
+:root {
+    color-scheme: light dark;
+
+    /* Color axis range of the maps */
+    --map-min-color: #d4ebfb;
+    --map-mid-color: #3f95ec;
+    --map-max-color: #0a3a8c;
+    --map-border-color: light-dark(var(--highcharts-background-color), #272727);
+
+    /* Thumbnail colors from the design, dimmed in dark mode */
+    --map-thumbnail-min-color:
+        light-dark(
+            #e6e9ff,
+            color-mix(in srgb, #e6e9ff 85%, var(--highcharts-background-color))
+        );
+    --map-thumbnail-max-color:
+        light-dark(
+            #02f,
+            color-mix(in srgb, #02f 85%, var(--highcharts-background-color))
+        );
+
+    /* Current thumbnail border, from the design */
+    --map-thumbnail-current-color: #1558fe;
+
+    /* Borders of the cards and controls, lighter in dark mode */
+    --demo-border-color:
+        light-dark(
+            var(--highcharts-neutral-color-10),
+            var(--highcharts-neutral-color-20)
+        );
+
+    /* Shadow of the map list and the menu */
+    --demo-popup-shadow:
+        0 1px 2px rgb(0 0 0 / 6%),
+        0 3px 3px rgb(0 0 0 / 5%),
+        0 7px 4px rgb(0 0 0 / 3%),
+        0 13px 5px rgb(0 0 0 / 1%);
+}
+
+.highcharts-light {
+    color-scheme: light;
+}
+
+.highcharts-dark {
+    color-scheme: dark;
+}
+
 body {
     font-family:
         -apple-system,
@@ -15,172 +63,422 @@ body {
 }
 
 #demo-wrapper {
-    max-width: 1000px;
-    margin: 10px auto;
-    height: 560px;
+    max-width: 890px;
+    margin: 36px auto;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    gap: 30px;
 }
 
-#selector {
-    display: flex;
-    align-items: center;
-    height: 40px;
-    width: 60%;
-}
-
-#selector .prev-next {
-    padding: 0 20px;
-    font-size: 30px;
-    line-height: 20px;
-    background: white;
-    font-weight: bold;
-    opacity: 0;
-    color: #999;
-    border: none;
-}
-
-#selector #map-datalist-input {
-    width: 100%;
-    height: 32px;
-    font-size: 14px;
-    border: 1px solid silver;
-    border-radius: 3px;
-    padding: 1px 5px 1px 30px;
-    background: url("https://www.highcharts.com/samples/graphics/search.png") 5px 8px no-repeat white;
-}
-
+/* No padding, the chart spacing is used instead */
 #map-box {
-    display: flex;
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 1px solid var(--demo-border-color);
+    border-radius: 3px;
 }
 
 #container {
-    flex: 0.8;
-    height: 500px;
+    height: 408px;
 }
 
+/* The default width of the search input would widen the column */
 #side-box {
-    flex: 0.2;
-    margin: 100px 1% 0;
-    padding-left: 1%;
-    border-left: 1px solid silver;
+    flex: 0 0 280px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    font-size: 12px;
+    line-height: 1.3;
 }
 
-.loading {
-    margin-top: 10em;
-    text-align: center;
-    color: gray;
+#demo-title {
+    margin: 0;
+    font-size: 22px;
+    line-height: normal;
 }
 
-#checkbox-wrapper {
+/* Zoom buttons as one card, without a line between them */
+g:has(> .highcharts-map-navigation) {
+    filter:
+        drop-shadow(0 0 0.5px var(--demo-border-color))
+        drop-shadow(0 0 0.5px var(--demo-border-color))
+        drop-shadow(0 1px 1px rgb(0 0 0 / 8%));
+}
+
+.highcharts-map-navigation .highcharts-button-symbol {
+    stroke-width: 1.25px;
+}
+
+/* A dot on each tick: a zero length dash with round caps, in the middle of
+   the 11px wide axis */
+.highcharts-coloraxis-grid {
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 35%));
+}
+
+.highcharts-coloraxis-grid .highcharts-grid-line {
+    stroke-linecap: round;
+    stroke-dashoffset: -5.5px;
+}
+
+#side-box .highcharts-description {
+    margin: -6px 0 5px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* Map search with Prev and Next. The list spans all three. */
+#selector {
+    position: relative;
+    display: flex;
+    gap: 5px;
+    height: 34px;
+}
+
+#selector svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.3333;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+#map-search {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 10px;
+    min-width: 0;
+    background: var(--highcharts-neutral-color-3);
+    border: 1px solid var(--demo-border-color);
+    border-radius: 5px;
 }
 
-#checkbox-wrapper #datalabels-checkbox {
+#map-search:focus-within {
+    border-color: var(--highcharts-highlight-color-100);
+}
+
+#map-search .search-icon {
+    flex: none;
+    margin-left: 8px;
+    pointer-events: none;
+}
+
+#map-search-input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 0 0 10px;
+    font: inherit;
+    font-weight: 500;
+    color: inherit;
+    text-overflow: ellipsis;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+#map-search-input::placeholder {
+    color: var(--highcharts-neutral-color-60);
+}
+
+#map-search-toggle {
+    flex: none;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 8px;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#map-search.open #map-search-toggle svg {
+    transform: rotate(180deg);
+}
+
+#map-listbox,
+#map-search-empty {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--highcharts-background-color);
+    border: 1px solid var(--demo-border-color);
+    border-radius: 5px;
+    box-shadow: var(--demo-popup-shadow);
+}
+
+#map-listbox {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+#map-search-empty {
+    padding: 8px 10px;
+    color: var(--highcharts-neutral-color-60);
+}
+
+/* Lines between options and groups */
+#map-listbox [role="group"]:not([hidden]) ~ [role="group"],
+.map-option {
+    border-top: 1px solid var(--highcharts-neutral-color-5);
+}
+
+.map-group-label {
+    padding: 3px 6px 0;
+    font-size: 11px;
+    color: var(--highcharts-neutral-color-60);
+}
+
+.map-option {
+    padding: 8px 10px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.map-group-label + .map-option {
+    border-top: none;
+}
+
+.map-option:hover,
+.map-option.active {
+    background: var(--highcharts-highlight-color-10);
+}
+
+.map-option.current {
+    font-weight: bold;
+}
+
+#selector .prev-next {
+    flex: none;
+    padding: 0 8px;
+    font: inherit;
+    font-weight: 500;
+    color: inherit;
+    background: none;
+    border: 1px solid var(--demo-border-color);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#selector .prev-next:hover {
+    background: var(--highcharts-neutral-color-3);
+}
+
+#selector .prev-next:focus-visible {
+    outline: 2px solid var(--highcharts-highlight-color-100);
+    outline-offset: 1px;
+}
+
+/* Quick pick thumbnails */
+#map-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.map-thumbnail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    font: inherit;
+    font-size: 11px;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* Less side padding, for wide maps */
+.map-thumbnail-chart {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 81px;
+    padding: 9px 4px;
+    pointer-events: none;
+    border: 1px solid var(--demo-border-color);
+    border-radius: 5px;
+}
+
+.map-thumbnail:hover .map-thumbnail-chart {
+    border-color: var(--highcharts-neutral-color-20);
+}
+
+.map-thumbnail[aria-current="true"] .map-thumbnail-chart {
+    border-color: var(--map-thumbnail-current-color);
+}
+
+.map-thumbnail:focus-visible {
+    outline: none;
+}
+
+.map-thumbnail:focus-visible .map-thumbnail-chart {
+    outline: 2px solid var(--highcharts-highlight-color-100);
+    outline-offset: 2px;
+}
+
+/* Settings: "View demo as" menu and "Show labels" switch */
+#settings {
+    margin-top: auto;
+    border: 1px solid var(--demo-border-color);
+    border-radius: 5px;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 35px;
+    padding: 0 8px;
+}
+
+.settings-row + .settings-row {
+    border-top: 1px solid var(--demo-border-color);
+}
+
+#view-as {
+    position: relative;
+}
+
+#view-as-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    font: inherit;
+    font-weight: 500;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#view-as-button svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+#view-as-button[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+}
+
+#view-as-button:focus-visible,
+#view-as-menu a:focus-visible {
+    outline: 2px solid var(--highcharts-highlight-color-100);
+    outline-offset: -2px;
+    border-radius: 4px;
+}
+
+#view-as-menu {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 4px);
+    right: -4px;
+    min-width: 124px;
+    background: var(--highcharts-background-color);
+    border: 1px solid var(--demo-border-color);
+    border-radius: 5px;
+    box-shadow: var(--demo-popup-shadow);
+    overflow: hidden;
+}
+
+#view-as.open-up #view-as-menu {
+    top: auto;
+    bottom: calc(100% + 4px);
+}
+
+#view-as-menu a {
+    display: block;
+    padding: 8px 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: inherit;
+    text-decoration: none;
+    border-top: 1px solid var(--highcharts-neutral-color-5);
+}
+
+#view-as-menu a:first-child {
+    border-top: none;
+}
+
+/* Keyboard focus only, the first item is also focused on mouse click */
+#view-as-menu a:hover,
+#view-as-menu a:focus-visible {
+    background: var(--highcharts-highlight-color-10);
+}
+
+/* Switch: gray track and a knob in the background color, as in the design */
+#datalabels-checkbox {
     appearance: none;
-    background-color: #dfe1e4;
-    border-radius: 72px;
-    border-style: none;
-    flex-shrink: 0;
+    position: relative;
+    flex: none;
+    width: 35px;
     height: 20px;
     margin: 0;
-    position: relative;
-    width: 30px;
+    background: var(--highcharts-neutral-color-20);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 100ms ease-out;
 }
 
-#checkbox-wrapper #datalabels-checkbox::before {
-    bottom: -6px;
+#datalabels-checkbox::after {
     content: "";
-    left: -6px;
     position: absolute;
-    right: -6px;
-    top: -6px;
-}
-
-#checkbox-wrapper #datalabels-checkbox,
-#checkbox-wrapper #datalabels-checkbox::after {
-    transition: all 100ms ease-out;
-}
-
-#checkbox-wrapper #datalabels-checkbox::after {
-    background-color: #fff;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: var(--highcharts-background-color);
     border-radius: 50%;
-    content: "";
-    height: 14px;
-    left: 3px;
-    position: absolute;
-    top: 3px;
-    width: 14px;
+    transition: transform 100ms ease-out;
 }
 
-#checkbox-wrapper #datalabels-checkbox:hover {
-    background-color: #c9cbcd;
-    transition-duration: 0s;
+#datalabels-checkbox:hover {
+    background: var(--highcharts-neutral-color-40);
 }
 
-#checkbox-wrapper #datalabels-checkbox:checked {
-    background-color: #6e79d6;
+#datalabels-checkbox:checked {
+    background: var(--highcharts-highlight-color-100);
 }
 
-#checkbox-wrapper #datalabels-checkbox:checked::after {
-    background-color: #fff;
-    left: 13px;
+#datalabels-checkbox:checked:hover {
+    background: var(--highcharts-highlight-color-80);
 }
 
-.checkbox-wrapper-2 :focus:not(.focus-visible) {
-    outline: 0;
+#datalabels-checkbox:checked::after {
+    transform: translateX(15px);
 }
 
-#checkbox-wrapper #datalabels-checkbox:checked:hover {
-    background-color: #535db3;
+#datalabels-checkbox:focus-visible {
+    outline: 2px solid var(--highcharts-highlight-color-100);
+    outline-offset: 2px;
 }
 
-#info-box #clean-demo-btn {
-    background: #00766f;
-    display: inline-block;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    outline: none;
-    text-decoration: none;
-    text-align: center;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-    font-size: 1rem;
-    line-height: 140%;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    padding: 8px 16px;
-}
-
-#info-box #clean-demo-btn:hover {
-    opacity: 0.8;
-}
-
-.links {
-    transition: all 250ms;
-    touch-action: manipulation;
-}
-
-.links a {
-    line-height: 1.5rem;
-}
-
-.links:hover {
-    font-size: 1.1rem;
+.settings-row label {
+    cursor: pointer;
 }
 
 @media (max-width: 768px) {
-    #selector {
-        width: 100%;
-    }
-
-    #map-box {
+    #demo-wrapper {
         flex-direction: column;
     }
 
@@ -189,9 +487,7 @@ body {
     }
 
     #side-box {
-        margin-top: 0;
-        padding-top: 16px;
-        border-left: none;
-        border-top: 1px solid silver;
+        flex-basis: auto;
+        order: -1;
     }
 }

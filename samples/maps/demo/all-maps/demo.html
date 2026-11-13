@@ -3,41 +3,72 @@
 <script src="https://code.highcharts.com/mapdata/index.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
 <div id="demo-wrapper">
-  <div id="selector">
-    <button id="prev-map-btn" class="prev-next" aria-label="Previous map"><i class="fa fa-angle-left"></i></button>
-
-    <input list="maps" id="map-datalist-input" name="map-choice" aria-label="Select a map to display" />
-    <datalist id="maps"></datalist>
-
-    <button id="next-map-btn" class="prev-next" aria-label="Next map"><i class="fa fa-angle-right"></i></button>
-  </div>
   <div id="map-box">
     <div id="container"></div>
+  </div>
 
-    <div id="side-box">
-        <div id="checkbox-wrapper">
-            <input type="checkbox" id="datalabels-checkbox" />
-          <label for="datalabels-checkbox">Data labels</label>
-        </div>
+  <div id="side-box">
+    <h2 id="demo-title">Map Collections</h2>
+    <p class="highcharts-description">
+      Interactive browser for the Highcharts map collection, from world maps
+      down to regions. Search for a map, click to drill down, and download it
+      in several formats. It's useful for finding the right base map for your
+      chart.
+    </p>
 
-      <div id="info-box">
-        <h4 id="map-name-header"></h4>
+    <div id="selector">
+      <div id="map-search">
+        <svg class="search-icon" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M14 14L11.1 11.1M12.6667 7.33333C12.6667 10.2789 10.2789 12.6667 7.33333 12.6667C4.38781 12.6667 2 10.2789 2 7.33333C2 4.38781 4.38781 2 7.33333 2C10.2789 2 12.6667 4.38781 12.6667 7.33333Z"></path>
+        </svg>
+        <input type="text" id="map-search-input" role="combobox"
+          aria-label="Search maps" aria-autocomplete="list"
+          aria-expanded="false" aria-controls="map-listbox"
+          autocomplete="off" spellcheck="false" />
+        <button type="button" id="map-search-toggle" tabindex="-1"
+          aria-label="Show all maps" aria-controls="map-listbox"
+          aria-expanded="false">
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M4 6L8 10L12 6"></path>
+          </svg>
+        </button>
+        <div id="map-listbox" role="listbox" aria-label="Maps" hidden></div>
+        <div id="map-search-empty" hidden>No maps found</div>
+        <div id="map-search-status" class="visually-hidden" role="status"></div>
+      </div>
+      <button type="button" id="prev-map-btn" class="prev-next"
+        aria-label="Previous map">Prev</button>
+      <button type="button" id="next-map-btn" class="prev-next"
+        aria-label="Next map">Next</button>
+    </div>
 
-        <div id="download">
-          <a id="clean-demo-btn" target="_blank">View clean demo</a>
-          <div>
-            <p>... or view as</p>
-            <ul>
-              <li class='links'><a target="_blank" href="" id="svg-link">SVG</a></li>
-              <li class='links'><a target="_blank" href="" id="geojson-link">GeoJSON</a></li>
-              <li class='links'><a target="_blank" href="" id="topojson-link">TopoJSON</a></li>
-              <li class='links'><a target="_blank" href="" id="javascript-link">JavaScript</a></li>
-            </ul>
+    <div id="map-thumbnails" role="group" aria-label="Quick picks"></div>
+
+    <div id="settings">
+      <div class="settings-row">
+        <span id="view-as-label">View demo as</span>
+        <div id="view-as">
+          <button type="button" id="view-as-button" aria-haspopup="menu"
+            aria-expanded="false" aria-controls="view-as-menu"
+            aria-labelledby="view-as-label view-as-button">
+            Select option
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M3 4.5L6 7.5L9 4.5"></path>
+            </svg>
+          </button>
+          <div id="view-as-menu" role="menu" aria-labelledby="view-as-label" hidden>
+            <a role="menuitem" tabindex="-1" target="_blank" id="clean-demo-link">Clean demo code</a>
+            <a role="menuitem" tabindex="-1" target="_blank" id="svg-link">SVG</a>
+            <a role="menuitem" tabindex="-1" target="_blank" id="geojson-link">GeoJSON</a>
+            <a role="menuitem" tabindex="-1" target="_blank" id="topojson-link">TopoJSON</a>
+            <a role="menuitem" tabindex="-1" target="_blank" id="javascript-link">JavaScript</a>
           </div>
         </div>
+      </div>
+      <div class="settings-row">
+        <label for="datalabels-checkbox">Show labels</label>
+        <input type="checkbox" id="datalabels-checkbox" role="switch" />
       </div>
     </div>
   </div>
