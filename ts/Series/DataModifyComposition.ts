@@ -513,10 +513,10 @@ namespace DataModifyComposition {
             } else if (!compareToMain) {
                 updateCompareValue.call(series);
             }
+        }
 
-            for (const linkedSeries of series.linkedSeries) {
-                recalculateCompareValueTree(linkedSeries);
-            }
+        for (const linkedSeries of series.linkedSeries) {
+            recalculateCompareValueTree(linkedSeries);
         }
     }
 

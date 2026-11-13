@@ -362,5 +362,37 @@ QUnit.test(
             linkedBase,
             'Linked compareValue should be the first grouped y, not raw data'
         );
+
+        // Linked series keeps its own compare base when the parent has none
+        // (#25538)
+        linkedChart.update({
+            series: [{
+                compare: null,
+                dataGrouping: {
+                    enabled: false
+                }
+            }, {
+                compare: 'percent',
+                compareStart: false,
+                dataGrouping: {
+                    forced: false
+                }
+            }]
+        });
+
+        const ownLinked = linkedChart.series[1],
+            ownLast = ownLinked.points[ownLinked.points.length - 1],
+            ownBase = linkedData[0][1];
+
+        assert.strictEqual(
+            ownLinked.dataModify.compareValue,
+            ownBase,
+            'Linked compareValue should be its own first y'
+        );
+        assert.strictEqual(
+            ownLast.change,
+            (ownLast.y - ownBase) / ownBase * 100,
+            'Last linked change should match percent from own base'
+        );
     }
 );
