@@ -263,3 +263,133 @@ QUnit.test('Compare with linked series, #21119.', assert => {
         linked to :previous series.`
     );
 });
+
+QUnit.test(
+    'CompareStart with dataGrouping (#25538)',
+    assert => {
+        const data = [];
+        for (let i = 0; i < 1000; i++) {
+            data.push([Date.UTC(2020, 0, 1) + i * 864e5, 100 + i]);
+        }
+
+        const chart = Highcharts.stockChart('container', {
+            series: [{
+                id: 'main',
+                data,
+                compare: 'percent',
+                compareStart: true,
+                dataGrouping: {
+                    groupPixelWidth: 20
+                }
+            }, {
+                type: 'sma',
+                linkedTo: 'main',
+                compareToMain: true,
+                params: {
+                    period: 3
+                }
+            }]
+        });
+
+        const main = chart.series[0],
+            sma = chart.series[1],
+            yData = main.getColumn('y', true),
+            firstVisibleIndex = main.points.findIndex(p => p.plotX >= 0),
+            firstVisible = main.points[firstVisibleIndex],
+            // Grouped y of the first visible point (the correct compare base)
+            expectedBase = yData[firstVisibleIndex];
+
+        assert.strictEqual(
+            firstVisible.change,
+            0,
+            'First visible point change should be 0 with compareStart'
+        );
+        assert.strictEqual(
+            main.dataModify.compareValue,
+            expectedBase,
+            'Main compareValue should be the first visible grouped y'
+        );
+        assert.strictEqual(
+            sma.dataModify.compareValue,
+            expectedBase,
+            'SMA with compareToMain should use the same grouped base as main'
+        );
+
+        // Linked series with its own data + forced grouping
+        const shortData = [],
+            linkedData = [];
+        for (let i = 0; i < 20; i++) {
+            shortData.push([Date.UTC(2020, 0, 1) + i * 864e5, 10 + i]);
+            linkedData.push([Date.UTC(2020, 0, 1) + i * 864e5, 20 + 2 * i]);
+        }
+
+        chart.destroy();
+
+        const linkedChart = Highcharts.stockChart('container', {
+            series: [{
+                id: 'main',
+                data: shortData,
+                compare: 'percent',
+                dataGrouping: {
+                    enabled: false
+                }
+            }, {
+                linkedTo: 'main',
+                data: linkedData,
+                compareStart: true,
+                dataGrouping: {
+                    forced: true,
+                    units: [['day', [2]]]
+                }
+            }]
+        });
+
+        const linked = linkedChart.series[1],
+            linkedY = linked.getColumn('y', true),
+            linkedFirst = linked.points[0],
+            linkedBase = linkedY[0];
+
+        assert.strictEqual(
+            linkedFirst.change,
+            0,
+            'First grouped linked point change should be 0 with compareStart'
+        );
+        assert.strictEqual(
+            linked.dataModify.compareValue,
+            linkedBase,
+            'Linked compareValue should be the first grouped y, not raw data'
+        );
+
+        // Linked series keeps its own compare base when the parent has none
+        // (#25538)
+        linkedChart.update({
+            series: [{
+                compare: null,
+                dataGrouping: {
+                    enabled: false
+                }
+            }, {
+                compare: 'percent',
+                compareStart: false,
+                dataGrouping: {
+                    forced: false
+                }
+            }]
+        });
+
+        const ownLinked = linkedChart.series[1],
+            ownLast = ownLinked.points[ownLinked.points.length - 1],
+            ownBase = linkedData[0][1];
+
+        assert.strictEqual(
+            ownLinked.dataModify.compareValue,
+            ownBase,
+            'Linked compareValue should be its own first y'
+        );
+        assert.strictEqual(
+            ownLast.change,
+            (ownLast.y - ownBase) / ownBase * 100,
+            'Last linked change should match percent from own base'
+        );
+    }
+);
