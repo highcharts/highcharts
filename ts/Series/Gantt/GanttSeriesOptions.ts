@@ -94,6 +94,7 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
     dataLabels?: Partial<DataLabelOptions>;
 
+    /** @default false */
     grouping?: boolean;
 
     /**

@@ -15,8 +15,8 @@ const { runApiDocs } = require('../gulptasks/api-docs.js');
 function createDependencies(calls) {
     return {
         processLib: {
-            async exec(command) {
-                calls.push(command.includes('api-classes.ts') ? 'classes' : 'options');
+            async execFile(file, args) {
+                calls.push(args.includes('tools/api-docs/api-classes.ts') ? 'classes' : 'options');
             }
         },
         reactStatic: {
@@ -38,6 +38,31 @@ function createDependencies(calls) {
         }
     };
 }
+
+describe('api-docs source arguments', () => {
+    for (const source of ['docs with spaces/$(printf unexpected)', '`printf unexpected`']) {
+        it(`passes ${String(source)} as one literal source argument`, async () => {
+            const calls = [];
+            await runApiDocs({ source }, {
+                processLib: {
+                    async execFile(file, args) {
+                        calls.push([file, ...args]);
+                    }
+                },
+                createApiDocumentation() {
+                    calls.push('generate');
+                }
+            });
+            assert.deepEqual(calls, [
+                [process.execPath, '--import', 'tsx', 'tools/api-docs/api-classes.ts',
+                    '--source', String(source || 'ts')],
+                [process.execPath, '--import', 'tsx', 'tools/api-docs/api-options.ts',
+                    '--source', String(source || 'ts')],
+                'generate'
+            ]);
+        });
+    }
+});
 
 function artifactArgs(fixture) {
     return {

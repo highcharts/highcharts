@@ -26,7 +26,7 @@
 import type MenuToolbarButton from './ToolbarButtons/MenuToolbarButton.js';
 import type Grid from '../../../Grid.js';
 
-import ContextMenu from '../../../UI/ContextMenu.js';
+import Menu from '../../../UI/Menu.js';
 import FilterMenuButton from './MenuButtons/FilterMenuButton.js';
 import SortMenuButton from './MenuButtons/SortMenuButton.js';
 
@@ -40,7 +40,7 @@ import SortMenuButton from './MenuButtons/SortMenuButton.js';
 /**
  * The column filtering popup.
  */
-class MenuPopup extends ContextMenu {
+class MenuPopup extends Menu {
 
     /* *
      *

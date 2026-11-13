@@ -934,10 +934,8 @@ class Point {
      *         The zone item, or `undefined` if the series has no zones.
      */
     public getZone(): Series.ZoneObject|undefined {
-        const series = this.series,
-            zones = series.zones,
-            zoneAxis = series.zoneAxis || 'y';
-        let zone,
+        const { zoneAxis = 'y', zones } = this.series;
+        let zone: Series.ZoneObject|undefined,
             i = 0;
 
         zone = zones[i];
@@ -949,15 +947,11 @@ class Point {
         }
 
         // For resetting or reusing the point (#8100)
-        if (!this.nonZonedColor) {
-            this.nonZonedColor = this.color;
-        }
+        this.nonZonedColor ||= this.color;
 
-        if (zone?.color && !this.options.color) {
-            this.color = zone.color;
-        } else {
-            this.color = this.nonZonedColor;
-        }
+        this.color = zone?.color && !this.options.color ?
+            zone.color :
+            this.nonZonedColor;
 
         return zone;
     }
@@ -968,10 +962,10 @@ class Point {
      * @internal
      */
     public hasNewShapeType(): boolean|undefined {
-        const point = this;
-        const oldShapeType = point.graphic &&
-            (point.graphic.symbolName || point.graphic.element.nodeName);
-        return oldShapeType !== this.shapeType;
+        const { graphic } = this;
+        return (
+            graphic?.symbolName || graphic?.element.nodeName
+        ) !== this.shapeType;
     }
 
     /**

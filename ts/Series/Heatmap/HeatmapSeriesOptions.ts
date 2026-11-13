@@ -77,12 +77,16 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
 
     /**
      * Animation is disabled by default on the heatmap series.
+     *
+     * @default false
      */
     animation?: boolean;
 
     /**
      * The border radius for each heatmap item. The border's color and width can
      * be set in marker options.
+     *
+     * @default 0
      *
      * @see [lineColor](#plotOptions.heatmap.marker.lineColor)
      *
@@ -92,9 +96,12 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
 
     /**
      * The border width for each heatmap item.
+     *
+     * @default 0
      */
     borderWidth?: number;
 
+    /** @default true */
     clip?: boolean;
 
     /**
@@ -210,6 +217,8 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      *
      * @sample highcharts/series-heatmap/interpolation
      *         Interpolated heatmap toggle
+     *
+     * @default false
      */
     interpolation?: boolean;
 
@@ -232,6 +241,8 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      * is applied instead.
      *
      * @type {Highcharts.ColorType}
+     *
+     * @default 'var(--highcharts-neutral-color-3)'
      */
     nullColor?: ColorType;
 
@@ -244,6 +255,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      */
     pointPadding?: number;
 
+    /** @default null */
     pointRange?: (number|null);
 
     /**
