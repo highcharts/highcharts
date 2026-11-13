@@ -273,9 +273,6 @@ QUnit.test(
         }
 
         const chart = Highcharts.stockChart('container', {
-            rangeSelector: {
-                selected: 5 // All -> grouping active
-            },
             series: [{
                 id: 'main',
                 data,

@@ -501,6 +501,8 @@ namespace DataModifyComposition {
     /**
      * Recalculate compareValue for a series, then for its linkedSeries
      * (parent before children, so compareToMain can copy a fresh base).
+     *
+     * @internal
      */
     function recalculateCompareValueTree(series: Series): void {
         if (series.dataModify) {
@@ -521,8 +523,10 @@ namespace DataModifyComposition {
     }
 
     /**
-     * After data grouping, refresh compareValue on each unlinked grouped
+     * After data grouping, refresh compareValue on each unlinked
      * series and its linked descendants (#25538).
+     *
+     * @internal
      */
     function postProcessData(this: Axis): void {
         for (const series of this.series) {
