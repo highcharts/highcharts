@@ -1055,4 +1055,22 @@ export default ColorAxis;
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 
+// Hide the `Axis` methods that don't apply to the color axis. A same-named
+// ignored doclet stops JSDoc from inheriting them through `@augments`.
+
+/**
+ * @function Highcharts.ColorAxis#setCompare
+ * @ignore
+ */
+
+/**
+ * @function Highcharts.ColorAxis#setCumulative
+ * @ignore
+ */
+
+/**
+ * @function Highcharts.ColorAxis#setDataGrouping
+ * @ignore
+ */
+
 ''; // Detach doclet above
