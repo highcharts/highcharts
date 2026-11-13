@@ -370,45 +370,6 @@ productColumn.filtering.set();
 
 This makes it easy to integrate column filtering with external UI controls, such as search fields or custom buttons.
 
-## Global filtering __grid_pro__
-
-The root `filtering` option combines rules for multiple columns with `and` or
-`or` logic. Each rule has a `columnId`, an `operator` and a `value`, using the
-same operators as column filters. Rules can be nested in groups with their own
-`logic` and `conditions`. The root `logic` defaults to `and`.
-
-```js
-filtering: {
-    conditions: [{
-        columnId: 'age',
-        operator: 'greaterThan',
-        value: 20
-    }, {
-        logic: 'or',
-        conditions: [{
-            columnId: 'country',
-            operator: 'equals',
-            value: 'PL'
-        }, {
-            columnId: 'country',
-            operator: 'equals',
-            value: 'NO'
-        }]
-    }]
-}
-```
-
-The global filter is combined with the column filters using AND logic. Rules
-for columns missing in the data and empty groups are ignored. The options are
-plain JSON, so the filter state can be saved with `grid.getOptions()` and
-restored with `grid.update()`. Updating `filtering` replaces the whole filter
-state instead of merging it, and an empty `conditions` array removes the global
-filter.
-
-Global filtering is not supported with the remote data provider yet.
-
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/options/advanced-filtering?force-light-theme" allow="fullscreen"></iframe>
-
 ## Deprecated filtering options
 
 The following options are deprecated. Use the replacements in the table below.
