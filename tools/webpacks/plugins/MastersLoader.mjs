@@ -74,7 +74,7 @@ function decorateImports(content, masterImports, context) {
             for (const path of masterImports) {
                 if (matches.some(m => m[2] === path)) {
                     newLastImports.push(`/*! ${path} */`);
-                } else if (path.endsWith('highcharts.src.js')){
+                } else if (path.endsWith('highcharts.src.js')) {
                     newFirstImports.push(`import '${path}';`);
                 } else {
                     newLastImports.push(`import '${path}';`);
@@ -132,13 +132,13 @@ function decorateImports(content, masterImports, context) {
  * @return {Array<string>|undefined}
  * Extracted requirements.
  */
-function extractMasterImports(content, contentFolder, requirePrefix='') {
+function extractMasterImports(content, contentFolder, requirePrefix = '') {
     const masterDoclet = content.match(/\n\/\*(.*?)\*\//su)?.[1] || '';
     const requireMatches =
         masterDoclet.matchAll(/@requires?[ \t]+([\/\w\.-]+)/gsu);
 
     if (!requireMatches) {
-        return;
+        return void 0;
     }
 
     const masterImports = [];
@@ -198,6 +198,8 @@ function insert(newContent, pos, content) {
  * Loader API for Webpack. Match pattern is defined outside in the general
  * loader configuration.
  *
+ * @this {import('webpack').LoaderContext<*>}
+ *
  * @param {string} content
  * Content of matching file.
  *
@@ -208,9 +210,10 @@ function insert(newContent, pos, content) {
  * Meta of matching file.
  */
 function mastersLoader(content, map, meta) {
+    const context = this;
+    const callback = context.async();
+
     try {
-        const context = this;
-        const callback = context.async();
         const options = context.getOptions();
 
         // The es-modules folder with all masters.
@@ -226,14 +229,13 @@ function mastersLoader(content, map, meta) {
         );
 
         // The product path as found on code.highcharts.com.
-        const requirePrefix = options.requirePrefix
+        const requirePrefix = options.requirePrefix;
 
         // The master doclet is expected after the license line.
         if (!content.startsWith(SPDX_LINE)) {
-            callback(new Error(
+            return callback(new Error(
                 `${context.resourcePath}: First line must be "${SPDX_LINE}".`
             ));
-            return;
         }
 
         const masterImports =
@@ -243,9 +245,9 @@ function mastersLoader(content, map, meta) {
             content = decorateImports(content, masterImports, context);
         }
 
-        callback(null, content, map, meta);
+        return callback(null, content, map, meta);
     } catch (error) {
-        callback(error);
+        return callback(error);
     }
 }
 

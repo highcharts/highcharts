@@ -19,7 +19,6 @@
 
 import { updateFile } from '../../libs/fs.js';
 import * as Path from 'node:path';
-import Webpack from 'webpack';
 
 
 /* *
@@ -45,13 +44,18 @@ const UMD_ROOT = '(typeof window === \'undefined\' ? this || {} : window,';
 
 
 /**
+ * Converts AMD dependencies to arguments of the shared factory.
+ *
  * @param {string} _
+ * Complete AMD wrapper match.
  * @param {string} amdPrefix
+ * Wrapper prefix before the dependency list.
  * @param {string} amdRequires
- * @param {string} amdSuffix
+ * Dependencies passed to the factory.
  * @return {string}
+ * Wrapper calling the factory with resolved dependencies.
  */
-function convertAMD(_, amdPrefix, amdRequires, amdSuffix) {
+function convertAMD(_, amdPrefix, amdRequires) {
     const requireToArgMap = {};
     const factoryArgs = [];
 
@@ -60,7 +64,7 @@ function convertAMD(_, amdPrefix, amdRequires, amdSuffix) {
         .split(/\],\s*?\[/gu);
 
     let factoryArg, // inner args
-        pathItems,  // original args
+        pathItems, // original args
         requireKey; // outer args
 
     for (const amdPath of amdRequires) {
@@ -106,7 +110,10 @@ export class UMDExtensionPlugin {
 
 
     /**
+     * Creates the plugin with the given options.
+     *
      * @param {UMDExtensionPluginOptions} [options]
+     * Plugin options.
      */
     constructor(options = {}) {
         this.options = options;
@@ -134,15 +141,21 @@ export class UMDExtensionPlugin {
 
 
     /**
-     * @param {Webpack.Compiler} compiler 
+     * Registers the output processing hook.
+     *
+     * @param {import('webpack').Compiler} compiler
+     * Webpack compiler.
      */
     apply(compiler) {
-        compiler.hooks.done.tap(HOOKS_NAME, (stats) => this.onDone(stats));
+        compiler.hooks.done.tap(HOOKS_NAME, stats => this.onDone(stats));
     }
 
 
     /**
-     * @param {Webpack.Stats} stats
+     * Updates the emitted bundle after compilation.
+     *
+     * @param {import('webpack').Stats} stats
+     * Compilation statistics.
      */
     onDone(stats) {
         const compilation = stats.compilation;
@@ -186,9 +199,9 @@ export class UMDExtensionPlugin {
                             )
                             .replace(
                                 /define\("(.*?)", \[\], factory\)/su,
-                                isES5
-                                    ? 'define("$1", [], function() { return factory(); })'
-                                    : 'define("$1", [], factory)'
+                                isES5 ?
+                                    'define("$1", [], function() { return factory(); })' :
+                                    'define("$1", [], factory)'
                             ) +
                         umdSuffix
                             .replace('(this,', UMD_ROOT)

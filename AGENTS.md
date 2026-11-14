@@ -29,14 +29,15 @@ Read only what the task needs:
 - Prefer cross-platform Node-based scripts unless shell-specific behavior is explicitly required.
 - Avoid introducing ad-hoc dependencies or an inconsistent automation stack.
 
-## Skill and Tooling Change Validation
+## Skill Sync Validation
 
-- Validate script behavior with:
+For changes to `.agents/skills/` or `tools/sync-agent-skills.js`, validate:
+
 - `npm run sync:skills -- --help`
 - `npm run sync:skills -- --yes`
-- For non-interactive safety, validate:
 - `npm run sync:skills < /dev/null` (should fail unless `--yes` is used)
-- In PR description, include commands executed and whether result was expected.
+
+In the PR description, include these commands and whether each result was expected.
 
 ## Skill Evaluation Notes
 

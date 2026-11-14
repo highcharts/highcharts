@@ -15,5 +15,18 @@
                 "ignores": ["modules"]
             }]
         }
+    }, {
+        "files": ["webpacks/**/*.mjs", "gulptasks-tests/**/*.mjs"],
+        "parserOptions": {
+            "ecmaVersion": 2022,
+            "sourceType": "module"
+        },
+        "rules": {
+            "node/no-unpublished-import": 0,
+            "node/no-unsupported-features/es-syntax": ["error", {
+                "ignores": ["modules", "dynamicImport"]
+            }],
+            "no-use-before-define": ["error", { "functions": false }]
+        }
     }]
 }
