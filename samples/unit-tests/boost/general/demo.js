@@ -1337,3 +1337,49 @@ QUnit.skip(
         );
     }
 );
+
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Boosted point index (#25641)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            plotOptions: {
+                series: {
+                    boostThreshold: 1,
+                    cropThreshold: 1
+                }
+            },
+            series: [{
+                data: [10, 20, 30, 40, 50, 60]
+            }]
+        });
+        const series = chart.series[0];
+
+        assert.strictEqual(
+            series.boost.getPoint({ i: 2 }).index,
+            2,
+            'Boosted point retains its nonzero data index'
+        );
+
+        chart.xAxis[0].setExtremes(3, 4);
+        assert.ok(series.cropStart > 0, 'The series is cropped');
+        assert.strictEqual(
+            series.boost.getPoint({ i: series.cropStart }).index,
+            series.cropStart,
+            'Cropped boosted point retains its original data index'
+        );
+
+        series.update({ boostThreshold: 0 });
+        const point = series.points[0];
+        assert.strictEqual(
+            series.boost.getPoint(point),
+            point,
+            'An existing unboosted point is returned unchanged'
+        );
+        assert.strictEqual(
+            point.index,
+            series.cropStart,
+            'Unboosted point retains its original data index'
+        );
+    }
+);
