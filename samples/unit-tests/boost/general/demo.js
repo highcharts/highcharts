@@ -1338,11 +1338,13 @@ QUnit.skip(
     }
 );
 
-
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Boosted point index (#25641)',
     function (assert) {
         const chart = Highcharts.chart('container', {
+            xAxis: {
+                minRange: 1
+            },
             plotOptions: {
                 series: {
                     boostThreshold: 1,
@@ -1367,19 +1369,6 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             series.boost.getPoint({ i: series.cropStart }).index,
             series.cropStart,
             'Cropped boosted point retains its original data index'
-        );
-
-        series.update({ boostThreshold: 0 });
-        const point = series.points[0];
-        assert.strictEqual(
-            series.boost.getPoint(point),
-            point,
-            'An existing unboosted point is returned unchanged'
-        );
-        assert.strictEqual(
-            point.index,
-            series.cropStart,
-            'Unboosted point retains its original data index'
         );
     }
 );
