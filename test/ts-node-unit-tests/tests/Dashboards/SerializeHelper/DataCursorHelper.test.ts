@@ -1,5 +1,5 @@
 import { describe, it } from 'node:test';
-import { deepStrictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual } from 'node:assert';
 
 import DataCursor from '../../../../../ts/Data/DataCursor';
 import DataCursorHelper from '../../../../../ts/Dashboards/SerializeHelper/DataCursorHelper';
@@ -68,6 +68,23 @@ describe('DataCursorHelper', () => {
                 stateMap
             },
             'DataCursor.JSON should keep a consistent structure.'
+        );
+    });
+
+    it('should keep the state map prototype-less after deserialization', () => {
+        const cursor = DataCursorHelper.fromJSON(JSON.parse(
+            '{"$class":"Data.DataCursor","stateMap":{}}'
+        ));
+
+        strictEqual(
+            Object.getPrototypeOf(cursor.stateMap),
+            null,
+            'The deserialized state map should have no prototype.'
+        );
+        strictEqual(
+            cursor.stateMap['__proto__'],
+            void 0,
+            'The deserialized state map should not expose `__proto__`.'
         );
     });
 });
