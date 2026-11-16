@@ -379,11 +379,9 @@ function seriesOnAfterColumnTranslate(
         for (const point of this.points) {
             const { shapeArgs } = point;
             if (point.shapeType === 'roundedRect' && shapeArgs) {
-                const {
-                    width = 0,
-                    height = 0,
-                    y = 0
-                } = shapeArgs;
+                const flip =
+                        (point.negative ? -1 : 1) * (reversed ? -1 : 1) === -1,
+                    { width = 0, height = 0, y = 0 } = shapeArgs;
 
                 let brBoxY = y,
                     brBoxHeight = height;
@@ -405,7 +403,7 @@ function seriesOnAfterColumnTranslate(
                                     ?.shapeArgs || {}
                             ),
                             // Use the pre-translated position (#24454)
-                            stackTip = (stackItem.total || 0) < 0 ?
+                            stackTip = flip ?
                                 y + height :
                                 y || 0,
 
@@ -426,9 +424,6 @@ function seriesOnAfterColumnTranslate(
                         brBoxHeight = box.height;
                     }
                 }
-
-                const flip = (point.negative ? -1 : 1) *
-                    (reversed ? -1 : 1) === -1;
 
                 // Handle the where option
                 let where = borderRadius.where;
