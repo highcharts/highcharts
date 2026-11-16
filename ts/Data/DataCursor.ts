@@ -25,6 +25,8 @@
 import type DataTable from './DataTable';
 import type { NullProto } from '../Shared/Types';
 
+import { extend } from '../Shared/Utilities.js';
+
 
 /* *
  *
@@ -58,13 +60,13 @@ class DataCursor {
 
 
     public constructor(
-        stateMap?: StateMap
+        stateMap: StateMap = {}
     ) {
         this.emittingRegister = [];
         // Table IDs are used as keys, so keep the maps prototype-less, also
         // when a map is given, for example from JSON.
         this.listenerMap = Object.create(null);
-        this.stateMap = Object.assign(Object.create(null), stateMap);
+        this.stateMap = extend(Object.create(null), stateMap);
     }
 
 
