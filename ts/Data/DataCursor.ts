@@ -23,6 +23,7 @@
 
 
 import type DataTable from './DataTable';
+import type { NullProto } from '../Shared/Types';
 
 
 /* *
@@ -83,13 +84,13 @@ class DataCursor {
     /**
      * Contains listeners of states on tables.
      */
-    public readonly listenerMap: ListenerMap;
+    public readonly listenerMap: NullProto & ListenerMap;
 
 
     /**
      * Contains lasting states that are kept over multiple changes.
      */
-    public readonly stateMap: StateMap;
+    public readonly stateMap: NullProto & StateMap;
 
 
     /* *
