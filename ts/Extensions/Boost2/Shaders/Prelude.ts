@@ -85,6 +85,14 @@ struct U {
     dashB     : vec4f,
     dashCount : u32,
     dashPeriod: f32,
+    // Marker paint. Each color stands in for the one the zone would
+    // give, and the flags say which of them was set at all.
+    fillColor : vec4f,
+    lineColor : vec4f,
+    // Marker outline width in device pixels, straddling the edge
+    stroke    : f32,
+    // 1 marker.fillColor set, 2 marker.lineColor set
+    paint     : u32,
 };
 
 // A band of the y domain, up to its value. The last one has no bound and

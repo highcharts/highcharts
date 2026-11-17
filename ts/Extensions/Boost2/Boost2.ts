@@ -98,7 +98,6 @@ const DEFAULT_THRESHOLD = 10000;
  */
 function isSupported(series: Series): boolean {
     const options = series.options,
-        marker = options.marker,
         // Shared with the boost module: 0 disables, 1 forces.
         threshold = options.boostThreshold ?? DEFAULT_THRESHOLD;
 
@@ -111,13 +110,9 @@ function isSupported(series: Series): boolean {
         options.stacking ||
         // `negativeColor` arrives here as a pair of zones too.
         !zonesSupported(series) ||
-        // Only circles in the series color are drawn, and the automatic
-        // rule decides by zoom whether markers appear at all.
-        (markersEnabled(series) && (
-            series.symbol !== 'circle' ||
-            marker?.fillColor ||
-            marker?.lineWidth
-        )) ||
+        // Only circles are drawn, and the automatic rule decides by zoom
+        // whether markers appear at all.
+        (markersEnabled(series) && series.symbol !== 'circle') ||
         // `hitAt` assumes a sorted x column.
         !series.requireSorting ||
         // An ordinal axis places x by its position in a table. That is

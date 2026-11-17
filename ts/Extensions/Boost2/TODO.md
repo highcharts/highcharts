@@ -44,6 +44,10 @@ or a guard.
 - `boostHairline` draws one device pixel, so it thins as the pixel ratio
   rises: measured 0.8 CSS px at 1.25 and 0.33 at 3, where SVG holds one
   CSS pixel throughout.
+- `Series.markerAttribs` snaps a marker's x through `crisp`, which this
+  path does not, so a marker can sit half a pixel from the SVG one. The
+  width of its outline matches: measured 4.00, 8.01 and 16.01 against
+  3.99, 7.99 and 15.99 across a cut.
 
 ## Options that fall back to SVG
 
@@ -56,12 +60,12 @@ path does not yet draw.
   their own, and styled mode, where the color lives in a class. Any
   number of y zones is drawn; `zoneAxis: 'x'` falls back, since zone
   values would have to be shifted by the buffer origin.
-- Markers: any symbol other than `circle`, `marker.fillColor`,
-  `marker.lineWidth`. The guard follows the automatic enabling rule, so
-  such a series stays on the GPU while its markers are hidden and falls
-  back once zooming would show them. Since the default symbol cycles per
-  series index, the second and later line series of a chart leave the GPU
-  path at that zoom level until the other symbols are drawn.
+- Markers of any symbol other than `circle`. The guard follows the
+  automatic enabling rule, so such a series stays on the GPU while its
+  markers are hidden and falls back once zooming would show them. Since
+  the default symbol cycles per series index, the second and later line
+  series of a chart leave the GPU path at that zoom level until the
+  other symbols are drawn.
 - Unsorted data (`requireSorting` false), which also rules out `scatter`:
   `hitAt` is a binary search over the x column, so an unsorted series
   needs a different hit test.

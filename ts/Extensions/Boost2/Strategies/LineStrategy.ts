@@ -61,13 +61,17 @@ interface Uniforms {
     swap: number;
     dash: Array<number>;
     dashPeriod: number;
+    fillColor: Color.RGBA;
+    lineColor: Color.RGBA;
+    stroke: number;
+    paint: number;
 }
 
 /**
- * A hundred and four bytes of content, rounded up because a struct in
- * the uniform address space takes an alignment of 16.
+ * A hundred and fifty-two bytes of content, rounded up because a struct
+ * in the uniform address space takes an alignment of 16.
  */
-const UNIFORM_BYTES = 112;
+const UNIFORM_BYTES = 160;
 
 /** Dash runs the uniform holds, as two vec4f. */
 const DASH_SLOTS = 8;
@@ -556,6 +560,14 @@ class LineStrategy {
         ints[24] = u.dash.length;
         floats[25] = u.dashPeriod;
 
+        for (let i = 0; i < 4; i++) {
+            // Alpha already runs zero to one, the channels do not.
+            floats[28 + i] = u.fillColor[i] / (i < 3 ? 255 : 1);
+            floats[32 + i] = u.lineColor[i] / (i < 3 ? 255 : 1);
+        }
+        floats[36] = u.stroke;
+        ints[37] = u.paint;
+
         GPUContext.device!.queue.writeBuffer(target, 0, bytes);
     }
 
@@ -955,10 +967,13 @@ class LineStrategy {
             lineWidth = options.lineWidth ?? 2,
             hairline = options.boostHairline === true,
             markers = markersEnabled(series),
+            marker = options.marker || {},
+            // The outline straddles the edge, so half of it counts.
+            stroke = markers ? (marker.lineWidth ?? 0) : 0,
             // How far a shape may reach past the plot box: a marker
             // centerd on the edge, and nothing else.
             overflow = markers ?
-                Math.ceil((options.marker?.radius ?? 4) + 1) :
+                Math.ceil((marker.radius ?? 4) + stroke / 2 + 1) :
                 0;
 
         // Nothing to draw. A surface is still needed if one exists, so
@@ -1030,7 +1045,20 @@ class LineStrategy {
                 zoneCount: this.zoneCount,
                 step,
                 dash,
-                dashPeriod: dash.reduce((sum, run): number => sum + run, 0)
+                dashPeriod: dash.reduce((sum, run): number => sum + run, 0),
+                // Unset leaves the zone color in place, which the flags
+                // below tell the shader.
+                fillColor: resolveColor(
+                    (marker.fillColor as string) || '#000000',
+                    series.chart.container
+                ),
+                lineColor: resolveColor(
+                    (marker.lineColor as string) || '#000000',
+                    series.chart.container
+                ),
+                stroke: stroke * ratio,
+                paint: (marker.fillColor ? 1 : 0) +
+                    (marker.lineColor ? 2 : 0)
             },
             scaleX = (xHigh - xLow) / spanX,
             scaleY = (yHigh - yLow) / spanY;

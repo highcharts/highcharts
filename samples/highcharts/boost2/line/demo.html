@@ -16,6 +16,9 @@
             <highcharts-control type="select" path="series[0].step" options="left,center,right" nullable></highcharts-control>
             <highcharts-control type="boolean" path="series[0].marker.enabled" nullable></highcharts-control>
             <highcharts-control type="number" path="series[0].marker.radius" min="1" max="8"></highcharts-control>
+            <highcharts-control type="color" path="series[0].marker.fillColor" nullable></highcharts-control>
+            <highcharts-control type="number" path="series[0].marker.lineWidth" min="0" max="4"></highcharts-control>
+            <highcharts-control type="color" path="series[0].marker.lineColor" value="#ffffff" nullable></highcharts-control>
             <highcharts-control type="boolean" path="series[0].connectNulls"></highcharts-control>
             <highcharts-control type="boolean" path="series[0].nullInteraction"></highcharts-control>
             <highcharts-control type="select" path="series[0].findNearestPointBy" options="x,xy"></highcharts-control>
@@ -33,8 +36,6 @@
                 once markers are visible.
             </highcharts-group-description>
             <highcharts-control type="select" path="series[0].marker.symbol" options="circle,square,diamond,triangle" nullable></highcharts-control>
-            <highcharts-control type="color" path="series[0].marker.fillColor" nullable></highcharts-control>
-            <highcharts-control type="number" path="series[0].marker.lineWidth" min="0" max="4"></highcharts-control>
         </highcharts-group>
     </highcharts-controls>
 </div>

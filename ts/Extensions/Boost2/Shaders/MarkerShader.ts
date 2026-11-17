@@ -54,9 +54,11 @@ fn vsMarker(
     @builtin(instance_index) ii : u32
 ) -> MarkerOut {
     let center = toPixels(ii);
-    // Collapsing the quad to its center leaves it with no area, which
-    // drops the marker whole rather than clipping it.
-    let reach  = select(0.0, u.radius + AA_PAD, inPlotArea(ii));
+    // The outline straddles the edge, so half of it reaches past the
+    // radius. Collapsing the quad to its center leaves it with no area,
+    // which drops the marker whole rather than clipping it.
+    let full   = u.radius + u.stroke * 0.5 + AA_PAD;
+    let reach  = select(0.0, full, inPlotArea(ii));
     let corner = vec2f(
         f32(vi & 1u) * 2.0 - 1.0,
         f32(vi >> 1u) * 2.0 - 1.0
@@ -73,12 +75,29 @@ fn vsMarker(
 @fragment
 fn fsMarker(in : MarkerOut) -> @location(0) vec4f {
     // A marker takes one color whole, from its own value, as the zone of
-    // a point does in SVG.
-    let color = tint(in.value);
-    let alpha = color.a * coverage(length(in.offset) - u.radius);
+    // a point does in SVG. Series.pointAttribs lets marker.fillColor and
+    // marker.lineColor stand in for it.
+    let zone = tint(in.value);
+    let fill = select(zone, u.fillColor, (u.paint & 1u) != 0u);
+    let d = length(in.offset) - u.radius;
+    let w = fwidth(d);
 
-    // Target alphaMode is 'premultiplied'.
-    return vec4f(color.rgb * alpha, alpha);
+    if (u.stroke <= 0.0) {
+        let alpha = fill.a * coverageAt(d, w);
+
+        // Target alphaMode is 'premultiplied'.
+        return vec4f(fill.rgb * alpha, alpha);
+    }
+
+    let line = select(zone, u.lineColor, (u.paint & 2u) != 0u);
+    let half = u.stroke * 0.5;
+    // Everything within the outer side of the outline is drawn, and the
+    // fill shows through within the inner one.
+    let outer = coverageAt(d - half, w);
+    let inner = coverageAt(d + half, w);
+    let alpha = mix(line.a, fill.a, inner) * outer;
+
+    return vec4f(mix(line.rgb, fill.rgb, inner) * alpha, alpha);
 }
 
 `;
