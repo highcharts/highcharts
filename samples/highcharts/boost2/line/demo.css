@@ -1,4 +1,14 @@
-#container {
-    height: 400px;
-    min-width: 320px;
+.highcharts-figure {
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+.highcharts-controls-wrapper {
+    max-width: 800px;
+    margin: 1em auto;
+    padding: 0 10px;
+}
+
+highcharts-controls {
+    display: inline-block;
 }

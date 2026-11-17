@@ -114,13 +114,18 @@ class GPUSurface {
      * Cover the plot box, extended by `overflow` on each side so that a
      * shape anchored on the edge is not cut off. The group origin is the
      * plot box origin, so the rectangle starts `overflow` before it.
+     *
+     * Rows run along the x axis unless `swapped`, which an upright group
+     * on an inverted chart asks for.
      * @internal
      */
-    public layout(overflow: number): void {
+    public layout(overflow: number, swapped?: boolean): void {
         const { xAxis, yAxis } = this.series,
             ratio = win.devicePixelRatio || 1,
-            cssWidth = Math.max(1, Math.round(xAxis.len) + 2 * overflow),
-            cssHeight = Math.max(1, Math.round(yAxis.len) + 2 * overflow);
+            along = swapped ? yAxis : xAxis,
+            across = swapped ? xAxis : yAxis,
+            cssWidth = Math.max(1, Math.round(along.len) + 2 * overflow),
+            cssHeight = Math.max(1, Math.round(across.len) + 2 * overflow);
 
         this.pad = Math.round(overflow * ratio);
 

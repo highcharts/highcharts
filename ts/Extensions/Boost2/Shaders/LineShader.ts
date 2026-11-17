@@ -193,7 +193,8 @@ fn fs(in : LineOut) -> @location(0) vec4f {
 @fragment
 fn fsLine(in : LineOut) -> @location(0) vec4f {
     let color = tint(fragValue(in.pos));
-    let alpha = color.a * coverage(abs(in.off) - u.halfWidth);
+    let alpha = color.a *
+        coverageAt(abs(in.off) - u.halfWidth, fwidth(in.off));
 
     // Target alphaMode is 'premultiplied'.
     return vec4f(color.rgb * alpha, alpha);

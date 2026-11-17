@@ -1,7 +1,7 @@
 # Boost2 - open work
 
-Scope of the current proof of concept: the `line` series, straight or
-stepped, drawn at any width as a ribbon with miter and bevel joins, or as
+Scope of the current proof of concept: the `line` series on a plain or
+ordinal axis, straight or stepped, drawn at any width as a ribbon with miter and bevel joins, or as
 a one pixel hairline under `boostHairline`, with optional circular
 markers and data labels.
 
@@ -40,9 +40,9 @@ or a guard.
 - `clip: false` applies to the graph, which inherits the series group
   clip, but not to markers, which are drawn whole or not at all by their
   own coordinate.
-- Ordinal axes. The shader maps x linearly between `xAxis.min` and
-  `xAxis.max`, while an ordinal axis spaces points by index, so positions
-  would diverge wherever the data has gaps. Needs a guard at least.
+- `boostHairline` draws one device pixel, so it thins as the pixel ratio
+  rises: measured 0.8 CSS px at 1.25 and 0.33 at 3, where SVG holds one
+  CSS pixel throughout.
 
 ## Options that fall back to SVG
 
@@ -65,8 +65,16 @@ path does not yet draw.
 - Unsorted data (`requireSorting` false), which also rules out `scatter`:
   `hitAt` is a binary search over the x column, so an unsorted series
   needs a different hit test.
-- Inverted charts.
 - Logarithmic axes.
+- An ordinal axis shared with another series, or one whose table of
+  positions is shorter than the rows in view, which means duplicate x.
+  A series that fills the table alone is drawn on the GPU: its row
+  index is its position in the table, so `slope * index + offset`
+  replaces the value. `connectNulls` also falls back there, since it
+  compacts the buffer and breaks the row-to-index match.
+- Grouped data. Grouping replaces the table the core reads, while this
+  path reads the raw columns; `extremes` would also index the raw column
+  with a count taken from the grouped table.
 
 ## Unverified
 

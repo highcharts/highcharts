@@ -117,7 +117,18 @@ function isSupported(series: Series): boolean {
         )) ||
         // `hitAt` assumes a sorted x column.
         !series.requireSorting ||
-        series.chart.inverted ||
+        // An ordinal axis places x by its position in a table. That is
+        // the row index only while this series fills the table alone and
+        // the buffer still holds every row.
+        (series.xAxis?.ordinal?.positions && (
+            options.connectNulls ||
+            series.xAxis.ordinal.positions.length !==
+                series.dataTable.getModified().rowCount
+        )) ||
+        // Grouping replaces the table the core reads, while this path
+        // reads the raw columns, so the two would disagree on both the
+        // shape and the row count.
+        series.hasGroupedData ||
         series.xAxis?.logarithmic ||
         series.yAxis?.logarithmic
     ) {

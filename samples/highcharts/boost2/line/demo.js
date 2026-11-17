@@ -13,7 +13,7 @@ for (let i = 0; i < n; i++) {
 
 Highcharts.chart('container', {
     chart: {
-        zooming: { type: 'xy' }
+        zooming: { type: 'x' }
     },
     title: {
         text: 'Boost2: 1,000,000 points on WebGPU'
@@ -28,6 +28,7 @@ Highcharts.chart('container', {
         type: 'line',
         boostThreshold: 1,
         name: 'Measurement',
+        lineWidth: 2,
         marker: { radius: 2 },
         connectNulls: true,
         zones: [{

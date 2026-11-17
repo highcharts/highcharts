@@ -47,21 +47,25 @@ import { defined, isNumber, splat } from '../../../Shared/Utilities.js';
  * @internal
  */
 interface Uniforms {
+    origin: [number, number];
+    scale: [number, number];
     span: [number, number];
     viewport: [number, number];
     halfWidth: number;
     radius: number;
-    pad: number;
+    ordSlope: number;
+    ordOffset: number;
     count: number;
     zoneCount: number;
     step: number;
+    swap: number;
 }
 
 /**
- * Forty bytes of content, rounded up because a struct in the uniform
+ * Sixty bytes of content, rounded up because a struct in the uniform
  * address space takes an alignment of 16.
  */
-const UNIFORM_BYTES = 48;
+const UNIFORM_BYTES = 64;
 
 /** Bytes per zone: a vec4f color and a value, at vec4f alignment. */
 const ZONE_BYTES = 32;
@@ -211,6 +215,35 @@ function passes(
 }
 
 /**
+ * An ordinal axis places a value at `slope * index + offset`, and for a
+ * series that fills the table alone the index is its row. Cropping only
+ * shifts where the rows start, so it folds into the offset.
+ *
+ * Reported as offsets above the lower end of the domain, like every
+ * other coordinate the shader sees. A zero slope means a plain axis.
+ *
+ * @internal
+ */
+function ordinalTerms(
+    series: Series,
+    xMin: number
+): { ordSlope: number, ordOffset: number } {
+    const ordinal = series.xAxis?.ordinal;
+
+    if (!ordinal?.positions || !isNumber(ordinal.slope)) {
+        return { ordSlope: 0, ordOffset: 0 };
+    }
+
+    const slope = ordinal.slope,
+        start = series.cropped ? (series.cropStart || 0) : 0;
+
+    return {
+        ordSlope: slope,
+        ordOffset: (ordinal.offset || 0) - xMin - slope * start
+    };
+}
+
+/**
  * How many rows of a sorted x column come before `value`, which is also
  * the index of the first row that reaches it. With `orEqual`, rows equal
  * to `value` count as before, so the result is one past the last match.
@@ -335,6 +368,13 @@ class LineStrategy {
     /** @internal */
     private uniformBuffer?: GPUBuffer;
 
+    /**
+     * The marker group keeps its own transform, so its surface needs its
+     * own mapping and cannot share the one above.
+     * @internal
+     */
+    private markerUniformBuffer?: GPUBuffer;
+
     /** @internal */
     private uniformBytes = new ArrayBuffer(UNIFORM_BYTES);
 
@@ -343,6 +383,9 @@ class LineStrategy {
 
     /** @internal */
     private bindGroup?: GPUBindGroup;
+
+    /** @internal */
+    private markerBindGroup?: GPUBindGroup;
 
     /** @internal */
     private pipeline?: GPURenderPipeline;
@@ -422,23 +465,29 @@ class LineStrategy {
      * declare it.
      * @internal
      */
-    private writeUniforms(u: Uniforms): void {
+    private writeUniforms(u: Uniforms, target: GPUBuffer): void {
         const bytes = this.uniformBytes,
             floats = new Float32Array(bytes),
             ints = new Uint32Array(bytes);
 
-        floats[0] = u.span[0];
-        floats[1] = u.span[1];
-        floats[2] = u.viewport[0];
-        floats[3] = u.viewport[1];
-        floats[4] = u.halfWidth;
-        floats[5] = u.radius;
-        floats[6] = u.pad;
-        ints[7] = u.count;
-        ints[8] = u.zoneCount;
-        ints[9] = u.step;
+        floats[0] = u.origin[0];
+        floats[1] = u.origin[1];
+        floats[2] = u.scale[0];
+        floats[3] = u.scale[1];
+        floats[4] = u.span[0];
+        floats[5] = u.span[1];
+        floats[6] = u.viewport[0];
+        floats[7] = u.viewport[1];
+        floats[8] = u.halfWidth;
+        floats[9] = u.radius;
+        floats[10] = u.ordSlope;
+        floats[11] = u.ordOffset;
+        ints[12] = u.count;
+        ints[13] = u.zoneCount;
+        ints[14] = u.step;
+        ints[15] = u.swap;
 
-        GPUContext.device!.queue.writeBuffer(this.uniformBuffer!, 0, bytes);
+        GPUContext.device!.queue.writeBuffer(target, 0, bytes);
     }
 
     /**
@@ -530,7 +579,7 @@ class LineStrategy {
             this.buffer?.destroy();
             this.buffer = GPUContext.createStorageBuffer(bytes);
             this.capacity = bytes;
-            this.bindGroup = void 0;
+            this.bindGroup = this.markerBindGroup = void 0;
         }
 
         GPUContext.device!.queue.writeBuffer(
@@ -544,7 +593,7 @@ class LineStrategy {
             this.originBuffer?.destroy();
             this.originBuffer = GPUContext.createStorageBuffer(originBytes);
             this.originCapacity = originBytes;
-            this.bindGroup = void 0;
+            this.bindGroup = this.markerBindGroup = void 0;
         }
 
         this.blockOriginX = originX.subarray(0, used);
@@ -655,7 +704,7 @@ class LineStrategy {
                 count * ZONE_BYTES
             );
             this.zoneCount = count;
-            this.bindGroup = void 0;
+            this.bindGroup = this.markerBindGroup = void 0;
         }
 
         GPUContext.device!.queue.writeBuffer(this.zoneBuffer!, 0, data);
@@ -694,21 +743,28 @@ class LineStrategy {
             );
         }
 
-        if (!this.uniformBuffer) {
-            this.uniformBuffer = GPUContext.createUniformBuffer(UNIFORM_BYTES);
-        }
+        this.uniformBuffer ||= GPUContext.createUniformBuffer(UNIFORM_BYTES);
+        this.bindGroup ||= this.buildBindGroup(this.uniformBuffer);
 
-        if (!this.bindGroup) {
-            this.bindGroup = GPUContext.device!.createBindGroup({
-                layout: GPUContext.bindGroupLayout(),
-                entries: [
-                    { binding: 0, resource: { buffer: this.uniformBuffer } },
-                    { binding: 1, resource: { buffer: this.buffer! } },
-                    { binding: 2, resource: { buffer: this.zoneBuffer! } },
-                    { binding: 3, resource: { buffer: this.originBuffer! } }
-                ]
-            });
+        if (markers) {
+            this.markerUniformBuffer ||=
+                GPUContext.createUniformBuffer(UNIFORM_BYTES);
+            this.markerBindGroup ||=
+                this.buildBindGroup(this.markerUniformBuffer);
         }
+    }
+
+    /** Everything but the uniforms is shared between the two. @internal */
+    private buildBindGroup(uniforms: GPUBuffer): GPUBindGroup {
+        return GPUContext.device!.createBindGroup({
+            layout: GPUContext.bindGroupLayout(),
+            entries: [
+                { binding: 0, resource: { buffer: uniforms } },
+                { binding: 1, resource: { buffer: this.buffer! } },
+                { binding: 2, resource: { buffer: this.zoneBuffer! } },
+                { binding: 3, resource: { buffer: this.originBuffer! } }
+            ]
+        });
     }
 
     /**
@@ -743,11 +799,16 @@ class LineStrategy {
         this.surface ||= new GPUSurface(series, series.group!);
         this.surface.layout(overflow);
 
+        // The core rotates the series group on an inverted chart but
+        // leaves the marker group upright, so the two surfaces do not
+        // share a space there.
+        const swap = series.chart.inverted === true;
+
         // Markers leave the marker group empty again when they turn off,
         // which is what the core reads to detect a series without them.
         if (markers) {
             this.markerSurface ||= new GPUSurface(series, series.markerGroup!);
-            this.markerSurface.layout(overflow);
+            this.markerSurface.layout(overflow, swap);
         } else if (this.markerSurface) {
             this.markerSurface.destroy();
             this.markerSurface = void 0;
@@ -757,22 +818,83 @@ class LineStrategy {
 
         const { xAxis, yAxis } = series,
             xMin = xAxis.min as number,
+            xMax = xAxis.max as number,
             yMin = yAxis.min as number,
+            yMax = yAxis.max as number,
+            spanX = xMax - xMin,
+            spanY = yMax - yMin,
             ratio = win.devicePixelRatio || 1,
+            pad = this.surface.pad,
+            height = this.surface.height,
             step = stepMode(series);
 
         this.placeOrigins(xMin, yMin);
 
+        // Both ends come from the axis, so a reversed one needs no case
+        // of its own: it returns them the other way round and the scale
+        // below comes out negative. `translate` is what the core uses
+        // for `plotX` and `plotY`, the space a series group holds.
+        const plotXLow = xAxis.translate(xMin, false, false, false, true),
+            plotXHigh = xAxis.translate(xMax, false, false, false, true),
+            plotYLow = yAxis.translate(yMin, false, true, false, true),
+            plotYHigh = yAxis.translate(yMax, false, true, false, true),
+            // Canvas rows run up from the bottom, group rows down from
+            // the top.
+            xLow = pad + plotXLow * ratio,
+            xHigh = pad + plotXHigh * ratio,
+            yLow = height - pad - plotYLow * ratio,
+            yHigh = height - pad - plotYHigh * ratio,
+            shared = {
+                span: [spanX, spanY] as [number, number],
+                halfWidth: lineWidth * ratio / 2,
+                radius: (options.marker?.radius ?? 4) * ratio,
+                ...ordinalTerms(series, xMin),
+                count: this.count,
+                zoneCount: this.zoneCount,
+                step
+            };
+
         this.writeUniforms({
-            span: [(xAxis.max as number) - xMin, (yAxis.max as number) - yMin],
-            viewport: [this.surface.width, this.surface.height],
-            halfWidth: lineWidth * ratio / 2,
-            radius: (options.marker?.radius ?? 4) * ratio,
-            pad: this.surface.pad,
-            count: this.count,
-            zoneCount: this.zoneCount,
-            step
-        });
+            ...shared,
+            origin: [xLow, yLow],
+            scale: [(xHigh - xLow) / spanX, (yHigh - yLow) / spanY],
+            viewport: [this.surface.width, height],
+            swap: 0
+        }, this.uniformBuffer!);
+
+        if (this.markerSurface) {
+            const surface = this.markerSurface,
+                // Where `Point.pos` puts a marker when the group it
+                // hangs in is left upright: both axes measured from
+                // their far end, and swapped.
+                mx = swap ?
+                    [
+                        surface.pad + (yAxis.len - plotYLow) * ratio,
+                        surface.pad + (yAxis.len - plotYHigh) * ratio
+                    ] :
+                    [xLow, xHigh],
+                my = swap ?
+                    [
+                        surface.height - surface.pad -
+                            (xAxis.len - plotXLow) * ratio,
+                        surface.height - surface.pad -
+                            (xAxis.len - plotXHigh) * ratio
+                    ] :
+                    [yLow, yHigh],
+                // A swapped surface takes x from the domain y and back.
+                spans = swap ? [spanY, spanX] : [spanX, spanY];
+
+            this.writeUniforms({
+                ...shared,
+                origin: [mx[0], my[0]],
+                scale: [
+                    (mx[1] - mx[0]) / spans[0],
+                    (my[1] - my[0]) / spans[1]
+                ],
+                viewport: [surface.width, surface.height],
+                swap: swap ? 1 : 0
+            }, this.markerUniformBuffer!);
+        }
 
         const device = GPUContext.device!,
             encoder = device.createCommandEncoder(),
@@ -794,7 +916,7 @@ class LineStrategy {
         if (this.markerSurface) {
             const markerPass = this.markerSurface.beginPass(encoder);
 
-            markerPass.setBindGroup(0, this.bindGroup!);
+            markerPass.setBindGroup(0, this.markerBindGroup!);
             markerPass.setPipeline(this.markerPipeline!);
             markerPass.draw(4, this.count);
             markerPass.end();
@@ -896,7 +1018,10 @@ class LineStrategy {
         }
 
         // Chart coordinates: `toValue` subtracts the axis position itself.
-        const value = series.xAxis.toValue(e.chartX);
+        // An inverted chart lays the x axis down the screen.
+        const value = series.xAxis.toValue(
+            series.chart.inverted ? e.chartY : e.chartX
+        );
 
         let low = Math.min(rowsBefore(xData, value), xData.length - 1);
 
@@ -972,8 +1097,17 @@ class LineStrategy {
             xData = series.getColumn('x'),
             yData = series.getColumn('y'),
             last = xData.length - 1,
-            cx = e.chartX - xAxis.pos,
-            cy = e.chartY - yAxis.pos;
+            inverted = series.chart.inverted,
+            // The pointer in the terms `place` puts the points in, as
+            // `Series.searchPoint` maps it.
+            cx = inverted ?
+                xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos,
+            cy = inverted ?
+                yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos,
+            plotX = (value: number): number =>
+                xAxis.translate(value, false, false, false, true),
+            plotY = (value: number): number =>
+                yAxis.translate(value, false, true, false, true);
 
         let best = seed,
             bestDist = Infinity;
@@ -985,8 +1119,8 @@ class LineStrategy {
                 const value = yData[i];
 
                 if (isNumber(value)) {
-                    const dx = xAxis.toPixels(xData[i], true) - cx,
-                        dy = yAxis.toPixels(value, true) - cy,
+                    const dx = plotX(xData[i]) - cx,
+                        dy = plotY(value) - cy,
                         dist = Math.sqrt(dx * dx + dy * dy);
 
                     if (dist < bestDist) {
@@ -1001,9 +1135,12 @@ class LineStrategy {
         // its horizontal distance, which only grows away from the seed.
         const visit = (b: number): number => {
             const to = Math.min(b * BLOCK + BLOCK - 1, last),
-                left = xAxis.toPixels(xData[b * BLOCK], true),
-                right = xAxis.toPixels(xData[to], true),
-                dx = Math.max(0, left - cx, cx - right);
+                left = plotX(xData[b * BLOCK]),
+                right = plotX(xData[to]),
+                dx = Math.max(
+                    0, Math.min(left, right) - cx,
+                    cx - Math.max(left, right)
+                );
 
             if (dx >= bestDist) {
                 return dx;
@@ -1014,11 +1151,13 @@ class LineStrategy {
 
             // An empty block holds no y at all.
             if (low <= high) {
-                const dy = Math.max(
-                    0,
-                    yAxis.toPixels(high, true) - cy,
-                    cy - yAxis.toPixels(low, true)
-                );
+                const near = plotY(high),
+                    far = plotY(low),
+                    dy = Math.max(
+                        0,
+                        Math.min(near, far) - cy,
+                        cy - Math.max(near, far)
+                    );
 
                 if (Math.sqrt(dx * dx + dy * dy) < bestDist) {
                     scan(b);
@@ -1058,12 +1197,19 @@ class LineStrategy {
         const series = this.series,
             { xAxis, yAxis } = series,
             y = series.getColumn('y')[index],
-            plotX = xAxis.toPixels(series.getColumn('x')[index], true);
+            // The core's own terms, which differ from `toPixels` on an
+            // inverted chart: there the axes change which way they run
+            // but these two stay in the space the series group holds.
+            plotX = xAxis.translate(
+                series.getColumn('x')[index], false, false, false, true
+            );
 
         // A null value has no position; the hit test treats its
         // contribution along y as zero rather than as a distance.
         point.plotX = point.clientX = plotX;
-        point.plotY = isNumber(y) ? yAxis.toPixels(y, true) : void 0;
+        point.plotY = isNumber(y) ?
+            yAxis.translate(y, false, true, false, true) :
+            void 0;
         point.isInside = series.isPointInside(point);
 
         // The hover state and the label are drawn in SVG from the color
@@ -1181,13 +1327,15 @@ class LineStrategy {
 
         this.buffer?.destroy();
         this.uniformBuffer?.destroy();
+        this.markerUniformBuffer?.destroy();
         this.zoneBuffer?.destroy();
         this.originBuffer?.destroy();
         this.surface?.destroy();
         this.markerSurface?.destroy();
         this.buffer = this.uniformBuffer = void 0;
+        this.markerUniformBuffer = void 0;
         this.zoneBuffer = this.originBuffer = void 0;
-        this.bindGroup = void 0;
+        this.bindGroup = this.markerBindGroup = void 0;
         this.surface = this.markerSurface = void 0;
     }
 
