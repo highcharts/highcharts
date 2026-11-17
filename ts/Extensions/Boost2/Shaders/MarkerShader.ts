@@ -54,11 +54,9 @@ fn vsMarker(
     @builtin(instance_index) ii : u32
 ) -> MarkerOut {
     let center = toPixels(ii);
-    // The outline straddles the edge, so half of it reaches past the
-    // radius. Collapsing the quad to its center leaves it with no area,
-    // which drops the marker whole rather than clipping it.
-    let full   = u.radius + u.stroke * 0.5 + AA_PAD;
-    let reach  = select(0.0, full, inPlotArea(ii));
+    // Collapsing the quad to its center leaves it with no area, which
+    // drops the marker whole rather than clipping it.
+    let reach  = select(0.0, u.reach, inPlotArea(ii));
     let corner = vec2f(
         f32(vi & 1u) * 2.0 - 1.0,
         f32(vi >> 1u) * 2.0 - 1.0
@@ -72,6 +70,36 @@ fn vsMarker(
     return out;
 }
 
+// Distance to the edge of the marker, negative inside, in device
+// pixels. Every symbol is inscribed in the same box of half extent
+// u.radius, as Series.markerAttribs sizes them.
+//
+// The polygons measure to the nearest edge line rather than to the
+// nearest point of the outline. Offsetting that by half a stroke keeps
+// the corners sharp, which is the miter join SVG draws; a true distance
+// would round them. Every built-in symbol stays inside the SVG miter
+// limit of 4, the sharpest being the triangle apex at 2.24.
+fn shapeDistance(p : vec2f) -> f32 {
+    let q = abs(p);
+    let r = u.radius;
+
+    if (u.symbol == 1u) {
+        return max(q.x, q.y) - r;
+    }
+    if (u.symbol == 2u) {
+        return (q.x + q.y - r) * 0.70710678;
+    }
+    // Rows here run up from the bottom, the other way from the symbol
+    // paths of the core, so the apex of a triangle sits at plus radius.
+    if (u.symbol == 3u) {
+        return max(-p.y - r, (2.0 * q.x + p.y - r) * 0.44721360);
+    }
+    if (u.symbol == 4u) {
+        return max(p.y - r, (2.0 * q.x - p.y - r) * 0.44721360);
+    }
+    return length(p) - r;
+}
+
 @fragment
 fn fsMarker(in : MarkerOut) -> @location(0) vec4f {
     // A marker takes one color whole, from its own value, as the zone of
@@ -79,7 +107,7 @@ fn fsMarker(in : MarkerOut) -> @location(0) vec4f {
     // marker.lineColor stand in for it.
     let zone = tint(in.value);
     let fill = select(zone, u.fillColor, (u.paint & 1u) != 0u);
-    let d = length(in.offset) - u.radius;
+    let d = shapeDistance(in.offset);
     let w = fwidth(d);
 
     if (u.stroke <= 0.0) {

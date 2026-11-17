@@ -29,6 +29,7 @@ const { composed } = H;
 import LineStrategy, {
     dashRuns,
     markersEnabled,
+    symbolIndex,
     zonesSupported
 } from './Strategies/LineStrategy.js';
 import { fireEvent, pushUnique, wrap } from '../../Shared/Utilities.js';
@@ -110,9 +111,9 @@ function isSupported(series: Series): boolean {
         options.stacking ||
         // `negativeColor` arrives here as a pair of zones too.
         !zonesSupported(series) ||
-        // Only circles are drawn, and the automatic rule decides by zoom
-        // whether markers appear at all.
-        (markersEnabled(series) && series.symbol !== 'circle') ||
+        // An image symbol has no distance field, and the automatic rule
+        // decides by zoom whether markers appear at all.
+        (markersEnabled(series) && symbolIndex(series.symbol) < 0) ||
         // `hitAt` assumes a sorted x column.
         !series.requireSorting ||
         // An ordinal axis places x by its position in a table. That is

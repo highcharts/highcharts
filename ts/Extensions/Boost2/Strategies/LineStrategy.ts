@@ -65,6 +65,8 @@ interface Uniforms {
     lineColor: Color.RGBA;
     stroke: number;
     paint: number;
+    symbol: number;
+    reach: number;
 }
 
 /**
@@ -229,6 +231,32 @@ function dashRuns(style?: string): (Array<number>|undefined) {
         runs.every((run): boolean => run > 0)
     ) ? runs : void 0;
 }
+
+/**
+ * Marker shape as the shader numbers them, or -1 for one it cannot
+ * draw, which then falls back to SVG.
+ *
+ * @internal
+ */
+function symbolIndex(symbol?: string): number {
+    return [
+        'circle',
+        'square',
+        'diamond',
+        'triangle',
+        'triangle-down'
+    ].indexOf(symbol as string);
+}
+
+/**
+ * How far a mitered outline reaches past the edge of a symbol, as a
+ * multiple of half the stroke. The sharpest corner decides it: a right
+ * angle on the square and the diamond, and the apex of a triangle at
+ * 53 degrees. All stay inside the SVG miter limit of 4.
+ *
+ * @internal
+ */
+const SYMBOL_MITER = [1, Math.SQRT2, Math.SQRT2, Math.sqrt(5), Math.sqrt(5)];
 
 /**
  * The comparison of `DataLabel.applyFilter`, against a raw column value
@@ -567,6 +595,8 @@ class LineStrategy {
         }
         floats[36] = u.stroke;
         ints[37] = u.paint;
+        ints[38] = u.symbol;
+        floats[39] = u.reach;
 
         GPUContext.device!.queue.writeBuffer(target, 0, bytes);
     }
@@ -968,13 +998,15 @@ class LineStrategy {
             hairline = options.boostHairline === true,
             markers = markersEnabled(series),
             marker = options.marker || {},
-            // The outline straddles the edge, so half of it counts.
+            // The outline straddles the edge, so half of it counts, and
+            // a mitered corner carries it further still.
             stroke = markers ? (marker.lineWidth ?? 0) : 0,
+            symbol = Math.max(0, symbolIndex(series.symbol)),
+            reach = (marker.radius ?? 4) +
+                stroke / 2 * SYMBOL_MITER[symbol] + 1,
             // How far a shape may reach past the plot box: a marker
             // centerd on the edge, and nothing else.
-            overflow = markers ?
-                Math.ceil((marker.radius ?? 4) + stroke / 2 + 1) :
-                0;
+            overflow = markers ? Math.ceil(reach) : 0;
 
         // Nothing to draw. A surface is still needed if one exists, so
         // that output from an earlier width is cleared.
@@ -1058,7 +1090,9 @@ class LineStrategy {
                 ),
                 stroke: stroke * ratio,
                 paint: (marker.fillColor ? 1 : 0) +
-                    (marker.lineColor ? 2 : 0)
+                    (marker.lineColor ? 2 : 0),
+                symbol,
+                reach: reach * ratio
             },
             scaleX = (xHigh - xLow) / spanX,
             scaleY = (yHigh - yLow) / spanY;
@@ -1565,5 +1599,5 @@ class LineStrategy {
  * */
 
 /** @internal */
-export { dashRuns, markersEnabled, stepMode, zonesSupported };
+export { dashRuns, markersEnabled, stepMode, symbolIndex, zonesSupported };
 export default LineStrategy;

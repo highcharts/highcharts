@@ -93,6 +93,13 @@ struct U {
     stroke    : f32,
     // 1 marker.fillColor set, 2 marker.lineColor set
     paint     : u32,
+    // Marker shape, in the order Series.symbol names them: 0 circle,
+    // 1 square, 2 diamond, 3 triangle, 4 triangle-down
+    symbol    : u32,
+    // Half extent of the quad a marker is drawn on, in device pixels.
+    // A mitered corner carries the outline further out than the radius
+    // and the stroke alone, so the host works this out per symbol.
+    reach     : f32,
 };
 
 // A band of the y domain, up to its value. The last one has no bound and
