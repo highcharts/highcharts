@@ -1,9 +1,10 @@
 # Boost2 - open work
 
 Scope of the current proof of concept: the `line` series on a plain or
-ordinal axis, straight or stepped, drawn at any width as a ribbon with miter and bevel joins, or as
-a one pixel hairline under `boostHairline`, with optional circular
-markers and data labels.
+ordinal axis, straight or stepped, solid or dashed, drawn at any width as
+a ribbon with miter and bevel joins, or as a one pixel hairline under
+`boostHairline`, with optional circular markers and data labels. Axes may
+be reversed and the chart inverted.
 
 ## Defects
 
@@ -50,7 +51,6 @@ Already guarded in `isSupported`, listed as the roadmap of what the GPU
 path does not yet draw.
 
 - Series types other than `line`; `area` and `column` are the next ones.
-- `dashStyle`
 - `stacking`
 - Zones carrying more than a color: a `fillColor` or a `dashStyle` of
   their own, and styled mode, where the color lives in a class. Any
@@ -65,6 +65,9 @@ path does not yet draw.
 - Unsorted data (`requireSorting` false), which also rules out `scatter`:
   `hitAt` is a binary search over the x column, so an unsorted series
   needs a different hit test.
+- A `dashStyle` of more than eight runs, or of an odd number of them,
+  which repeats with on and off swapped. Every style the core names is
+  six or fewer and even, so this guards hand-written patterns.
 - Logarithmic axes.
 - An ordinal axis shared with another series, or one whose table of
   positions is shorter than the rows in view, which means duplicate x.

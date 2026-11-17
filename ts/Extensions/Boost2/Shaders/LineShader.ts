@@ -53,7 +53,73 @@ struct LineOut {
     @builtin(position) pos : vec4f,
     // Signed distance from the centerline, in device pixels
     @location(0)       off : f32,
+    // Where the segment this fragment belongs to starts, and how far
+    // along the path that is. The fragment measures its own distance
+    // from them rather than taking an interpolated one, which keeps
+    // every term small: a cumulative length reaches millions of pixels
+    // on a long series, where f32 can no longer separate two dashes.
+    @location(1) @interpolate(flat) arcFrom : f32,
+    @location(2) @interpolate(flat) segFrom : vec2f,
+    @location(3) @interpolate(flat) segDir  : vec2f,
 };
+
+// How far along the path a fragment lies, in device pixels.
+fn pathDistance(in : LineOut) -> f32 {
+    // Fragment rows run down from the top, pixel rows up from the
+    // bottom.
+    let p = vec2f(in.pos.x, u.viewport.y - in.pos.y);
+
+    return in.arcFrom + dot(p - in.segFrom, in.segDir);
+}
+
+// Horizontal and vertical reach of the step between k and k + 1, in
+// device pixels.
+fn stepLegs(k : u32) -> vec2f {
+    let a = offsetAt(k);
+    let b = offsetAt(min(k + 1u, u.count - 1u));
+
+    return abs((b - a) * u.scale);
+}
+
+// Distance along the drawn path to a vertex. Points carry their own;
+// a corner adds the legs of its step that come before it. Zero where
+// the stroke is solid, which is all the buffer then holds.
+fn arcAt(j : u32) -> f32 {
+    if (u.dashCount == 0u) {
+        return 0.0;
+    }
+
+    let last = u.count - 1u;
+
+    if (u.step == 0u) {
+        return arcs[min(j, last)];
+    }
+
+    if (u.step == 2u) {
+        let k = min(j / 3u, last);
+        let r = j % 3u;
+        let legs = stepLegs(k);
+
+        if (r == 0u) {
+            return arcs[k];
+        }
+        if (r == 1u) {
+            return arcs[k] + legs.x * 0.5;
+        }
+        return arcs[k] + legs.x * 0.5 + legs.y;
+    }
+
+    let k = min(j >> 1u, last);
+
+    if ((j & 1u) == 0u) {
+        return arcs[k];
+    }
+
+    let legs = stepLegs(k);
+
+    // A right step rises first, a left one runs across first.
+    return arcs[k] + select(legs.x, legs.y, u.step == 1u);
+}
 
 // Vertices the line takes. A step carries one extra corner per segment,
 // two when it is centered.
@@ -112,9 +178,17 @@ fn vertexAt(j : u32) -> vec2f {
 // One vertex per point, for line-strip topology.
 @vertex
 fn vsHairline(@builtin(vertex_index) vi : u32) -> LineOut {
+    let last = vertexCount() - 1u;
+    let here = toPixelsAt(vertexAt(vi));
+    let ahead = toPixelsAt(vertexAt(min(vi + 1u, last))) - here;
+    let reach = length(ahead);
+
     var out : LineOut;
-    out.pos = toClip(toPixelsAt(vertexAt(vi)));
+    out.pos = toClip(here);
     out.off = 0.0;
+    out.arcFrom = arcAt(vi);
+    out.segFrom = here;
+    out.segDir = select(vec2f(0.0, 0.0), ahead / reach, reach > EPS);
     return out;
 }
 
@@ -137,6 +211,16 @@ fn vsLine(@builtin(vertex_index) vi : u32) -> LineOut {
 
     let lIn  = length(dIn);
     let lOut = length(dOut);
+
+    // Every vertex of a point reports that point, so the segment and
+    // the join either side of it measure from the same place.
+    out.arcFrom = arcAt(i);
+    out.segFrom = curr;
+    out.segDir = select(
+        select(vec2f(0.0, 0.0), dIn / lIn, lIn > EPS),
+        dOut / lOut,
+        lOut > EPS
+    );
 
     // False for a NaN length too, so a null point, the ends of the strip
     // and a zero-length segment all take the same path.
@@ -185,15 +269,16 @@ fn vsLine(@builtin(vertex_index) vi : u32) -> LineOut {
 @fragment
 fn fs(in : LineOut) -> @location(0) vec4f {
     let color = tint(fragValue(in.pos));
+    let alpha = color.a * dashAlpha(pathDistance(in));
 
     // Target alphaMode is 'premultiplied'.
-    return vec4f(color.rgb * color.a, color.a);
+    return vec4f(color.rgb * alpha, alpha);
 }
 
 @fragment
 fn fsLine(in : LineOut) -> @location(0) vec4f {
     let color = tint(fragValue(in.pos));
-    let alpha = color.a *
+    let alpha = color.a * dashAlpha(pathDistance(in)) *
         coverageAt(abs(in.off) - u.halfWidth, fwidth(in.off));
 
     // Target alphaMode is 'premultiplied'.

@@ -78,6 +78,13 @@ struct U {
     // an inverted chart, so the domain axes meet the opposite screen
     // ones. The line group is rotated instead and never sets this.
     swap      : u32,
+    // Dash runs in device pixels, on and off alternating from the first.
+    // Up to six carry every style the core defines; a zero count means a
+    // solid stroke and leaves the arc buffer unread.
+    dashA     : vec4f,
+    dashB     : vec4f,
+    dashCount : u32,
+    dashPeriod: f32,
 };
 
 // A band of the y domain, up to its value. The last one has no bound and
@@ -93,6 +100,9 @@ struct Zone {
 @group(0) @binding(2) var<storage, read> zones : array<Zone>;
 // Origin of each block, as its distance from the lower end of the domain
 @group(0) @binding(3) var<storage, read> origins : array<vec2f>;
+// Distance along the drawn path to each of its vertices, in device
+// pixels, restarting at every gap. One entry when the stroke is solid.
+@group(0) @binding(4) var<storage, read> arcs : array<f32>;
 
 // Where a point sits above the lower end of the domain, in domain units.
 fn offsetAt(i : u32) -> vec2f {
@@ -159,6 +169,42 @@ fn coverageAt(d : f32, w : f32) -> f32 {
 // fold after taking it. Fragment stage only.
 fn coverage(d : f32) -> f32 {
     return coverageAt(d, fwidth(d));
+}
+
+fn dashAt(k : u32) -> f32 {
+    if (k < 4u) {
+        return u.dashA[k];
+    }
+    return u.dashB[k - 4u];
+}
+
+// What the dash pattern leaves of a fragment lying s device pixels along
+// the path. Runs alternate on and off from the first, and the end of a
+// run fades by the same rule as the edge of a shape.
+fn dashAlpha(s : f32) -> f32 {
+    if (u.dashCount == 0u) {
+        return 1.0;
+    }
+
+    let w = fwidth(s);
+    let phase = s - u.dashPeriod * floor(s / u.dashPeriod);
+
+    var start = 0.0;
+    var alpha = 1.0;
+
+    for (var k = 0u; k < u.dashCount; k++) {
+        let len = dashAt(k);
+
+        if (phase >= start && phase < start + len) {
+            // Distance to the nearer end of the run it falls in.
+            let d = min(phase - start, start + len - phase);
+            alpha = select(
+                coverageAt(d, w), coverageAt(-d, w), (k & 1u) == 0u
+            );
+        }
+        start += len;
+    }
+    return alpha;
 }
 
 `;

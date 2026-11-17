@@ -212,6 +212,10 @@ class GPUContext {
                 binding: 3,
                 visibility: GPUShaderStage.VERTEX,
                 buffer: { type: 'read-only-storage' }
+            }, {
+                binding: 4,
+                visibility: GPUShaderStage.VERTEX,
+                buffer: { type: 'read-only-storage' }
             }]
         }));
     }

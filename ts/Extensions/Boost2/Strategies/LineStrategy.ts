@@ -59,13 +59,18 @@ interface Uniforms {
     zoneCount: number;
     step: number;
     swap: number;
+    dash: Array<number>;
+    dashPeriod: number;
 }
 
 /**
- * Sixty bytes of content, rounded up because a struct in the uniform
- * address space takes an alignment of 16.
+ * A hundred and four bytes of content, rounded up because a struct in
+ * the uniform address space takes an alignment of 16.
  */
-const UNIFORM_BYTES = 64;
+const UNIFORM_BYTES = 112;
+
+/** Dash runs the uniform holds, as two vec4f. */
+const DASH_SLOTS = 8;
 
 /** Bytes per zone: a vec4f color and a value, at vec4f alignment. */
 const ZONE_BYTES = 32;
@@ -185,6 +190,40 @@ function stepMode(series: Series): number {
         'center',
         'left'
     ].indexOf(series.options.step));
+}
+
+/**
+ * The runs `SVGElement.dashstyleSetter` would write, before scaling by
+ * the stroke width. Empty for a solid stroke, and undefined for a
+ * pattern this path cannot hold, which then falls back to SVG.
+ *
+ * @internal
+ */
+function dashRuns(style?: string): (Array<number>|undefined) {
+    if (!style || style.toLowerCase() === 'solid') {
+        return [];
+    }
+
+    const runs = style
+        .toLowerCase()
+        .replace('shortdashdotdot', '3,1,1,1,1,1,')
+        .replace('shortdashdot', '3,1,1,1')
+        .replace('shortdot', '1,1,')
+        .replace('shortdash', '3,1,')
+        .replace('longdash', '8,3,')
+        .replace(/dot/g, '1,3,')
+        .replace('dash', '4,3,')
+        .replace(/,$/, '')
+        .split(',')
+        .map(Number);
+
+    // An odd count repeats with on and off swapped, which the shader
+    // does not do.
+    return (
+        runs.length <= DASH_SLOTS &&
+        runs.length % 2 === 0 &&
+        runs.every((run): boolean => run > 0)
+    ) ? runs : void 0;
 }
 
 /**
@@ -426,6 +465,30 @@ class LineStrategy {
     /** @internal */
     private blockMax = new Float64Array(0);
 
+    /**
+     * Distance along the drawn path to each point, in device pixels.
+     * Only a dashed series fills it; a solid one leaves it at a single
+     * entry, so neither the scan nor the memory is spent.
+     * @internal
+     */
+    private arcBuffer?: GPUBuffer;
+
+    /** @internal */
+    private arcCapacity = 0;
+
+    /** @internal */
+    private arcData = new Float32Array(0);
+
+    /**
+     * Scale the arcs were measured at. Panning leaves it alone, so only
+     * a zoom pays for them again.
+     * @internal
+     */
+    private arcScale: [number, number] = [NaN, NaN];
+
+    /** @internal */
+    private arcPeriod = NaN;
+
     /** @internal */
     private zoneBuffer?: GPUBuffer;
 
@@ -487,6 +550,12 @@ class LineStrategy {
         ints[14] = u.step;
         ints[15] = u.swap;
 
+        for (let i = 0; i < DASH_SLOTS; i++) {
+            floats[16 + i] = u.dash[i] ?? 0;
+        }
+        ints[24] = u.dash.length;
+        floats[25] = u.dashPeriod;
+
         GPUContext.device!.queue.writeBuffer(target, 0, bytes);
     }
 
@@ -514,6 +583,9 @@ class LineStrategy {
             this.stats.buildMs = performance.now() - start;
             return;
         }
+
+        // The rows behind the arcs are about to change.
+        this.arcScale = [NaN, NaN];
 
         const flat = new Float32Array(length * 2),
             originBlocks = Math.max(1, Math.ceil(length / BLOCK)),
@@ -716,9 +788,20 @@ class LineStrategy {
     private ensureResources(
         hairline: boolean,
         markers: boolean,
-        zoned: boolean
+        zoned: boolean,
+        dashed: boolean
     ): void {
-        const suffix = zoned ? '-zoned' : '';
+        const suffix = zoned ? '-zoned' : '',
+            // One entry stands in for a solid stroke, which reads none.
+            arcBytes = Math.max(4, dashed ? this.count * 4 : 0);
+
+        if (!this.arcBuffer || this.arcCapacity !== arcBytes) {
+            this.arcBuffer?.destroy();
+            this.arcBuffer = GPUContext.createStorageBuffer(arcBytes);
+            this.arcCapacity = arcBytes;
+            this.arcScale = [NaN, NaN];
+            this.bindGroup = this.markerBindGroup = void 0;
+        }
 
         // The pipelines share one bind group layout, so switching between
         // them leaves the bind group valid.
@@ -762,9 +845,97 @@ class LineStrategy {
                 { binding: 0, resource: { buffer: uniforms } },
                 { binding: 1, resource: { buffer: this.buffer! } },
                 { binding: 2, resource: { buffer: this.zoneBuffer! } },
-                { binding: 3, resource: { buffer: this.originBuffer! } }
+                { binding: 3, resource: { buffer: this.originBuffer! } },
+                { binding: 4, resource: { buffer: this.arcBuffer! } }
             ]
         });
+    }
+
+    /**
+     * Distance along the drawn path to each point, in device pixels.
+     * Measured on screen, so it is taken again whenever the mapping
+     * changes, and a null restarts it the way a new subpath restarts
+     * the pattern in SVG.
+     *
+     * @internal
+     */
+    private placeArcs(
+        scaleX: number,
+        scaleY: number,
+        ordSlope: number,
+        stepped: boolean,
+        period: number
+    ): void {
+        if (
+            this.arcScale[0] === scaleX &&
+            this.arcScale[1] === scaleY &&
+            this.arcPeriod === period &&
+            this.arcData.length >= this.count
+        ) {
+            return;
+        }
+        this.arcScale = [scaleX, scaleY];
+        this.arcPeriod = period;
+
+        const series = this.series,
+            xData = series.getColumn('x'),
+            yData = series.getColumn('y'),
+            length = Math.min(xData.length, yData.length),
+            connect = !!series.options.connectNulls,
+            // An ordinal axis spaces points by index, so every segment
+            // reaches the same way along x.
+            ordStep = Math.abs(ordSlope * scaleX),
+            // A reciprocal, so the wrap below costs a multiply rather
+            // than a division on every row.
+            perPeriod = 1 / period;
+
+        if (this.arcData.length < this.count) {
+            this.arcData = new Float32Array(this.count);
+        }
+
+        const arcs = this.arcData;
+
+        let at = 0,
+            total = 0,
+            prevX = 0,
+            prevY = 0,
+            open = false;
+
+        for (let i = 0; i < length; i++) {
+            const value = yData[i];
+
+            if (!isNumber(value)) {
+                if (connect) {
+                    continue;
+                }
+                // The null breaks the strip, so the pattern starts over.
+                arcs[at++] = 0;
+                total = 0;
+                open = false;
+                continue;
+            }
+
+            const px = xData[i] * scaleX,
+                py = value * scaleY;
+
+            if (open) {
+                const dx = ordSlope ? ordStep : Math.abs(px - prevX),
+                    dy = Math.abs(py - prevY);
+
+                total += stepped ? dx + dy : Math.sqrt(dx * dx + dy * dy);
+            }
+
+            // Only the place within the pattern matters, and the whole
+            // length does not survive f32 on a long series.
+            arcs[at++] = total - period * Math.floor(total * perPeriod);
+            prevX = px;
+            prevY = py;
+            open = true;
+        }
+
+        GPUContext.device!.queue.writeBuffer(
+            this.arcBuffer!, 0, arcs.subarray(0, at)
+        );
     }
 
     /**
@@ -814,7 +985,14 @@ class LineStrategy {
             this.markerSurface = void 0;
         }
 
-        this.ensureResources(hairline, markers, this.buildZones());
+        const ratio = win.devicePixelRatio || 1,
+            dash = (dashRuns(options.dashStyle) as Array<number>).map(
+                (run): number => run * lineWidth * ratio
+            );
+
+        this.ensureResources(
+            hairline, markers, this.buildZones(), dash.length > 0
+        );
 
         const { xAxis, yAxis } = series,
             xMin = xAxis.min as number,
@@ -823,7 +1001,6 @@ class LineStrategy {
             yMax = yAxis.max as number,
             spanX = xMax - xMin,
             spanY = yMax - yMin,
-            ratio = win.devicePixelRatio || 1,
             pad = this.surface.pad,
             height = this.surface.height,
             step = stepMode(series);
@@ -851,13 +1028,24 @@ class LineStrategy {
                 ...ordinalTerms(series, xMin),
                 count: this.count,
                 zoneCount: this.zoneCount,
-                step
-            };
+                step,
+                dash,
+                dashPeriod: dash.reduce((sum, run): number => sum + run, 0)
+            },
+            scaleX = (xHigh - xLow) / spanX,
+            scaleY = (yHigh - yLow) / spanY;
+
+        if (dash.length) {
+            this.placeArcs(
+                scaleX, scaleY, shared.ordSlope, step !== 0,
+                shared.dashPeriod
+            );
+        }
 
         this.writeUniforms({
             ...shared,
             origin: [xLow, yLow],
-            scale: [(xHigh - xLow) / spanX, (yHigh - yLow) / spanY],
+            scale: [scaleX, scaleY],
             viewport: [this.surface.width, height],
             swap: 0
         }, this.uniformBuffer!);
@@ -1330,11 +1518,12 @@ class LineStrategy {
         this.markerUniformBuffer?.destroy();
         this.zoneBuffer?.destroy();
         this.originBuffer?.destroy();
+        this.arcBuffer?.destroy();
         this.surface?.destroy();
         this.markerSurface?.destroy();
         this.buffer = this.uniformBuffer = void 0;
         this.markerUniformBuffer = void 0;
-        this.zoneBuffer = this.originBuffer = void 0;
+        this.zoneBuffer = this.originBuffer = this.arcBuffer = void 0;
         this.bindGroup = this.markerBindGroup = void 0;
         this.surface = this.markerSurface = void 0;
     }
@@ -1348,5 +1537,5 @@ class LineStrategy {
  * */
 
 /** @internal */
-export { markersEnabled, stepMode, zonesSupported };
+export { dashRuns, markersEnabled, stepMode, zonesSupported };
 export default LineStrategy;

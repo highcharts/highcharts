@@ -27,6 +27,7 @@ import GPUContext from './GPUContext.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import LineStrategy, {
+    dashRuns,
     markersEnabled,
     zonesSupported
 } from './Strategies/LineStrategy.js';
@@ -104,7 +105,9 @@ function isSupported(series: Series): boolean {
     if (
         threshold === 0 ||
         series.type !== 'line' ||
-        options.dashStyle ||
+        // A pattern of more runs than the uniform holds, or of an odd
+        // count, would be drawn as a different one.
+        !dashRuns(options.dashStyle) ||
         options.stacking ||
         // `negativeColor` arrives here as a pair of zones too.
         !zonesSupported(series) ||
