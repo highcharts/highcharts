@@ -81,9 +81,9 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      *    series options.
      *    ```js
      *    data: [
-     *        [0, 5, 6, 7],
-     *        [1, 4, 8, 2],
-     *        [2, 3, 4, 10]
+     *        [0, 7, 2, 6],
+     *        [1, 8, 4, 5],
+     *        [2, 9, 3, 8]
      *    ]
      *    ```
      *
@@ -97,16 +97,16 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      *    ```js
      *    data: [{
      *        x: 1,
-     *        high: 4,
-     *        low: 5,
-     *        close: 2,
+     *        high: 9,
+     *        low: 2,
+     *        close: 7,
      *        name: "Point2",
      *        color: "#00FF00"
      *    }, {
      *        x: 1,
-     *        high: 3,
-     *        low: 6,
-     *        close: 7,
+     *        high: 8,
+     *        low: 4,
+     *        close: 5,
      *        name: "Point1",
      *        color: "#FF00FF"
      *    }]
