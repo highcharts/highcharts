@@ -22,13 +22,13 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Renderer/AlignObject';
-import type Axis from '../Axis';
 import type BBoxObject from '../../Renderer/BBoxObject';
 import type StackingAxis from './StackingAxis';
 import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Renderer/SVG/SVGLabel';
 
+import Point from '../../Series/Point.js';
 import T from '../../Templating.js';
 const { format } = T;
 import Series from '../../Series/Series.js';
@@ -59,16 +59,6 @@ export interface AlignOptions {
     y?: number;
 }
 
-/** @internal */
-export interface StackBoxProps {
-    boxBottom?: number;
-    boxTop?: number;
-    defaultX?: number;
-    isNegative: boolean;
-    width: number;
-    xAxis?: Axis;
-    xOffset: number;
-}
 export interface StackTempPoint {
     low?: number;
     stackY?: number|null;
@@ -280,6 +270,8 @@ class StackItem {
         // Rank it higher than data labels (#8742)
         label.labelrank = chart.plotSizeY;
         fireEvent(this, 'afterRender');
+
+        this.setOffset();
     }
 
     /**
@@ -287,28 +279,13 @@ class StackItem {
      * label.
      * @internal
      */
-    public setOffset(
-        xOffset: number,
-        width: number,
-        boxBottom?: number,
-        boxTop?: number,
-        defaultX?: number,
-        xAxis?: Axis
-    ): void {
+    public setOffset(): void {
         const { axis, label } = this,
             chart = axis.chart,
             options = axis.options.stackLabels || {},
             inverted = chart.inverted,
             isNegative = this.negativeValue !== !!axis.reversed,
-            stackBox = this.getStackBox({
-                boxBottom,
-                boxTop,
-                defaultX,
-                isNegative,
-                width,
-                xAxis,
-                xOffset
-            }),
+            stackBox = this.getStackBox(),
             {
                 align = (inverted ? (isNegative ? 'left' : 'right') : 'center'),
                 verticalAlign = (
@@ -352,7 +329,7 @@ class StackItem {
             // Check if the label is inside the plotArea #12294
             visible = chart.isInsidePlot(
                 label.alignAttr.x + x + adjustX,
-                label.alignAttr.y + y + adjustY
+                label.alignAttr.y + y + adjustY - 1
             );
 
             if (!visible) {
@@ -394,7 +371,7 @@ class StackItem {
             label[visible ? 'show' : 'hide']();
         }
 
-        fireEvent(this, 'afterSetOffset', { xOffset, width });
+        fireEvent(this, 'afterSetOffset');
     }
 
     /**
@@ -421,47 +398,49 @@ class StackItem {
      * @return {BBoxObject}
      * The x, y, height, width of the stack.
      */
-    public getStackBox(stackBoxProps: StackBoxProps): BBoxObject {
-        const axis = this.axis,
-            chart = axis.chart,
-            {
-                boxBottom,
-                boxTop,
-                defaultX,
-                isNegative,
-                width,
-                xOffset
-            } = stackBoxProps,
-            totalStackValue = axis.stacking.usePercentage ?
-                100 :
-                (boxTop ?? this.total ?? 0),
-            y = axis.toPixels(totalStackValue),
-            xAxis = stackBoxProps.xAxis || chart.xAxis[0],
-            x = (defaultX ?? xAxis.translate(this.x)) + xOffset,
-            yZero = axis.toPixels(
-                boxBottom ||
-                (
-                    isNumber(axis.min) &&
-                    axis.logarithmic &&
-                    axis.logarithmic.lin2log(axis.min)
-                ) ||
-                0
-            ),
-            height = Math.abs(y - yZero),
-            inverted = chart.inverted;
+    public getStackBox(): BBoxObject|undefined {
+        const yAxis = this.axis,
+            chart = yAxis.chart;
+        let left = Infinity,
+            right = -Infinity,
+            top = Infinity,
+            bottom = -Infinity,
+            hasBox: boolean|undefined;
 
-        return inverted ?
-            {
-                x: (isNegative ? y : y - height) - chart.plotLeft,
-                y: xAxis.height - x - width + xAxis.top - chart.plotTop,
-                width: height,
-                height: width
-            } : {
-                x: x + xAxis.transB - chart.plotLeft,
-                y: (isNegative ? y - height : y) - chart.plotTop,
-                width: width,
-                height: height
+        for (const point of Object.values(this.points)) {
+            if (
+                point instanceof Point &&
+                point.series?.visible &&
+                !point.isNull
+            ) {
+                const { x, y, width, height } = point.shapeArgs || {};
+
+                if (isNumber(x) && isNumber(y)) {
+                    const topLeft = point.pos(true, x, y),
+                        bottomRight = point.pos(
+                            true,
+                            x + (width || 0),
+                            y + (height || 0)
+                        );
+                    if (topLeft && bottomRight) {
+                        left = Math.min(left, topLeft[0], bottomRight[0]);
+                        right = Math.max(right, topLeft[0], bottomRight[0]);
+                        top = Math.min(top, topLeft[1], bottomRight[1]);
+                        bottom = Math.max(bottom, topLeft[1], bottomRight[1]);
+                        hasBox = true;
+                    }
+                }
+            }
+        }
+
+        if (hasBox) {
+            return {
+                x: left - chart.plotLeft,
+                y: top - chart.plotTop,
+                width: Math.max(right - left, 0),
+                height: Math.max(bottom - top, 0)
             };
+        }
     }
 }
 

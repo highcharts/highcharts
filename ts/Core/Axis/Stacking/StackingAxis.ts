@@ -652,7 +652,7 @@ class AxisAdditions {
      * Create the stack totals group and render the individual labels into it
      * @internal
      */
-    public renderStackTotals(): void {
+    public renderStacks(): void {
         const stacking = this,
             axis = stacking.axis,
             chart = axis.chart,
@@ -685,12 +685,12 @@ class AxisAdditions {
             stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
 
             // Render each stack total
-            objectEach(stacks, (type): void => {
-                objectEach(type, (stack): void => {
+            objectEach(stacks, (stackItems): void => {
+                objectEach(stackItems, (stackItem): void => {
                     if (enabled) {
-                        stack.render(stackTotalGroup);
+                        stackItem.render(stackTotalGroup);
                     } else {
-                        stack.label = stack.label?.destroy();
+                        stackItem.label = stackItem.label?.destroy();
                     }
                 });
             });

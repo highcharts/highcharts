@@ -2831,16 +2831,19 @@ class Series {
                     // wrongly, so the call of the setOffset is omitted here and
                     // labels are correctly positioned later, at the end of the
                     // variwide's translate function (#10962)
-                    if (!(series as any).irregularWidths) {
-                        stackItem.setOffset(
-                            series.pointXOffset || 0,
-                            series.barW || 0,
-                            void 0,
-                            void 0,
-                            void 0,
-                            series.xAxis
-                        );
-                    }
+                    // if (
+                    //     stackKey === stackItem.base &&
+                    //     !(series as any).irregularWidths
+                    // ) {
+                    //     stackItem.setOffset(
+                    //         series.pointXOffset || 0,
+                    //         series.barW || 0,
+                    //         void 0,
+                    //         void 0,
+                    //         void 0,
+                    //         series.xAxis
+                    //     );
+                    // }
 
                 }
             }

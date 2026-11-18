@@ -198,28 +198,6 @@ class VariwideSeries extends ColumnSeries {
         this.options.crisp = this.crispOption;
     }
 
-    /**
-     * Function that corrects stack labels positions
-     * @internal
-     */
-    public correctStackLabels(): void {
-        for (const point of this.points) {
-            const pointWidth = point.shapeArgs?.width || 0,
-                stackItem = this.getStackItem(point);
-
-            if (stackItem && !point.isNull) {
-                stackItem.setOffset(
-                    -(pointWidth / 2) || 0,
-                    pointWidth || 0,
-                    void 0,
-                    void 0,
-                    point.plotX,
-                    this.xAxis
-                );
-            }
-        }
-    }
-
     /** @internal */
     public getXExtremes(
         xData: Array<number>|TypedArray
@@ -283,10 +261,6 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
                 tooltipPos[1] = xAxis.len - shapeArgs.x - shapeArgs.width / 2;
             }
         }
-    }
-
-    if (this.options.stacking) {
-        this.correctStackLabels();
     }
 
 }, { order: 2 });

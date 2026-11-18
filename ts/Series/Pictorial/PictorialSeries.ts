@@ -348,14 +348,19 @@ function renderStackShadow(
             options = stack.axis.options,
             chart = stack.axis.chart,
             stackShadow = stack.shadow,
-            xCenter = xAxis.toPixels(stack.x, true),
-            x = chart.inverted ? xAxis.len - xCenter : xCenter,
+            stackBox = stack.getStackBox(),
+            x = chart.inverted ?
+                -((stackBox?.y || 0) + (stackBox?.height || 0)) :
+                stackBox?.x || 0,
+            width = chart.inverted ?
+                stackBox?.height || 0 :
+                stackBox?.width || 0,
             paths = series.options.paths || [],
             index = stack.x % paths.length,
             shape = paths[index],
-            width = series.getColumnMetrics &&
-            series.getColumnMetrics().width,
-            { height, y } = getStackMetrics(series.yAxis, shape),
+            metrics = getStackMetrics(series.yAxis, shape),
+            height = metrics.height,
+            y = chart.inverted ? -(height - metrics.y) : metrics.y,
             shadowOptions = options.stackShadow,
             strokeWidth = (
                 (shadowOptions && shadowOptions.borderWidth) ??
@@ -365,8 +370,7 @@ function renderStackShadow(
 
         if (
             !stackShadow &&
-            shadowOptions &&
-            shadowOptions.enabled &&
+            shadowOptions?.enabled &&
             shape
         ) {
             if (!stack.shadowGroup) {
@@ -416,11 +420,6 @@ function renderStackShadow(
                 strokeWidth
             );
 
-            stack.setOffset(
-                series.pointXOffset || 0,
-                series.barW || 0
-            );
-
         } else if (stackShadow && stack.shadowGroup) {
             stackShadow.animate({
                 x,
@@ -459,11 +458,6 @@ function renderStackShadow(
                 width,
                 height,
                 strokeWidth
-            );
-
-            stack.setOffset(
-                series.pointXOffset || 0,
-                series.barW || 0
             );
 
         }
