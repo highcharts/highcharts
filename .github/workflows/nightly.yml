@@ -348,6 +348,7 @@ jobs:
     if: ${{ inputs.validateDistribution || (github.event_name == 'schedule' && vars.NIGHTLY_PACKAGE_VALIDATION == 'true') }}
     outputs:
       checks: ${{ steps.validate.outputs.verdict }}
+      results: ${{ steps.validate.outputs.results }}
       evidence: ${{ steps.evidence.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v6
@@ -421,32 +422,19 @@ jobs:
     needs: [nightly_dist, nightly_package_validation]
     if: ${{ !cancelled() && (inputs.validateDistribution || (github.event_name == 'schedule' && vars.NIGHTLY_PACKAGE_VALIDATION == 'true')) }}
     steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: tools/nightly-package-validation-prototype
       - name: Report advisory result
         env:
           BUILD: ${{ needs.nightly_dist.result }}
           VALIDATION: ${{ needs.nightly_package_validation.result }}
           CHECKS: ${{ needs.nightly_package_validation.outputs.checks }}
+          RESULTS: ${{ needs.nightly_package_validation.outputs.results }}
           EVIDENCE: ${{ needs.nightly_package_validation.outputs.evidence }}
-        run: |
-          verdict=blocked
-          if [[ "$BUILD" == success && "$VALIDATION" == success && "$CHECKS" == passed && -n "$EVIDENCE" ]]; then
-            verdict=passed
-          elif [[ "$CHECKS" == failed ]]; then
-            verdict=failed
-          fi
-          {
-            printf '## Nightly npm package validation — %s\n\n' "$verdict"
-            printf 'Run %s, attempt %s\n\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT"
-            printf -- '- Distribution build and upload: %s\n- Validation job: %s\n' "$BUILD" "$VALIDATION"
-            printf -- '- Consumer checks: %s\n' "${CHECKS:-unavailable}"
-            if [[ -n "$EVIDENCE" ]]; then
-              printf -- '- [Validation evidence](%s/%s/actions/runs/%s/artifacts/%s)\n' \
-                "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$EVIDENCE"
-            else
-              printf -- '- Validation evidence unavailable\n'
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
-          test "$verdict" = passed
+        run: node tools/nightly-package-validation-prototype/summary.mjs
 
   nightly_dist_publish:
     runs-on: ubuntu-latest

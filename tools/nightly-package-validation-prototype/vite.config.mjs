@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react';
 import { realpathSync, writeFileSync } from 'node:fs';
 import { isAbsolute, relative, sep } from 'node:path';
 import { defineConfig } from 'vite';
+import { browserCases } from './browser-cases.mjs';
 
 export default defineConfig({
     plugins: [
@@ -27,11 +28,7 @@ export default defineConfig({
                         files.add(relative(root, resolved));
                     }
                 }
-                for (const required of [
-                    'highcharts.js',
-                    'modules/annotations.js',
-                    'es-modules/masters/highcharts.src.js'
-                ]) {
+                for (const required of browserCases.flatMap(({ modules }) => modules)) {
                     if (!files.has(required)) {
                         this.error(`Missing Highcharts module in production bundle: ${required}`);
                     }
@@ -42,7 +39,7 @@ export default defineConfig({
     ],
     build: {
         rolldownOptions: {
-            input: { core: 'app/core.html', react: 'app/react.html' }
+            input: browserCases.map(({ page }) => page)
         }
     }
 });

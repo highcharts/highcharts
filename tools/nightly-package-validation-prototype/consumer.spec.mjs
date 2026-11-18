@@ -1,5 +1,6 @@
 import { expect, test as base } from '@playwright/test';
 import { preview } from 'vite';
+import { browserCases, consumerStartedAttachment } from './browser-cases.mjs';
 
 const test = base.extend({
     origin: [async ({}, use) => {
@@ -10,7 +11,7 @@ const test = base.extend({
             await server.close();
         }
     }, { scope: 'worker' }],
-    page: async ({ page }, use) => {
+    consumerPage: async ({ origin, page }, use, testInfo) => {
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));
         page.on('console', message => {
@@ -18,30 +19,15 @@ const test = base.extend({
                 errors.push(message.text());
             }
         });
-        await use(page);
+        await testInfo.attach(consumerStartedAttachment, { body: 'true' });
+        await use({ page, origin });
         expect(errors).toEqual([]);
     }
 });
 
-const seriesPath = 'svg.highcharts-root .highcharts-series-group .highcharts-graph';
-
-test('Core renders two points and an annotation', async ({ page, origin }, testInfo) => {
-    await testInfo.attach('consumer-check-started', { body: 'true' });
-    await page.goto(`${origin}/app/core.html`);
-    await expect(page.locator(seriesPath)).toBeVisible();
-    await expect(page.locator('.highcharts-annotation-label')).toHaveText('First point');
-    expect(await page.evaluate(() => window.chart.series[0].points.map(point => point.y)))
-        .toEqual([1, 2]);
-});
-
-test('React updates chart points and SVG', async ({ page, origin }, testInfo) => {
-    await testInfo.attach('consumer-check-started', { body: 'true' });
-    await page.goto(`${origin}/app/react.html`);
-    const line = page.locator(seriesPath);
-    await expect(line).toBeVisible();
-    const originalPath = await line.getAttribute('d');
-    await expect.poll(() => page.evaluate(() => window.chartValues?.())).toEqual([1, 2]);
-    await page.getByRole('button', { name: 'Update data' }).click();
-    await expect.poll(() => page.evaluate(() => window.chartValues?.())).toEqual([3, 5]);
-    await expect(line).not.toHaveAttribute('d', originalPath);
-});
+for (const { id, page: entry, check } of browserCases) {
+    test(id, async ({ consumerPage: { page, origin } }) => {
+        await page.goto(new URL(entry, origin).href);
+        await check(page, expect);
+    });
+}

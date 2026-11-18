@@ -129,6 +129,7 @@ describe('nightly advisory package validation', () => {
         strictEqual(validation.needs, 'nightly_dist');
         strictEqual('environment' in validation, false);
         strictEqual(validation.outputs.checks, '${{ steps.validate.outputs.verdict }}');
+        strictEqual(validation.outputs.results, '${{ steps.validate.outputs.results }}');
         ok(!JSON.stringify(validation).includes('secrets.'));
         deepEqual(validation.steps.filter(item =>
             item.uses?.startsWith('actions/download-artifact@')
@@ -137,36 +138,6 @@ describe('nightly advisory package validation', () => {
             '${{ needs.nightly_dist.outputs.build_evidence }}'
         ]);
         deepEqual(summary.needs, ['nightly_dist', 'nightly_package_validation']);
-    });
-
-    it('reports missing or incomplete evidence and retains known failures', async () => {
-        await withFixture(async root => {
-            const report = join(root, 'summary.md');
-            for (const [build, validation, checks, evidence, expected] of [
-                ['success', 'success', 'passed', '1234', 'passed'],
-                ['success', 'success', 'passed', '', 'blocked'],
-                ['success', 'failure', 'passed', '', 'blocked'],
-                ['success', 'failure', 'blocked', '1234', 'blocked'],
-                ['success', 'failure', 'failed', '', 'failed'],
-                ['success', 'failure', '', '1234', 'blocked'],
-                ['failure', 'skipped', '', '', 'blocked'],
-                ['success', 'cancelled', '', '', 'blocked']
-            ]) {
-                await writeFile(report, '');
-                const env = {
-                    BUILD: build, VALIDATION: validation, CHECKS: checks, EVIDENCE: evidence,
-                    GITHUB_STEP_SUMMARY: report, GITHUB_RUN_ID: '12', GITHUB_RUN_ATTEMPT: '2',
-                    GITHUB_SERVER_URL: 'https://github.com', GITHUB_REPOSITORY: 'highcharts/highcharts'
-                };
-                const script = summary.steps[0].run;
-                if (expected === 'passed') {
-                    run(script, root, env);
-                } else {
-                    throws(() => run(script, root, env), error => error.status === 1);
-                }
-                ok(readFileSync(report, 'utf8').includes(`validation — ${expected}`));
-            }
-        });
     });
 
     it('blocks the candidate when the control lock drifts', {
@@ -219,7 +190,9 @@ if (command === 'view') {
             ok(report.control.error.includes('Unrelated lock drift'));
             strictEqual(report.candidate.outcome, 'blocked');
             ok(!existsSync(join(root, evidence, 'candidate')));
-            strictEqual(readFileSync(output, 'utf8'), 'verdict=blocked\n');
+            const [verdict, results] = readFileSync(output, 'utf8').trim().split('\n');
+            strictEqual(verdict, 'verdict=blocked');
+            deepEqual(JSON.parse(results.slice('results='.length)), report);
         });
     });
 

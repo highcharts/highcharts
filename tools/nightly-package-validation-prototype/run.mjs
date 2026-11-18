@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import {
     appendFileSync, copyFileSync, cpSync, mkdirSync, mkdtempSync, readFileSync,
     realpathSync, statSync, writeFileSync
@@ -8,37 +7,32 @@ import {
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import {
+    fixtureFiles, hash, readJSON, recordReplay, verifyReplay, writeJSON
+} from './replay-evidence.mjs';
 
-const usage = 'Usage: node run.mjs <candidate.tgz> <expected-sha256>';
+const usage = 'Usage: node run.mjs <candidate.tgz> <expected-sha256> | --replay <retained-input-directory>';
 const [tarball, expectedDigest, ...extra] = process.argv.slice(2);
 if (tarball === '--help') {
     console.log(usage);
     process.exit(0);
 }
-assert(tarball && /^[a-f0-9]{64}$/u.test(expectedDigest) && !extra.length, usage);
+const replay = tarball === '--replay' && expectedDigest ? resolve(expectedDigest) : undefined;
+assert(!extra.length && (replay || (tarball && /^[a-f0-9]{64}$/u.test(expectedDigest))), usage);
 
-const fixture = fileURLToPath(new URL('.', import.meta.url));
+const sourceFixture = fileURLToPath(new URL('.', import.meta.url));
 const evidence = mkdtempSync(join(tmpdir(), 'highcharts-package-prototype-'));
+const fixture = join(replay ?? evidence, 'fixture');
 const env = { ...process.env, npm_config_cache: join(evidence, 'npm-cache') };
 const installOptions = ['--strict-peer-deps', '--no-audit', '--no-fund'];
 const results = {
-    control: { outcome: 'blocked', stage: 'control input' },
+    control: { outcome: 'blocked', stage: 'not started' },
     candidate: { outcome: 'blocked', stage: 'candidate input' }
 };
 let verifiedControlLock;
-
-function hash(path, algorithm, encoding) {
-    return createHash(algorithm).update(readFileSync(path)).digest(encoding);
-}
-
-function readJSON(path) {
-    return JSON.parse(readFileSync(path, 'utf8'));
-}
-
-function writeJSON(path, value) {
-    writeFileSync(path, JSON.stringify(value, null, 2) + '\n');
-}
+let verifiedCandidateLock;
+let inspectBrowserResults;
 
 function run(args, cwd, log, returnStatus = false) {
     console.log(`  npm ${args.join(' ')}`);
@@ -49,10 +43,14 @@ function run(args, cwd, log, returnStatus = false) {
     if (stderr) {
         writeFileSync(join(cwd, `${log}.stderr`), stderr);
     }
-    assert(
-        !error && status !== null && (returnStatus || status === 0),
-        `npm ${args.join(' ')} failed. See ${join(cwd, log)}`
-    );
+    if (error || status === null || (!returnStatus && status !== 0)) {
+        const lines = [stdout, stderr].filter(Boolean).join('\n').split(/\r?\n/u);
+        const actionableError = /\bError[:\]]|^npm error\s+(?!code\b|path\b|command\b|A complete log\b)/u;
+        const detail = lines.find(line => /\berror TS\d+:/u.test(line)) ??
+            lines.find(line => actionableError.test(line));
+        throw new Error(detail?.trim().replaceAll(cwd + sep, '').slice(0, 500) ??
+            error?.message ?? `npm ${args.join(' ')} failed with exit status ${status ?? 'unavailable'}`);
+    }
     if (returnStatus) {
         return status;
     }
@@ -83,10 +81,7 @@ function validate(label, archive, referenceLock) {
     const cwd = join(evidence, label);
     mkdirSync(cwd);
     console.log(label);
-    for (const file of [
-        'app', 'consumer.spec.mjs', 'package.json', 'playwright.config.mjs',
-        'tsconfig.json', 'vite.config.mjs'
-    ]) {
+    for (const file of fixtureFiles.filter(file => file !== 'package-lock.json')) {
         cpSync(join(fixture, file), join(cwd, file), { recursive: true });
     }
     const filename = `${label}.tgz`;
@@ -95,14 +90,21 @@ function validate(label, archive, referenceLock) {
     const integrity = `sha512-${hash(staged, 'sha512', 'base64')}`;
     const manifest = join(cwd, 'package.json');
     const lock = join(cwd, 'package-lock.json');
-    const pkg = readJSON(manifest);
-    pkg.dependencies.highcharts = `file:${filename}`;
-    writeJSON(manifest, pkg);
-    copyFileSync(referenceLock, lock);
-    run(['install', '--package-lock-only', ...installOptions], cwd, 'lock.log');
+    if (replay) {
+        copyFileSync(join(replay, label, 'package.json'), manifest);
+        copyFileSync(join(replay, label, 'package-lock.json'), lock);
+    } else {
+        const pkg = readJSON(manifest);
+        pkg.dependencies.highcharts = `file:${filename}`;
+        writeJSON(manifest, pkg);
+        copyFileSync(referenceLock, lock);
+        run(['install', '--package-lock-only', ...installOptions], cwd, 'lock.log');
+    }
     verifyLock(referenceLock, lock, filename, integrity);
     if (label === 'control') {
         verifiedControlLock = lock;
+    } else {
+        verifiedCandidateLock = lock;
     }
     writeJSON(join(cwd, 'install-inputs.json'), {
         tarballSha256: hash(staged, 'sha256', 'hex'),
@@ -145,21 +147,14 @@ function validate(label, archive, referenceLock) {
 
     result.stage = 'browser';
     const status = run(['test'], cwd, 'browser.log', true);
-    const { errors, stats, suites } = readJSON(join(cwd, 'browser-results.json'));
-    const checks = suites.flatMap(suite => suite.specs)
-        .flatMap(spec => spec.tests)
-        .flatMap(test => test.results)
-        .filter(run => run.attachments.some(({ name }) => name === 'consumer-check-started'));
-    if (checks.some(({ status }) => status === 'failed' || status === 'timedOut')) {
-        result.outcome = 'failed';
-        throw new Error(`Chromium consumer assertion failed. See ${join(cwd, 'browser.log')}`);
+    const reportPath = join(cwd, 'browser-results.json');
+    let report;
+    try {
+        report = readJSON(reportPath);
+    } catch (error) {
+        throw new Error(`Browser report unavailable: ${error.code ?? error.name}`);
     }
-    assert(
-        status === 0 && errors.length === 0 && checks.length === 2 &&
-        stats.expected === 2 && stats.skipped === 0 && stats.unexpected === 0 && stats.flaky === 0,
-        `Chromium consumer checks did not complete. See ${join(cwd, 'browser.log')}`
-    );
-    result.outcome = 'passed';
+    Object.assign(result, inspectBrowserResults(status, report));
 }
 
 function fetchControl() {
@@ -198,11 +193,30 @@ console.log(`Evidence: ${evidence}`);
 const candidate = join(evidence, 'candidate.tgz');
 let preparing = 'candidate';
 try {
-    copyFileSync(resolve(tarball), candidate);
-    assert.equal(hash(candidate, 'sha256', 'hex'), expectedDigest, 'Candidate tarball digest mismatch');
-    results.candidate.stage = 'lock';
+    let control;
+    if (replay) {
+        const { inputs } = verifyReplay(replay);
+        assert.equal(process.version, inputs.node, 'Replay requires the recorded Node version');
+        const npm = run(['--version'], evidence, 'npm-version.log').trim();
+        assert.equal(npm, inputs.npm, 'Replay requires the recorded npm version');
+        if (inputs.platform !== process.platform || inputs.arch !== process.arch) {
+            console.warn(`Replay host differs from the original ${inputs.platform}/${inputs.arch} runner.`);
+        }
+        console.log(`Replaying recorded control Highcharts ${inputs.control.version} and both retained locks`);
+        copyFileSync(join(replay, 'candidate', 'candidate.tgz'), candidate);
+        control = join(replay, 'control', 'control.tgz');
+    } else {
+        copyFileSync(resolve(tarball), candidate);
+        assert.equal(hash(candidate), expectedDigest, 'Candidate tarball digest mismatch');
+        mkdirSync(fixture);
+        for (const file of fixtureFiles) {
+            cpSync(join(sourceFixture, file), join(fixture, file), { recursive: true });
+        }
+    }
+    ({ inspectBrowserResults } = await import(pathToFileURL(join(fixture, 'browser-results.mjs'))));
     preparing = 'control';
-    const control = fetchControl();
+    results.control.stage = 'control input';
+    control ??= fetchControl();
     validateLane('control', control, join(fixture, 'package-lock.json'));
     if (verifiedControlLock) {
         validateLane('candidate', candidate, verifiedControlLock);
@@ -222,7 +236,10 @@ const verdict = outcomes.includes('failed') ? 'failed' :
 const report = { verdict, ...results };
 console.log(JSON.stringify(report, null, 2));
 writeJSON(join(evidence, 'results.json'), report);
+if (!replay && verifiedControlLock && verifiedCandidateLock) {
+    recordReplay(evidence);
+}
 if (process.env.GITHUB_OUTPUT) {
-    appendFileSync(process.env.GITHUB_OUTPUT, `verdict=${verdict}\n`);
+    appendFileSync(process.env.GITHUB_OUTPUT, `verdict=${verdict}\nresults=${JSON.stringify(report)}\n`);
 }
 process.exitCode = verdict === 'passed' ? 0 : 1;
