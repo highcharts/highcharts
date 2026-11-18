@@ -444,6 +444,50 @@ describe('DataCursor', () => {
                 'The state map should not expose `constructor`.'
             );
         });
+
+        it('should handle states named like prototype members', () => {
+            const table = new DataTable({ id: 'table' });
+
+            for (const state of ['__proto__', 'constructor', 'toString']) {
+                const cursor = new DataCursor();
+                const cursorObject: DataCursorType = {
+                    type: 'position',
+                    row: 1,
+                    state
+                };
+                let calls = 0;
+
+                cursor.addListener(table.id, state, (): void => {
+                    ++calls;
+                });
+                cursor.emitCursor(table, cursorObject, void 0, true);
+
+                strictEqual(
+                    calls,
+                    1,
+                    `The listener for state \`${state}\` should be called.`
+                );
+                deepStrictEqual(
+                    cursor.stateMap[table.id][state],
+                    [cursorObject],
+                    `The lasting cursor for state \`${state}\` should be kept.`
+                );
+
+                cursor.remitCursor(table.id, cursorObject);
+
+                strictEqual(
+                    cursor.stateMap[table.id][state].length,
+                    0,
+                    `The cursor for state \`${state}\` should be removed.`
+                );
+            }
+
+            strictEqual(
+                Object.prototype.hasOwnProperty.call(Object.prototype, 'row'),
+                false,
+                'Object.prototype should not be changed.'
+            );
+        });
     });
 
 });

@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import { deepStrictEqual, strictEqual } from 'node:assert';
 
 import DataCursor from '../../../../../ts/Data/DataCursor';
+import type DataTable from '../../../../../ts/Data/DataTable';
 import DataCursorHelper from '../../../../../ts/Dashboards/SerializeHelper/DataCursorHelper';
 
 describe('DataCursorHelper', () => {
@@ -73,7 +74,7 @@ describe('DataCursorHelper', () => {
 
     it('should keep the state map prototype-less after deserialization', () => {
         const cursor = DataCursorHelper.fromJSON(JSON.parse(
-            '{"$class":"Data.DataCursor","stateMap":{}}'
+            '{"$class":"Data.DataCursor","stateMap":{"table-1":{"":[]}}}'
         ));
 
         strictEqual(
@@ -82,9 +83,33 @@ describe('DataCursorHelper', () => {
             'The deserialized state map should have no prototype.'
         );
         strictEqual(
-            cursor.stateMap['__proto__'],
-            void 0,
-            'The deserialized state map should not expose `__proto__`.'
+            Object.getPrototypeOf(cursor.stateMap['table-1']),
+            null,
+            'The deserialized states of a table should have no prototype.'
+        );
+
+        // A table-like object skips the ID check in DataTableCore.
+        for (const id of ['__proto__', 'constructor']) {
+            const table = { id } as unknown as DataTable;
+
+            cursor.addListener(id, 'hover', (): void => {});
+            cursor.emitCursor(
+                table,
+                { type: 'position', row: 1, state: 'hover' },
+                void 0,
+                true
+            );
+        }
+
+        strictEqual(
+            Object.prototype.hasOwnProperty.call(Object.prototype, 'hover'),
+            false,
+            'A `__proto__` table ID should not change Object.prototype.'
+        );
+        strictEqual(
+            Object.prototype.hasOwnProperty.call(Object, 'hover'),
+            false,
+            'A `constructor` table ID should not change Object.'
         );
     });
 });

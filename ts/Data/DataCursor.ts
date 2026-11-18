@@ -25,7 +25,7 @@
 import type DataTable from './DataTable';
 import type { NullProto } from '../Shared/Types';
 
-import { extend } from '../Shared/Utilities.js';
+import { extend, objectEach } from '../Shared/Utilities.js';
 
 
 /* *
@@ -63,10 +63,14 @@ class DataCursor {
         stateMap: StateMap = {}
     ) {
         this.emittingRegister = [];
-        // Table IDs are used as keys, so keep the maps prototype-less, also
-        // when a map is given, for example from JSON.
+        // Table IDs and states are used as keys, so keep all maps
+        // prototype-less, also when a map is given, for example from JSON.
         this.listenerMap = Object.create(null);
-        this.stateMap = extend(Object.create(null), stateMap);
+        this.stateMap = Object.create(null);
+
+        objectEach(stateMap, (states, tableId): void => {
+            this.stateMap[tableId] = extend(Object.create(null), states);
+        });
     }
 
 
@@ -86,13 +90,13 @@ class DataCursor {
     /**
      * Contains listeners of states on tables.
      */
-    public readonly listenerMap: NullProto & ListenerMap;
+    public readonly listenerMap: NullProtoMap<Listener>;
 
 
     /**
      * Contains lasting states that are kept over multiple changes.
      */
-    public readonly stateMap: NullProto & StateMap;
+    public readonly stateMap: NullProtoMap<Type>;
 
 
     /* *
@@ -135,7 +139,7 @@ class DataCursor {
     ): this {
         const listenerMap = this.listenerMap[tableId] = (
             this.listenerMap[tableId] ||
-            {}
+            Object.create(null)
         );
         const listeners = listenerMap[state] = (
             listenerMap[state] ||
@@ -220,7 +224,7 @@ class DataCursor {
 
         if (listeners) {
             const stateMap = this.stateMap[tableId] = (
-                this.stateMap[tableId] ?? {}
+                this.stateMap[tableId] ?? Object.create(null)
             );
 
             const cursors = stateMap[cursor.state] || [];
@@ -388,6 +392,13 @@ export interface Event {
 export type Listener = (this: DataCursor, e: Event) => void;
 
 export type ListenerMap = Record<TableId, Record<State, Array<Listener>>>;
+
+/**
+ * Prototype-less map of items by table ID and state.
+ */
+type NullProtoMap<T> = (
+    NullProto & Record<TableId, NullProto & Record<State, Array<T>>>
+);
 
 export type State = string;
 
