@@ -6,23 +6,28 @@ import {
 } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
-import { join, resolve, sep } from 'node:path';
+import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { stripVTControlCharacters } from 'node:util';
 import {
     fixtureFiles, hash, readJSON, recordReplay, verifyReplay, writeJSON
 } from './replay-evidence.mjs';
 
-const usage = 'Usage: node run.mjs <candidate.tgz> <expected-sha256> | --replay <retained-input-directory>';
+const usage = 'Usage: node run.mjs <candidate.tgz> <expected-sha256> [--package grid-lite] | --replay <retained-input-directory> [--package grid-lite]';
 const [tarball, expectedDigest, ...extra] = process.argv.slice(2);
 if (tarball === '--help') {
     console.log(usage);
     process.exit(0);
 }
 const replay = tarball === '--replay' && expectedDigest ? resolve(expectedDigest) : undefined;
-assert(!extra.length && (replay || (tarball && /^[a-f0-9]{64}$/u.test(expectedDigest))), usage);
+const gridLite = extra.length === 2 && extra[0] === '--package' && extra[1] === 'grid-lite';
+assert((!extra.length || gridLite) && (replay || (tarball && /^[a-f0-9]{64}$/u.test(expectedDigest))), usage);
 
 const sourceFixture = fileURLToPath(new URL('.', import.meta.url));
-const evidence = mkdtempSync(join(tmpdir(), 'highcharts-package-prototype-'));
+const packageName = gridLite ? '@highcharts/grid-lite' : 'highcharts';
+const lockKey = `node_modules/${packageName}`;
+const productFiles = ['app', 'browser-cases.mjs', 'package-lock.json', 'package.json', 'tsconfig.json'];
+const evidence = mkdtempSync(join(tmpdir(), gridLite ? 'grid-lite-package-prototype-' : 'highcharts-package-prototype-'));
 const fixture = join(replay ?? evidence, 'fixture');
 const env = { ...process.env, npm_config_cache: join(evidence, 'npm-cache') };
 const installOptions = ['--strict-peer-deps', '--no-audit', '--no-fund'];
@@ -44,8 +49,8 @@ function run(args, cwd, log, returnStatus = false) {
         writeFileSync(join(cwd, `${log}.stderr`), stderr);
     }
     if (error || status === null || (!returnStatus && status !== 0)) {
-        const lines = [stdout, stderr].filter(Boolean).join('\n').split(/\r?\n/u);
-        const actionableError = /\bError[:\]]|^npm error\s+(?!code\b|path\b|command\b|A complete log\b)/u;
+        const lines = stripVTControlCharacters([stdout, stderr].filter(Boolean).join('\n')).split(/\r?\n/u);
+        const actionableError = /\b\w*Error[:\]]|^npm error\s+(?!code\b|path\b|command\b|A complete log\b)/u;
         const detail = lines.find(line => /\berror TS\d+:/u.test(line)) ??
             lines.find(line => actionableError.test(line));
         throw new Error(detail?.trim().replaceAll(cwd + sep, '').slice(0, 500) ??
@@ -59,19 +64,17 @@ function run(args, cwd, log, returnStatus = false) {
 
 function verifyLock(reference, current, path, integrity) {
     const { packages } = readJSON(current);
-    const entry = packages['node_modules/highcharts'];
-    assert.equal(entry?.resolved, `file:${path}`, 'Highcharts must resolve to the staged tarball');
-    assert.equal(entry.integrity, integrity, 'Unexpected Highcharts lock integrity');
+    const entry = packages[lockKey];
+    assert.equal(entry?.resolved, `file:${path}`, `${packageName} must resolve to the staged tarball`);
+    assert.equal(entry.integrity, integrity, `Unexpected ${packageName} lock integrity`);
 
-    // This fixture allows only the top-level Highcharts replacement. Review
-    // any new package dependencies before extending this comparison.
     const baseline = readJSON(reference).packages;
-    const withoutHighcharts = entries => Object.fromEntries(
-        Object.entries(entries).filter(([key]) => key && key !== 'node_modules/highcharts')
+    const otherDependencies = entries => Object.fromEntries(
+        Object.entries(entries).filter(([key]) => key && key !== lockKey)
     );
     assert.deepEqual(
-        withoutHighcharts(packages), withoutHighcharts(baseline),
-        'Unrelated lock drift or an unreviewed Highcharts dependency'
+        otherDependencies(packages), otherDependencies(baseline),
+        `Unrelated lock drift or an unreviewed ${packageName} dependency`
     );
 }
 
@@ -95,7 +98,7 @@ function validate(label, archive, referenceLock) {
         copyFileSync(join(replay, label, 'package-lock.json'), lock);
     } else {
         const pkg = readJSON(manifest);
-        pkg.dependencies.highcharts = `file:${filename}`;
+        pkg.dependencies[packageName] = `file:${filename}`;
         writeJSON(manifest, pkg);
         copyFileSync(referenceLock, lock);
         run(['install', '--package-lock-only', ...installOptions], cwd, 'lock.log');
@@ -122,23 +125,12 @@ function validate(label, archive, referenceLock) {
     result.stage = 'resolution';
     run(['ls', '--all', '--json'], cwd, 'dependency-tree.json');
 
-    const require = createRequire(manifest);
-    const wrapperRequire = createRequire(require.resolve('@highcharts/react'));
-    const installed = join(cwd, 'node_modules/highcharts');
-    assert.equal(realpathSync(installed), join(realpathSync(cwd), 'node_modules/highcharts'));
-    for (const consumer of [require, wrapperRequire]) {
-        assert.equal(consumer.resolve('highcharts'), join(realpathSync(installed), 'highcharts.js'));
-    }
-    const wrapperEntry = 'es-modules/masters/highcharts.src.js';
-    assert.equal(
-        wrapperRequire.resolve(`highcharts/${wrapperEntry}`),
-        join(realpathSync(installed), wrapperEntry)
-    );
-    for (const entry of ['highstock', 'highmaps', 'highcharts-gantt']) {
-        for (const extension of ['.js', '.d.ts']) {
-            const file = join(installed, entry + extension);
-            assert(statSync(file).size > 0, `Empty product entry: ${file}`);
-        }
+    const installed = join(realpathSync(cwd), lockKey);
+    assert.equal(realpathSync(installed), installed);
+    if (gridLite) {
+        verifyGridLiteEntries(manifest, installed);
+    } else {
+        verifyHighchartsEntries(manifest, installed);
     }
     result.stage = 'types';
     run(['run', 'types'], cwd, 'types.log');
@@ -157,16 +149,50 @@ function validate(label, archive, referenceLock) {
     Object.assign(result, inspectBrowserResults(status, report));
 }
 
+function verifyGridLiteEntries(manifest, installed) {
+    const require = createRequire(manifest);
+    const pkg = readJSON(join(installed, 'package.json'));
+    assert.equal(pkg.name, packageName);
+    for (const field of ['main', 'module', 'types']) {
+        assert(typeof pkg[field] === 'string' && pkg[field], `Missing Grid Lite ${field} entry`);
+        const file = realpathSync(resolve(installed, pkg[field]));
+        const path = relative(installed, file);
+        assert(path && !path.startsWith(`..${sep}`) && path !== '..' && !isAbsolute(path) &&
+            statSync(file).isFile() && statSync(file).size > 0, `Invalid Grid Lite ${field} entry`);
+    }
+    assert.equal(require.resolve(packageName), resolve(installed, pkg.main));
+}
+
+function verifyHighchartsEntries(manifest, installed) {
+    const require = createRequire(manifest);
+    const wrapperRequire = createRequire(require.resolve('@highcharts/react'));
+    for (const consumer of [require, wrapperRequire]) {
+        assert.equal(consumer.resolve('highcharts'), join(realpathSync(installed), 'highcharts.js'));
+    }
+    const wrapperEntry = 'es-modules/masters/highcharts.src.js';
+    assert.equal(
+        wrapperRequire.resolve(`highcharts/${wrapperEntry}`),
+        join(realpathSync(installed), wrapperEntry)
+    );
+    for (const entry of ['highstock', 'highmaps', 'highcharts-gantt']) {
+        for (const extension of ['.js', '.d.ts']) {
+            const file = join(installed, entry + extension);
+            assert(statSync(file).size > 0, `Empty product entry: ${file}`);
+        }
+    }
+}
+
 function fetchControl() {
     const { version, 'dist.integrity': integrity } = JSON.parse(
-        run(['view', 'highcharts@latest', 'version', 'dist.integrity', '--json'], evidence, 'latest.json')
+        run(['view', `${packageName}@latest`, 'version', 'dist.integrity', '--json'], evidence, 'latest.json')
     );
     assert(/^\d+\.\d+\.\d+$/u.test(version) && integrity, 'The latest tag must resolve to a stable release');
     const resolvedAt = new Date().toISOString();
-    const [pack] = JSON.parse(run(['pack', `highcharts@${version}`, '--json'], evidence, 'control-pack.json'));
+    const [pack] = JSON.parse(run(['pack', `${packageName}@${version}`, '--json'], evidence, 'control-pack.json'));
     const control = join(evidence, pack.filename);
     assert.equal(`sha512-${hash(control, 'sha512', 'base64')}`, integrity);
     writeJSON(join(evidence, 'inputs.json'), {
+        packageName,
         candidate: { sha256: expectedDigest },
         control: { version, integrity, resolvedAt },
         node: process.version,
@@ -196,13 +222,14 @@ try {
     let control;
     if (replay) {
         const { inputs } = verifyReplay(replay);
+        assert.equal(inputs.packageName ?? 'highcharts', packageName, 'Replay package mismatch');
         assert.equal(process.version, inputs.node, 'Replay requires the recorded Node version');
         const npm = run(['--version'], evidence, 'npm-version.log').trim();
         assert.equal(npm, inputs.npm, 'Replay requires the recorded npm version');
         if (inputs.platform !== process.platform || inputs.arch !== process.arch) {
             console.warn(`Replay host differs from the original ${inputs.platform}/${inputs.arch} runner.`);
         }
-        console.log(`Replaying recorded control Highcharts ${inputs.control.version} and both retained locks`);
+        console.log(`Replaying recorded control ${packageName} ${inputs.control.version} and both retained locks`);
         copyFileSync(join(replay, 'candidate', 'candidate.tgz'), candidate);
         control = join(replay, 'control', 'control.tgz');
     } else {
@@ -210,7 +237,8 @@ try {
         assert.equal(hash(candidate), expectedDigest, 'Candidate tarball digest mismatch');
         mkdirSync(fixture);
         for (const file of fixtureFiles) {
-            cpSync(join(sourceFixture, file), join(fixture, file), { recursive: true });
+            const directory = gridLite && productFiles.includes(file) ? join(sourceFixture, 'grid-lite') : sourceFixture;
+            cpSync(join(directory, file), join(fixture, file), { recursive: true });
         }
     }
     ({ inspectBrowserResults } = await import(pathToFileURL(join(fixture, 'browser-results.mjs'))));

@@ -1,15 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-prepare() {
-    prototype="$GITHUB_WORKSPACE/tools/nightly-package-validation-prototype"
-    distribution="$RUNNER_TEMP/assembled-distribution"
-    cd "$RUNNER_TEMP/package-validation"
+if [[ "${1:-}" == --help ]]; then
+    printf 'Usage: bash setup.sh <pack|grid-build|grid-pack|chromium>\n'
+    exit 0
+fi
+
+evidence="$RUNNER_TEMP/package-validation"
+
+check_npm() {
     actual_npm=$(npm --version)
     if [[ "$actual_npm" != 11.20.0 ]]; then
         printf 'Expected npm 11.20.0, found %s\n' "$actual_npm" >&2
         return 1
     fi
+}
+
+prepare() {
+    prototype="$GITHUB_WORKSPACE/tools/nightly-package-validation-prototype"
+    distribution="$RUNNER_TEMP/assembled-distribution"
+    cd "$evidence"
+    check_npm
     node "$prototype/distribution.mjs" verify "$distribution" build-manifest.json
     npm pack "$distribution" --ignore-scripts --json > pack.json
     node "$prototype/distribution.mjs" verify "$distribution" build-manifest.json
@@ -21,11 +32,32 @@ prepare() {
     sha256sum build-manifest.json candidate.tgz > SHA256SUMS
 }
 
+prepare_grid_lite() {
+    local -a args=("$GITHUB_SHA" "$PWD" "$GITHUB_WORKSPACE/grid-lite-dist"
+        "$GRID_LITE_METADATA_SHA" "$RUNNER_TEMP/grid-lite-staging")
+    if [[ "${GRID_LITE_MISSING_CSS:-false}" == true ]]; then
+        args+=(--missing-css)
+    fi
+    check_npm
+    node tools/nightly-package-validation-prototype/stage-grid-lite.mjs "${args[@]}" \
+        > "$evidence/staging.json"
+    local tarball
+    tarball=$(jq -er '.tarball' "$evidence/staging.json")
+    cp -- "$RUNNER_TEMP/grid-lite-staging/staging-manifest.json" "$evidence/"
+    mv -- "$tarball" "$evidence/candidate.tgz"
+}
+
 if [[ "${1:-}" == run ]]; then
     case "$2" in
         pack) prepare ;;
+        grid-build)
+            check_npm
+            npm ci
+            npx gulp dist --product Grid --skip-dist-compress
+            ;;
+        grid-pack) prepare_grid_lite ;;
         chromium)
-            cd "$RUNNER_TEMP/package-validation"
+            cd "$evidence"
             npm exec --yes --package=@playwright/test@1.61.1 -- \
                 playwright install --with-deps --only-shell chromium
             ;;
@@ -35,11 +67,10 @@ if [[ "${1:-}" == run ]]; then
 fi
 
 case "${1:-}" in
-    pack|chromium) ;;
-    --help) printf 'Usage: bash setup.sh <pack|chromium>\n'; exit 0 ;;
-    *) printf 'Usage: bash setup.sh <pack|chromium>\n'; exit 2 ;;
+    pack|grid-build|grid-pack|chromium) ;;
+    *) printf 'Usage: bash setup.sh <pack|grid-build|grid-pack|chromium>\n'; exit 2 ;;
 esac
-log="$RUNNER_TEMP/package-validation/setup-$1.log"
+log="$evidence/setup-$1.log"
 mkdir -p "$(dirname "$log")"
 set +e
 bash "$0" run "$1" 2>&1 | tee "$log"
@@ -51,7 +82,7 @@ if (( result != 0 )); then
     diagnostic=$(awk '
         /Failed to install browsers/ && !fallback { fallback = $0; next }
         /^npm error (code|path|command|A complete log)( |$)/ { next }
-        /AssertionError|Error:|^npm error |^jq:|^mv:|Expected npm|failed|not found|No such file/ {
+        /error TS[0-9]+:|AssertionError|Error:|^npm error |^jq:|^mv:|Expected npm|failed|not found|No such file/ {
             print; found = 1; exit
         }
         NF && !fallback { fallback = $0 }

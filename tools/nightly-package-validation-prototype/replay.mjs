@@ -4,11 +4,11 @@ import { closeSync, mkdirSync, mkdtempSync, openSync, readdirSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
 import { hash, verifyReplay } from './replay-evidence.mjs';
 
-const usage = 'Usage: node replay.mjs <run-id> <attempt> [--artifact <extracted-artifact-directory>]';
-const [runId, attempt, source, directory, ...extra] = process.argv.slice(2);
-if (runId === '--help') {
+const usage = 'Usage: node replay.mjs <run-id> <attempt> [--package grid-lite] [--artifact <extracted-artifact-directory>]';
+if (process.argv[2] === '--help') {
     console.log(usage);
     process.exit(0);
 }
@@ -17,12 +17,11 @@ function api(path) {
     return JSON.parse(execFileSync('gh', ['api', path], { encoding: 'utf8' }));
 }
 
-function download(runId, attempt) {
+function download(runId, attempt, name) {
     const repository = 'repos/highcharts/highcharts/actions';
     const run = api(`${repository}/runs/${runId}/attempts/${attempt}`);
     assert.equal(String(run.run_attempt), attempt, 'GitHub returned a different run attempt');
     assert.equal(run.path.split('@')[0], '.github/workflows/nightly.yml', 'Run is not Nightly');
-    const name = `nightly-package-validation-${attempt}`;
     const { artifacts } = api(`${repository}/runs/${runId}/artifacts?name=${name}`);
     const artifact = artifacts.find(artifact => artifact.name === name);
     assert(artifact, `Evidence ${name} unavailable for run ${runId}; it may be expired or was never uploaded`);
@@ -47,23 +46,34 @@ function download(runId, attempt) {
 }
 
 try {
-    assert(/^[1-9]\d*$/u.test(runId) && /^[1-9]\d*$/u.test(attempt) &&
-        (!source || (source === '--artifact' && directory && !extra.length)), usage);
-    const { extracted, sourceSha } = source ?
-        { extracted: resolve(directory) } : download(runId, attempt);
+    const { positionals, values } = parseArgs({
+        allowPositionals: true,
+        options: { package: { type: 'string' }, artifact: { type: 'string' } }
+    });
+    const [runId, attempt] = positionals;
+    const gridLite = values.package === 'grid-lite';
+    assert(positionals.length === 2 && /^[1-9]\d*$/u.test(runId) && /^[1-9]\d*$/u.test(attempt) &&
+        (values.package === undefined || gridLite) && values.artifact !== '', usage);
+    const artifactName = gridLite ? `nightly-grid-lite-validation-${attempt}` : `nightly-package-validation-${attempt}`;
+    const { extracted, sourceSha } = values.artifact ?
+        { extracted: resolve(values.artifact) } : download(runId, attempt, artifactName);
+    const prefix = gridLite ? 'grid-lite-package-prototype-' : 'highcharts-package-prototype-';
     const roots = readdirSync(extracted, { withFileTypes: true }).filter(
-        entry => entry.isDirectory() && entry.name.startsWith('highcharts-package-prototype-')
+        entry => entry.isDirectory() && entry.name.startsWith(prefix)
     );
     assert(roots.length === 1, 'Retained consumer results directory unavailable or ambiguous');
     const evidence = join(extracted, roots[0].name);
-    const { manifest } = verifyReplay(evidence);
+    const { manifest, inputs } = verifyReplay(evidence);
+    assert.equal(inputs.packageName ?? 'highcharts', gridLite ? '@highcharts/grid-lite' : 'highcharts',
+        'Evidence package differs from requested package');
     assert.equal(manifest.runId, runId, 'Evidence run ID differs from requested run');
     assert.equal(manifest.attempt, attempt, 'Evidence attempt differs from requested attempt');
     if (sourceSha) {
         assert.equal(manifest.sourceSha, sourceSha, 'Evidence source SHA differs from requested attempt');
     }
     const runner = fileURLToPath(new URL('./run.mjs', import.meta.url));
-    const { status, error } = spawnSync(process.execPath, [runner, '--replay', evidence], {
+    const runnerArgs = gridLite ? ['--package', 'grid-lite'] : [];
+    const { status, error } = spawnSync(process.execPath, [runner, '--replay', evidence, ...runnerArgs], {
         stdio: 'inherit'
     });
     if (error) {

@@ -128,6 +128,9 @@ function loadRelease({ argv = {}, products = {} } = {}) {
             if (name === '../libs/log') {
                 return { message() {} };
             }
+            if (name === './lib/release-version') {
+                return require('../gulptasks/lib/release-version');
+            }
             if (name === 'child_process') {
                 return {
                     execSync() {

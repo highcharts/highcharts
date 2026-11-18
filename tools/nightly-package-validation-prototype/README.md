@@ -37,6 +37,35 @@ The runner prints the local evidence directory. It contains the tarballs,
 manifests and locks, digests, build logs, bundled Highcharts module inventory,
 and Playwright reports and failure traces.
 
+## Validate Grid Lite locally
+
+In a disposable source checkout at the revision under test, run `npm ci` and
+`npx gulp dist --product Grid --skip-dist-compress`. Use the Node, npm, and
+Chromium versions above. Set `SOURCE_CHECKOUT` to that checkout, `SOURCE_SHA`
+to its commit, `GRID_LITE_DIST` to a local `grid-lite-dist` checkout, and
+`METADATA_SHA` to the full commit to read release metadata from. Set `OUTPUT`
+to a new directory in an existing scratch directory.
+
+```sh
+prototype=tools/nightly-package-validation-prototype
+node "$prototype/stage-grid-lite.mjs" \
+  "$SOURCE_SHA" "$SOURCE_CHECKOUT" "$GRID_LITE_DIST" "$METADATA_SHA" "$OUTPUT"
+```
+
+Use `tarball` and `tarballSha256` from the command's JSON output.
+
+```sh
+node "$prototype/run.mjs" "$TARBALL" "$SHA256" --package grid-lite
+```
+
+This compares the staged tarball with an exact stable Grid Lite release in
+separate consumers. It checks the package entries, types, and production
+build, then uses Chromium to verify the packaged styling and column sorting.
+Repeat staging with `--missing-css` and a different output directory to
+exercise a candidate-only Vite failure on `@highcharts/grid-lite/css/grid-lite.css`.
+With the same runner and toolchain, replay locally from the printed evidence
+directory using `node "$prototype/run.mjs" --replay "$EVIDENCE" --package grid-lite`.
+
 ## Add a product check
 
 Stock imports `highcharts/highstock` from [its consumer page](app/stock.ts).
@@ -68,6 +97,10 @@ the attempt number from the run:
 ```sh
 node tools/nightly-package-validation-prototype/replay.mjs "$RUN_ID" "$ATTEMPT"
 ```
+
+For Grid Lite evidence from the same Nightly workflow, add `--package grid-lite`.
+See the [Grid Lite pilot](../../.github/workflows/nightly.md#grid-lite-pilot)
+for the dispatch inputs.
 
 Use authenticated `gh` with read access to `highcharts/highcharts`, `unzip`,
 the recorded Node and npm versions, and the pinned Playwright Chromium

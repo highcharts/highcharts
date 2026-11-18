@@ -18,6 +18,10 @@ const build = workflow.jobs.nightly_dist;
 const publisher = workflow.jobs.nightly_dist_publish;
 const validation = workflow.jobs.nightly_package_validation;
 const summary = workflow.jobs.nightly_package_summary;
+const gridLiteValidation = workflow.jobs.nightly_grid_lite_validation;
+const visualResultsStep = workflow.jobs.nightly_visual_diff.steps.find(item =>
+    item.name === 'Publish nightly visual results'
+);
 const distributionTool = fileURLToPath(new URL(
     '../nightly-package-validation-prototype/distribution.mjs', import.meta.url
 ));
@@ -125,6 +129,35 @@ describe('nightly distribution credential boundary', () => {
 });
 
 describe('nightly advisory package validation', () => {
+    it('skips visual result publishing only for the Grid Lite pilot dispatch', () => {
+        strictEqual(visualResultsStep.if,
+            "${{ github.event_name != 'workflow_dispatch' || !inputs.validateGridLite }}");
+
+        function shouldPublish(event, validateGridLite) {
+            const expression = visualResultsStep.if
+                .slice(3, -2)
+                .replace(/github\.event_name\b/gu, JSON.stringify(event))
+                .replace(/inputs\.validateGridLite\b/gu, String(validateGridLite));
+            return Boolean(runInNewContext(expression));
+        }
+
+        strictEqual(shouldPublish('schedule', false), true);
+        strictEqual(shouldPublish('workflow_dispatch', false), true);
+        strictEqual(shouldPublish('workflow_dispatch', true), false);
+    });
+
+    it('runs the Grid Lite pilot only on explicit dispatch, independently of publishing', () => {
+        strictEqual(gridLiteValidation.if,
+            "${{ github.event_name == 'workflow_dispatch' && inputs.validateGridLite }}");
+        strictEqual(gridLiteValidation.needs, undefined);
+        strictEqual(gridLiteValidation.environment, undefined);
+        ok(!JSON.stringify(gridLiteValidation).includes('secrets.'));
+        ok(!publisher.needs.includes('nightly_grid_lite_validation'));
+        strictEqual(gridLiteValidation.steps.find(item => item.id === 'evidence').with.name,
+            'nightly-grid-lite-validation-${{ github.run_attempt }}');
+        ok(gridLiteValidation.steps.find(item => item.id === 'validate').run.includes('--package grid-lite'));
+    });
+
     it('uses the two build artifacts without access to publication credentials', () => {
         strictEqual(validation.needs, 'nightly_dist');
         strictEqual('environment' in validation, false);
@@ -140,7 +173,11 @@ describe('nightly advisory package validation', () => {
         deepEqual(summary.needs, ['nightly_dist', 'nightly_package_validation']);
     });
 
-    it('blocks the candidate when the control lock drifts', {
+    const lockDriftCases = [
+        { name: 'highcharts', key: 'highcharts', args: [] },
+        { name: '@highcharts/grid-lite', key: 'grid-lite', args: ['--package', 'grid-lite'] }
+    ];
+    for (const { name, key, args } of lockDriftCases) it(`blocks the ${name} candidate when the control lock drifts`, {
         skip: process.platform === 'win32'
     }, async () => {
         await withFixture(async root => {
@@ -162,8 +199,8 @@ if (command === 'view') {
     console.log('11.20.0');
 } else if (command === 'install') {
     const lock = JSON.parse(fs.readFileSync('package-lock.json'));
-    lock.packages['node_modules/highcharts'].resolved = 'file:control.tgz';
-    lock.packages['node_modules/highcharts'].integrity = '${integrity}';
+    lock.packages['node_modules/${name}'].resolved = 'file:control.tgz';
+    lock.packages['node_modules/${name}'].integrity = '${integrity}';
     lock.packages['node_modules/unreviewed'] = { version: '1.0.0' };
     fs.writeFileSync('package-lock.json', JSON.stringify(lock));
 } else {
@@ -172,7 +209,7 @@ if (command === 'view') {
 `);
             await chmod(npm, 0o755);
             const output = join(root, 'output');
-            throws(() => execFileSync(process.execPath, [consumerRunner, tarball, sha256], {
+            throws(() => execFileSync(process.execPath, [consumerRunner, tarball, sha256, ...args], {
                 cwd: root,
                 env: {
                     ...environment,
@@ -184,7 +221,7 @@ if (command === 'view') {
                 stdio: 'pipe'
             }), error => error.status === 1);
             const evidence = (await readdir(root)).find(name =>
-                name.startsWith('highcharts-package-prototype-'));
+                name.startsWith(`${key}-package-prototype-`));
             const report = JSON.parse(readFileSync(join(root, evidence, 'results.json'), 'utf8'));
             strictEqual(report.control.outcome, 'blocked');
             ok(report.control.error.includes('Unrelated lock drift'));

@@ -9,7 +9,7 @@ if (process.argv.includes('--help')) {
 }
 
 const {
-    BUILD, CHECKS, EVIDENCE, GITHUB_REPOSITORY, GITHUB_RUN_ATTEMPT,
+    BUILD, CHECKS, EVIDENCE, GRID_LITE, GRID_LITE_MISSING_CSS, GITHUB_REPOSITORY, GITHUB_RUN_ATTEMPT,
     GITHUB_RUN_ID, GITHUB_SERVER_URL, GITHUB_STEP_SUMMARY, RESULTS,
     SETUP_ERROR, SETUP_STEP, VALIDATION
 } = process.env;
@@ -60,12 +60,15 @@ if (BUILD === 'success' && VALIDATION === 'success' && CHECKS === 'passed' && ha
 }
 
 const results = parseResults();
+const title = GRID_LITE === 'true' ? 'Nightly Grid Lite npm package validation' : 'Nightly npm package validation';
 const report = [
-    `## Nightly npm package validation — ${verdict}`,
+    `## ${title} — ${verdict}`,
     '',
     `Run ${GITHUB_RUN_ID}, attempt ${GITHUB_RUN_ATTEMPT}`,
     '',
-    `- Distribution build and upload: ${BUILD || 'unavailable'}`,
+    ...(GRID_LITE === 'true' && GRID_LITE_MISSING_CSS === 'true' ?
+        ['Synthetic candidate with `css/grid-lite.css` removed.', ''] : []),
+    `- ${GRID_LITE === 'true' ? 'Distribution build and pack' : 'Distribution build and upload'}: ${BUILD || 'unavailable'}`,
     `- Validation job: ${VALIDATION || 'unavailable'}`,
     `- Consumer checks: ${CHECKS || 'unavailable'}`,
     ...(SETUP_STEP ? formatLane('Setup', {

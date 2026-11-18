@@ -15,6 +15,14 @@ on:
         required: false
         default: false
         type: boolean
+      validateGridLite:
+        description: 'Run the advisory Grid Lite npm package validation'
+        default: false
+        type: boolean
+      gridLiteMissingCss:
+        description: 'Use a synthetic Grid Lite candidate with the stylesheet removed'
+        default: false
+        type: boolean
 
 permissions:
    contents: read # to fetch code (actions/checkout)
@@ -271,6 +279,7 @@ jobs:
           fi
 
       - name: Publish nightly visual results
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.validateGridLite }}
         env:
           VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
         run: npx gulp update-nightly-testresults --tag "${HIGHCHARTS_VERSION}" --reference-root tmp/nightly-reference-samples
@@ -430,6 +439,92 @@ jobs:
           SETUP_ERROR: ${{ needs.nightly_package_validation.outputs.setup_error }}
           EVIDENCE: ${{ needs.nightly_package_validation.outputs.evidence }}
         run: node tools/nightly-package-validation-prototype/summary.mjs
+
+  nightly_grid_lite_validation:
+    name: Validate nightly Grid Lite npm package
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.validateGridLite }}
+    defaults:
+      run:
+        working-directory: highcharts
+    env:
+      GRID_LITE_METADATA_SHA: 6b2c4eb22f33178d99acd3bb857c7bbff5d62e30
+      GRID_LITE_MISSING_CSS: ${{ inputs.gridLiteMissingCss }}
+    steps:
+      - uses: actions/checkout@v6
+        id: source
+        with:
+          path: highcharts
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - uses: actions/checkout@v6
+        id: metadata
+        with:
+          repository: highcharts/grid-lite-dist
+          path: grid-lite-dist
+          ref: ${{ env.GRID_LITE_METADATA_SHA }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        id: toolchain
+        with:
+          node-version: '26.13.0'
+          package-manager-cache: false
+
+      - name: Build Grid distribution
+        id: build
+        run: bash tools/nightly-package-validation-prototype/setup.sh grid-build
+
+      - name: Stage and pack Grid Lite
+        id: pack
+        run: bash tools/nightly-package-validation-prototype/setup.sh grid-pack
+
+      - name: Install Chromium
+        id: chromium
+        run: bash tools/nightly-package-validation-prototype/setup.sh chromium
+
+      - name: Run isolated Grid Lite consumer checks
+        id: validate
+        run: |
+          evidence="$RUNNER_TEMP/package-validation"
+          digest=$(jq -er '.tarballSha256' "$evidence/staging-manifest.json")
+          TMPDIR="$evidence" node tools/nightly-package-validation-prototype/run.mjs \
+            "$evidence/candidate.tgz" "$digest" --package grid-lite
+
+      - name: Upload Grid Lite validation evidence
+        id: evidence
+        if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.build.outcome == 'failure') }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-grid-lite-validation-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/package-validation/
+            !${{ runner.temp }}/package-validation/**/node_modules/**
+            !${{ runner.temp }}/package-validation/**/npm-cache/**
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Summarize Grid Lite validation
+        if: ${{ !cancelled() }}
+        working-directory: ${{ runner.temp }}
+        env:
+          GRID_LITE: 'true'
+          BUILD: ${{ steps.pack.outcome == 'success' && 'success' || steps.build.outcome == 'failure' && 'failure' || steps.pack.outcome }}
+          VALIDATION: ${{ job.status }}
+          CHECKS: ${{ steps.validate.outputs.verdict }}
+          RESULTS: ${{ steps.validate.outputs.results }}
+          SETUP_STEP: ${{ steps.metadata.outcome == 'failure' && 'Check out Grid Lite release metadata' || steps.toolchain.outcome == 'failure' && 'Set up Node.js' || steps.build.outcome == 'failure' && 'Build Grid distribution' || steps.pack.outcome == 'failure' && 'Stage and pack Grid Lite' || steps.chromium.outcome == 'failure' && 'Install Chromium' || '' }}
+          SETUP_ERROR: ${{ steps.build.outputs.diagnostic || steps.pack.outputs.diagnostic || steps.chromium.outputs.diagnostic }}
+          EVIDENCE: ${{ steps.evidence.outputs.artifact-id }}
+          SOURCE: ${{ steps.source.outcome }}
+        run: |
+          if [[ "$SOURCE" != success ]]; then
+            printf '## Nightly Grid Lite npm package validation — blocked\n\nSource checkout did not complete.\n' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          node "$GITHUB_WORKSPACE/highcharts/tools/nightly-package-validation-prototype/summary.mjs"
 
   nightly_dist_publish:
     runs-on: ubuntu-latest
