@@ -10,6 +10,11 @@ on:
         required: false
         default: true
         type: boolean
+      validateDistribution:
+        description: 'Run the advisory npm package validation'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
    contents: read # to fetch code (actions/checkout)
@@ -273,7 +278,9 @@ jobs:
 
   nightly_dist:
     runs-on: ubuntu-latest
-    needs: [nightly_unit_tests, nightly_cypress, nightly_playwright_all_browsers, nightly_visual_diff]
+    outputs:
+      distribution: ${{ steps.distribution.outputs.artifact-id }}
+      build_evidence: ${{ steps.build_evidence.outputs.artifact-id }}
     steps:
       - name: Checkout highcharts
         uses: actions/checkout@v6
@@ -301,27 +308,148 @@ jobs:
       - name: Install and build
         working-directory: ./highcharts
         run: |
+          metadata_before=$(git -C ../highcharts-dist rev-parse HEAD)
           npm ci
           npm run build -- --CI true
           npx gulp scripts-es5
           npx gulp dist-verify
           npx gulp dist-release --force-yes
+          node tools/nightly-package-validation-prototype/distribution.mjs record \
+            ../highcharts-dist "$RUNNER_TEMP/build-manifest.json" "$metadata_before"
 
       - name: Upload distribution artifact
+        id: distribution
         uses: actions/upload-artifact@v6
         with:
-          name: nightly-dist-${{ github.sha }}
+          name: nightly-dist-${{ github.sha }}-${{ github.run_attempt }}
           path: |
             highcharts-dist/
             !highcharts-dist/.git
             !highcharts-dist/.git/**
           include-hidden-files: true
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 30
+
+      - name: Upload build evidence
+        id: build_evidence
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-package-build-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/build-manifest.json
+          if-no-files-found: error
+          retention-days: 30
+
+  nightly_package_validation:
+    name: Validate nightly npm package
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: nightly_dist
+    if: ${{ inputs.validateDistribution || (github.event_name == 'schedule' && vars.NIGHTLY_PACKAGE_VALIDATION == 'true') }}
+    outputs:
+      checks: ${{ steps.validate.outputs.verdict }}
+      evidence: ${{ steps.evidence.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '26.13.0'
+          package-manager-cache: false
+
+      - name: Check artifact references
+        env:
+          DISTRIBUTION: ${{ needs.nightly_dist.outputs.distribution }}
+          BUILD_EVIDENCE: ${{ needs.nightly_dist.outputs.build_evidence }}
+        run: test -n "$DISTRIBUTION" && test -n "$BUILD_EVIDENCE"
+
+      - name: Download distribution artifact
+        uses: actions/download-artifact@v7
+        with:
+          artifact-ids: ${{ needs.nightly_dist.outputs.distribution }}
+          path: ${{ runner.temp }}/assembled-distribution
+
+      - name: Download build evidence
+        uses: actions/download-artifact@v7
+        with:
+          artifact-ids: ${{ needs.nightly_dist.outputs.build_evidence }}
+          path: ${{ runner.temp }}/package-validation
+
+      - name: Verify and pack the distribution
+        run: |
+          prototype="$GITHUB_WORKSPACE/tools/nightly-package-validation-prototype"
+          distribution="$RUNNER_TEMP/assembled-distribution"
+          cd "$RUNNER_TEMP/package-validation"
+          test "$(npm --version)" = '11.20.0'
+          node "$prototype/distribution.mjs" verify "$distribution" build-manifest.json
+          npm pack "$distribution" --ignore-scripts --json > pack.json
+          node "$prototype/distribution.mjs" verify "$distribution" build-manifest.json
+          tarball=$(jq -er '.[0] | select(.name == "highcharts") | .filename' pack.json)
+          mv -- "$tarball" candidate.tgz
+          sha256sum build-manifest.json candidate.tgz > SHA256SUMS
+
+      - name: Install Chromium
+        working-directory: ${{ runner.temp }}/package-validation
+        run: npm exec --yes --package=@playwright/test@1.61.1 -- playwright install --with-deps --only-shell chromium
+
+      - name: Run isolated consumer checks
+        id: validate
+        working-directory: ${{ runner.temp }}/package-validation
+        run: |
+          digest=$(awk '$2 == "candidate.tgz" { print $1 }' SHA256SUMS)
+          TMPDIR="$PWD" node "$GITHUB_WORKSPACE/tools/nightly-package-validation-prototype/run.mjs" candidate.tgz "$digest"
+
+      - name: Upload validation evidence
+        id: evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-package-validation-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/package-validation/
+            !${{ runner.temp }}/package-validation/**/node_modules/**
+            !${{ runner.temp }}/package-validation/**/npm-cache/**
+          if-no-files-found: error
+          retention-days: 14
+
+  nightly_package_summary:
+    name: Summarize nightly package validation
+    runs-on: ubuntu-latest
+    needs: [nightly_dist, nightly_package_validation]
+    if: ${{ !cancelled() && (inputs.validateDistribution || (github.event_name == 'schedule' && vars.NIGHTLY_PACKAGE_VALIDATION == 'true')) }}
+    steps:
+      - name: Report advisory result
+        env:
+          BUILD: ${{ needs.nightly_dist.result }}
+          VALIDATION: ${{ needs.nightly_package_validation.result }}
+          CHECKS: ${{ needs.nightly_package_validation.outputs.checks }}
+          EVIDENCE: ${{ needs.nightly_package_validation.outputs.evidence }}
+        run: |
+          verdict=blocked
+          if [[ "$BUILD" == success && "$VALIDATION" == success && "$CHECKS" == passed && -n "$EVIDENCE" ]]; then
+            verdict=passed
+          elif [[ "$CHECKS" == failed ]]; then
+            verdict=failed
+          fi
+          {
+            printf '## Nightly npm package validation — %s\n\n' "$verdict"
+            printf 'Run %s, attempt %s\n\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT"
+            printf -- '- Distribution build and upload: %s\n- Validation job: %s\n' "$BUILD" "$VALIDATION"
+            printf -- '- Consumer checks: %s\n' "${CHECKS:-unavailable}"
+            if [[ -n "$EVIDENCE" ]]; then
+              printf -- '- [Validation evidence](%s/%s/actions/runs/%s/artifacts/%s)\n' \
+                "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$EVIDENCE"
+            else
+              printf -- '- Validation evidence unavailable\n'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          test "$verdict" = passed
 
   nightly_dist_publish:
     runs-on: ubuntu-latest
-    needs: nightly_dist
+    needs: [nightly_dist, nightly_unit_tests, nightly_cypress, nightly_playwright_all_browsers, nightly_visual_diff]
     if: ${{ github.ref == 'refs/heads/master' && (github.event_name == 'schedule' || inputs.pushToDist) }}
     # Configure master-only access and environment secrets before enabling.
     # See nightly.md for the credential migration.
@@ -330,10 +458,15 @@ jobs:
       group: nightly-dist
       cancel-in-progress: false
     steps:
+      - name: Check artifact reference
+        env:
+          DISTRIBUTION: ${{ needs.nightly_dist.outputs.distribution }}
+        run: test -n "$DISTRIBUTION"
+
       - name: Download distribution artifact
         uses: actions/download-artifact@v7
         with:
-          name: nightly-dist-${{ github.sha }}
+          artifact-ids: ${{ needs.nightly_dist.outputs.distribution }}
           path: nightly-dist
 
       - name: Validate distribution artifact

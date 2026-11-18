@@ -1,11 +1,13 @@
 import { describe, it } from 'node:test';
 import { deepEqual, ok, strictEqual, throws } from 'node:assert';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { existsSync, readFileSync } from 'node:fs';
 import { chmod, mkdtemp, mkdir, readdir, rm, symlink, utimes, writeFile } from 'node:fs/promises';
 import { delimiter, join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
 
 const require = createRequire(import.meta.url);
@@ -14,6 +16,14 @@ const workflow = require('js-yaml').safeLoad(readFileSync(
 ));
 const build = workflow.jobs.nightly_dist;
 const publisher = workflow.jobs.nightly_dist_publish;
+const validation = workflow.jobs.nightly_package_validation;
+const summary = workflow.jobs.nightly_package_summary;
+const distributionTool = fileURLToPath(new URL(
+    '../nightly-package-validation-prototype/distribution.mjs', import.meta.url
+));
+const consumerRunner = fileURLToPath(new URL(
+    '../nightly-package-validation-prototype/run.mjs', import.meta.url
+));
 function step(name) {
     return publisher.steps.find(item => item.name === name);
 }
@@ -63,6 +73,10 @@ describe('nightly distribution credential boundary', () => {
             item.uses?.startsWith('actions/upload-artifact@'));
         ok(artifact.with.path.includes('!highcharts-dist/.git'));
         strictEqual(artifact.with['include-hidden-files'], true);
+        for (const id of ['distribution', 'build_evidence']) {
+            const upload = build.steps.find(item => item.id === id);
+            ok(upload.with['retention-days'] >= 30, `${id} must survive partial retries`);
+        }
     });
 
     it('publishes only master schedule or opted-in master dispatch runs', () => {
@@ -83,11 +97,15 @@ describe('nightly distribution credential boundary', () => {
     });
 
     it('consumes the same-run artifact in an isolated environment job', () => {
-        strictEqual(publisher.needs, 'nightly_dist');
+        strictEqual(build.needs, undefined);
+        deepEqual(publisher.needs, [
+            'nightly_dist', 'nightly_unit_tests', 'nightly_cypress',
+            'nightly_playwright_all_browsers', 'nightly_visual_diff'
+        ]);
         strictEqual(publisher.environment, 'nightly-dist');
         const download = publisher.steps.find(item =>
             item.uses?.startsWith('actions/download-artifact@'));
-        strictEqual(download.with.name, 'nightly-dist-${{ github.sha }}');
+        strictEqual(download.with['artifact-ids'], '${{ needs.nightly_dist.outputs.distribution }}');
         strictEqual('run-id' in download.with, false);
         strictEqual('repository' in download.with, false);
         const checkout = publisher.steps.find(item =>
@@ -103,6 +121,143 @@ describe('nightly distribution credential boundary', () => {
         ok(!publisher.steps.some(item =>
             item.uses?.startsWith('actions/setup-node@') ||
             /\b(npm|npx|gulp)\b/u.test(item.run || '')));
+    });
+});
+
+describe('nightly advisory package validation', () => {
+    it('uses the two build artifacts without access to publication credentials', () => {
+        strictEqual(validation.needs, 'nightly_dist');
+        strictEqual('environment' in validation, false);
+        strictEqual(validation.outputs.checks, '${{ steps.validate.outputs.verdict }}');
+        ok(!JSON.stringify(validation).includes('secrets.'));
+        deepEqual(validation.steps.filter(item =>
+            item.uses?.startsWith('actions/download-artifact@')
+        ).map(item => item.with['artifact-ids']), [
+            '${{ needs.nightly_dist.outputs.distribution }}',
+            '${{ needs.nightly_dist.outputs.build_evidence }}'
+        ]);
+        deepEqual(summary.needs, ['nightly_dist', 'nightly_package_validation']);
+    });
+
+    it('reports missing or incomplete evidence and retains known failures', async () => {
+        await withFixture(async root => {
+            const report = join(root, 'summary.md');
+            for (const [build, validation, checks, evidence, expected] of [
+                ['success', 'success', 'passed', '1234', 'passed'],
+                ['success', 'success', 'passed', '', 'blocked'],
+                ['success', 'failure', 'passed', '', 'blocked'],
+                ['success', 'failure', 'blocked', '1234', 'blocked'],
+                ['success', 'failure', 'failed', '', 'failed'],
+                ['success', 'failure', '', '1234', 'blocked'],
+                ['failure', 'skipped', '', '', 'blocked'],
+                ['success', 'cancelled', '', '', 'blocked']
+            ]) {
+                await writeFile(report, '');
+                const env = {
+                    BUILD: build, VALIDATION: validation, CHECKS: checks, EVIDENCE: evidence,
+                    GITHUB_STEP_SUMMARY: report, GITHUB_RUN_ID: '12', GITHUB_RUN_ATTEMPT: '2',
+                    GITHUB_SERVER_URL: 'https://github.com', GITHUB_REPOSITORY: 'highcharts/highcharts'
+                };
+                const script = summary.steps[0].run;
+                if (expected === 'passed') {
+                    run(script, root, env);
+                } else {
+                    throws(() => run(script, root, env), error => error.status === 1);
+                }
+                ok(readFileSync(report, 'utf8').includes(`validation — ${expected}`));
+            }
+        });
+    });
+
+    it('blocks the candidate when the control lock drifts', {
+        skip: process.platform === 'win32'
+    }, async () => {
+        await withFixture(async root => {
+            const tarball = join(root, 'candidate.tgz');
+            const bytes = 'fixture tarball';
+            const sha256 = createHash('sha256').update(bytes).digest('hex');
+            const integrity = 'sha512-' + createHash('sha512').update(bytes).digest('base64');
+            const npm = join(root, 'npm');
+            await writeFile(tarball, bytes);
+            await writeFile(npm, `#!/usr/bin/env node
+const fs = require('node:fs');
+const command = process.argv[2];
+if (command === 'view') {
+    console.log(JSON.stringify({ version: '13.1.1', 'dist.integrity': '${integrity}' }));
+} else if (command === 'pack') {
+    fs.copyFileSync(process.env.FIXTURE_TARBALL, 'packed-control.tgz');
+    console.log('[{"filename":"packed-control.tgz"}]');
+} else if (command === '--version') {
+    console.log('11.20.0');
+} else if (command === 'install') {
+    const lock = JSON.parse(fs.readFileSync('package-lock.json'));
+    lock.packages['node_modules/highcharts'].resolved = 'file:control.tgz';
+    lock.packages['node_modules/highcharts'].integrity = '${integrity}';
+    lock.packages['node_modules/unreviewed'] = { version: '1.0.0' };
+    fs.writeFileSync('package-lock.json', JSON.stringify(lock));
+} else {
+    process.exitCode = 1;
+}
+`);
+            await chmod(npm, 0o755);
+            const output = join(root, 'output');
+            throws(() => execFileSync(process.execPath, [consumerRunner, tarball, sha256], {
+                cwd: root,
+                env: {
+                    ...environment,
+                    TMPDIR: root,
+                    PATH: root + delimiter + process.env.PATH,
+                    FIXTURE_TARBALL: tarball,
+                    GITHUB_OUTPUT: output
+                },
+                stdio: 'pipe'
+            }), error => error.status === 1);
+            const evidence = (await readdir(root)).find(name =>
+                name.startsWith('highcharts-package-prototype-'));
+            const report = JSON.parse(readFileSync(join(root, evidence, 'results.json'), 'utf8'));
+            strictEqual(report.control.outcome, 'blocked');
+            ok(report.control.error.includes('Unrelated lock drift'));
+            strictEqual(report.candidate.outcome, 'blocked');
+            ok(!existsSync(join(root, evidence, 'candidate')));
+            strictEqual(readFileSync(output, 'utf8'), 'verdict=blocked\n');
+        });
+    });
+
+    it('verifies the transferred distribution against the build manifest', async () => {
+        await withFixture(async root => {
+            const distribution = join(root, 'nightly-dist');
+            const transferred = join(root, 'transferred');
+            const manifest = join(root, 'build-manifest.json');
+            function commit(cwd, message) {
+                git(cwd, '-c', 'user.name=Nightly fixture', '-c', 'user.email=nightly@example.test',
+                    'commit', '--allow-empty', '-m', message);
+                return git(cwd, 'rev-parse', 'HEAD');
+            }
+            git(root, 'init');
+            git(distribution, 'init');
+            const source = commit(root, 'source');
+            const before = commit(distribution, 'metadata before assembly');
+            const after = commit(distribution, 'metadata after assembly');
+            await writeFile(join(root, 'package-lock.json'), '{}');
+            const runTool = (...args) => execFileSync(process.execPath, [
+                distributionTool, ...args
+            ], {
+                cwd: root,
+                env: { ...environment, GITHUB_SHA: source, GITHUB_RUN_ID: '12' },
+                stdio: 'pipe'
+            });
+            runTool('record', distribution, manifest, before);
+            const record = JSON.parse(readFileSync(manifest, 'utf8'));
+            strictEqual(record.metadataBefore, before);
+            strictEqual(record.metadataAfter, after);
+            await mkdir(transferred);
+            for (const name of ['package.json', 'highcharts.js']) {
+                await writeFile(join(transferred, name), readFileSync(join(distribution, name)));
+            }
+            runTool('verify', transferred, manifest);
+            await writeFile(join(transferred, 'highcharts.js'), 'changed');
+            throws(() => runTool('verify', transferred, manifest), /Distribution digest mismatch/u);
+        });
     });
 });
 

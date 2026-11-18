@@ -1,0 +1,27 @@
+{
+  "name": "highcharts-package-validation-prototype",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "types": "tsc --noEmit",
+    "build": "vite build",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@highcharts/react": "5.2.2",
+    "highcharts": "13.1.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.0.3",
+    "typescript": "6.0.3",
+    "vite": "8.1.4"
+  },
+  "allowScripts": {
+    "fsevents": false
+  }
+}
