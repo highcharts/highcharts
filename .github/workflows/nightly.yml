@@ -349,6 +349,8 @@ jobs:
     outputs:
       checks: ${{ steps.validate.outputs.verdict }}
       results: ${{ steps.validate.outputs.results }}
+      setup_step: ${{ steps.pack.outcome == 'failure' && 'Verify and pack the distribution' || steps.chromium.outcome == 'failure' && 'Install Chromium' || '' }}
+      setup_error: ${{ steps.pack.outputs.diagnostic || steps.chromium.outputs.diagnostic }}
       evidence: ${{ steps.evidence.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v6
@@ -380,21 +382,12 @@ jobs:
           path: ${{ runner.temp }}/package-validation
 
       - name: Verify and pack the distribution
-        run: |
-          prototype="$GITHUB_WORKSPACE/tools/nightly-package-validation-prototype"
-          distribution="$RUNNER_TEMP/assembled-distribution"
-          cd "$RUNNER_TEMP/package-validation"
-          test "$(npm --version)" = '11.20.0'
-          node "$prototype/distribution.mjs" verify "$distribution" build-manifest.json
-          npm pack "$distribution" --ignore-scripts --json > pack.json
-          node "$prototype/distribution.mjs" verify "$distribution" build-manifest.json
-          tarball=$(jq -er '.[0] | select(.name == "highcharts") | .filename' pack.json)
-          mv -- "$tarball" candidate.tgz
-          sha256sum build-manifest.json candidate.tgz > SHA256SUMS
+        id: pack
+        run: bash tools/nightly-package-validation-prototype/setup.sh pack
 
       - name: Install Chromium
-        working-directory: ${{ runner.temp }}/package-validation
-        run: npm exec --yes --package=@playwright/test@1.61.1 -- playwright install --with-deps --only-shell chromium
+        id: chromium
+        run: bash tools/nightly-package-validation-prototype/setup.sh chromium
 
       - name: Run isolated consumer checks
         id: validate
@@ -433,6 +426,8 @@ jobs:
           VALIDATION: ${{ needs.nightly_package_validation.result }}
           CHECKS: ${{ needs.nightly_package_validation.outputs.checks }}
           RESULTS: ${{ needs.nightly_package_validation.outputs.results }}
+          SETUP_STEP: ${{ needs.nightly_package_validation.outputs.setup_step }}
+          SETUP_ERROR: ${{ needs.nightly_package_validation.outputs.setup_error }}
           EVIDENCE: ${{ needs.nightly_package_validation.outputs.evidence }}
         run: node tools/nightly-package-validation-prototype/summary.mjs
 

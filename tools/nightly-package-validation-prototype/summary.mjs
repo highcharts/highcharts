@@ -3,14 +3,15 @@ import { stripVTControlCharacters } from 'node:util';
 
 if (process.argv.includes('--help')) {
     console.log('Usage: node summary.mjs');
-    console.log('Reads BUILD, VALIDATION, CHECKS, EVIDENCE and RESULTS from the workflow.');
+    console.log('Reads BUILD, VALIDATION, CHECKS, EVIDENCE, RESULTS, SETUP_STEP and SETUP_ERROR from the workflow.');
     console.log('Appends the report to GITHUB_STEP_SUMMARY. Exits 1 unless validation passed.');
     process.exit(0);
 }
 
 const {
     BUILD, CHECKS, EVIDENCE, GITHUB_REPOSITORY, GITHUB_RUN_ATTEMPT,
-    GITHUB_RUN_ID, GITHUB_SERVER_URL, GITHUB_STEP_SUMMARY, RESULTS, VALIDATION
+    GITHUB_RUN_ID, GITHUB_SERVER_URL, GITHUB_STEP_SUMMARY, RESULTS,
+    SETUP_ERROR, SETUP_STEP, VALIDATION
 } = process.env;
 
 function parseResults() {
@@ -67,6 +68,9 @@ const report = [
     `- Distribution build and upload: ${BUILD || 'unavailable'}`,
     `- Validation job: ${VALIDATION || 'unavailable'}`,
     `- Consumer checks: ${CHECKS || 'unavailable'}`,
+    ...(SETUP_STEP ? formatLane('Setup', {
+        outcome: 'blocked', stage: SETUP_STEP, error: SETUP_ERROR
+    }) : []),
     ...formatLane('Stable', results?.control),
     ...formatLane('Candidate', results?.candidate),
     '',

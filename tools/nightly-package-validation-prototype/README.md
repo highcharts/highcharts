@@ -55,7 +55,8 @@ assembled Highcharts package.
 
 Open **Summarize nightly package validation** in the Actions run. It shows the
 stable and candidate outcomes, the stage each reached, and the first available
-diagnostic. The evidence link contains the full logs, browser reports, exact
+diagnostic. If packing or Chromium setup fails first, it shows that step and
+its diagnostic. The evidence link contains the full logs, browser reports, exact
 tarballs, and build manifest. See the
 [nightly workflow notes](../../.github/workflows/nightly.md) for rollout.
 
@@ -77,6 +78,8 @@ platform-specific failures.
 The command downloads only the named attempt's validation evidence, verifies
 its digests, and runs the same checks with the retained fixture, tarballs, and
 locks. It installs with `npm ci` and uses the recorded stable release.
+Replay checks the runner and its helper against the recorded digests. If they
+differ, use a separate checkout at the source revision shown in the diagnostic.
 Replays require evidence captured after both locks were verified. If the
 evidence has expired or the run predates replay support, the command stops
 with a diagnostic. For an already extracted archive, add

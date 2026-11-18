@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export const fixtureFiles = [
     'app', 'browser-cases.mjs', 'browser-results.mjs', 'consumer.spec.mjs',
@@ -10,6 +11,15 @@ export const fixtureFiles = [
 ];
 export const lanes = ['control', 'candidate'];
 const laneFiles = ['install-inputs.json', 'package.json', 'package-lock.json'];
+const runnerFiles = ['run.mjs', 'replay-evidence.mjs'];
+const runnerDirectory = fileURLToPath(new URL('.', import.meta.url));
+
+function runnerDigests() {
+    return Object.fromEntries(runnerFiles.map(file => {
+        const source = readFileSync(join(runnerDirectory, file), 'utf8');
+        return [file, createHash('sha256').update(source.replaceAll('\r\n', '\n')).digest('hex')];
+    }));
+}
 
 export function hash(path, algorithm = 'sha256', encoding = 'hex') {
     return createHash(algorithm).update(readFileSync(path)).digest(encoding);
@@ -46,7 +56,7 @@ function replayFiles(root) {
     return [
         'inputs.json',
         ...fixtureFiles.filter(name => name !== 'app').map(name => `fixture/${name}`),
-        ...app.map(entry => join(entry.parentPath, entry.name).slice(root.length + 1)),
+        ...app.map(entry => relative(root, join(entry.parentPath, entry.name)).split(sep).join('/')),
         ...lanes.flatMap(lane => [...laneFiles, `${lane}.tgz`].map(name => `${lane}/${name}`))
     ];
 }
@@ -57,6 +67,7 @@ export function recordReplay(root) {
         runId: process.env.GITHUB_RUN_ID,
         attempt: process.env.GITHUB_RUN_ATTEMPT,
         sourceSha: process.env.GITHUB_SHA,
+        runner: runnerDigests(),
         files: inventory(root, replayFiles(root))
     });
 }
@@ -72,6 +83,13 @@ export function verifyReplay(root) {
         throw error;
     }
     assert.equal(manifest.version, 1, 'Unsupported replay manifest version');
+    const revision = manifest.sourceSha ?? 'the revision that produced this evidence';
+    assert(manifest.runner, `Recorded runner digests unavailable for ${revision}; replay cannot verify the validation logic`);
+    const runner = runnerDigests();
+    for (const [file, digest] of Object.entries(runner)) {
+        assert.equal(digest, manifest.runner[file],
+            `Replay runner differs: ${file}. Check out ${revision} on a separate worktree and retry.`);
+    }
     const files = inventory(root, replayFiles(root));
     for (const [name, digest] of Object.entries(files)) {
         assert.equal(digest, manifest.files[name], `Replay digest mismatch or missing digest: ${name}`);

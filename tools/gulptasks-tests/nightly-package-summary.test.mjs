@@ -10,7 +10,7 @@ const script = fileURLToPath(new URL(
     '../nightly-package-validation-prototype/summary.mjs', import.meta.url
 ));
 
-function summarize({ build, validation, checks, evidence, results }) {
+function summarize({ build, validation, checks, evidence, results, setupStep = '', setupError = '' }) {
     const dir = mkdtempSync(join(tmpdir(), 'nightly-package-summary-'));
     const report = join(dir, 'summary.md');
     try {
@@ -27,6 +27,8 @@ function summarize({ build, validation, checks, evidence, results }) {
                 GITHUB_SERVER_URL: 'https://github.com',
                 GITHUB_STEP_SUMMARY: report,
                 RESULTS: results,
+                SETUP_STEP: setupStep,
+                SETUP_ERROR: setupError,
                 VALIDATION: validation
             }
         });
@@ -37,6 +39,20 @@ function summarize({ build, validation, checks, evidence, results }) {
         rmSync(dir, { recursive: true, force: true });
     }
 }
+
+test('shows an actionable setup failure before either lane starts', () => {
+    const [status, summary] = summarize({
+        build: 'success', validation: 'failure', checks: '', evidence: '1234',
+        results: '', setupStep: 'Install Chromium',
+        setupError: 'Error: Chromium download returned 503\nretry details'
+    });
+    deepEqual(status, 1);
+    ok(summary.includes('validation — blocked'));
+    ok(summary.includes('Setup <code>blocked</code> at <code>Install Chromium</code>'));
+    ok(summary.includes('<pre>Error: Chromium download returned 503</pre>'));
+    ok(summary.includes('Stable <code>unavailable</code>'));
+    ok(!summary.includes('retry details'));
+});
 
 test('shows the failed lane, stage, and first actionable compiler diagnostic', () => {
     const diagnostic = "app/stock.ts(1,21): error TS2307: Cannot find module 'highcharts/highstock'.";
