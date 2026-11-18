@@ -2825,26 +2825,6 @@ class Series {
                     point.total = point.stackTotal = stackItem.total ?? void 0;
                     point.percentage = defined(point.y) && stackItem.total ?
                         (point.y / stackItem.total * 100) : void 0;
-
-                    // In case of variwide series (where widths of points are
-                    // different in most cases), stack labels are positioned
-                    // wrongly, so the call of the setOffset is omitted here and
-                    // labels are correctly positioned later, at the end of the
-                    // variwide's translate function (#10962)
-                    // if (
-                    //     stackKey === stackItem.base &&
-                    //     !(series as any).irregularWidths
-                    // ) {
-                    //     stackItem.setOffset(
-                    //         series.pointXOffset || 0,
-                    //         series.barW || 0,
-                    //         void 0,
-                    //         void 0,
-                    //         void 0,
-                    //         series.xAxis
-                    //     );
-                    // }
-
                 }
             }
 

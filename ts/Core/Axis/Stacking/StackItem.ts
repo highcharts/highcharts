@@ -34,7 +34,6 @@ const { format } = T;
 import Series from '../../Series/Series.js';
 import {
     destroyObjectProperties,
-    fireEvent,
     getAlignFactor,
     isNumber
 } from '../../../Shared/Utilities.js';
@@ -228,7 +227,27 @@ class StackItem {
                     format(formatOption, this, chart) :
                     options.formatter?.call(this, this)
             ) || '',
-            verb = this.label ? 'animate' : 'attr';
+            verb = this.label ? 'animate' : 'attr',
+            inverted = chart.inverted,
+            isNegative = this.negativeValue !== !!axis.reversed,
+            stackBox = this.getStackBox(),
+            {
+                align = (inverted ? (isNegative ? 'left' : 'right') : 'center'),
+                verticalAlign = (
+                    inverted ? 'middle' : isNegative ? 'bottom' : 'top'
+                ),
+                textAlign = (
+                    inverted ? (!isNegative ? 'left' : 'right') : 'center'
+                ),
+                x = 0,
+                y = 0
+            } = options,
+            alignOptions: AlignOptions = {
+                align,
+                verticalAlign,
+                x,
+                y
+            };
 
         // Create new label
         this.label ||= chart.renderer.label(
@@ -269,42 +288,8 @@ class StackItem {
 
         // Rank it higher than data labels (#8742)
         label.labelrank = chart.plotSizeY;
-        fireEvent(this, 'afterRender');
 
-        this.setOffset();
-    }
-
-    /**
-     * Sets the offset that the stack has from the x value and repositions the
-     * label.
-     * @internal
-     */
-    public setOffset(): void {
-        const { axis, label } = this,
-            chart = axis.chart,
-            options = axis.options.stackLabels || {},
-            inverted = chart.inverted,
-            isNegative = this.negativeValue !== !!axis.reversed,
-            stackBox = this.getStackBox(),
-            {
-                align = (inverted ? (isNegative ? 'left' : 'right') : 'center'),
-                verticalAlign = (
-                    inverted ? 'middle' : isNegative ? 'bottom' : 'top'
-                ),
-                textAlign = (
-                    inverted ? (!isNegative ? 'left' : 'right') : 'center'
-                ),
-                x = 0,
-                y = 0
-            } = options,
-            alignOptions: AlignOptions = {
-                align,
-                verticalAlign,
-                x,
-                y
-            };
-
-        if (label && stackBox) {
+        if (stackBox) {
             const labelBox = label.getBBox(void 0, 0),
                 padding = label.padding;
             let isJustify = (options.overflow ?? 'justify') === 'justify',
@@ -370,8 +355,6 @@ class StackItem {
             }
             label[visible ? 'show' : 'hide']();
         }
-
-        fireEvent(this, 'afterSetOffset');
     }
 
     /**

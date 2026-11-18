@@ -497,27 +497,6 @@ addEvent(Chart, 'render', function (): void {
     forEachStack(this, renderStackShadow);
 });
 
-interface AfterSetOffsetEvent {
-    xOffset: number;
-    width: number;
-}
-
-addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
-    if (this.shadow) {
-        const { chart, len } = this.axis,
-            { xOffset, width } = e,
-            translateX =
-                chart.inverted ? xOffset - chart.xAxis[0].len : xOffset,
-            translateY = chart.inverted ? -len : 0;
-
-        this.shadow.attr({
-            translateX,
-            translateY
-        });
-        this.shadow.animate({ width });
-    }
-});
-
 /**
  *
  */
