@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { existsSync, readFileSync } from 'node:fs';
-import { chmod, mkdtemp, mkdir, readdir, rm, symlink, utimes, writeFile } from 'node:fs/promises';
+import { chmod, mkdtemp, mkdir, readdir, rename, rm, symlink, utimes, writeFile } from 'node:fs/promises';
 import { delimiter, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -19,9 +19,6 @@ const publisher = workflow.jobs.nightly_dist_publish;
 const validation = workflow.jobs.nightly_package_validation;
 const summary = workflow.jobs.nightly_package_summary;
 const gridLiteValidation = workflow.jobs.nightly_grid_lite_validation;
-const visualResultsStep = workflow.jobs.nightly_visual_diff.steps.find(item =>
-    item.name === 'Publish nightly visual results'
-);
 const distributionTool = fileURLToPath(new URL(
     '../nightly-package-validation-prototype/distribution.mjs', import.meta.url
 ));
@@ -83,6 +80,57 @@ describe('nightly distribution credential boundary', () => {
         }
     });
 
+    it('rejects unsafe distribution entries before the required artifact upload', {
+        skip: process.platform === 'win32'
+    }, async () => {
+        const guard = build.steps.find(item => item.name === 'Validate assembled distribution tree');
+        const assembly = build.steps.find(item => item.name === 'Install and build');
+        const upload = build.steps.find(item => item.id === 'distribution');
+        ok(build.steps.indexOf(assembly) < build.steps.indexOf(guard));
+        ok(build.steps.indexOf(guard) < build.steps.indexOf(upload));
+        strictEqual(guard.if, undefined);
+        strictEqual(guard['continue-on-error'], undefined);
+
+        await withFixture(async root => {
+            const distribution = join(root, 'highcharts-dist');
+            await rename(join(root, 'nightly-dist'), distribution);
+            await writeFile(join(distribution, '.npmignore'), 'hidden metadata');
+            await mkdir(join(distribution, '.git/objects'), { recursive: true });
+            await symlink('missing', join(distribution, '.git/objects/ignored'));
+            run(guard.run, root);
+            await rm(join(distribution, '.git'), { recursive: true });
+
+            const cases = [
+                ['.git', path => writeFile(path, 'gitdir: ../metadata')],
+                ['.git', path => symlink(root, path)],
+                ['nested/.git', path => writeFile(path, 'gitdir: ../../metadata')],
+                ['nested/.git', path => mkdir(path)],
+                ['linked.js', path => symlink('highcharts.js', path)],
+                ['linked-dir', path => symlink('nested', path)],
+                ['broken-link', path => symlink('missing', path)],
+                ['pipe', path => execFileSync('mkfifo', [path])]
+            ];
+            await mkdir(join(distribution, 'nested'));
+            for (const [name, create] of cases) {
+                const path = join(distribution, name);
+                await create(path);
+                throws(() => run(guard.run, root), error =>
+                    error.status === 1 && error.stdout?.includes(
+                        'Assembled distribution contains unexpected Git metadata or special files.'
+                    ), name);
+                await rm(path, { recursive: true });
+            }
+
+            const original = join(root, 'original');
+            await rename(distribution, original);
+            await symlink(original, distribution);
+            throws(() => run(guard.run, root), error =>
+                error.status === 1 && error.stdout?.includes(
+                    'Expected a regular highcharts-dist directory.'
+                ));
+        });
+    });
+
     it('publishes only master schedule or opted-in master dispatch runs', () => {
         function allowed(ref, event, pushToDist) {
             const expression = publisher.if
@@ -129,23 +177,6 @@ describe('nightly distribution credential boundary', () => {
 });
 
 describe('nightly advisory package validation', () => {
-    it('skips visual result publishing only for the Grid Lite pilot dispatch', () => {
-        strictEqual(visualResultsStep.if,
-            "${{ github.event_name != 'workflow_dispatch' || !inputs.validateGridLite }}");
-
-        function shouldPublish(event, validateGridLite) {
-            const expression = visualResultsStep.if
-                .slice(3, -2)
-                .replace(/github\.event_name\b/gu, JSON.stringify(event))
-                .replace(/inputs\.validateGridLite\b/gu, String(validateGridLite));
-            return Boolean(runInNewContext(expression));
-        }
-
-        strictEqual(shouldPublish('schedule', false), true);
-        strictEqual(shouldPublish('workflow_dispatch', false), true);
-        strictEqual(shouldPublish('workflow_dispatch', true), false);
-    });
-
     it('runs the Grid Lite pilot only on explicit dispatch, independently of publishing', () => {
         strictEqual(gridLiteValidation.if,
             "${{ github.event_name == 'workflow_dispatch' && inputs.validateGridLite }}");
@@ -173,15 +204,110 @@ describe('nightly advisory package validation', () => {
         deepEqual(summary.needs, ['nightly_dist', 'nightly_package_validation']);
     });
 
-    const lockDriftCases = [
-        { name: 'highcharts', key: 'highcharts', args: [] },
-        { name: '@highcharts/grid-lite', key: 'grid-lite', args: ['--package', 'grid-lite'] }
+    it('keeps build evidence optional for the required distribution job', () => {
+        const assembly = build.steps.find(item => item.name === 'Install and build');
+        const distribution = build.steps.find(item => item.id === 'distribution');
+        const record = build.steps.find(item => item.id === 'record_evidence');
+        const upload = build.steps.find(item => item.id === 'build_evidence');
+        ok(!assembly.run.includes('distribution.mjs'));
+        strictEqual(distribution.if, undefined);
+        strictEqual(distribution['continue-on-error'], undefined);
+        ok(build.steps.indexOf(distribution) < build.steps.indexOf(record));
+        strictEqual(record.if, validation.if);
+        strictEqual(record['continue-on-error'], true);
+        strictEqual(upload.if, "${{ steps.record_evidence.outcome == 'success' }}");
+        strictEqual(upload['continue-on-error'], true);
+        strictEqual(build.outputs.build_evidence,
+            "${{ steps.build_evidence.outcome == 'success' && steps.build_evidence.outputs.artifact-id || '' }}");
+        for (const [event, dispatch, schedule, expected] of [
+            ['schedule', false, 'false', false],
+            ['schedule', false, 'true', true],
+            ['workflow_dispatch', false, 'true', false],
+            ['workflow_dispatch', true, 'false', true]
+        ]) {
+            strictEqual(runInNewContext(record.if.slice(3, -2), {
+                github: { event_name: event },
+                inputs: { validateDistribution: dispatch },
+                vars: { NIGHTLY_PACKAGE_VALIDATION: schedule }
+            }), expected);
+        }
+    });
+
+    it('directs missing build evidence to a new dispatch with distribution publishing disabled', {
+        skip: process.platform === 'win32'
+    }, async () => {
+        const check = validation.steps.find(item => item.id === 'artifacts');
+        strictEqual(check['continue-on-error'], undefined);
+        await withFixture(async root => {
+            const output = join(root, 'output');
+            const env = { DISTRIBUTION: '123', BUILD_EVIDENCE: '456', GITHUB_OUTPUT: output };
+            run(check.run, root, env);
+            ok(!existsSync(output));
+            const recovery = 'gh workflow run nightly.yml --ref "$REF" -f validateDistribution=true -f pushToDist=false';
+            throws(() => run(check.run, root, { ...env, BUILD_EVIDENCE: '' }), error =>
+                error.status === 1 && error.stdout?.includes(recovery));
+            const diagnostic = readFileSync(output, 'utf8');
+            ok(diagnostic.startsWith('diagnostic='));
+            ok(diagnostic.includes('nightly_dist job'));
+            ok(diagnostic.includes('start a new validation run with distribution publishing disabled'));
+            ok(diagnostic.includes(recovery));
+        });
+    });
+
+    const grid = { name: '@highcharts/grid-lite', key: 'grid-lite', args: ['--package', 'grid-lite'], prepared: true };
+    const resolutionError = peer => [
+        'npm error code ERESOLVE',
+        'npm error ERESOLVE unable to resolve dependency tree',
+        'npm error',
+        'npm error Could not resolve dependency:',
+        `npm error ${peer}`
+    ].join('\n');
+    const candidatePeer = 'peerOptional vite@"^7.0.0 || ^6.0.0" from @highcharts/grid-lite@4.0.0';
+    const peerCases = [
+        {
+            test: 'fails when the candidate requires an incompatible peer at lock resolution',
+            command: 'install', diagnostic: resolutionError(candidatePeer), error: `ERESOLVE: ${candidatePeer}`,
+            verdict: 'failed'
+        },
+        {
+            test: 'fails when a fixture dependency rejects the candidate as a peer at install',
+            command: 'ci', diagnostic: resolutionError('peer @highcharts/grid-lite@"^3.0.0" from wrapper@1.0.0'),
+            error: 'ERESOLVE: peer @highcharts/grid-lite@"^3.0.0" from wrapper@1.0.0', verdict: 'failed'
+        },
+        {
+            test: 'blocks when npm reports a registry error alongside a peer warning',
+            command: 'ci', diagnostic: [resolutionError(candidatePeer).replaceAll('npm error', 'npm warn'),
+                'npm error code ENOTCACHED', 'npm error request failed'].join('\n'),
+            error: 'npm error request failed', verdict: 'blocked'
+        },
+        {
+            test: 'blocks when npm reports a peer conflict unrelated to the candidate',
+            command: 'install', diagnostic: resolutionError('peer vite@"^7.0.0" from wrapper@1.0.0'),
+            error: 'npm error ERESOLVE unable to resolve dependency tree', verdict: 'blocked'
+        },
+        {
+            test: 'blocks when a candidate peer conflict lacks a successfully installed control',
+            controlInstallFails: true, command: 'install', diagnostic: resolutionError(candidatePeer),
+            error: `ERESOLVE: ${candidatePeer}`, verdict: 'blocked'
+        }
     ];
-    for (const { name, key, args } of lockDriftCases) it(`blocks the ${name} candidate when the control lock drifts`, {
+    const consumerCases = [
+        ...[{ name: 'highcharts', key: 'highcharts', args: [], prepared: false }, grid].map(product => ({
+            ...product, test: `blocks the ${product.name} candidate when the control lock drifts`,
+            drift: true, verdict: 'blocked'
+        })),
+        ...peerCases.map(testCase => ({ ...grid, ...testCase }))
+    ];
+    for (const testCase of consumerCases) it(testCase.test, {
         skip: process.platform === 'win32'
     }, async () => {
         await withFixture(async root => {
-            const tarball = join(root, 'candidate.tgz');
+            const { name, key, args, prepared, drift, command, diagnostic, error, controlInstallFails, verdict } = testCase;
+            const directory = join(root, `${key}-package-prototype-prepared`);
+            const tarball = prepared ? join(directory, 'candidate', 'candidate.tgz') : join(root, 'candidate.tgz');
+            if (prepared) {
+                await mkdir(join(directory, 'candidate'), { recursive: true });
+            }
             const bytes = 'fixture tarball';
             const sha256 = createHash('sha256').update(bytes).digest('hex');
             const integrity = 'sha512-' + createHash('sha512').update(bytes).digest('base64');
@@ -189,8 +315,17 @@ describe('nightly advisory package validation', () => {
             await writeFile(tarball, bytes);
             await writeFile(npm, `#!/usr/bin/env node
 const fs = require('node:fs');
+const { basename, resolve } = require('node:path');
+const { pathToFileURL } = require('node:url');
 const command = process.argv[2];
-if (command === 'view') {
+const lane = basename(process.cwd());
+if (lane === 'candidate' && command === ${JSON.stringify(command)}) {
+    console.error(${JSON.stringify(diagnostic)});
+    process.exitCode = 1;
+} else if (lane === 'control' && command === 'ci' && ${Boolean(controlInstallFails)}) {
+    console.error('npm error setup failed');
+    process.exitCode = 1;
+} else if (command === 'view') {
     console.log(JSON.stringify({ version: '13.1.1', 'dist.integrity': '${integrity}' }));
 } else if (command === 'pack') {
     fs.copyFileSync(process.env.FIXTURE_TARBALL, 'packed-control.tgz');
@@ -199,17 +334,36 @@ if (command === 'view') {
     console.log('11.20.0');
 } else if (command === 'install') {
     const lock = JSON.parse(fs.readFileSync('package-lock.json'));
-    lock.packages['node_modules/${name}'].resolved = 'file:control.tgz';
+    lock.packages['node_modules/${name}'].resolved = 'file:' + lane + '.tgz';
     lock.packages['node_modules/${name}'].integrity = '${integrity}';
-    lock.packages['node_modules/unreviewed'] = { version: '1.0.0' };
+    if (${Boolean(drift)}) {
+        lock.packages['node_modules/unreviewed'] = { version: '1.0.0' };
+    }
     fs.writeFileSync('package-lock.json', JSON.stringify(lock));
-} else {
+} else if (command === 'config') {
+    console.log('false');
+} else if (command === 'ci') {
+    const installed = 'node_modules/${name}';
+    fs.mkdirSync(installed, { recursive: true });
+    fs.writeFileSync(installed + '/index.js', 'module.exports = {}');
+    fs.writeFileSync(installed + '/package.json', JSON.stringify({
+        name: '${name}', main: 'index.js', module: 'index.js', types: 'index.js'
+    }));
+} else if (command === 'test') {
+    import(pathToFileURL(resolve('browser-cases.mjs'))).then(({ browserCases, consumerStartedAttachment }) => {
+        const specs = browserCases.map(({ id }) => ({ title: id, tests: [{ results: [
+            { status: 'passed', attachments: [{ name: consumerStartedAttachment }] }
+        ] }] }));
+        fs.writeFileSync('browser-results.json', JSON.stringify({ suites: [{ specs }] }));
+    });
+} else if (!['ls', 'run'].includes(command)) {
     process.exitCode = 1;
 }
 `);
             await chmod(npm, 0o755);
             const output = join(root, 'output');
-            throws(() => execFileSync(process.execPath, [consumerRunner, tarball, sha256, ...args], {
+            const input = prepared ? ['--prepared', directory] : [tarball];
+            throws(() => execFileSync(process.execPath, [consumerRunner, ...input, sha256, ...args], {
                 cwd: root,
                 env: {
                     ...environment,
@@ -223,13 +377,36 @@ if (command === 'view') {
             const evidence = (await readdir(root)).find(name =>
                 name.startsWith(`${key}-package-prototype-`));
             const report = JSON.parse(readFileSync(join(root, evidence, 'results.json'), 'utf8'));
-            strictEqual(report.control.outcome, 'blocked');
-            ok(report.control.error.includes('Unrelated lock drift'));
-            strictEqual(report.candidate.outcome, 'blocked');
-            ok(!existsSync(join(root, evidence, 'candidate')));
-            const [verdict, results] = readFileSync(output, 'utf8').trim().split('\n');
-            strictEqual(verdict, 'verdict=blocked');
+            strictEqual(report.verdict, verdict);
+            strictEqual(report.control.outcome, drift || controlInstallFails ? 'blocked' : 'passed');
+            strictEqual(report.candidate.outcome, verdict);
+            if (drift) {
+                ok(report.control.error.includes('Unrelated lock drift'));
+                deepEqual(await readdir(join(root, evidence, 'candidate')), ['candidate.tgz']);
+            } else {
+                strictEqual(report.candidate.stage, command === 'ci' ? 'install' : 'lock');
+                strictEqual(report.candidate.error, error);
+            }
+            const archives = (await readdir(join(root, evidence), { recursive: true }))
+                .filter(path => path.endsWith('.tgz')).sort();
+            deepEqual(archives, [join('candidate', 'candidate.tgz'), join('control', 'control.tgz')]);
+            strictEqual(readFileSync(tarball, 'utf8'), bytes);
+            const [outputVerdict, results] = readFileSync(output, 'utf8').trim().split('\n');
+            strictEqual(outputVerdict, `verdict=${verdict}`);
             deepEqual(JSON.parse(results.slice('results='.length)), report);
+        });
+    });
+
+    it('refuses to reuse a populated nightly evidence directory', async () => {
+        await withFixture(async root => {
+            await mkdir(join(root, 'candidate'));
+            await writeFile(join(root, 'candidate', 'candidate.tgz'), 'candidate');
+            const results = join(root, 'results.json');
+            await writeFile(results, 'prior results');
+            throws(() => execFileSync(process.execPath, [consumerRunner, '--prepared', root, '0'.repeat(64)], {
+                stdio: 'pipe'
+            }), error => error.status === 1 && error.stderr?.includes('Expected a fresh nightly evidence directory'));
+            strictEqual(readFileSync(results, 'utf8'), 'prior results');
         });
     });
 

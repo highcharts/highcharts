@@ -16,6 +16,13 @@ check_npm() {
     fi
 }
 
+stage_candidate() {
+    consumer=$(mktemp -d "$evidence/$2-package-prototype-XXXXXX")
+    mkdir "$consumer/candidate"
+    mv -- "$1" "$consumer/candidate/candidate.tgz"
+    printf 'consumer=%s\n' "$consumer" >> "$GITHUB_OUTPUT"
+}
+
 prepare() {
     prototype="$GITHUB_WORKSPACE/tools/nightly-package-validation-prototype"
     distribution="$RUNNER_TEMP/assembled-distribution"
@@ -28,8 +35,8 @@ prepare() {
         printf 'Error: npm pack did not report a Highcharts tarball\n' >&2
         return 1
     fi
-    mv -- "$tarball" candidate.tgz
-    sha256sum build-manifest.json candidate.tgz > SHA256SUMS
+    stage_candidate "$tarball" highcharts
+    sha256sum build-manifest.json "${consumer#"$evidence"/}/candidate/candidate.tgz" > SHA256SUMS
 }
 
 prepare_grid_lite() {
@@ -44,7 +51,7 @@ prepare_grid_lite() {
     local tarball
     tarball=$(jq -er '.tarball' "$evidence/staging.json")
     cp -- "$RUNNER_TEMP/grid-lite-staging/staging-manifest.json" "$evidence/"
-    mv -- "$tarball" "$evidence/candidate.tgz"
+    stage_candidate "$tarball" grid-lite
 }
 
 if [[ "${1:-}" == run ]]; then

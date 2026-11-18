@@ -22,6 +22,8 @@ shasum -a 256 highcharts-*.tgz
 ```
 
 From the repository root, pass the tarball and recorded digest to the runner.
+Use this mode with packages you built from reviewed source because it installs
+and runs them on your machine.
 
 ```sh
 node tools/nightly-package-validation-prototype/run.mjs <candidate.tgz> <expected-sha256>
@@ -33,9 +35,10 @@ resolution, declarations, and a Vite production build. Playwright checks Core
 annotations, a React-driven series update, and the Stock navigator in Chromium.
 Maps and Gantt coverage is limited to entry files and TypeScript imports.
 
-The runner prints the local evidence directory. It contains the tarballs,
-manifests and locks, digests, build logs, bundled Highcharts module inventory,
-and Playwright reports and failure traces.
+The runner prints the local evidence directory. After both packages are staged,
+their archives are in `candidate/candidate.tgz` and `control/control.tgz`.
+The evidence also includes manifests, locks, digests, build logs, bundled module
+inventories, and Playwright reports and failure traces.
 
 ## Validate Grid Lite locally
 
@@ -58,13 +61,23 @@ Use `tarball` and `tarballSha256` from the command's JSON output.
 node "$prototype/run.mjs" "$TARBALL" "$SHA256" --package grid-lite
 ```
 
-This compares the staged tarball with an exact stable Grid Lite release in
-separate consumers. It checks the package entries, types, and production
-build, then uses Chromium to verify the packaged styling and column sorting.
-Repeat staging with `--missing-css` and a different output directory to
-exercise a candidate-only Vite failure on `@highcharts/grid-lite/css/grid-lite.css`.
-With the same runner and toolchain, replay locally from the printed evidence
-directory using `node "$prototype/run.mjs" --replay "$EVIDENCE" --package grid-lite`.
+The pilot uses the Grid release task's assembly rules with metadata from
+`METADATA_SHA`. It compares the packed candidate with an exact stable release
+in separate consumers, checking package entries, types, and a production build.
+Chromium verifies the packaged styling and column sorting.
+
+The staged and packed file inventories are retained with the tarball. Missing
+`main`, `module`, or `types` entries fail during consumer resolution.
+
+If the build or npm packaging omits `css/grid-lite.css`, the candidate's Vite
+build fails on the stylesheet import. To exercise the same failure deliberately,
+repeat staging with `--missing-css` and a different output directory.
+From the same reviewed checkout, replay the printed evidence directory in the
+container described below:
+
+```sh
+node "$prototype/run.mjs" --replay "$EVIDENCE" --package grid-lite
+```
 
 ## Add a product check
 
@@ -91,8 +104,10 @@ tarballs, and build manifest. See the
 
 ## Replay a Nightly attempt
 
-From the repository root, run this with the run ID from the Actions URL and
-the attempt number from the run:
+For attempts that predate container replay, capture fresh evidence on a revision
+that includes it. For a supported attempt, check out its reviewed source SHA in
+a separate worktree using the same line endings as CI (LF). From that worktree,
+run the command with the run ID from the Actions URL and the attempt number.
 
 ```sh
 node tools/nightly-package-validation-prototype/replay.mjs "$RUN_ID" "$ATTEMPT"
@@ -102,18 +117,26 @@ For Grid Lite evidence from the same Nightly workflow, add `--package grid-lite`
 See the [Grid Lite pilot](../../.github/workflows/nightly.md#grid-lite-pilot)
 for the dispatch inputs.
 
-Use authenticated `gh` with read access to `highcharts/highcharts`, `unzip`,
-the recorded Node and npm versions, and the pinned Playwright Chromium
-installation from the **Run** section. Ensure npm can fetch the locked
-dependencies. Use Linux x64 to match the Actions host when investigating
-platform-specific failures.
+Use authenticated `gh` with read access to `highcharts/highcharts` and a
+running Docker engine with Linux x64 support. Set
+`NIGHTLY_REPLAY_CONTAINER=podman` to use Podman. On macOS, the Podman replay
+stages its temporary inputs under your home directory, which Podman Machine
+shares by default. The first run pulls pinned Node and Playwright images and
+caches the npm dependencies from the local fixture's lockfile. That build needs
+access to the image and npm registries.
 
-The command downloads only the named attempt's validation evidence, verifies
-its digests, and runs the same checks with the retained fixture, tarballs, and
-locks. It installs with `npm ci` and uses the recorded stable release.
-Replay checks the runner and its helper against the recorded digests. If they
-differ, use a separate checkout at the source revision shown in the diagnostic.
-Replays require evidence captured after both locks were verified. If the
-evidence has expired or the run predates replay support, the command stops
-with a diagnostic. For an already extracted archive, add
-`--artifact /path/to/extracted-evidence` to the same command.
+The command verifies the named attempt and downloaded artifact digest. It
+extracts the archive and runs `npm ci` and the consumer checks inside a
+disposable container with networking disabled, a cleared environment and a
+read-only input mount. It runs the fixture from the reviewed checkout and checks
+its exact contents, runner and npm scripts against the recorded evidence. The
+two lanes use the retained tarballs and locks, including the recorded stable
+release. The command prints the lane results and browser failure logs. Full
+logs and traces from the original run are available in the Actions evidence.
+
+Replay requires evidence captured with the matching runner after both locks
+were verified.
+For an already extracted archive, add `--artifact /path/to/extracted-evidence`
+to the same command. To replay an individual consumer evidence directory, use
+`run.mjs --replay` as shown above. That command checks the same source revision,
+runner and fixture and uses the same container.

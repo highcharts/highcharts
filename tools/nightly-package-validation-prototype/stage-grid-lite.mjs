@@ -3,10 +3,11 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
-    copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync,
+    chmodSync, mkdirSync, readFileSync, readdirSync,
     rmSync, writeFileSync
 } from 'node:fs';
-import { join, relative, resolve, sep } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
+import { releaseRepositoryMetadata, stageGridPackage } from '../gulptasks/lib/release-package.js';
 import { getReleaseVersion } from '../gulptasks/lib/release-version.js';
 const [sourceSha, sourceRepoArg, metadataRepoArg, metadataRevision, outputArg, ...flags] =
     process.argv.slice(2);
@@ -27,10 +28,6 @@ const outputDirectory = resolve(outputArg);
 const packageDirectory = join(outputDirectory, 'package');
 const missingCss = flags.includes('--missing-css');
 const packageName = '@highcharts/grid-lite';
-const requiredMetadata = [
-    '.gitignore', 'LICENSE.txt', 'README.md', 'package.json'
-];
-const optionalMetadata = ['.npmignore', 'SECURITY.md'];
 
 function sha256(bytes) {
     return createHash('sha256').update(bytes).digest('hex');
@@ -54,26 +51,6 @@ function metadataAtRevision(file) {
     return result.stdout;
 }
 
-function copyCodeFiles(source, destination, paths = []) {
-    for (const entry of readdirSync(source, { withFileTypes: true })) {
-        const sourcePath = join(source, entry.name);
-        const destinationPath = join(destination, entry.name);
-        const relativePath = [...paths, entry.name].join('/');
-        assert(!entry.isSymbolicLink(), `Unexpected symlink in build output: ${relativePath}`);
-        if (entry.isDirectory()) {
-            assert(!existsSync(destinationPath),
-                `Grid Lite build output collides with release metadata: ${relativePath}`);
-            mkdirSync(destinationPath);
-            copyCodeFiles(sourcePath, destinationPath, [...paths, entry.name]);
-        } else {
-            assert(entry.isFile(), `Unexpected build output type: ${relativePath}`);
-            assert(!existsSync(destinationPath),
-                `Grid Lite build output collides with release metadata: ${relativePath}`);
-            copyFileSync(sourcePath, destinationPath);
-        }
-    }
-}
-
 function inventory(root) {
     const files = [];
     function visit(directory) {
@@ -95,7 +72,6 @@ function inventory(root) {
 
 let createdOutput = false;
 try {
-    assert(lstatSync(codeDirectory).isDirectory(), `Grid Lite build directory unavailable: ${codeDirectory}`);
     const revision = git(['rev-parse', '--verify', `${metadataRevision}^{commit}`]);
     assert.equal(revision, metadataRevision, 'Pass a full immutable metadata commit SHA');
     const sourceHead = spawnSync('git', ['rev-parse', 'HEAD'], {
@@ -114,33 +90,27 @@ try {
     createdOutput = true;
     mkdirSync(packageDirectory);
 
-    for (const file of [...requiredMetadata, ...optionalMetadata]) {
-        if (optionalMetadata.includes(file) &&
-            spawnSync('git', ['cat-file', '-e', `${revision}:${file}`], {
-                cwd: metadataRepo,
-                stdio: 'ignore'
-            }).status !== 0) {
-            continue;
+    const entries = git(['ls-tree', '-r', '-z', '--full-tree', revision]).split('\0').filter(Boolean);
+    for (const entry of entries) {
+        const separator = entry.indexOf('\t');
+        const file = entry.slice(separator + 1);
+        if (releaseRepositoryMetadata.some(pattern => file.match(pattern))) {
+            assert(!file.includes('\\'), `Unexpected metadata path: ${file}`);
+            const mode = entry.slice(0, 6);
+            assert(mode === '100644' || mode === '100755', `Expected regular release metadata: ${file}`);
+            const destination = join(packageDirectory, file);
+            mkdirSync(dirname(destination), { recursive: true });
+            writeFileSync(destination, metadataAtRevision(file));
+            chmodSync(destination, mode === '100755' ? 0o755 : 0o644);
         }
-        writeFileSync(join(packageDirectory, file), metadataAtRevision(file));
     }
-    const packageJson = JSON.parse(readFileSync(join(packageDirectory, 'package.json'), 'utf8'));
+    const packageJson = stageGridPackage(codeDirectory, packageDirectory, liteVersion);
     assert.equal(packageJson.name, packageName, 'Metadata is not for Grid Lite');
-    packageJson.version = liteVersion;
-    writeFileSync(join(packageDirectory, 'package.json'), JSON.stringify(packageJson, null, 2) + '\n');
-
-    copyCodeFiles(codeDirectory, packageDirectory);
-    const cssPath = join(packageDirectory, 'css', 'grid-lite.css');
-    assert(lstatSync(cssPath).isFile(), 'Grid Lite build is missing css/grid-lite.css');
     if (missingCss) {
-        rmSync(cssPath);
+        rmSync(join(packageDirectory, 'css', 'grid-lite.css'), { force: true });
     }
 
     const files = inventory(packageDirectory);
-    for (const entry of [packageJson.main, packageJson.module, packageJson.types]) {
-        assert(files.some(([path]) => path === entry || path === entry.replace(/^\.\//u, '')),
-            `Grid Lite package entry is missing from staging: ${entry}`);
-    }
     const packageManifestSha256 = sha256(readFileSync(join(packageDirectory, 'package.json')));
     const pack = spawnSync('npm', ['pack', packageDirectory, '--ignore-scripts', '--json', '--pack-destination', outputDirectory], {
         cwd: outputDirectory,
@@ -150,13 +120,6 @@ try {
     const [packed] = JSON.parse(pack.stdout);
     assert.equal(packed.name, packageName, 'npm packed an unexpected package');
     assert.equal(packed.version, liteVersion, 'npm packed an unexpected version');
-    const packedFiles = new Set(packed.files.map(file => file.path.replace(/^\.\//u, '')));
-    for (const entry of [packageJson.main, packageJson.module, packageJson.types]) {
-        assert(packedFiles.has(entry.replace(/^\.\//u, '')),
-            `npm pack omitted declared Grid Lite package entry: ${entry}`);
-    }
-    assert.equal(packedFiles.has('css/grid-lite.css'), !missingCss,
-        'npm pack CSS contents do not match the requested staging mode');
     const tarball = join(outputDirectory, packed.filename);
     const manifest = {
         package: packageName,

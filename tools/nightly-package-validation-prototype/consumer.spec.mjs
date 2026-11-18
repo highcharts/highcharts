@@ -11,7 +11,7 @@ const test = base.extend({
             await server.close();
         }
     }, { scope: 'worker' }],
-    consumerPage: async ({ origin, page }, use, testInfo) => {
+    consumerPage: async ({ origin, page }, use) => {
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));
         page.on('console', message => {
@@ -19,14 +19,15 @@ const test = base.extend({
                 errors.push(message.text());
             }
         });
-        await testInfo.attach(consumerStartedAttachment, { body: 'true' });
         await use({ page, origin });
         expect(errors).toEqual([]);
     }
 });
 
-for (const { id, page: entry, check } of browserCases) {
-    test(id, async ({ consumerPage: { page, origin } }) => {
+for (const { id, page: entry, prepare, check } of browserCases) {
+    test(id, async ({ consumerPage: { page, origin } }, testInfo) => {
+        await prepare?.(page);
+        await testInfo.attach(consumerStartedAttachment, { body: 'true' });
         await page.goto(new URL(entry, origin).href);
         await check(page, expect);
     });

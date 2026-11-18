@@ -8,6 +8,18 @@ export const browserCases = [
             'es-modules/masters/grid-lite.src.js',
             'css/grid-lite.css'
         ],
+        async prepare(page) {
+            // The credits CDN is external to the check for packaged styles and sorting.
+            await page.route(/^https:\/\/assets\.highcharts\.com\/grid\/logo_(light|dark)(x2)?\.png$/u, route =>
+                route.fulfill({
+                    contentType: 'image/png',
+                    body: Buffer.from(
+                        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAXpeqz8AAAAASUVORK5CYII=',
+                        'base64'
+                    )
+                })
+            );
+        },
         async check(page, expect) {
             const grid = page.locator('#grid');
             const rows = grid.locator('tbody tr');

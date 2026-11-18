@@ -559,10 +559,17 @@ test('nightly selects every eligible product sample and gates publication', () =
     ];
     const steps = visualSteps.filter(step => orderedNames.includes(step.name));
     assert.deepEqual(steps.map(step => step.name), orderedNames);
-    for (const step of steps) {
+    for (const step of steps.slice(0, -1)) {
         assert.equal(step['continue-on-error'], undefined);
         assert.equal(step.if, undefined, 'Each step requires prior success');
     }
+    const publish = steps.at(-1);
+    assert.equal(publish['continue-on-error'], undefined);
+    // GitHub Actions implicitly requires success() when no status function is present.
+    assert.equal(
+        publish.if,
+        "${{ github.event_name != 'workflow_dispatch' || !inputs.validateGridLite }}"
+    );
     assert.equal(steps[0].env.VISUAL_TEST_REFERENCE, '1');
     assert.equal(job.env?.VISUAL_TEST_REFERENCE, undefined);
     assert.equal(steps[3].env?.VISUAL_TEST_REFERENCE, undefined);
