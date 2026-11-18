@@ -15,21 +15,16 @@ be reversed and the chart inverted.
   series on the GPU shows only `B` in 60. Fix direction: a branch in
   `getHoverData` that asks the strategy instead of scanning `points`.
 
-- **The hover marker appears at full size instead of growing into it.**
-  A point without its own marker element gets the shared
-  `stateMarkerGraphic` of the core, which is placed with `attr` on the
-  normal hover path, since `move` is a parameter of `Point.setState` and
-  only the tooltip-follow callers pass it. SVG animates `point.graphic`
-  from the plain radius to the hover one instead.
+- **A hovered series does not thicken.** `Series.setState` raises the
+  width by `states.hover.lineWidthPlus`, one by default, and applies it
+  to `series.graph`, which this path does not keep. Measured on three
+  series of width 4: the hovered one carries 3349 of ink in SVG against
+  2671 on the GPU, the 25% the extra pixel accounts for. The `opacity`
+  of the same rule does work, since it lands on the series group and the
+  canvas hangs inside it, which is why `inactive` dims correctly.
 
-  Only applies while markers are visible: with them off the points carry
-  no graphic in SVG either, so both paths take the same element and look
-  the same. Measured on a series of 2000 points, markers on and off.
-
-  Fix direction: wrap `Point.setState`, branch on `series.gpu`, place the
-  state marker at the plain size and animate it to the hover one. No
-  frame loop is involved, the element is SVG. Worth measuring whether the
-  GPU marker underneath shows through while the two sizes are close.
+  Fix direction: read the width in `draw` the way `setState` derives it,
+  from `options.states[series.state]`.
 
 ## Options that silently render differently
 
@@ -94,7 +89,6 @@ path does not yet draw.
   `series.points`, the cropped set. A point just outside the view can
   therefore win here and not there, though the distance bound keeps the
   difference to the plot edge.
-- Series visibility, legend interaction and the inactive state.
 - `series.update` and incremental data: the upload is skipped on column
   array identity, which may be too coarse.
 - Crossing `boostThreshold` by zooming destroys the strategy and builds a

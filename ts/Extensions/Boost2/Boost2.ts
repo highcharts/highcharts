@@ -17,6 +17,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -340,7 +341,57 @@ function compose(
         this.gpu?.draw();
     });
 
-    // --- 7. searchPoint(): runs ahead of the lazy buildKDTree(), so the
+    // --- 7. Point.setState(): the shared state marker is created at
+    //        the hover size, since only a point with its own grows.
+    wrap(
+        SeriesClass.prototype.pointClass.prototype,
+        'setState',
+        function (
+            this: Point,
+            proceed: Function,
+            state?: StatesOptionsKey,
+            move?: boolean
+        ): void {
+            // `setState` leaves the state alone where it declines.
+            const was = this.state,
+                // Shared, so sizing it down belongs to the hover it
+                // arrives at rather than to every call.
+                arriving = !this.series.stateMarkerGraphic ||
+                    this.series.stateMarkerGraphic.visibility === 'hidden';
+
+            proceed.apply(this, [].slice.call(arguments, 1));
+
+            const series = this.series,
+                graphic = series.stateMarkerGraphic;
+
+            // `move` is a tooltip following a hover the core animates
+            // itself. With markers hidden SVG pops the same way.
+            if (
+                !series.gpu ||
+                !state ||
+                this.state === was ||
+                move ||
+                !graphic ||
+                !arriving ||
+                !markersEnabled(series)
+            ) {
+                return;
+            }
+
+            const marker = series.options.marker;
+
+            graphic.attr(series.markerAttribs(this));
+            graphic.animate(
+                series.markerAttribs(this, state),
+                // The core's own precedence. The second holds the
+                // default of 150ms, the chart option a far slower one.
+                series.chart.options.chart.animation ??
+                    marker?.states?.[state]?.animation
+            );
+        }
+    );
+
+    // --- 8. searchPoint(): runs ahead of the lazy buildKDTree(), so the
     //        k-d tree and the mock points are never created.
     wrap(seriesProto, 'searchPoint', function (
         this: Series,
@@ -356,7 +407,7 @@ function compose(
         return proceed.apply(this, [].slice.call(arguments, 1));
     });
 
-    // --- 8. getExtremes(): answered from the block index instead of a
+    // --- 9. getExtremes(): answered from the block index instead of a
     //        scan of every row in view.
     wrap(seriesProto, 'getExtremes', function (
         this: Series,

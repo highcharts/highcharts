@@ -452,6 +452,13 @@ class LineStrategy {
     /** Points carrying a label, by row. @internal */
     private labelled: Record<number, Point> = {};
 
+    /**
+     * The point the hit test last answered with. The core tells hovers
+     * apart by identity, so a fresh object each move would restart one.
+     * @internal
+     */
+    private hovered?: Point;
+
     /** @internal */
     private bindGroup?: GPUBindGroup;
 
@@ -626,8 +633,9 @@ class LineStrategy {
             return;
         }
 
-        // The rows behind the arcs are about to change.
+        // The rows behind these are about to change.
         this.arcScale = [NaN, NaN];
+        this.hovered = void 0;
 
         const flat = new Float32Array(length * 2),
             originBlocks = Math.max(1, Math.ceil(length / BLOCK)),
@@ -1555,8 +1563,15 @@ class LineStrategy {
      * @internal
      */
     private materialize(index: number, e: PointerEvent): Point {
+        if (this.hovered?.index === index) {
+            // The axes may have moved under it since the last hit.
+            this.place(this.hovered, index);
+        } else {
+            this.hovered = this.pointAt(index);
+        }
+
         const { xAxis, yAxis } = this.series,
-            point = this.pointAt(index),
+            point = this.hovered,
             dx = e.chartX - xAxis.pos - (point.plotX as number),
             dy = isNumber(point.plotY) ?
                 e.chartY - yAxis.pos - point.plotY :
@@ -1574,6 +1589,7 @@ class LineStrategy {
             this.labelled[index as unknown as number].destroyElements();
         }
         this.labelled = {};
+        this.hovered = void 0;
 
         this.buffer?.destroy();
         this.uniformBuffer?.destroy();
