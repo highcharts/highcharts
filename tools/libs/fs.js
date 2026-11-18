@@ -674,6 +674,58 @@ function setFile(filePath, data) {
 
 }
 
+/**
+ * Update UTF-8 content through one open file, preserving its identity.
+ *
+ * @param {string} filePath
+ * File to update.
+ * @param {Function} transform
+ * Return new content, or undefined to leave the file unchanged.
+ * @param {object} [options]
+ * Update options.
+ * @param {boolean} [options.optional=false]
+ * Skip files missing when opened.
+ */
+function updateFile(filePath, transform, { optional = false } = {}) {
+    let descriptor, writeError;
+    try {
+        descriptor = FS.openSync(filePath, 'r+');
+    } catch (error) {
+        if (optional && error.code === 'ENOENT') {
+            return;
+        }
+        if (!['EACCES', 'EPERM', 'EROFS'].includes(error.code)) {
+            throw error;
+        }
+        // Read-only outputs can still be intentionally left unchanged.
+        writeError = error;
+        descriptor = FS.openSync(filePath, 'r');
+    }
+    try {
+        const content = transform(FS.readFileSync(descriptor, 'utf8'));
+        if (typeof content === 'undefined') {
+            return;
+        }
+        if (writeError) {
+            throw writeError;
+        }
+        const bytes = Buffer.from(content, 'utf8');
+        let offset = 0;
+        while (offset < bytes.length) {
+            const written = FS.writeSync(
+                descriptor, bytes, offset, bytes.length - offset, offset
+            );
+            if (!written) {
+                throw new Error(`Could not finish writing ${filePath}`);
+            }
+            offset += written;
+        }
+        FS.ftruncateSync(descriptor, bytes.length);
+    } finally {
+        FS.closeSync(descriptor);
+    }
+}
+
 /* *
  *
  *  Exports
@@ -702,5 +754,6 @@ module.exports = {
     parentPath,
     path,
     sanitizePath,
-    setFile
+    setFile,
+    updateFile
 };

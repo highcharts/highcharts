@@ -1,7 +1,7 @@
 /* stylelint-disable max-line-length */
 
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 :root,

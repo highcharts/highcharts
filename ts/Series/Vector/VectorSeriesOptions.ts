@@ -125,6 +125,7 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
      */
     data?: Array<(VectorPointOptions|PointShortOptions)>;
 
+    /** @default undefined */
     marker?: PointMarkerOptions;
 
     /**

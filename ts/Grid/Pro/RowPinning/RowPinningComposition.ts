@@ -43,15 +43,19 @@ import RowPinningController, {
     type RowPinningPosition,
     type RowPinningSectionOptions
 } from './RowPinningController.js';
+import type {
+    CellMenuTarget,
+    MenuContext
+} from '../../Core/ContextMenu/ContextMenuTarget';
+
 import RowPinningView, { classNames } from './RowPinningView.js';
 import PinnedTableCell from './PinnedTableCell.js';
-import {
-    registerBuiltInAction,
-    registerBuiltInGroup
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
+import { registerMenuItem } from '../../Core/ContextMenu/ContextMenuRegistry.js';
 import {
     addEvent,
     defined,
+    isNumber,
+    isString,
     merge,
     pushUnique
 } from '../../../Shared/Utilities.js';
@@ -162,73 +166,93 @@ export function compose(
 }
 
 /**
+ * Narrows a menu context down to what the row pinning helpers need.
+ *
+ * @param context
+ * Context the menu was opened in.
+ *
+ * @return
+ * Row pinning context.
+ */
+function pinningContext(
+    context: MenuContext<CellMenuTarget>
+): RowPinningContextMenuContext {
+    const rowId = context.target.row.id;
+
+    return {
+        grid: context.grid,
+        rowId: isString(rowId) || isNumber(rowId) ? rowId : void 0
+    };
+}
+
+/**
  * Registers row pinning built-in context menu actions and group.
  */
 function registerBuiltInActions(): void {
-    registerBuiltInAction(
-        'pinRowTop',
-        {
-            getLabel: (context): string =>
-                getRowPinningActionLabel(context, 'pinRowTop'),
-            icon: 'pin',
-            isVisible: (context): boolean =>
-                isRowPinningActionVisible(context),
-            isDisabled: (context): boolean =>
-                isRowPinningActionDisabled('pinRowTop', context),
-            onClick: (context): void => {
-                if (context.rowId !== void 0) {
-                    void context.grid.rowPinning?.pin(context.rowId, 'top');
-                }
-            }
-        }
-    );
-
-    registerBuiltInAction(
-        'pinRowBottom',
-        {
-            getLabel: (context): string =>
-                getRowPinningActionLabel(context, 'pinRowBottom'),
-            icon: 'pin',
-            isVisible: (context): boolean =>
-                isRowPinningActionVisible(context),
-            isDisabled: (context): boolean =>
-                isRowPinningActionDisabled('pinRowBottom', context),
-            onClick: (context): void => {
-                if (context.rowId !== void 0) {
-                    void context.grid.rowPinning?.pin(
-                        context.rowId,
-                        'bottom'
-                    );
-                }
-            }
-        }
-    );
-
-    registerBuiltInAction(
-        'unpinRow',
-        {
-            getLabel: (context): string =>
-                getRowPinningActionLabel(context, 'unpinRow'),
-            icon: 'unpin',
-            isVisible: (context): boolean =>
-                isRowPinningActionVisible(context),
-            isDisabled: (context): boolean =>
-                isRowPinningActionDisabled('unpinRow', context),
-            onClick: (context): void => {
-                if (context.rowId !== void 0) {
-                    void context.grid.rowPinning?.unpin(context.rowId);
-                }
-            }
-        }
-    );
-
-    registerBuiltInGroup('pinning', {
-        getLabel: (context): string =>
-            context.grid.options?.lang?.rowPinning?.label || '',
+    registerMenuItem<CellMenuTarget>('pinRowTop', {
         icon: 'pin',
-        isVisible: (context): boolean => isRowPinningActionVisible(context),
-        items: ['pinRowTop', 'pinRowBottom', 'unpinRow']
-    }, true);
+        label: (context): string =>
+            getRowPinningActionLabel(pinningContext(context), 'pinRowTop'),
+        targets: ['cell'],
+        visible: (context): boolean =>
+            isRowPinningActionVisible(pinningContext(context)),
+        disabled: (context): boolean =>
+            isRowPinningActionDisabled('pinRowTop', pinningContext(context)),
+        onClick: (_target, context): void => {
+            const { rowId } = pinningContext(context);
+
+            if (rowId !== void 0) {
+                void context.grid.rowPinning?.pin(rowId, 'top');
+            }
+        }
+    });
+
+    registerMenuItem<CellMenuTarget>('pinRowBottom', {
+        icon: 'pin',
+        label: (context): string =>
+            getRowPinningActionLabel(pinningContext(context), 'pinRowBottom'),
+        targets: ['cell'],
+        visible: (context): boolean =>
+            isRowPinningActionVisible(pinningContext(context)),
+        disabled: (context): boolean =>
+            isRowPinningActionDisabled('pinRowBottom', pinningContext(context)),
+        onClick: (_target, context): void => {
+            const { rowId } = pinningContext(context);
+
+            if (rowId !== void 0) {
+                void context.grid.rowPinning?.pin(rowId, 'bottom');
+            }
+        }
+    });
+
+    registerMenuItem<CellMenuTarget>('unpinRow', {
+        icon: 'unpin',
+        label: (context): string =>
+            getRowPinningActionLabel(pinningContext(context), 'unpinRow'),
+        targets: ['cell'],
+        visible: (context): boolean =>
+            isRowPinningActionVisible(pinningContext(context)),
+        disabled: (context): boolean =>
+            isRowPinningActionDisabled('unpinRow', pinningContext(context)),
+        onClick: (_target, context): void => {
+            const { rowId } = pinningContext(context);
+
+            if (rowId !== void 0) {
+                void context.grid.rowPinning?.unpin(rowId);
+            }
+        }
+    });
+
+    registerMenuItem<CellMenuTarget>('pinning', {
+        defaultIn: ['cell'],
+        icon: 'pin',
+        items: ['pinRowTop', 'pinRowBottom', 'unpinRow'],
+        label: (context): string =>
+            context.grid.options?.lang?.rowPinning?.label || '',
+        targets: ['cell'],
+        visible: (context): boolean =>
+            isRowPinningActionVisible(pinningContext(context))
+    });
 }
 
 /**

@@ -56,6 +56,37 @@ describe('CSVConnector', () => {
             ok(!foundComment, 'Comment is not added to the dataTable');
         });
 
+        it('should ignore hex sequences inside inline comments', async () => {
+            const connector = new CSVConnector({
+                csv: 'Value\n1 # note 123456\n2 # note aBcDeF\n' +
+                    '3 # note,abcdef\n# full row 123456\n4',
+                itemDelimiter: ','
+            });
+
+            await connector.load();
+
+            deepStrictEqual(connector.getTable().getColumnIds(), ['Value']);
+            deepStrictEqual(
+                connector.getTable().getColumn('Value'),
+                [1, 2, 3, 4]
+            );
+        });
+
+        it('should preserve hex colors', async () => {
+            const connector = new CSVConnector({
+                csv: 'Label,Color,After\nshort,#aBc,1\n' +
+                    'long,#A1b2C3,2\nlast,#def',
+                itemDelimiter: ','
+            });
+
+            await connector.load();
+
+            const table = connector.getTable();
+            deepStrictEqual(table.getRow(0), ['short', '#aBc', 1]);
+            deepStrictEqual(table.getRow(1), ['long', '#A1b2C3', 2]);
+            strictEqual(table.getCell('Color', 2), '#def');
+        });
+
         it('should trim spaces in header', async () => {
             const csvWithSpaces = `Number, Letter, Color
 1, B, Red`;

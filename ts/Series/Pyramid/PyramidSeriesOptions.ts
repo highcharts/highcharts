@@ -94,6 +94,8 @@ export interface PyramidSeriesOptions extends FunnelSeriesOptions {
      * The pyramid neck height is zero by default, as opposed to the funnel,
      * which shares the same layout logic.
      *
+     * @default '0%'
+     *
      * @since 3.0.10
      */
     neckHeight?: (number|string);
@@ -102,6 +104,8 @@ export interface PyramidSeriesOptions extends FunnelSeriesOptions {
      * The pyramid neck width is zero by default, as opposed to the funnel,
      * which shares the same layout logic.
      *
+     * @default '0%'
+     *
      * @since 3.0.10
      */
     neckWidth?: (number|string);
@@ -109,6 +113,8 @@ export interface PyramidSeriesOptions extends FunnelSeriesOptions {
     /**
      * The pyramid is reversed by default, as opposed to the funnel, which
      * shares the layout engine, and is not reversed.
+     *
+     * @default true
      *
      * @since 3.0.10
      */

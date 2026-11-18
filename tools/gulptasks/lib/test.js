@@ -101,7 +101,7 @@ function checkProduct(product) {
 
 /**
  * Checks if tests should run
- * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string, project?: string }} config
+ * @param {{ configFile: string, codeDirectory: string, tsDirectory: string, testsDirectory: string, project?: string }} config
  * Configuration
  *
  * @return {Promise<boolean>}
@@ -109,8 +109,7 @@ function checkProduct(product) {
  */
 async function shouldRun({
     configFile,
-    codeDirectory,
-    jsDirectory,
+    tsDirectory,
     testsDirectory,
     project
 }) {
@@ -122,7 +121,7 @@ async function shouldRun({
 
     let configuration = {
         latestCodeHash: '',
-        latestJsHash: '',
+        latestTsHash: '',
         latestTestsHash: '',
         project: ''
     };
@@ -139,24 +138,29 @@ async function shouldRun({
         return true;
     }
 
+    /*
     const latestCodeHash = fsLib.getDirectoryHash(
         codeDirectory, true, stringLib.removeComments
     );
-    const latestJsHash = fsLib.getDirectoryHash(
-        jsDirectory, true, stringLib.removeComments
+    */
+    const latestTsHash = fsLib.getDirectoryHash(
+        tsDirectory, true, stringLib.removeComments
     );
     const latestTestsHash = fsLib.getDirectoryHash(
         testsDirectory, true, stringLib.removeComments
     );
 
+    /*
+    // Commented out because `gulp test` always runs `gulp scripts` first
     if (latestCodeHash === configuration.latestCodeHash &&
-        latestJsHash !== configuration.latestJsHash
+        latestTsHash !== configuration.latestTsHash
     ) {
 
         throw new Error('Code out of sync');
     }
+    */
 
-    if (latestCodeHash === configuration.latestCodeHash &&
+    if (latestTsHash === configuration.latestTsHash &&
         latestTestsHash === configuration.latestTestsHash
     ) {
 
@@ -173,15 +177,15 @@ async function shouldRun({
 
 /**
  * Saves test run information
- * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string, project?: string }} config
+ * @param {{ configFile: string, codeDirectory: string, tsDirectory: string, testsDirectory: string, project?: string }} config
  * Configuration
  *
  * @return {void}
  */
 function saveRun({
     configFile,
-    codeDirectory,
-    jsDirectory,
+    // codeDirectory,
+    tsDirectory,
     testsDirectory,
     project
 }) {
@@ -190,19 +194,19 @@ function saveRun({
     const FSLib = require('../../libs/fs');
     const StringLib = require('./string');
 
-    const latestCodeHash = FSLib.getDirectoryHash(
-        codeDirectory, true, StringLib.removeComments
-    );
-    const latestJsHash = FSLib.getDirectoryHash(
-        jsDirectory, true, StringLib.removeComments
+    // const latestCodeHash = FSLib.getDirectoryHash(
+    //     codeDirectory, true, StringLib.removeComments
+    // );
+    const latestTsHash = FSLib.getDirectoryHash(
+        tsDirectory, true, StringLib.removeComments
     );
     const latestTestsHash = FSLib.getDirectoryHash(
         testsDirectory, true, StringLib.removeComments
     );
 
     const configuration = {
-        latestCodeHash,
-        latestJsHash,
+        // latestCodeHash,
+        latestTsHash,
         latestTestsHash,
         project: project || ''
     };

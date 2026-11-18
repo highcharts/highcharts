@@ -71,6 +71,8 @@ const DEFAULT_SOURCE = FSLib.path('ts/Grid/');
 
 const STACK: Array<TSLib.CodeInfo> = [];
 
+const GENERIC_INTERFACES: Record<string, TSLib.InterfaceInfo> = {};
+
 
 const TREE: TreeLib.Options = {};
 
@@ -78,6 +80,10 @@ let runtimeBranchMetadata = new WeakMap<TreeLib.Option, RuntimeBranchMetadata>()
 
 function resetBuildState(): void {
     STACK.length = 0;
+
+    for (const key of Object.keys(GENERIC_INTERFACES)) {
+        delete GENERIC_INTERFACES[key];
+    }
     runtimeBranchMetadata = new WeakMap();
 
     for (const key of Object.keys(TREE)) {
@@ -1532,6 +1538,88 @@ function linkType(typeName: string): string {
 }
 
 
+/**
+ * Puts the type arguments of a generic interface into the types of its
+ * members, so that the tree says `MenuItemResolvable<string, CellMenuTarget>`
+ * where the declaration says `MenuItemResolvable<string, T>`. The interface
+ * itself is left alone, since it is shared with whoever else refers to it.
+ */
+function withTypeArguments(
+    interfaceInfo: TSLib.InterfaceInfo,
+    typeStr: string
+): TSLib.InterfaceInfo {
+    const cacheKey = `${interfaceInfo.meta.file}|${interfaceInfo.name}|` +
+        typeStr;
+    const cached = GENERIC_INTERFACES[cacheKey];
+
+    if (cached) {
+        return cached;
+    }
+
+    const parameters = (interfaceInfo.generics || [])
+        .map((generic): string => generic.name);
+    const argumentsStr = typeStr.slice(
+        typeStr.indexOf('<') + 1,
+        typeStr.lastIndexOf('>')
+    );
+
+    // Top level only: an argument of its own may carry commas.
+    const typeArguments: string[] = [];
+    let depth = 0;
+    let current = '';
+
+    for (const char of argumentsStr) {
+        if (char === '<') {
+            ++depth;
+        } else if (char === '>') {
+            --depth;
+        } else if (char === ',' && !depth) {
+            typeArguments.push(current.trim());
+            current = '';
+            continue;
+        }
+
+        current += char;
+    }
+
+    if (current.trim()) {
+        typeArguments.push(current.trim());
+    }
+
+    if (!parameters.length || !typeArguments.length) {
+        return interfaceInfo;
+    }
+
+    const substitute = (type: string): string => {
+        let result = type;
+
+        for (let i = 0; i < parameters.length; ++i) {
+            if (typeArguments[i]) {
+                result = result.replace(
+                    new RegExp(`\\b${parameters[i]}\\b`, 'gsu'),
+                    typeArguments[i]
+                );
+            }
+        }
+
+        return result;
+    };
+
+    const substituted: TSLib.InterfaceInfo = {
+        ...interfaceInfo,
+        members: interfaceInfo.members.map((member): TSLib.MemberInfo => (
+            'type' in member && member.type ?
+                { ...member, type: member.type.map(substitute) } :
+                member
+        ))
+    };
+
+    GENERIC_INTERFACES[cacheKey] = substituted;
+
+    return substituted;
+}
+
+
 function resolveTypeToInterface(
     sourceInfo: TSLib.SourceInfo,
     typeStr: string,
@@ -1583,14 +1671,38 @@ function resolveTypeToInterface(
         return void 0;
     }
 
-    // 6. Direct resolution
+    // 6. Generic interfaces of our own: `Foo<Bar>` is documented as `Foo`,
+    // since an option tree describes the shape of the options, while a type
+    // argument only narrows the callbacks behind them.
+    const ownGenericMatch = typeStr.match(/^([\w$]+)<[\s\S]+>$/);
+
+    if (ownGenericMatch) {
+        const genericName = ownGenericMatch[1];
+        const genericBase = tryResolve(sourceInfo, genericName, info);
+
+        // Only when the name leads to an interface of that same name. A
+        // generic alias resolves to whatever it stands for, which is a value
+        // like `CSSObject` rather than a group of options, and pouring that
+        // into the tree would document a type nobody declared as options.
+        if (
+            genericBase?.kind === 'Interface' &&
+            genericBase.name === genericName
+        ) {
+            TSLib.autoExtendInfo(genericBase);
+            return withTypeArguments(genericBase, typeStr);
+        }
+
+        return void 0;
+    }
+
+    // 7. Direct resolution
     let resolved = tryResolve(sourceInfo, typeStr, info);
 
     if (!resolved) {
         return void 0;
     }
 
-    // 7. Follow TypeAlias one level
+    // 8. Follow TypeAlias one level
     if (resolved.kind === 'TypeAlias') {
         return followTypeAlias(sourceInfo, resolved as any, info);
     }
