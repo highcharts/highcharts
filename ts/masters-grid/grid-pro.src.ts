@@ -5,8 +5,10 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use,
- * see www.highcharts.com/license
+ * Commercial use of this software is governed by
+ * the Highsoft Standard License Agreement, see www.highcharts.com/license.
+ * Non-commercial use is governed by the Highsoft EULA,
+ * see www.highcharts.com/license-eula
  */
 
 
