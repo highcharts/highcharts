@@ -169,6 +169,18 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^26",
+      "onFail": "warn"
+    },
+    "packageManager": {
+      "name": "npm",
+      "version": "^11",
+      "onFail": "warn"
+    }
+  },
   "lint-staged": {
     "*.js": [
       "eslint"
