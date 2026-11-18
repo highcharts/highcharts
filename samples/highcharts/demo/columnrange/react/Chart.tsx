@@ -43,7 +43,7 @@ export default function ColumnrangeChart() {
         <Chart
             dataTable={dataTable}
             inverted
-            containerProps={{ style: { height: '400px' } }}
+            containerProps={{ id: 'container' }}
         >
             <Title>Temperature variation by month</Title>
             <Subtitle>

@@ -13,7 +13,7 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function ColumnPlacementChart() {
     return (
-        <Chart containerProps={{ style: { height: '400px' } }}>
+        <Chart containerProps={{ id: 'container' }}>
             <Title>Efficiency Optimization by Branch</Title>
             <XAxis categories={['Seattle HQ', 'San Francisco', 'Tokyo']} />
             <YAxis min={0}>Employees</YAxis>

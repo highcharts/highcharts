@@ -37,7 +37,7 @@ export default function AreaNegativeChart() {
                     plotBorderWidth: 1
                 }
             }}
-            containerProps={{ style: { height: '400px' } }}
+            containerProps={{ id: 'container' }}
         >
             <Title>Import, Export of goods in Norway (NOK million)</Title>
             <Subtitle>

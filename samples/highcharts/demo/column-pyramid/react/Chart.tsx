@@ -7,7 +7,7 @@ export default function ColumnPyramidChart() {
     return (
         <Chart
             colors={['#C79D6D', '#B5927B', '#CE9B84', '#B7A58C', '#C7A58C']}
-            containerProps={{ style: { height: '400px' } }}
+            containerProps={{ id: 'container' }}
         >
             <Title>The 5 highest pyramids in the World</Title>
             <XAxis

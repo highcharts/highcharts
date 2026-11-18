@@ -52,7 +52,7 @@ export default function ComboDualAxesChart() {
                     }
                 }
             }}
-            containerProps={{ style: { height: '400px' } }}
+            containerProps={{ id: 'container' }}
         >
             <Title align="left">Karasjok weather, 2023</Title>
             <Credits>

@@ -21,6 +21,10 @@ body {
     margin: 1em auto;
 }
 
+#container {
+    height: 500px;
+}
+
 .highcharts-data-table table {
     font-family: Verdana, sans-serif;
     border-collapse: collapse;

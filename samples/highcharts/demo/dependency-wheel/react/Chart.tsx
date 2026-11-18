@@ -5,7 +5,7 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function DependencyWheelChart() {
     return (
-        <Chart containerProps={{ style: { height: '500px' } }}>
+        <Chart containerProps={{ id: 'container' }}>
             <Title>Highcharts Dependency Wheel</Title>
             <Exporting />
             <Accessibility

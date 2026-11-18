@@ -7,7 +7,7 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function VariableRadiusPieChart() {
     return (
-        <Chart containerProps={{ style: { height: '500px' } }}>
+        <Chart containerProps={{ id: 'container' }}>
             <Title>
                 Countries compared by population density and total area, 2024
             </Title>

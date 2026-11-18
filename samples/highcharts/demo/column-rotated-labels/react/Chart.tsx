@@ -13,7 +13,7 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function ColumnRotatedLabelsChart() {
     return (
-        <Chart containerProps={{ style: { height: '400px' } }}>
+        <Chart containerProps={{ id: 'container' }}>
             <Title>World's largest cities per 2021</Title>
             <Subtitle>
                 Source:{' '}

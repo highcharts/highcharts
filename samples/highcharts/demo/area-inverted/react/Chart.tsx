@@ -13,7 +13,7 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 // Data retrieved from https://companiesmarketcap.com/
 export default function AreaInvertedChart() {
     return (
-        <Chart inverted containerProps={{ style: { height: '410px' } }}>
+        <Chart inverted containerProps={{ id: 'container' }}>
             <Title>Alibaba and Meta (Facebook) revenue</Title>
             <Tooltip valuePrefix="$" valueSuffix=" B" />
             <Legend

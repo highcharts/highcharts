@@ -27,10 +27,7 @@ const dataTable = new Highcharts.DataTable({
 
 export default function ColumnStackedChart() {
     return (
-        <Chart
-            dataTable={dataTable}
-            containerProps={{ style: { height: '400px' } }}
-        >
+        <Chart dataTable={dataTable} containerProps={{ id: 'container' }}>
             <Title align="left">Major trophies for some English teams</Title>
             <XAxis type="category" />
             <YAxis min={0} stackLabels={{ enabled: true }}>

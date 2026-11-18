@@ -23,10 +23,7 @@ const dataTable = new Highcharts.DataTable({
 
 export default function BarStackedChart() {
     return (
-        <Chart
-            dataTable={dataTable}
-            containerProps={{ style: { height: '400px' } }}
-        >
+        <Chart dataTable={dataTable} containerProps={{ id: 'container' }}>
             <Title align="left">Ferry passengers by vehicle type 2024</Title>
             <XAxis type="category" />
             <YAxis min={0}>{''}</YAxis>

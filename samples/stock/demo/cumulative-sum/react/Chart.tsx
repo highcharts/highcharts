@@ -44,14 +44,7 @@ export default function CumulativeSumChart() {
                     enabled: false
                 }
             }}
-            containerProps={{
-                style: {
-                    height: '400px',
-                    minWidth: '360px',
-                    maxWidth: '800px',
-                    margin: '0 auto'
-                }
-            }}
+            containerProps={{ id: 'container' }}
         >
             <Title align="left">Cumulative Sum</Title>
             <Subtitle align="left">

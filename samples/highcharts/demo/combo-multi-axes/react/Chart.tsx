@@ -96,7 +96,7 @@ export default function ComboMultiAxesChart() {
                     ]
                 }
             }}
-            containerProps={{ style: { height: '400px' } }}
+            containerProps={{ id: 'container' }}
         >
             <Title>Average Monthly Weather Data for Tokyo</Title>
             <Subtitle>Source: WorldClimate.com</Subtitle>

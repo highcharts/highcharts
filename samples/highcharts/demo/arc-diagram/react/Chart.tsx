@@ -4,11 +4,7 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function ArcDiagramChart() {
     return (
-        <Chart
-            containerProps={{
-                style: { height: '400px', maxWidth: '800px', margin: '0 auto' }
-            }}
-        >
+        <Chart containerProps={{ id: 'container' }}>
             <Title>Main train connections in Europe</Title>
             <Accessibility
                 description={

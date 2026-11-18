@@ -47,9 +47,7 @@ export default function ColumnrangeChart() {
                     selected: 2
                 }
             }}
-            containerProps={{
-                style: { minWidth: '310px', height: '400px', margin: '0 auto' }
-            }}
+            containerProps={{ id: 'container' }}
         >
             <Title>Temperature variation by day</Title>
             <Tooltip valueSuffix="°C" />

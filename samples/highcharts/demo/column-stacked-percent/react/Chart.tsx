@@ -24,10 +24,7 @@ const dataTable = new Highcharts.DataTable({
 
 export default function ColumnStackedPercentChart() {
     return (
-        <Chart
-            dataTable={dataTable}
-            containerProps={{ style: { height: '400px' } }}
-        >
+        <Chart dataTable={dataTable} containerProps={{ id: 'container' }}>
             <Title>
                 Domestic passenger transport by mode of transport, Norway
             </Title>

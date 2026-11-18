@@ -7,7 +7,7 @@ export default function VariwideChart() {
     return (
         <Chart
             caption="Column widths are proportional to GDP"
-            containerProps={{ style: { height: '500px' } }}
+            containerProps={{ id: 'container' }}
         >
             <Title>Labor Costs in Europe, 2023</Title>
             <Subtitle>

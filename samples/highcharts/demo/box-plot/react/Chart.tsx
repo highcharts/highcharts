@@ -13,7 +13,7 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function BoxPlotChart() {
     return (
-        <Chart containerProps={{ style: { height: '400px' } }}>
+        <Chart containerProps={{ id: 'container' }}>
             <Title>Highcharts Box Plot Example</Title>
             <Legend enabled={false} />
             <XAxis categories={['1', '2', '3', '4', '5']}>Experiment No.</XAxis>

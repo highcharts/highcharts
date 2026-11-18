@@ -17,7 +17,7 @@ export default function PieDonutChart() {
                     }
                 }
             }}
-            containerProps={{ style: { height: '400px' } }}
+            containerProps={{ id: 'container' }}
         >
             <Title>Beijing 2022 gold medals by country</Title>
             <Subtitle>3D donut in Highcharts</Subtitle>

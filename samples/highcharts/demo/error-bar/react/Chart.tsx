@@ -62,7 +62,7 @@ export default function ErrorBarChart() {
                     }
                 }
             }}
-            containerProps={{ style: { height: '400px' } }}
+            containerProps={{ id: 'container' }}
         >
             <Title>Temperature vs Rainfall</Title>
             <XAxis type="category" />
