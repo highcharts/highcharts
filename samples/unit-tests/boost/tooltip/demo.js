@@ -276,3 +276,45 @@ QUnit.skip(
         );
     }
 );
+
+QUnit.test(
+    'Boosted hover point should have its data index (#25641)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                series: [{
+                    boostThreshold: 1,
+                    cropThreshold: 1,
+                    data: [
+                        1, 3, 2, 4, 3, 5, 4, 6, 5, 7,
+                        6, 8, 7, 9, 8, 10, 9, 11, 10, 12
+                    ]
+                }]
+            }),
+            series = chart.series[0],
+            xAxis = chart.xAxis[0],
+            controller = new TestController(chart),
+            hover = x => controller.moveTo(
+                xAxis.toPixels(x),
+                chart.plotTop + chart.plotHeight / 2
+            );
+
+        hover(3);
+
+        assert.ok(series.boosted, 'The series should be boosted');
+        assert.strictEqual(
+            chart.hoverPoint.index,
+            3,
+            'The hover point should have its index in the series data'
+        );
+
+        xAxis.setExtremes(10, 18);
+        hover(14);
+
+        assert.ok(series.cropStart > 0, 'The series should be cropped');
+        assert.strictEqual(
+            chart.hoverPoint.index,
+            14,
+            'The index should count from the start of the data when cropped'
+        );
+    }
+);
