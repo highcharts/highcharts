@@ -20,10 +20,13 @@ import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
 import type {
     DataLabelsFilterOptionsObject
 } from '../../../Core/Series/DataLabelOptions';
+import type { AnimationOptions } from '../../../Core/Animation/AnimationOptions';
 import type Point from '../../../Core/Series/Point';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type Series from '../../../Core/Series/Series';
 
+import { animate } from '../../../Core/Animation/AnimationUtilities.js';
 import Color from '../../../Core/Color/Color.js';
 import GPUContext from '../GPUContext.js';
 import GPUSurface from '../GPUSurface.js';
@@ -230,6 +233,27 @@ function dashRuns(style?: string): (Array<number>|undefined) {
         runs.length % 2 === 0 &&
         runs.every((run): boolean => run > 0)
     ) ? runs : void 0;
+}
+
+/**
+ * Stroke width in the state the series currently holds, as
+ * `Series.setState` derives it for the graph element.
+ *
+ * @internal
+ */
+function stateWidth(series: Series): number {
+    const options = series.options,
+        width = options.lineWidth ?? 2,
+        state = series.chart.styledMode ? '' : series.state;
+
+    if (!state) {
+        return width;
+    }
+
+    const stateOptions = options.states?.[state];
+
+    return stateOptions?.lineWidth ??
+        width + (stateOptions?.lineWidthPlus || 0);
 }
 
 /**
@@ -458,6 +482,26 @@ class LineStrategy {
      * @internal
      */
     private hovered?: Point;
+
+    /** Stroke width drawn, while a state animates it. @internal */
+    private width?: number;
+
+    /**
+     * Target of that animation. `animate` reads the start through
+     * `attr` and writes each frame the same way, so this shape is all
+     * it needs of an element.
+     * @internal
+     */
+    private widthTween = {
+        element: true,
+        attr: (prop: string, value?: number): (number|void) => {
+            if (!defined(value)) {
+                return this.width;
+            }
+            this.width = value;
+            this.draw();
+        }
+    };
 
     /** @internal */
     private bindGroup?: GPUBindGroup;
@@ -989,6 +1033,29 @@ class LineStrategy {
     }
 
     /**
+     * Carry the stroke to the width the new state asks for, as the core
+     * carries the one on `series.graph`.
+     * @internal
+     */
+    public animateWidth(
+        from: number,
+        animation: AnimationOptions
+    ): void {
+        this.width = from;
+
+        animate(
+            this.widthTween as unknown as SVGElement,
+            { width: stateWidth(this.series) },
+            {
+                ...animation,
+                complete: (): void => {
+                    this.width = void 0;
+                }
+            }
+        );
+    }
+
+    /**
      * Draw the series.
      * @internal
      */
@@ -1002,7 +1069,7 @@ class LineStrategy {
         const start = performance.now(),
             series = this.series,
             options = series.options,
-            lineWidth = options.lineWidth ?? 2,
+            lineWidth = this.width ?? stateWidth(series),
             hairline = options.boostHairline === true,
             markers = markersEnabled(series),
             marker = options.marker || {},
@@ -1042,7 +1109,9 @@ class LineStrategy {
 
         const ratio = win.devicePixelRatio || 1,
             dash = (dashRuns(options.dashStyle) as Array<number>).map(
-                (run): number => run * lineWidth * ratio
+                // Scaled once from the plain width: the core sets the
+                // pattern there and a state only widens the stroke.
+                (run): number => run * (options.lineWidth ?? 2) * ratio
             );
 
         this.ensureResources(
@@ -1615,5 +1684,12 @@ class LineStrategy {
  * */
 
 /** @internal */
-export { dashRuns, markersEnabled, stepMode, symbolIndex, zonesSupported };
+export {
+    dashRuns,
+    markersEnabled,
+    stateWidth,
+    stepMode,
+    symbolIndex,
+    zonesSupported
+};
 export default LineStrategy;

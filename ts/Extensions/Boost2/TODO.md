@@ -15,17 +15,6 @@ be reversed and the chart inverted.
   series on the GPU shows only `B` in 60. Fix direction: a branch in
   `getHoverData` that asks the strategy instead of scanning `points`.
 
-- **A hovered series does not thicken.** `Series.setState` raises the
-  width by `states.hover.lineWidthPlus`, one by default, and applies it
-  to `series.graph`, which this path does not keep. Measured on three
-  series of width 4: the hovered one carries 3349 of ink in SVG against
-  2671 on the GPU, the 25% the extra pixel accounts for. The `opacity`
-  of the same rule does work, since it lands on the series group and the
-  canvas hangs inside it, which is why `inactive` dims correctly.
-
-  Fix direction: read the width in `draw` the way `setState` derives it,
-  from `options.states[series.state]`.
-
 ## Options that silently render differently
 
 These are not rejected by `isSupported`, so a chart using them is drawn

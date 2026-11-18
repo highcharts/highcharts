@@ -24,12 +24,14 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import GPUContext from './GPUContext.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import LineStrategy, {
     dashRuns,
     markersEnabled,
+    stateWidth,
     symbolIndex,
     zonesSupported
 } from './Strategies/LineStrategy.js';
@@ -341,7 +343,29 @@ function compose(
         this.gpu?.draw();
     });
 
-    // --- 7. Point.setState(): the shared state marker is created at
+    // --- 7. Series.setState(): the width it derives lands on
+    //        `series.graph`, which this path does not keep.
+    wrap(seriesProto, 'setState', function (
+        this: Series,
+        proceed: Function,
+        state?: StatesOptionsKey,
+        inherit?: boolean
+    ): void {
+        // Taken before the call, which assigns the new state.
+        const was = this.state,
+            from = stateWidth(this);
+
+        proceed.call(this, state, inherit);
+
+        if (this.gpu && this.state !== was) {
+            this.gpu.animateWidth(from, animObject(
+                this.options.states?.[this.state || 'normal']?.animation ??
+                    this.chart.options.chart.animation
+            ));
+        }
+    });
+
+    // --- 8. Point.setState(): the shared state marker is created at
     //        the hover size, since only a point with its own grows.
     wrap(
         SeriesClass.prototype.pointClass.prototype,
@@ -391,7 +415,7 @@ function compose(
         }
     );
 
-    // --- 8. searchPoint(): runs ahead of the lazy buildKDTree(), so the
+    // --- 9. searchPoint(): runs ahead of the lazy buildKDTree(), so the
     //        k-d tree and the mock points are never created.
     wrap(seriesProto, 'searchPoint', function (
         this: Series,
@@ -407,7 +431,7 @@ function compose(
         return proceed.apply(this, [].slice.call(arguments, 1));
     });
 
-    // --- 9. getExtremes(): answered from the block index instead of a
+    // --- 10. getExtremes(): answered from the block index instead of a
     //        scan of every row in view.
     wrap(seriesProto, 'getExtremes', function (
         this: Series,
