@@ -24,6 +24,10 @@ body {
     padding: 0 8px;
 }
 
+#container .hcg-container .spark-label {
+    color: var(--highcharts-neutral-color-100);
+}
+
 #container .hcg-container {
     max-height: 600px;
 }

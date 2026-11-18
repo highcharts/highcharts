@@ -150,6 +150,40 @@ QUnit.test('Sync between data table and series', async assert => {
         'After setting multiple columns, the chart should redraw exactly once'
     );
 
+    // #25283
+    const seriesTable = new Highcharts.DataTable({
+        columns: {
+            y: [5, 6, 7]
+        }
+    });
+    const seriesWithTable = chart.addSeries({
+        dataTable: seriesTable
+    });
+
+    seriesWithTable.points[1].update({ y: 99 });
+    seriesWithTable.addPoint([4, 8]);
+
+    assert.deepEqual(
+        Array.from(seriesWithTable.getColumn('y')),
+        [5, 99, 7, 8],
+        'Updating and adding points should work with a data table instance ' +
+        'on series level.'
+    );
+
+    assert.deepEqual(
+        Array.from(seriesTable.getColumn('y')),
+        [5, 6, 7],
+        'The series should not write back into the given data table.'
+    );
+
+    seriesTable.setColumn('y', [9, 8, 7]);
+
+    assert.deepEqual(
+        Array.from(seriesWithTable.getColumn('y')),
+        [9, 8, 7],
+        'Updating the given data table should update the series.'
+    );
+
     // Series.update should not break the sync (#25441)
     chart.series[0].update({ color: 'red' });
     dataTable.setColumn('Cost', [20, 21, 22, 23]);
