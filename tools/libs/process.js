@@ -63,6 +63,41 @@ let onExitCallbacks;
  */
 function exec(command, options = {}) {
     const ChildProcess = require('node:child_process');
+    return runCommand(
+        callback => ChildProcess.exec(command, options, callback),
+        command,
+        options
+    );
+}
+
+/**
+ * Executes a file with literal arguments, without a shell.
+ *
+ * @param {string} file Executable file.
+ * @param {Array<string>} args Arguments to pass unchanged.
+ * @param {object} [options] Process and logging options.
+ * @return {Promise<string>} Captured stdout.
+ */
+function execFile(file, args, options = {}) {
+    const ChildProcess = require('node:child_process');
+    return runCommand(
+        callback => ChildProcess.execFile(
+            file, args, { ...options, shell: false }, callback
+        ),
+        [file, ...args].join(' '),
+        options
+    );
+}
+
+/**
+ * Shares output and error handling between process launch methods.
+ *
+ * @param {Function} start Starts the process with its completion callback.
+ * @param {string} command Command to display in logs.
+ * @param {object} options Process and logging options.
+ * @return {Promise<string>} Captured stdout.
+ */
+function runCommand(start, command, options) {
 
     const silent = options.silent;
 
@@ -74,7 +109,11 @@ function exec(command, options = {}) {
         let cli;
 
         try {
-            cli = ChildProcess.exec(command, options, (error, stdout) => {
+            cli = start((error, stdout) => {
+
+                if (!silent) {
+                    cli.stdout.off('data', toStdOut);
+                }
 
                 if (error) {
                     LogLib.failure(error);
@@ -91,10 +130,6 @@ function exec(command, options = {}) {
                         ),
                         command
                     );
-                }
-
-                if (!silent) {
-                    cli.stdout.off('data', toStdOut);
                 }
 
                 resolve(stdout);
@@ -285,6 +320,7 @@ module.exports = {
     CPD,
     CWD,
     exec,
+    execFile,
     isRunning,
     onExit,
     openAppFor

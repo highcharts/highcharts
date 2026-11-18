@@ -21,7 +21,7 @@ const CONFIGURATION_FILE = path.join(
     BASE, 'node_modules', '_gulptasks_test.json'
 );
 
-const JS_DIRECTORY = path.join(BASE, 'js');
+const TS_DIRECTORY = path.join(BASE, 'ts');
 
 const TESTS_DIRECTORY = path.join(BASE, 'samples', 'unit-tests');
 
@@ -363,7 +363,7 @@ Available arguments for 'gulp test':` +
     const runConfig = {
         configFile,
         codeDirectory: CODE_DIRECTORY,
-        jsDirectory: JS_DIRECTORY,
+        tsDirectory: TS_DIRECTORY,
         testsDirectory: TESTS_DIRECTORY,
         project: projectParam
     };

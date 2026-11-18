@@ -195,7 +195,7 @@ Available built-in actions are:
 - `unpinRow`
 
 For configuration and customization details, see
-[Cell context menu](https://www.highcharts.com/docs/grid/cell-context-menu).
+[Context menu](https://www.highcharts.com/docs/grid/context-menu).
 
 These actions appear in the default cell context menu when
 `pinning.enabled` is `true`. If you define custom `contextMenu.items`, add the

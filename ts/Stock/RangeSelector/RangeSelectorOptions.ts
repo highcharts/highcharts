@@ -288,6 +288,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/demo/rangeselector-datagrouping/
      *         Data grouping by buttons
      *
+     * @default [{ type: 'month', count: 1 }, { type: 'month', count: 3 }, { type: 'month', count: 6 }, { type: 'ytd' }, { type: 'year', count: 1 }, { type: 'all' }]
      */
     buttons: Array<RangeSelectorButtonOptions>;
 
@@ -365,6 +366,8 @@ export interface RangeSelectorOptions {
      * Deprecated. The height of the range selector. Currently it is
      * calculated dynamically.
      *
+     * @default undefined
+     *
      * @deprecated 6.0.0
      * @since 2.1.9
      */
@@ -398,6 +401,8 @@ export interface RangeSelectorOptions {
      *
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
+     *
+     * @default undefined
      *
      * @since  1.3.7
      */
@@ -434,6 +439,8 @@ export interface RangeSelectorOptions {
      *
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector
+     *
+     * @default undefined
      *
      * @since     1.3.3
      */
@@ -510,6 +517,7 @@ export interface RangeSelectorOptions {
      * exceeds the total data range and the 'all' option is available,
      * the 'all' option, showing the full range, is automatically selected.
      *
+     * @default undefined
      */
     selected?: number;
 

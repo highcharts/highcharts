@@ -81,7 +81,10 @@ export default interface ContourSeriesOptions extends ScatterSeriesOptions {
      *
      * @sample {highcharts} highcharts/series-contour/contour-simple/
      *         Contour plot with lines
+     *
+     * @default 0
      */
     contourOffset?: number;
+    /** @default #000000 */
     lineColor?: ColorType; // Kept because we might want alternate docs
 }

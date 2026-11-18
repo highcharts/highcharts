@@ -167,6 +167,7 @@ export interface TilemapSeriesOptions extends HeatmapSeriesOptions {
      */
     colsize?: number;
 
+    /** @default null */
     marker?: PointMarkerOptions;
 
     /**
@@ -174,6 +175,8 @@ export interface TilemapSeriesOptions extends HeatmapSeriesOptions {
      *
      * @sample maps/plotoptions/tilemap-pointpadding
      *         Point padding on tiles
+     *
+     * @default 2
      */
     pointPadding?: number;
 
@@ -206,6 +209,8 @@ export interface TilemapSeriesOptions extends HeatmapSeriesOptions {
      *
      * @sample maps/demo/diamondmap
      *         Diamond tile shapes
+     *
+     * @default 'hexagon'
      */
     tileShape?: TilemapShapeValue;
 

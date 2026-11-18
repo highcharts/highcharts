@@ -247,6 +247,8 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
 
     /**
      * The start angle of the dependency wheel, in degrees where 0 is up.
+     *
+     * @default 0
      */
     startAngle?: number;
 
