@@ -365,8 +365,9 @@ function compose(
         }
     });
 
-    // --- 8. Point.setState(): the shared state marker is created at
-    //        the hover size, since only a point with its own grows.
+    // --- 8. Point.setState(): the shared state marker is shown at the
+    //        hover size and hidden again, since only a point with its
+    //        own marker takes the branch that eases between them.
     wrap(
         SeriesClass.prototype.pointClass.prototype,
         'setState',
@@ -377,11 +378,7 @@ function compose(
             move?: boolean
         ): void {
             // `setState` leaves the state alone where it declines.
-            const was = this.state,
-                // Shared, so sizing it down belongs to the hover it
-                // arrives at rather than to every call.
-                arriving = !this.series.stateMarkerGraphic ||
-                    this.series.stateMarkerGraphic.visibility === 'hidden';
+            const was = this.state;
 
             proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -392,26 +389,34 @@ function compose(
             // itself. With markers hidden SVG pops the same way.
             if (
                 !series.gpu ||
-                !state ||
                 this.state === was ||
                 move ||
                 !graphic ||
-                !arriving ||
                 !markersEnabled(series)
             ) {
                 return;
             }
 
-            const marker = series.options.marker;
+            const animation = series.chart.options.chart.animation ??
+                series.options.marker?.states?.[state || 'normal']?.animation;
 
-            graphic.attr(series.markerAttribs(this));
-            graphic.animate(
-                series.markerAttribs(this, state),
-                // The core's own precedence. The second holds the
-                // default of 150ms, the chart option a far slower one.
-                series.chart.options.chart.animation ??
-                    marker?.states?.[state]?.animation
-            );
+            if (state) {
+                graphic.attr(series.markerAttribs(this));
+                graphic.animate(series.markerAttribs(this, state), animation);
+                return;
+            }
+
+            // Hidden by the call above, where SVG eases the marker of
+            // the point back to its plain size. The one drawn on the
+            // canvas is already there, so hiding it again at the end
+            // leaves nothing to see.
+            graphic.show();
+            graphic.animate(series.markerAttribs(this), {
+                ...animObject(animation),
+                complete: (): void => {
+                    graphic.hide();
+                }
+            });
         }
     );
 

@@ -1049,7 +1049,11 @@ class LineStrategy {
             {
                 ...animation,
                 complete: (): void => {
+                    // A tween the next one cancels never draws its last
+                    // frame, and one of no length draws none at all, so
+                    // the settled width only reaches the canvas here.
                     this.width = void 0;
+                    this.draw();
                 }
             }
         );
