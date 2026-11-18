@@ -76,7 +76,10 @@ test('shows the failed lane, stage, and first actionable compiler diagnostic', (
     ok(summary.includes(`<pre>${diagnostic}</pre>`));
     ok(!summary.includes('second diagnostic'));
     ok(!summary.includes('\x1b'));
-    ok(summary.includes('https://github.com/highcharts/highcharts/actions/runs/12/artifacts/1234'));
+    const links = summary.split(/\r?\n/u).filter(line => line.startsWith('[Validation evidence]('));
+    deepEqual(links, [
+        '[Validation evidence](https://github.com/highcharts/highcharts/actions/runs/12/artifacts/1234)'
+    ]);
 });
 
 test('renders diagnostics as text and identifies a lane that never started', () => {
