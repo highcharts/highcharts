@@ -314,8 +314,9 @@ jobs:
           npx gulp scripts-es5
           npx gulp dist-verify
           npx gulp dist-release --force-yes
+          npm_version=$(npm --version)
           node tools/nightly-package-validation-prototype/distribution.mjs record \
-            ../highcharts-dist "$RUNNER_TEMP/build-manifest.json" "$metadata_before"
+            ../highcharts-dist "$RUNNER_TEMP/build-manifest.json" "$metadata_before" "$npm_version"
 
       - name: Upload distribution artifact
         id: distribution

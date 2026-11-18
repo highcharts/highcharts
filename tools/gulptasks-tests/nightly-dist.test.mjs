@@ -246,10 +246,11 @@ if (command === 'view') {
                 env: { ...environment, GITHUB_SHA: source, GITHUB_RUN_ID: '12' },
                 stdio: 'pipe'
             });
-            runTool('record', distribution, manifest, before);
+            runTool('record', distribution, manifest, before, '11.20.0');
             const record = JSON.parse(readFileSync(manifest, 'utf8'));
             strictEqual(record.metadataBefore, before);
             strictEqual(record.metadataAfter, after);
+            strictEqual(record.npm, '11.20.0');
             await mkdir(transferred);
             for (const name of ['package.json', 'highcharts.js']) {
                 await writeFile(join(transferred, name), readFileSync(join(distribution, name)));
@@ -257,6 +258,10 @@ if (command === 'view') {
             runTool('verify', transferred, manifest);
             await writeFile(join(transferred, 'highcharts.js'), 'changed');
             throws(() => runTool('verify', transferred, manifest), /Distribution digest mismatch/u);
+            if (process.platform !== 'win32') {
+                await symlink(join(distribution, 'highcharts.js'), join(transferred, 'link.js'));
+                throws(() => runTool('verify', transferred, manifest), /Unexpected file type: link\.js/u);
+            }
         });
     });
 });

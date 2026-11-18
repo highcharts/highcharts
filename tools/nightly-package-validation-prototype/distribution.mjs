@@ -1,11 +1,14 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { lstatSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import {
+    closeSync, constants, fstatSync, lstatSync, openSync, readFileSync,
+    readdirSync, writeFileSync
+} from 'node:fs';
 import { join } from 'node:path';
 
-const [command, directory, manifest, metadataBefore] = process.argv.slice(2);
-const usage = 'Usage: node distribution.mjs record <directory> <manifest> <metadata-before> | verify <directory> <manifest>';
+const [command, directory, manifest, metadataBefore, npmVersion] = process.argv.slice(2);
+const usage = 'Usage: node distribution.mjs record <directory> <manifest> <metadata-before> <npm-version> | verify <directory> <manifest>';
 if (command === '--help') {
     console.log(usage);
     process.exit(0);
@@ -20,19 +23,26 @@ function inventory(root, excludeGit) {
     assert(lstatSync(root).isDirectory(), 'Expected a distribution directory');
     const files = [];
     function visit(folder = '') {
-        for (const name of readdirSync(join(root, folder))) {
+        for (const entry of readdirSync(join(root, folder), { withFileTypes: true })) {
+            const { name } = entry;
             if (excludeGit && !folder && name === '.git') {
                 continue;
             }
             const relativePath = folder ? `${folder}/${name}` : name;
             const path = join(root, relativePath);
-            const stat = lstatSync(path);
             assert(name !== '.git', `Unexpected Git metadata: ${relativePath}`);
-            if (stat.isDirectory()) {
+            if (entry.isDirectory()) {
                 visit(relativePath);
             } else {
-                assert(stat.isFile(), `Unexpected file type: ${relativePath}`);
-                files.push([relativePath, sha256(readFileSync(path))]);
+                assert(entry.isFile(), `Unexpected file type: ${relativePath}`);
+                const fd = openSync(path, constants.O_RDONLY |
+                    (constants.O_NOFOLLOW ?? 0) | (constants.O_NONBLOCK ?? 0));
+                try {
+                    assert(fstatSync(fd).isFile(), `Unexpected file type: ${relativePath}`);
+                    files.push([relativePath, sha256(readFileSync(fd))]);
+                } finally {
+                    closeSync(fd);
+                }
             }
         }
     }
@@ -51,6 +61,7 @@ const directorySha256 = sha256(JSON.stringify(files));
 
 if (command === 'record') {
     assert(/^[a-f0-9]{40}$/u.test(metadataBefore), 'Expected the initial metadata SHA');
+    assert(/^\d+\.\d+\.\d+(?:-[\w.-]+)?$/u.test(npmVersion), 'Expected an npm version');
     const gitHead = cwd => execFileSync('git', ['rev-parse', 'HEAD'], {
         cwd, encoding: 'utf8'
     }).trim();
@@ -64,7 +75,7 @@ if (command === 'record') {
         metadataAfter: gitHead(directory),
         sourceLockSha256: sha256(readFileSync('package-lock.json')),
         node: process.version,
-        npm: execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim(),
+        npm: npmVersion,
         directorySha256,
         files
     }, null, 2) + '\n');
