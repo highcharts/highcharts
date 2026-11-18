@@ -159,6 +159,7 @@ Each component is exported from `@highcharts/react/series/<Name>`, where `<Name>
 | column            | `<ColumnSeries />`            | Highcharts Core  |
 | columnpyramid     | `<ColumnPyramidSeries />`     | Highcharts Core  |
 | columnrange       | `<ColumnRangeSeries />`       | Highcharts Core  |
+| contour           | `<ContourSeries />`           | Highcharts Core  |
 | cylinder          | `<CylinderSeries />`          | Highcharts Core  |
 | dependencywheel   | `<DependencyWheelSeries />`   | Highcharts Core  |
 | dumbbell          | `<DumbbellSeries />`          | Highcharts Core  |
