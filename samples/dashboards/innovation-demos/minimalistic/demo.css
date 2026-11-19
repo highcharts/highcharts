@@ -1,0 +1,78 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+.highcharts-dashboards-cell {
+    --highcharts-background-color: #111b4d;
+}
+
+.highcharts-dashboards,
+.highcharts-dashboards-wrapper {
+    background-color: #0e153a;
+    padding: 5px;
+}
+
+.highcharts-dashboards-cell > .highcharts-dashboards-component {
+    box-shadow: inset 0 0 0 1px #ffffff20;
+}
+
+/*
+ * Line chart, in styled mode. The full highcharts.css is not loaded since it
+ * would restyle the other charts, so only what this chart shows is styled.
+ */
+#line-chart .highcharts-background,
+#line-chart .highcharts-plot-background,
+#line-chart .highcharts-plot-border {
+    fill: none;
+}
+
+#line-chart .highcharts-graph {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+#line-chart .highcharts-tracker-line {
+    fill: none;
+    stroke: rgba(192, 192, 192, 0.0001);
+    stroke-width: 22px;
+    stroke-linejoin: round;
+}
+
+/* On the unclipped parent, so the glow can extend past the plot area */
+#column-chart .highcharts-series-group,
+#line-chart .highcharts-series-group {
+    filter: url(#neon);
+}
+
+#line-chart .highcharts-point {
+    fill: white;
+    stroke: white;
+    stroke-width: 1px;
+}
+
+/*
+ * Markers kept by the accessibility module when marker.enabled is false. These
+ * classes are only set in styled mode, so the rule needs no #line-chart scope.
+ */
+.highcharts-a11y-markers-hidden .highcharts-point:not(.highcharts-point-hover, .highcharts-a11y-marker-visible),
+.highcharts-a11y-marker-hidden {
+    opacity: 0;
+}
+
+#line-chart .highcharts-halo {
+    fill: white;
+    fill-opacity: 0.25;
+}
+
+#line-chart .highcharts-tooltip-box {
+    fill: #0e153a;
+    stroke: #fff;
+    stroke-width: 1px;
+}
+
+#line-chart .highcharts-tooltip text {
+    fill: white;
+    font-size: 0.8em;
+}
