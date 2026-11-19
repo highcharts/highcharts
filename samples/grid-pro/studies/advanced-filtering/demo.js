@@ -134,8 +134,8 @@ function setOperator(rule, operator) {
 }
 
 function countRules(group) {
-    return group.conditions.reduce((count, item) => count + (
-        item.conditions ? countRules(item) : +hasValue(item)
+    return group.rules.reduce((count, item) => count + (
+        item.rules ? countRules(item) : +hasValue(item)
     ), 0);
 }
 
@@ -155,9 +155,9 @@ function describeRule(rule) {
 }
 
 function describe(group, nested) {
-    const parts = group.conditions
+    const parts = group.rules
         .map(item => (
-            item.conditions ? describe(item, true) :
+            item.rules ? describe(item, true) :
                 hasValue(item) && describeRule(item)
         ))
         .filter(Boolean);
@@ -179,7 +179,7 @@ function apply(delay) {
 }
 
 async function updateStatus() {
-    const filtering = grid.getOptions().filtering || { conditions: [] };
+    const filtering = grid.getOptions().filtering || { rules: [] };
     const count = countRules(filtering);
 
     ui.count.textContent = count ? `(${count})` : '';
@@ -202,19 +202,19 @@ function render(focus) {
 function renderGroup(group, path) {
     const id = path.join('-') || 'root';
     const add = (item, focus) => {
-        group.conditions.push(item);
-        render(focus + [...path, group.conditions.length - 1].join('-'));
+        group.rules.push(item);
+        render(focus + [...path, group.rules.length - 1].join('-'));
         apply(0);
     };
 
     return h(
         'div',
         { className: path.length ? 'fb-group' : 'fb-root' },
-        ...group.conditions.map((item, i) => renderRow(group, item, [
+        ...group.rules.map((item, i) => renderRow(group, item, [
             ...path,
             i
         ])),
-        !group.conditions.length && h('p', {
+        !group.rules.length && h('p', {
             className: 'fb-empty',
             textContent: 'No rules. Add a rule to filter the rows.'
         }),
@@ -236,7 +236,7 @@ function renderGroup(group, path) {
                 textContent: '+ Add group',
                 onclick: () => add({
                     logic: 'or',
-                    conditions: [newRule()]
+                    rules: [newRule()]
                 }, 'row-')
             })
         )
@@ -247,7 +247,7 @@ function renderRow(group, item, path) {
     const index = path[path.length - 1];
     const id = path.join('-');
     const groupId = path.slice(0, -1).join('-') || 'root';
-    const name = (item.conditions ? 'Group ' : 'Rule ') +
+    const name = (item.rules ? 'Group ' : 'Rule ') +
         path.map(i => i + 1).join('.');
     const logic = group.logic || 'and';
     let prefix;
@@ -287,7 +287,7 @@ function renderRow(group, item, path) {
             'data-key': `row-${id}`
         },
         prefix,
-        item.conditions ?
+        item.rules ?
             renderGroup(item, path) :
             renderRule(item, id),
         h('button', {
@@ -296,9 +296,9 @@ function renderRow(group, item, path) {
             textContent: '×',
             'aria-label': `Remove ${name.toLowerCase()}`,
             onclick: () => {
-                group.conditions.splice(index, 1);
+                group.rules.splice(index, 1);
 
-                const next = Math.min(index, group.conditions.length - 1);
+                const next = Math.min(index, group.rules.length - 1);
                 const nextPath = [...path.slice(0, -1), next].join('-');
 
                 render(next < 0 ? `add-${groupId}` : `row-${nextPath}`);
@@ -380,13 +380,13 @@ Grid.grid('container', {
         cells: f.cells
     })),
     filtering: {
-        conditions: [{
+        rules: [{
             columnId: 'salary',
             operator: 'greaterThan',
             value: 70000
         }, {
             logic: 'or',
-            conditions: [{
+            rules: [{
                 columnId: 'country',
                 operator: 'equals',
                 value: 'Poland'
@@ -400,11 +400,11 @@ Grid.grid('container', {
 }, true).then(instance => {
     grid = instance;
     state = JSON.parse(JSON.stringify(
-        grid.getOptions().filtering || { conditions: [] }
+        grid.getOptions().filtering || { rules: [] }
     ));
 
     ui.clear.onclick = () => {
-        state = { conditions: [] };
+        state = { rules: [] };
         render('add-root');
         apply(0);
     };
