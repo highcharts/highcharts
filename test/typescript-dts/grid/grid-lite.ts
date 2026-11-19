@@ -39,6 +39,22 @@ function test_grid() {
         }
     );
 
+    Grid.ContextMenu.registerItem('showColumnId', {
+        icon: 'checkmark',
+        label: (context): string => context.target.column.id,
+        targets: ['cell'],
+        visible: (context): boolean => context.target.row.id !== void 0,
+        onClick: function (cell): void {
+            cell.row.id;
+        }
+    });
+
+    Grid.ContextMenu.registerItem('sampleGroup', {
+        defaultIn: ['cell'],
+        items: ['showColumnId', 'showCellValue'],
+        label: 'Sample group'
+    });
+
     const dataTable = new Grid.DataTable({
         columns: {
             x: ['A', 'B', 'C'],
@@ -82,7 +98,41 @@ function test_grid() {
                 }
             }
         },
+        lang: {
+            setFilter: 'Set filter',
+            filterValuePlaceholder: 'Value...',
+            columnFilteringOperators: {
+                contains: 'Contains'
+            },
+            columnFilteringDateTimeOperators: {
+                greaterThan: 'After'
+            },
+            // Deprecated in 3.1.0, replaced by columnFilteringOperators.
+            columnFilteringConditions: {
+                contains: 'Contains'
+            }
+        },
         columns: [{
+            id: 'x',
+            filtering: {
+                enabled: true,
+                operators: ['contains', 'beginsWith'],
+                rule: {
+                    operator: 'contains',
+                    value: 'A'
+                }
+            }
+        }, {
+            id: 'y',
+            filtering: {
+                enabled: true,
+                // Deprecated in 3.1.0: `conditions` became `operators`, and
+                // `condition` and `value` moved into `rule`.
+                conditions: ['greaterThan', 'lessThan'],
+                condition: 'greaterThan',
+                value: 1
+            }
+        }, {
             id: 'hidden',
             enabled: false
         }],
