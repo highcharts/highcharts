@@ -31,13 +31,13 @@ test.describe('Advanced filtering', () => {
                     }
                 },
                 filtering: {
-                    conditions: [{
+                    rules: [{
                         columnId: 'age',
                         operator: 'greaterThan',
                         value: 30
                     }, {
                         logic: 'or',
-                        conditions: [{
+                        rules: [{
                             columnId: 'country',
                             operator: 'equals',
                             value: 'PL'
@@ -64,9 +64,9 @@ test.describe('Advanced filtering', () => {
         const isSameTable = await page.evaluate(async (): Promise<boolean> => {
             const grid = (window as any).grid;
             const tableElement = grid.tableElement;
-            const { conditions } = grid.getOptions().filtering;
+            const { rules } = grid.getOptions().filtering;
 
-            await grid.update({ filtering: { logic: 'or', conditions } });
+            await grid.update({ filtering: { logic: 'or', rules } });
 
             return grid.tableElement === tableElement;
         });
@@ -87,9 +87,9 @@ test.describe('Advanced filtering', () => {
 
         await page.evaluate(async (): Promise<void> => {
             const grid = (window as any).grid;
-            const { conditions } = grid.getOptions().filtering;
+            const { rules } = grid.getOptions().filtering;
 
-            await grid.update({ filtering: { conditions } });
+            await grid.update({ filtering: { rules } });
         });
 
         await expect(page.locator(names)).toHaveText([
@@ -98,7 +98,7 @@ test.describe('Advanced filtering', () => {
 
         await page.evaluate(async (): Promise<void> => {
             await (window as any).grid.update(
-                { filtering: { conditions: [] } }
+                { filtering: { rules: [] } }
             );
         });
 
@@ -133,7 +133,7 @@ test.describe('Advanced filtering', () => {
         await page.evaluate(async (): Promise<void> => {
             await (window as any).grid.update({
                 filtering: {
-                    conditions: [{
+                    rules: [{
                         columnId: 'age',
                         operator: 'greaterThan',
                         value: 30
@@ -143,7 +143,7 @@ test.describe('Advanced filtering', () => {
                         value: 1
                     }, {
                         logic: 'or',
-                        conditions: []
+                        rules: []
                     }]
                 }
             });
@@ -165,12 +165,12 @@ test.describe('Advanced filtering', () => {
 
             await grid.update({
                 rowGrouping: { enabled: true, groupBy: ['country'] },
-                filtering: { conditions: [pl] }
+                filtering: { rules: [pl] }
             });
             await grid.update({
                 filtering: {
                     logic: 'or',
-                    conditions: [pl, { ...pl, value: 'DE' }]
+                    rules: [pl, { ...pl, value: 'DE' }]
                 }
             });
         });
