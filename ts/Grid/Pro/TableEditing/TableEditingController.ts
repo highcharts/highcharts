@@ -31,16 +31,9 @@ import type {
 import type { DataTableValue } from '../../../Data/DataTableOptions';
 import type { IndividualColumnOptions } from '../../Core/Options';
 
-import Globals from '../../Core/Globals.js';
 import {
     hasDataTableProvider
 } from '../../Core/Data/DataProvider.js';
-
-/**
- * Class name of the button offered when the table has no columns or no rows.
- */
-export const emptyStateButtonClassName =
-    Globals.classNamePrefix + 'empty-state-button';
 
 /* *
  *
@@ -194,23 +187,13 @@ class TableEditingController {
     }
 
     /**
-     * Returns what an empty table is missing, which is what the empty state
-     * button offers to add.
+     * Returns whether the table has no column to hang a menu on, and so needs
+     * a button of its own to get its first one.
      */
-    public getEmptyState(): 'columns' | 'rows' | undefined {
+    public needsFirstColumn(): boolean {
         const table = this.isEnabled() ? this.getDataTable() : void 0;
 
-        if (!table) {
-            return;
-        }
-
-        if (table.getColumnIds().length < 1) {
-            return 'columns';
-        }
-
-        if (table.getRowCount() < 1) {
-            return 'rows';
-        }
+        return !!table && table.getColumnIds().length < 1;
     }
 
     /**
@@ -487,20 +470,14 @@ class TableEditingController {
     private focusResult(rowIndex: number | undefined, columnId?: string): void {
         const viewport = this.grid.viewport;
 
-        if (!viewport) {
+        if (!viewport || rowIndex === void 0) {
             return;
         }
 
         const lastRowIndex = viewport.rowsVirtualizer.rowCount - 1;
 
+        // Deleting the last row leaves nothing to focus.
         if (lastRowIndex < 0) {
-            this.grid.contentWrapper?.querySelector<HTMLElement>(
-                '.' + emptyStateButtonClassName
-            )?.focus();
-            return;
-        }
-
-        if (rowIndex === void 0) {
             return;
         }
 

@@ -6,6 +6,6 @@
    here. */
 .hcg-container .hcg-empty-state-button {
     align-self: center;
-    margin: 8px auto;
+    margin-block: 8px;
     gap: 6px;
 }

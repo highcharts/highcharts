@@ -33,7 +33,6 @@ import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import { registerMenuItem } from '../../Core/ContextMenu/ContextMenuRegistry.js';
 import TableEditingController, {
-    emptyStateButtonClassName,
     type TableEditingContext,
     type TableEditingOptions
 } from './TableEditingController.js';
@@ -46,6 +45,9 @@ import {
 } from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement, joinClassNames } = GridUtils;
+
+const emptyStateButtonClassName =
+    Globals.classNamePrefix + 'empty-state-button';
 
 /* *
  *
@@ -95,8 +97,8 @@ export interface TableEditingLangOptions {
     columns?: string;
 
     /**
-     * Label used for the built-in "add row" action, which the menu and the
-     * empty state button of a table holding no row offer.
+     * Label used for the built-in "add row" action, which the menu of a table
+     * holding no row offers.
      *
      * @default 'Add row'
      */
@@ -323,22 +325,19 @@ function initTableEditing(this: Grid): void {
 }
 
 /**
- * Renders a button that seeds an empty table with its first column or row.
- * Nothing else adds a column to a table holding none, and for the row it is
- * the visible twin of what the table menu offers.
+ * Renders a button that gives a table without columns its first one. Every
+ * other structural edit comes from a menu, and a table with no column has
+ * nothing to open one on.
  */
 function renderEmptyStateButton(this: Grid): void {
     const grid = this;
     const controller = grid.tableEditing;
-    const state = controller?.getEmptyState();
     const contentWrapper = grid.contentWrapper;
 
-    if (!controller || !state || !contentWrapper) {
+    if (!controller?.needsFirstColumn() || !contentWrapper) {
         return;
     }
 
-    const isRow = state === 'rows';
-    const lang = grid.options?.lang?.tableEditing;
     const button = makeHTMLElement('button', {
         className: joinClassNames(
             Globals.getClassName('button'),
@@ -351,24 +350,15 @@ function renderEmptyStateButton(this: Grid): void {
         grid.options?.rendering?.icons
     ));
     makeHTMLElement('span', {
-        innerText: (isRow ? lang?.addRow : lang?.addColumn) || ''
+        innerText: grid.options?.lang?.tableEditing?.addColumn || ''
     }, button);
 
     button.addEventListener('click', (): void => {
-        void (async (): Promise<void> => {
-            await (
-                isRow ? controller.appendRow() : controller.addFirstColumn()
-            );
-
-            // The button is gone after the redraw, so move the focus to where
-            // the work continues: the new cell, or the next empty state step.
-            (
-                grid.viewport?.getRenderedRows()[0]?.cells[0]?.htmlElement ||
-                grid.contentWrapper?.querySelector<HTMLElement>(
-                    '.' + emptyStateButtonClassName
-                )
-            )?.focus();
-        })();
+        void controller.addFirstColumn().then((): void => {
+            // The button is gone after the redraw, so move the focus to the
+            // header of the column it created.
+            grid.viewport?.header?.rows[0]?.cells[0]?.htmlElement.focus();
+        });
     });
 
     // Below the table, or the message standing in for it, but above the

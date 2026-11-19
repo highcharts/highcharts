@@ -65,7 +65,7 @@ async function runMenuAction(
 }
 
 test.describe('Table editing empty state', () => {
-    test('A table without columns offers the first column, then the first row', async ({ page }) => {
+    test('A table without columns offers the first column and focuses it', async ({ page }) => {
         await renderGrid(page, { data: { columns: {} } });
 
         const button = page.locator(EMPTY_STATE_BUTTON);
@@ -73,24 +73,18 @@ test.describe('Table editing empty state', () => {
 
         await button.click();
         await expect(page.locator('#container thead th')).toHaveCount(1);
-        await expect(button).toHaveText('Add row');
 
-        await button.click();
-        await expect(page.locator('#container tbody tr td')).toHaveCount(1);
+        // From here the table menu takes over, so the button is done.
         await expect(button).toHaveCount(0);
+        expect(await focused(page)).toBe('th[column1@-]');
     });
 
-    test('A table without rows offers the first row and focuses it', async ({ page }) => {
+    test('A table without rows offers nothing, the table menu does', async ({ page }) => {
         await renderGrid(page, {
             data: { columns: { product: [], stock: [] } }
         });
 
-        await expect(page.locator(EMPTY_STATE_BUTTON)).toHaveText('Add row');
-        await page.locator(EMPTY_STATE_BUTTON).click();
-
-        await expect(page.locator('#container tbody tr')).toHaveCount(1);
         await expect(page.locator(EMPTY_STATE_BUTTON)).toHaveCount(0);
-        expect(await focused(page)).toBe('td[product@0]');
     });
 
     test('A table with data offers nothing', async ({ page }) => {
@@ -110,20 +104,7 @@ test.describe('Table editing empty state', () => {
         await expect(page.locator(EMPTY_STATE_BUTTON)).toHaveCount(0);
     });
 
-    test('A filter hiding every row is not an empty table', async ({ page }) => {
-        await renderGrid(page, {
-            data: { columns: { product: ['Apples'], stock: [100] } },
-            columns: [{
-                id: 'product',
-                filtering: { enabled: true, condition: 'contains', value: 'zz' }
-            }]
-        });
-
-        await expect(page.locator('#container tbody tr')).toHaveCount(0);
-        await expect(page.locator(EMPTY_STATE_BUTTON)).toHaveCount(0);
-    });
-
-    test('Deleting the last row brings the button back and focuses it', async ({ page }) => {
+    test('Deleting the last row leaves the table menu to add one back', async ({ page }) => {
         await renderGrid(page, {
             data: { columns: { product: ['Apples'], stock: [100] } }
         });
@@ -135,8 +116,14 @@ test.describe('Table editing empty state', () => {
             'Delete row'
         );
 
-        await expect(page.locator(EMPTY_STATE_BUTTON)).toHaveText('Add row');
-        expect(await focused(page)).toContain('empty-state-button');
+        await expect(page.locator('#container tbody tr')).toHaveCount(0);
+        await expect(page.locator(EMPTY_STATE_BUTTON)).toHaveCount(0);
+
+        await page.locator('#container tbody:not(.hcg-tbody-sticky)')
+            .click({ button: 'right' });
+        await page.locator('.hcg-menu-item', { hasText: 'Add row' }).click();
+
+        await expect(page.locator('#container tbody tr')).toHaveCount(1);
     });
 });
 

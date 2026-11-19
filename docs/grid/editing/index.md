@@ -26,7 +26,7 @@ Validation rules ensure edited values match your expected format and business co
 
 ## Adding and deleting rows and columns
 
-`cells.editMode` covers the value inside a cell. To let users change the shape of the table itself, enable [`tableEditing`](https://api.highcharts.com/grid/tableEditing). It adds context menu actions for adding and deleting rows and columns, and a button for the case where the table is still empty and there is no cell to open a menu on.
+`cells.editMode` covers the value inside a cell. To let users change the shape of the table itself, enable [`tableEditing`](https://api.highcharts.com/grid/tableEditing). It adds context menu actions for adding and deleting rows and columns, and an *Add column* button for the one case a menu cannot reach: a table with no column at all.
 
 The two options are independent: `tableEditing` decides whether rows and columns can be added, `cells.editMode` whether the resulting cells can be filled in. A table meant to be built from scratch needs both.
 

@@ -311,18 +311,16 @@ Grid.grid('container', {
 
 Table editing labels are configured under `lang.tableEditing`, for example
 `lang.tableEditing.rows`, `lang.tableEditing.addRowAbove` and
-`lang.tableEditing.deleteColumn`. The two labels the empty table buttons use
-are `lang.tableEditing.addColumn` and `lang.tableEditing.addRow`.
+`lang.tableEditing.deleteColumn`. The *Add column* button of a table with no
+column uses `lang.tableEditing.addColumn`.
 
 ## Editing an empty table
 
-Cell actions open on a body cell, so a table with no columns or no rows has
-none to offer them on. With
-[`tableEditing`](https://api.highcharts.com/grid/tableEditing) enabled, Grid
-Pro shows a button in that case: *Add column* while the table has no columns,
-then *Add row* once it has one, which is the action the table menu offers as
-well. From the first row on, the cell menu takes over and the button
-disappears. Deleting the last row brings it back.
+A table with no row still has a table menu to add one from. A table with no
+column has nothing at all to open a menu on, so with
+[`tableEditing`](https://api.highcharts.com/grid/tableEditing) enabled Grid
+Pro shows an *Add column* button in that one case. The first column makes the
+table menu reachable, and the button is gone for good.
 
 After every structural edit the focus moves to the cell the edit produced, so
 the change is visible and the keyboard stays inside the table.
