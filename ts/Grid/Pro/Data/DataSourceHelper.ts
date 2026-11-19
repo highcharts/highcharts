@@ -55,7 +55,9 @@ const filterOperatorMap: Record<string, string> = {
     startsWith: 'beginsWith',
     endsWith: 'endsWith',
     empty: 'empty',
-    notEmpty: 'notEmpty'
+    notEmpty: 'notEmpty',
+    'in': 'anyOf',
+    notIn: 'noneOf'
 };
 
 /**
@@ -96,7 +98,7 @@ function extractFilterConditions(
                 conditionToUse.operator.slice(1);
         }
 
-        const mapped = filterOperatorMap[key] || conditionToUse.operator;
+        const mapped = filterOperatorMap[key] || key;
 
         if (conditionToUse.columnId) {
             filterColumns.push({
