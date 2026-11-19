@@ -48,7 +48,8 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 // After (@highcharts/react)
-import { Chart, LineSeries, Title } from "@highcharts/react";
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 ```
 
 **Note:** Unless you need a custom Highcharts instance (typically for loading additional modules or setting global options), you no longer need to import `Highcharts`.
@@ -130,7 +131,8 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 // After - chart and its options as dedicated React components
-import { Chart, LineSeries, Title } from "@highcharts/react";
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 ```
 
 ### Component Props Interface

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Chart, Series, Title, XAxis, YAxis, Tooltip } from '@highcharts/react';
-import { Accessibility } from '@highcharts/react/options/Accessibility';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
 // External Redux libraries via esm.sh
 import { Provider, useSelector, useDispatch } from 'https://esm.sh/react-redux@9.1.0?external=react';
 import { configureStore, createSlice } from 'https://esm.sh/@reduxjs/toolkit@2.2.1?external=react';
