@@ -1,11 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
-import {
-    closeSync, constants, fstatSync, lstatSync, openSync, readFileSync,
-    readdirSync, writeFileSync
-} from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { fileInventory, readJSON, sha256, writeJSON } from './package-evidence.mjs';
 
 const [command, directory, manifest, metadataBefore, npmVersion] = process.argv.slice(2);
 const usage = 'Usage: node distribution.mjs record <directory> <manifest> <metadata-before> <npm-version> | verify <directory> <manifest>';
@@ -15,48 +11,12 @@ if (command === '--help') {
 }
 assert(directory && manifest && ['record', 'verify'].includes(command), usage);
 
-function sha256(bytes) {
-    return createHash('sha256').update(bytes).digest('hex');
-}
-
-function inventory(root, excludeGit) {
-    assert(lstatSync(root).isDirectory(), 'Expected a distribution directory');
-    const files = [];
-    function visit(folder = '') {
-        for (const entry of readdirSync(join(root, folder), { withFileTypes: true })) {
-            const { name } = entry;
-            if (excludeGit && !folder && name === '.git') {
-                continue;
-            }
-            const relativePath = folder ? `${folder}/${name}` : name;
-            const path = join(root, relativePath);
-            assert(name !== '.git', `Unexpected Git metadata: ${relativePath}`);
-            if (entry.isDirectory()) {
-                visit(relativePath);
-            } else {
-                assert(entry.isFile(), `Unexpected file type: ${relativePath}`);
-                const fd = openSync(path, constants.O_RDONLY |
-                    (constants.O_NOFOLLOW ?? 0) | (constants.O_NONBLOCK ?? 0));
-                try {
-                    assert(fstatSync(fd).isFile(), `Unexpected file type: ${relativePath}`);
-                    files.push([relativePath, sha256(readFileSync(fd))]);
-                } finally {
-                    closeSync(fd);
-                }
-            }
-        }
-    }
-    visit();
-    files.sort(([left], [right]) => (left < right ? -1 : Number(left > right)));
-    assert(files.some(([path]) => path === 'highcharts.js'), 'Missing Highcharts entry');
-    assert(files.some(([path]) => path === 'package.json'), 'Missing package manifest');
-    return files;
-}
-
 const sourceSha = process.env.GITHUB_SHA;
 const runId = process.env.GITHUB_RUN_ID;
 assert(sourceSha && runId, 'Expected GitHub source SHA and run ID');
-const files = inventory(directory, command === 'record');
+const files = fileInventory(directory, command === 'record');
+assert(files.some(([path]) => path === 'highcharts.js'), 'Missing Highcharts entry');
+assert(files.some(([path]) => path === 'package.json'), 'Missing package manifest');
 const directorySha256 = sha256(JSON.stringify(files));
 
 if (command === 'record') {
@@ -66,7 +26,7 @@ if (command === 'record') {
         cwd, encoding: 'utf8'
     }).trim();
     assert.equal(gitHead(process.cwd()), sourceSha);
-    writeFileSync(manifest, JSON.stringify({
+    writeJSON(manifest, {
         sourceSha,
         runId,
         buildAttempt: process.env.GITHUB_RUN_ATTEMPT,
@@ -78,9 +38,9 @@ if (command === 'record') {
         npm: npmVersion,
         directorySha256,
         files
-    }, null, 2) + '\n');
+    });
 } else {
-    const expected = JSON.parse(readFileSync(manifest, 'utf8'));
+    const expected = readJSON(manifest);
     assert.equal(sourceSha, expected.sourceSha, 'Source SHA mismatch');
     assert.equal(runId, expected.runId, 'Run ID mismatch');
     assert.equal(directorySha256, expected.directorySha256, 'Distribution digest mismatch');

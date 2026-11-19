@@ -20,8 +20,8 @@ try {
         assert.equal(roots.length, 1, 'Retained consumer results directory unavailable or ambiguous');
         root = join(extracted, roots[0].name);
     }
-    const inputs = verifyReplaySource(root, fixture, identity);
-    process.exitCode = await runConsumer({ gridLite: identity.gridLite, replay: { root, fixture, inputs } });
+    const evidence = verifyReplaySource(root, fixture, identity);
+    process.exitCode = await runConsumer({ gridLite: identity.gridLite, replay: { root, fixture, ...evidence } });
 } catch (error) {
     console.error(error.message);
     process.exitCode = 1;

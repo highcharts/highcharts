@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import {
-    chmodSync, mkdirSync, readFileSync, readdirSync,
-    rmSync, writeFileSync
+    chmodSync, mkdirSync, readFileSync, rmSync, writeFileSync
 } from 'node:fs';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { releaseRepositoryMetadata, stageGridPackage } from '../gulptasks/lib/release-package.js';
 import { getReleaseVersion } from '../gulptasks/lib/release-version.js';
+import { readPackResult } from './npm-pack.mjs';
+import { fileInventory, sha256 } from './package-evidence.mjs';
 const [sourceSha, sourceRepoArg, metadataRepoArg, metadataRevision, outputArg, ...flags] =
     process.argv.slice(2);
 const usage = 'Usage: node stage-grid-lite.mjs <source-sha> <source-checkout> <grid-lite-dist-checkout> <metadata-revision> <new-output-dir> [--missing-css]';
@@ -29,10 +29,6 @@ const packageDirectory = join(outputDirectory, 'package');
 const missingCss = flags.includes('--missing-css');
 const packageName = '@highcharts/grid-lite';
 
-function sha256(bytes) {
-    return createHash('sha256').update(bytes).digest('hex');
-}
-
 function git(args) {
     const result = spawnSync('git', args, {
         cwd: metadataRepo,
@@ -49,25 +45,6 @@ function metadataAtRevision(file) {
     });
     assert.equal(result.status, 0, `Metadata file unavailable at ${metadataRevision}: ${file}`);
     return result.stdout;
-}
-
-function inventory(root) {
-    const files = [];
-    function visit(directory) {
-        for (const entry of readdirSync(directory, { withFileTypes: true })) {
-            const path = join(directory, entry.name);
-            if (entry.isDirectory()) {
-                visit(path);
-            } else {
-                assert(entry.isFile(), `Unexpected staged package file type: ${path}`);
-                const name = relative(root, path).split(sep).join('/');
-                files.push([name, sha256(readFileSync(path))]);
-            }
-        }
-    }
-    visit(root);
-    files.sort(([left], [right]) => left < right ? -1 : Number(left > right));
-    return files;
 }
 
 let createdOutput = false;
@@ -110,21 +87,25 @@ try {
         rmSync(join(packageDirectory, 'css', 'grid-lite.css'), { force: true });
     }
 
-    const files = inventory(packageDirectory);
-    const packageManifestSha256 = sha256(readFileSync(join(packageDirectory, 'package.json')));
+    const files = fileInventory(packageDirectory);
+    const packageManifest = files.find(([name]) => name === 'package.json');
+    assert(packageManifest, 'Missing staged package manifest');
+    const [, packageManifestSha256] = packageManifest;
     const pack = spawnSync('npm', ['pack', packageDirectory, '--ignore-scripts', '--json', '--pack-destination', outputDirectory], {
         cwd: outputDirectory,
         encoding: 'utf8'
     });
     assert.equal(pack.status, 0, pack.stderr || 'npm pack failed');
-    const [packed] = JSON.parse(pack.stdout);
-    assert.equal(packed.name, packageName, 'npm packed an unexpected package');
+    const packed = readPackResult(pack.stdout, packageName);
     assert.equal(packed.version, liteVersion, 'npm packed an unexpected version');
+    assert.deepEqual(fileInventory(packageDirectory), files, 'Grid Lite staging changed during npm pack');
     const tarball = join(outputDirectory, packed.filename);
     const manifest = {
         package: packageName,
         version: liteVersion,
         sourceSha,
+        runId: process.env.GITHUB_RUN_ID,
+        attempt: process.env.GITHUB_RUN_ATTEMPT,
         metadataRevision: revision,
         metadataPackageJsonSha256: sha256(metadataAtRevision('package.json')),
         packageManifestSha256,

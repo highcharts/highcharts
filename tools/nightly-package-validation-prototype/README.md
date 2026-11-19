@@ -40,6 +40,12 @@ their archives are in `candidate/candidate.tgz` and `control/control.tgz`.
 The evidence also includes manifests, locks, digests, build logs, bundled module
 inventories, and Playwright reports and failure traces.
 
+The local tarball command checks the digest you supply. In Nightly, the runner
+also verifies which build produced the candidate. For Highcharts it checks the
+build manifest and npm pack inventory. For Grid Lite it checks the staging
+manifest. After installation it compares the candidate's files and their
+contents with the recorded package inventory.
+
 ## Validate Grid Lite locally
 
 In a disposable source checkout at the revision under test, run `npm ci` and
@@ -102,10 +108,14 @@ its diagnostic. The evidence link contains the full logs, browser reports, exact
 tarballs, and build manifest. See the
 [nightly workflow notes](../../.github/workflows/nightly.md) for rollout.
 
+If you rerun only the summary, it can receive results from an earlier attempt.
+It identifies that attempt and marks the current one as blocked. Rerun the
+validation job and its dependent summary to get a verdict for the new attempt.
+
 ## Replay a Nightly attempt
 
-For attempts that predate container replay, capture fresh evidence on a revision
-that includes it. For a supported attempt, check out its reviewed source SHA in
+For attempts that predate linked package evidence, capture a fresh attempt.
+For a supported attempt, check out its reviewed source SHA in
 a separate worktree using the same line endings as CI (LF). From that worktree,
 run the command with the run ID from the Actions URL and the attempt number.
 

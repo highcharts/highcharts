@@ -9,9 +9,12 @@ import {
     copyFixture, hash, lanes, readJSON, recordReplay, verifyReplay,
     verifyReplaySource, writeJSON
 } from '../nightly-package-validation-prototype/replay-evidence.mjs';
+import { recordCandidateEvidence } from '../nightly-package-validation-prototype/package-evidence.mjs';
+import { writeCandidateProvenance } from './fixtures/nightly-package-evidence.mjs';
 
 const prototype = fileURLToPath(new URL('../nightly-package-validation-prototype/', import.meta.url));
 const sourceSha = execFileSync('git', ['-C', prototype, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+const nightly = { sourceSha, runId: '123', attempt: '2' };
 
 function temporaryDirectory(t) {
     const path = mkdtempSync(join(tmpdir(), 'hc-nightly-replay-test-'));
@@ -19,7 +22,16 @@ function temporaryDirectory(t) {
     return path;
 }
 
-function writeEvidence(root, gridLite = false) {
+function recordInstall(dir, lane, provenanceSha256) {
+    writeJSON(join(dir, 'install-inputs.json'), {
+        manifestSha256: hash(join(dir, 'package.json')),
+        lockSha256: hash(join(dir, 'package-lock.json')),
+        tarballSha256: hash(join(dir, `${lane}.tgz`)),
+        provenanceSha256
+    });
+}
+
+function writeEvidence(root, gridLite, identity, buildAttempt) {
     const fixture = join(root, 'fixture');
     const packageName = gridLite ? '@highcharts/grid-lite' : 'highcharts';
     mkdirSync(root, { recursive: true });
@@ -35,21 +47,23 @@ function writeEvidence(root, gridLite = false) {
         }
         recordInstall(dir, lane);
     }
+    const provenanceSha256 = identity && writeCandidateProvenance(root, packageName, identity, {
+        'package.json': JSON.stringify({ name: packageName, version: '13.1.1' })
+    }, buildAttempt);
+    if (identity) {
+        recordInstall(join(root, 'candidate'), 'candidate', provenanceSha256);
+    }
     writeJSON(join(root, 'inputs.json'), {
         packageName,
-        candidate: { sha256: hash(join(root, 'candidate', 'candidate.tgz')) },
+        candidate: {
+            sha256: hash(join(root, 'candidate', 'candidate.tgz')),
+            provenance: identity ? 'nightly' : 'tarball-only',
+            provenanceSha256
+        },
         control: { integrity: `sha512-${hash(join(root, 'control', 'control.tgz'), 'sha512', 'base64')}` }
     });
-    recordReplay(root, sourceSha);
+    recordReplay(root, identity ?? { sourceSha });
     return fixture;
-}
-
-function recordInstall(dir, lane) {
-    writeJSON(join(dir, 'install-inputs.json'), {
-        manifestSha256: hash(join(dir, 'package.json')),
-        lockSha256: hash(join(dir, 'package-lock.json')),
-        tarballSha256: hash(join(dir, `${lane}.tgz`))
-    });
 }
 
 test('records portable evidence paths and rejects a different original runner', t => {
@@ -68,10 +82,8 @@ test('records portable evidence paths and rejects a different original runner', 
 test('binds both products to the reviewed fixture and checks the source and attempt', t => {
     for (const gridLite of [false, true]) {
         const root = temporaryDirectory(t);
-        const fixture = writeEvidence(root, gridLite);
-        const identity = { sourceSha, gridLite, runId: '123', attempt: '2' };
-        const manifestPath = join(root, 'replay.json');
-        writeJSON(manifestPath, { ...readJSON(manifestPath), runId: '123', attempt: '2' });
+        const identity = { ...nightly, gridLite };
+        const fixture = writeEvidence(root, gridLite, nightly, '1');
         assert.doesNotThrow(() => verifyReplaySource(root, fixture, identity));
         assert.throws(() => verifyReplaySource(root, fixture, { ...identity, sourceSha: 'bad' }),
             /Evidence source SHA differs/u);
@@ -84,11 +96,43 @@ test('binds both products to the reviewed fixture and checks the source and atte
     }
 });
 
+test('rejects a Highcharts build from an attempt later than the recorded validation', t => {
+    const root = temporaryDirectory(t);
+    const fixture = writeEvidence(root, false, nightly, '3');
+    assert.throws(() => verifyReplaySource(root, fixture, nightly), /Build manifest attempt mismatch/u);
+});
+
+test('requires hosted provenance and validates the manifest linked to each candidate', t => {
+    for (const gridLite of [false, true]) {
+        const root = temporaryDirectory(t);
+        const fixture = writeEvidence(root, gridLite, nightly);
+        const identity = { ...nightly, gridLite };
+        const manifest = join(root, 'candidate', gridLite ? 'staging-manifest.json' : 'build-manifest.json');
+        const original = readJSON(manifest);
+        rmSync(manifest);
+        assert.throws(() => verifyReplaySource(root, fixture, identity),
+            /Required replay input unavailable: candidate\/.*manifest\.json/u);
+
+        writeJSON(manifest, { ...original, sourceSha: '0'.repeat(40) });
+        assert.throws(() => verifyReplaySource(root, fixture, identity), /Replay digest mismatch/u);
+        recordReplay(root, nightly);
+        assert.throws(() => verifyReplaySource(root, fixture, identity), /Candidate manifest digest mismatch/u);
+        const inputs = readJSON(join(root, 'inputs.json'));
+        recordCandidateEvidence(root, inputs.packageName, nightly);
+        recordReplay(root, nightly);
+        assert.throws(() => verifyReplaySource(root, fixture, identity), /Candidate manifest source SHA mismatch/u);
+    }
+
+    const local = temporaryDirectory(t);
+    const fixture = writeEvidence(local);
+    assert.throws(() => verifyReplaySource(local, fixture, nightly), /Hosted replay requires linked package evidence/u);
+});
+
 test('rejects retained executable fixture changes even if all evidence hashes match', t => {
     const root = temporaryDirectory(t);
     writeEvidence(root);
-    writeFileSync(join(root, 'fixture', 'browser-results.mjs'), "throw new Error('artifact fixture ran');\n");
-    recordReplay(root, sourceSha);
+    writeFileSync(join(root, 'fixture', 'browser-results.mjs'), 'throw new Error(\'artifact fixture ran\');\n');
+    recordReplay(root, { sourceSha });
     assert.doesNotThrow(() => verifyReplay(root));
     assert.throws(() => verifyReplaySource(root, prototype, { sourceSha }),
         /Retained fixture differs from the reviewed revision/u);
@@ -102,7 +146,7 @@ test('rejects retained npm scripts even if the install and replay hashes match',
     pkg.scripts.test = 'echo unexpected fixture script';
     writeJSON(join(candidate, 'package.json'), pkg);
     recordInstall(candidate, 'candidate');
-    recordReplay(root, sourceSha);
+    recordReplay(root, { sourceSha });
     assert.doesNotThrow(() => verifyReplay(root));
     assert.throws(() => verifyReplaySource(root, fixture, { sourceSha }),
         /Retained candidate manifest differs from the reviewed fixture/u);
@@ -114,7 +158,7 @@ test('stages only read-only inputs for sandbox execution through both replay ent
     const bin = temporaryDirectory(t);
     const extracted = temporaryDirectory(t);
     const evidence = join(extracted, 'grid-lite-package-prototype-fixture');
-    writeEvidence(evidence, true);
+    writeEvidence(evidence, true, { ...nightly, runId: '12' });
     const callLog = join(bin, 'container.jsonl');
     const docker = join(bin, 'docker');
     writeFileSync(docker, `#!${process.execPath}
@@ -209,6 +253,11 @@ switch (path) {
 test('runs the CLI when invoked through a symlinked directory', t => {
     const shortcut = join(temporaryDirectory(t), 'prototype');
     symlinkSync(prototype, shortcut, 'junction');
+    const evidenceHelp = spawnSync(process.execPath, [join(shortcut, 'package-evidence.mjs'), '--help'], {
+        encoding: 'utf8'
+    });
+    assert.equal(evidenceHelp.status, 0, evidenceHelp.stderr);
+    assert.match(evidenceHelp.stdout, /^Usage: node package-evidence\.mjs/u);
     const script = join(shortcut, 'run.mjs');
     const help = spawnSync(process.execPath, [script, '--help'], { encoding: 'utf8' });
     assert.equal(help.status, 0, help.stderr);

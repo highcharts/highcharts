@@ -29,8 +29,22 @@ const releaseRepositoryMetadata = [
 function stageGridPackage(source, destination, version) {
     assert(fs.lstatSync(source).isDirectory(), 'Expected built Grid directory');
     const manifest = join(destination, 'package.json');
-    assert(fs.lstatSync(manifest).isFile(), 'Expected Grid release manifest');
-    const pkg = JSON.parse(fs.readFileSync(manifest, 'utf8'));
+    const { O_RDONLY, O_NOFOLLOW, O_NONBLOCK } = fs.constants;
+    const fd = fs.openSync(manifest, O_RDONLY | (O_NOFOLLOW ?? 0) | (O_NONBLOCK ?? 0));
+    let pkg, mode;
+    try {
+        const stat = fs.fstatSync(fd, { bigint: true });
+        assert(stat.isFile(), 'Expected Grid release manifest');
+        if (!O_NOFOLLOW) {
+            const entry = fs.lstatSync(manifest, { bigint: true });
+            assert(entry.isFile() && entry.dev === stat.dev && entry.ino === stat.ino,
+                'Expected Grid release manifest');
+        }
+        mode = Number(stat.mode & 0o777n);
+        pkg = JSON.parse(fs.readFileSync(fd, 'utf8'));
+    } finally {
+        fs.closeSync(fd);
+    }
     for (const file of getFilesInFolder(source, true)) {
         if (file.endsWith('package.json')) {
             continue;
@@ -43,7 +57,15 @@ function stageGridPackage(source, destination, version) {
         fs.copySync(from, join(destination, file));
     }
     pkg.version = version;
-    fs.writeFileSync(manifest, JSON.stringify(pkg, null, 2));
+    const directory = fs.mkdtempSync(join(destination, '.grid-release-'));
+    const replacement = join(directory, 'package.json');
+    try {
+        fs.writeFileSync(replacement, JSON.stringify(pkg, null, 2), { flag: 'wx' });
+        fs.chmodSync(replacement, mode);
+        fs.renameSync(replacement, manifest);
+    } finally {
+        fs.rmSync(directory, { recursive: true, force: true });
+    }
     return pkg;
 }
 

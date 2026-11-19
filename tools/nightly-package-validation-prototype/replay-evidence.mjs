@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { cpSync, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { cpSync, lstatSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { candidateFiles, hash, readJSON, verifyCandidateEvidence, writeJSON } from './package-evidence.mjs';
+
+export { hash, readJSON, writeJSON };
 
 export const fixtureFiles = [
     'app', 'browser-cases.mjs', 'browser-results.mjs', 'consumer.spec.mjs',
@@ -12,7 +15,10 @@ export const fixtureFiles = [
 const productFiles = ['app', 'browser-cases.mjs', 'package-lock.json', 'package.json', 'tsconfig.json'];
 export const lanes = ['control', 'candidate'];
 const laneFiles = ['install-inputs.json', 'package.json', 'package-lock.json'];
-const runnerFiles = ['run.mjs', 'replay-evidence.mjs'];
+export const runnerFiles = [
+    'run.mjs', 'replay-evidence.mjs', 'replay-worker.mjs', 'package-evidence.mjs',
+    'npm-pack.mjs'
+];
 const runnerDirectory = fileURLToPath(new URL('.', import.meta.url));
 
 function runnerDigests() {
@@ -20,18 +26,6 @@ function runnerDigests() {
         const source = readFileSync(join(runnerDirectory, file), 'utf8');
         return [file, createHash('sha256').update(source.replaceAll('\r\n', '\n')).digest('hex')];
     }));
-}
-
-export function hash(path, algorithm = 'sha256', encoding = 'hex') {
-    return createHash(algorithm).update(readFileSync(path)).digest(encoding);
-}
-
-export function readJSON(path) {
-    return JSON.parse(readFileSync(path, 'utf8'));
-}
-
-export function writeJSON(path, value) {
-    writeFileSync(path, JSON.stringify(value, null, 2) + '\n');
 }
 
 export function copyFixture(source, destination, gridLite) {
@@ -76,18 +70,22 @@ export function replayFiles(root) {
     for (const directory of ['fixture', ...lanes]) {
         assert(lstatSync(join(root, directory)).isDirectory(), `Replay ${directory} must be a directory`);
     }
+    const inputsPath = join(root, 'inputs.json');
+    assert(lstatSync(inputsPath).isFile(), 'Replay inputs must be a regular file');
+    const { packageName, candidate } = readJSON(inputsPath);
     return [
         'inputs.json',
+        ...candidateFiles(packageName, candidate?.provenance),
         ...fixtureInventory(join(root, 'fixture')).map(name => `fixture/${name}`),
         ...lanes.flatMap(lane => [...laneFiles, `${lane}.tgz`].map(name => `${lane}/${name}`))
     ];
 }
 
-export function recordReplay(root, sourceSha = process.env.GITHUB_SHA) {
+export function recordReplay(root, { sourceSha, runId, attempt }) {
     writeJSON(join(root, 'replay.json'), {
-        version: 1,
-        runId: process.env.GITHUB_RUN_ID,
-        attempt: process.env.GITHUB_RUN_ATTEMPT,
+        version: 2,
+        runId,
+        attempt,
         sourceSha,
         runner: runnerDigests(),
         files: inventory(root, replayFiles(root))
@@ -106,7 +104,7 @@ export function verifyReplay(root) {
         }
         throw error;
     }
-    assert.equal(manifest.version, 1, 'Unsupported replay manifest version');
+    assert.equal(manifest.version, 2, 'Unsupported replay manifest version. Capture a fresh attempt with linked package evidence.');
     const revision = manifest.sourceSha ?? 'the revision that produced this evidence';
     assert(manifest.runner, `Recorded runner digests unavailable for ${revision}; replay cannot verify the validation logic`);
     for (const [file, digest] of Object.entries(runnerDigests())) {
@@ -132,6 +130,15 @@ export function verifyReplay(root) {
     const inputs = readJSON(join(root, 'inputs.json'));
     const control = join(root, 'control', 'control.tgz');
     assert.equal(files['candidate/candidate.tgz'], inputs.candidate.sha256, 'Replay candidate digest mismatch');
+    if (inputs.candidate.provenance === 'nightly') {
+        const { provenanceSha256 } = verifyCandidateEvidence(root, inputs.packageName, manifest, inputs.candidate.sha256);
+        assert.equal(inputs.candidate.provenanceSha256, provenanceSha256, 'Replay candidate provenance digest mismatch');
+        assert.equal(readJSON(join(root, 'candidate', 'install-inputs.json')).provenanceSha256, provenanceSha256,
+            'Replay candidate provenance changed after lock verification');
+    } else {
+        assert(!('runId' in manifest) && !('attempt' in manifest),
+            'Hosted replay requires linked package evidence');
+    }
     assert.equal(`sha512-${hash(control, 'sha512', 'base64')}`, inputs.control.integrity,
         'Replay stable control integrity mismatch');
     return { manifest, inputs };
@@ -142,11 +149,12 @@ export function verifyReplaySource(root, fixture, identity) {
     assert.equal(manifest.sourceSha, identity.sourceSha,
         'Evidence source SHA differs from the reviewed checkout. Use a separate checkout at the recorded revision.');
     if (identity.runId) {
+        assert.equal(inputs.candidate.provenance, 'nightly', 'Hosted replay requires linked package evidence');
         assert.equal(manifest.runId, identity.runId, 'Evidence run ID differs from requested run');
         assert.equal(manifest.attempt, identity.attempt, 'Evidence attempt differs from requested attempt');
     }
     const packageName = identity.gridLite ? '@highcharts/grid-lite' : 'highcharts';
-    assert.equal(inputs.packageName ?? 'highcharts', packageName, 'Evidence package differs from requested package');
+    assert.equal(inputs.packageName, packageName, 'Evidence package differs from requested package');
     const reviewed = inventory(fixture, fixtureInventory(fixture));
     const retained = Object.fromEntries(Object.entries(manifest.files).filter(([name]) => name.startsWith('fixture/'))
         .map(([name, digest]) => [name.slice('fixture/'.length), digest]));
@@ -157,5 +165,5 @@ export function verifyReplaySource(root, fixture, identity) {
         assert.deepEqual(readJSON(join(root, lane, 'package.json')), pkg,
             `Retained ${lane} manifest differs from the reviewed fixture`);
     }
-    return inputs;
+    return { manifest, inputs };
 }

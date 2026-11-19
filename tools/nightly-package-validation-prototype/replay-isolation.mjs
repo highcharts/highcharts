@@ -7,7 +7,7 @@ import { homedir, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stripVTControlCharacters } from 'node:util';
-import { copyFixture, replayFiles, writeJSON } from './replay-evidence.mjs';
+import { copyFixture, replayFiles, runnerFiles, writeJSON } from './replay-evidence.mjs';
 
 const directory = fileURLToPath(new URL('.', import.meta.url));
 
@@ -44,7 +44,7 @@ export function runReplay({ evidence, archive, gridLite, sourceSha, runId, attem
         const fixture = join(input, 'fixture');
         copyFixture(directory, fixture, gridLite);
         writeJSON(join(input, 'identity.json'), { sourceSha: checkedOut, runId, attempt, gridLite });
-        for (const file of ['run.mjs', 'replay-evidence.mjs', 'replay-worker.mjs']) {
+        for (const file of runnerFiles) {
             copyFileSync(join(directory, file), join(input, file));
         }
         for (const file of ['package.json', 'package-lock.json']) {

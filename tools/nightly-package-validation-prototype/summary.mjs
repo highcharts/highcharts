@@ -37,6 +37,10 @@ function escapeHtml(value) {
         .replaceAll('>', '&gt;');
 }
 
+function lanePassed(result) {
+    return result?.outcome === 'passed' && result.stage === 'browser' && !Object.hasOwn(result, 'error');
+}
+
 function formatLane(label, result) {
     const outcome = shortLine(result?.outcome, 30) || 'unavailable';
     const stage = shortLine(result?.stage, 60);
@@ -51,16 +55,32 @@ function formatLane(label, result) {
     return lines;
 }
 
+const results = parseResults();
+const runNumber = /^[1-9]\d*$/u;
+const hasReportIdentity = typeof results?.runId === 'string' && runNumber.test(results.runId) &&
+    typeof results.attempt === 'string' && runNumber.test(results.attempt);
+const currentReport = hasReportIdentity &&
+    results.runId === GITHUB_RUN_ID && results.attempt === GITHUB_RUN_ATTEMPT;
+const staleReport = hasReportIdentity && !currentReport;
+const reportPassed = currentReport && results.verdict === 'passed' && results.provenance === 'nightly' &&
+    lanePassed(results.control) && lanePassed(results.candidate);
+const hasFailure = !staleReport &&
+    [CHECKS, results?.verdict, results?.control?.outcome, results?.candidate?.outcome].includes('failed');
 const hasEvidence = /^\d+$/u.test(EVIDENCE);
 let verdict = 'blocked';
-if (BUILD === 'success' && VALIDATION === 'success' && CHECKS === 'passed' && hasEvidence) {
-    verdict = 'passed';
-} else if (CHECKS === 'failed') {
+if (hasFailure) {
     verdict = 'failed';
+} else if (BUILD === 'success' && VALIDATION === 'success' && CHECKS === 'passed' &&
+    reportPassed && hasEvidence && !SETUP_STEP && !SETUP_ERROR) {
+    verdict = 'passed';
 }
 
-const results = parseResults();
 const title = GRID_LITE === 'true' ? 'Nightly Grid Lite npm package validation' : 'Nightly npm package validation';
+const evidenceLabel = staleReport ? `Validation evidence from run ${results.runId}, attempt ${results.attempt}` :
+    'Validation evidence';
+const evidenceRun = staleReport ? results.runId : GITHUB_RUN_ID;
+const reportIssue = staleReport ? `Consumer results are from run ${results.runId}, attempt ${results.attempt}.` :
+    CHECKS === 'passed' && !reportPassed ? 'Consumer report is incomplete or inconsistent.' : '';
 const report = [
     `## ${title} — ${verdict}`,
     '',
@@ -69,6 +89,7 @@ const report = [
     ...(GRID_LITE === 'true' && GRID_LITE_MISSING_CSS === 'true' ?
         ['Synthetic candidate with `css/grid-lite.css` removed.', ''] : []),
     `- ${GRID_LITE === 'true' ? 'Distribution build and pack' : 'Distribution build and upload'}: ${BUILD || 'unavailable'}`,
+    ...(reportIssue ? [`- ${reportIssue}`] : []),
     `- Validation job: ${VALIDATION || 'unavailable'}`,
     `- Consumer checks: ${CHECKS || 'unavailable'}`,
     ...(SETUP_STEP ? formatLane('Setup', {
@@ -78,7 +99,7 @@ const report = [
     ...formatLane('Candidate', results?.candidate),
     '',
     hasEvidence ?
-        `[Validation evidence](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts/${EVIDENCE})` :
+        `[${evidenceLabel}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${evidenceRun}/artifacts/${EVIDENCE})` :
         'Validation evidence unavailable',
     ''
 ];

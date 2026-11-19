@@ -9,8 +9,13 @@ import { tmpdir } from 'node:os';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseArgs, stripVTControlCharacters } from 'node:util';
+import { readPackResult } from './npm-pack.mjs';
 import {
-    copyFixture, fixtureFiles, hash, readJSON, recordReplay, writeJSON
+    candidateFiles, hash, nightlyIdentity, readJSON, verifyCandidateEvidence,
+    verifyInstalledCandidate, writeJSON
+} from './package-evidence.mjs';
+import {
+    copyFixture, fixtureFiles, recordReplay
 } from './replay-evidence.mjs';
 
 class NpmPeerConflictError extends Error {}
@@ -37,12 +42,12 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
     const fixture = join(evidence, 'fixture');
     const candidate = join(evidence, 'candidate', 'candidate.tgz');
     const control = join(evidence, 'control', 'control.tgz');
+    const provenance = prepared ? 'nightly' : replay?.inputs.candidate.provenance ?? 'tarball-only';
+    const identity = prepared ? nightlyIdentity() : replay?.manifest;
     if (prepared) {
         assert(lstatSync(evidence).isDirectory() && lstatSync(join(evidence, 'candidate')).isDirectory() &&
             lstatSync(candidate).isFile(), 'Expected a prepared candidate tarball');
         assert.deepEqual(readdirSync(evidence), ['candidate'], 'Expected a fresh nightly evidence directory');
-        assert.deepEqual(readdirSync(join(evidence, 'candidate')), ['candidate.tgz'],
-            'Expected only the packed candidate in the prepared lane');
     }
     mkdirSync(join(evidence, 'control'));
     const env = replay ? { ...process.env, npm_config_offline: 'true' } :
@@ -56,6 +61,7 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
     let verifiedCandidateLock;
     let controlInstalled = false;
     let inspectBrowserResults;
+    let candidateEvidence;
 
     function run(args, cwd, log, returnStatus = false) {
         console.log(`  npm ${args.join(' ')}`);
@@ -117,12 +123,13 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
         const integrity = `sha512-${hash(staged, 'sha512', 'base64')}`;
         const manifest = join(cwd, 'package.json');
         const lock = join(cwd, 'package-lock.json');
-        const pkg = readJSON(manifest);
-        pkg.dependencies[packageName] = `file:${filename}`;
-        writeJSON(manifest, pkg);
         if (replay) {
+            copyFileSync(join(replay.root, label, 'package.json'), manifest);
             copyFileSync(join(replay.root, label, 'package-lock.json'), lock);
         } else {
+            const pkg = readJSON(manifest);
+            pkg.dependencies[packageName] = `file:${filename}`;
+            writeJSON(manifest, pkg);
             copyFileSync(referenceLock, lock);
             run(['install', '--package-lock-only', ...installOptions], cwd, 'lock.log');
         }
@@ -135,7 +142,8 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
         writeJSON(join(cwd, 'install-inputs.json'), {
             tarballSha256: hash(staged, 'sha256', 'hex'),
             manifestSha256: hash(manifest, 'sha256', 'hex'),
-            lockSha256: hash(lock, 'sha256', 'hex')
+            lockSha256: hash(lock, 'sha256', 'hex'),
+            provenanceSha256: label === 'candidate' ? candidateEvidence?.provenanceSha256 : undefined
         });
         result.stage = 'install';
         assert.equal(
@@ -153,6 +161,9 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
 
         const installed = join(realpathSync(cwd), lockKey);
         assert.equal(realpathSync(installed), installed);
+        if (label === 'candidate' && candidateEvidence) {
+            verifyInstalledCandidate(installed, candidateEvidence);
+        }
         if (gridLite) {
             verifyGridLiteEntries(manifest, installed);
         } else {
@@ -212,17 +223,24 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
     }
 
     function fetchControl() {
-        const { version, 'dist.integrity': integrity } = JSON.parse(
+        const response = JSON.parse(
             run(['view', `${packageName}@latest`, 'version', 'dist.integrity', '--json'], evidence, 'latest.json')
         );
-        assert(/^\d+\.\d+\.\d+$/u.test(version) && integrity, 'The latest tag must resolve to a stable release');
+        // npm 11 returns an object for one release. npm 12 returns an array.
+        const releases = Array.isArray(response) ? response : [response];
+        assert(releases.length === 1, 'Expected one stable release in npm view');
+        const { version, 'dist.integrity': integrity } = releases[0] ?? {};
+        assert(typeof version === 'string' && /^\d+\.\d+\.\d+$/u.test(version) &&
+            typeof integrity === 'string' && integrity, 'The latest tag must resolve to a stable release');
         const resolvedAt = new Date().toISOString();
-        const [pack] = JSON.parse(run(['pack', `${packageName}@${version}`, '--json'], evidence, 'control-pack.json'));
+        const pack = readPackResult(run(['pack', `${packageName}@${version}`, '--json'], evidence,
+            'control-pack.json'), packageName);
         renameSync(join(evidence, pack.filename), control);
+        assert.equal(pack.integrity, integrity, 'Stable control pack integrity differs from the registry');
         assert.equal(`sha512-${hash(control, 'sha512', 'base64')}`, integrity);
         writeJSON(join(evidence, 'inputs.json'), {
             packageName,
-            candidate: { sha256: expectedDigest },
+            candidate: { sha256: expectedDigest, provenance, provenanceSha256: candidateEvidence?.provenanceSha256 },
             control: { version, integrity, resolvedAt },
             node: process.version,
             npm: run(['--version'], evidence, 'npm-version.log').trim(),
@@ -251,9 +269,26 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
             mkdirSync(join(evidence, 'candidate'));
             copyFileSync(replay ? join(replay.root, 'candidate', 'candidate.tgz') : resolve(tarball), candidate);
         }
+        if (provenance === 'nightly') {
+            const records = candidateFiles(packageName, provenance);
+            if (replay) {
+                for (const name of records) {
+                    copyFileSync(join(replay.root, name), join(evidence, name));
+                }
+            } else {
+                const expected = new Set(['candidate.tgz', ...records.map(name => name.slice('candidate/'.length))]);
+                assert(readdirSync(join(evidence, 'candidate')).every(name => expected.has(name)),
+                    'Unexpected file in the prepared candidate directory');
+            }
+            candidateEvidence = verifyCandidateEvidence(evidence, packageName,
+                identity, replay ? replay.inputs.candidate.sha256 : expectedDigest);
+        } else {
+            assert.equal(hash(candidate), replay ? replay.inputs.candidate.sha256 : expectedDigest,
+                'Candidate tarball digest mismatch');
+        }
         if (replay) {
             const { inputs } = replay;
-            assert.equal(inputs.packageName ?? 'highcharts', packageName, 'Replay package mismatch');
+            assert.equal(inputs.packageName, packageName, 'Replay package mismatch');
             assert.equal(process.version, inputs.node, 'Replay requires the recorded Node version');
             const npm = run(['--version'], evidence, 'npm-version.log').trim();
             assert.equal(npm, inputs.npm, 'Replay requires the recorded npm version');
@@ -261,8 +296,6 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
                 console.warn(`Replay host differs from the original ${inputs.platform}/${inputs.arch} runner.`);
             }
             console.log(`Replaying recorded control ${packageName} ${inputs.control.version} and both retained locks`);
-        } else {
-            assert.equal(hash(candidate), expectedDigest, 'Candidate tarball digest mismatch');
         }
         copyFixture(replay ? replay.fixture : sourceFixture, fixture, gridLite && !replay);
         ({ inspectBrowserResults } = await import(pathToFileURL(join(fixture, 'browser-results.mjs'))));
@@ -289,17 +322,22 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
     const outcomes = Object.values(results).map(({ outcome }) => outcome);
     const verdict = outcomes.includes('failed') ? 'failed' :
         outcomes.every(outcome => outcome === 'passed') ? 'passed' : 'blocked';
-    const report = { verdict, ...results };
+    const report = {
+        verdict,
+        provenance,
+        runId: identity?.runId,
+        attempt: identity?.attempt,
+        ...results
+    };
     console.log(JSON.stringify(report, null, 2));
+    if (prepared && process.env.GITHUB_OUTPUT) {
+        appendFileSync(process.env.GITHUB_OUTPUT, `verdict=${verdict}\nresults=${JSON.stringify(report)}\n`);
+    }
     writeJSON(join(evidence, 'results.json'), report);
     if (!replay && verifiedControlLock && verifiedCandidateLock) {
-        const sourceSha = process.env.GITHUB_SHA ?? spawnSync(
-            'git', ['-C', sourceFixture, 'rev-parse', 'HEAD'], { encoding: 'utf8' }
-        ).stdout?.trim();
-        recordReplay(evidence, sourceSha);
-    }
-    if (!replay && process.env.GITHUB_OUTPUT) {
-        appendFileSync(process.env.GITHUB_OUTPUT, `verdict=${verdict}\nresults=${JSON.stringify(report)}\n`);
+        recordReplay(evidence, identity ?? {
+            sourceSha: spawnSync('git', ['-C', sourceFixture, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).stdout?.trim()
+        });
     }
     return verdict === 'passed' ? 0 : 1;
 }

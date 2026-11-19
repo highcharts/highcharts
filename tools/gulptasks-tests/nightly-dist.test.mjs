@@ -5,10 +5,11 @@ import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { existsSync, readFileSync } from 'node:fs';
 import { chmod, mkdtemp, mkdir, readdir, rename, rm, symlink, utimes, writeFile } from 'node:fs/promises';
-import { delimiter, join } from 'node:path';
+import { delimiter, dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
+import { writeCandidateProvenance } from './fixtures/nightly-package-evidence.mjs';
 
 const require = createRequire(import.meta.url);
 const workflow = require('js-yaml').safeLoad(readFileSync(
@@ -25,6 +26,11 @@ const distributionTool = fileURLToPath(new URL(
 const consumerRunner = fileURLToPath(new URL(
     '../nightly-package-validation-prototype/run.mjs', import.meta.url
 ));
+const prototype = dirname(consumerRunner);
+const nightly = { sourceSha: 'a'.repeat(40), runId: '123', attempt: '2' };
+const nightlyEnv = {
+    GITHUB_SHA: nightly.sourceSha, GITHUB_RUN_ID: nightly.runId, GITHUB_RUN_ATTEMPT: nightly.attempt
+};
 function step(name) {
     return publisher.steps.find(item => item.name === name);
 }
@@ -254,6 +260,7 @@ describe('nightly advisory package validation', () => {
         });
     });
 
+    const core = { name: 'highcharts', key: 'highcharts', args: [] };
     const grid = { name: '@highcharts/grid-lite', key: 'grid-lite', args: ['--package', 'grid-lite'], prepared: true };
     const resolutionError = peer => [
         'npm error code ERESOLVE',
@@ -292,17 +299,62 @@ describe('nightly advisory package validation', () => {
         }
     ];
     const consumerCases = [
-        ...[{ name: 'highcharts', key: 'highcharts', args: [], prepared: false }, grid].map(product => ({
+        { ...grid, viewRecords: 1, verdict: 'passed', test: 'accepts one stable release in an npm view array' },
+        ...[0, 2].map(viewRecords => ({
+            ...grid, viewRecords, verdict: 'blocked',
+            test: `blocks before packing when npm view returns ${viewRecords} stable releases`
+        })),
+        ...[core, grid].map(product => ({
             ...product, test: `blocks the ${product.name} candidate when the control lock drifts`,
             drift: true, verdict: 'blocked'
         })),
-        ...peerCases.map(testCase => ({ ...grid, ...testCase }))
+        ...peerCases.map(testCase => ({ ...grid, ...testCase })),
+        {
+            ...grid,
+            installedDrift: true,
+            failReplayWrite: true,
+            verdict: 'failed',
+            test: 'emits the known candidate failure when replay evidence cannot be written'
+        },
+        ...[core, grid].flatMap(product => [
+            {
+                ...product,
+                prepared: true,
+                breakManifest: 'missing',
+                verdict: 'blocked',
+                test: `blocks ${product.name} before npm when its linked manifest is missing`
+            },
+            {
+                ...product,
+                prepared: true,
+                breakManifest: 'wrong',
+                verdict: 'blocked',
+                test: `blocks ${product.name} before npm when its linked manifest changes`
+            },
+            {
+                ...product,
+                prepared: true,
+                installedDrift: true,
+                verdict: 'failed',
+                test: `fails the first ${product.name} candidate install when npm's installed contents change`
+            },
+            {
+                ...product,
+                prepared: true,
+                replayDrift: true,
+                verdict: 'passed',
+                test: `rejects a new file in the replayed ${product.name} installation`
+            }
+        ])
     ];
     for (const testCase of consumerCases) it(testCase.test, {
         skip: process.platform === 'win32'
     }, async () => {
         await withFixture(async root => {
-            const { name, key, args, prepared, drift, command, diagnostic, error, controlInstallFails, verdict } = testCase;
+            const {
+                name, key, args, prepared, drift, command, diagnostic, error: expectedError, controlInstallFails,
+                verdict, breakManifest, installedDrift, replayDrift, failReplayWrite, viewRecords
+            } = testCase;
             const directory = join(root, `${key}-package-prototype-prepared`);
             const tarball = prepared ? join(directory, 'candidate', 'candidate.tgz') : join(root, 'candidate.tgz');
             if (prepared) {
@@ -313,23 +365,55 @@ describe('nightly advisory package validation', () => {
             const integrity = 'sha512-' + createHash('sha512').update(bytes).digest('base64');
             const npm = join(root, 'npm');
             await writeFile(tarball, bytes);
+            const entry = key === 'grid-lite' ? 'index.js' : 'highcharts.js';
+            const contents = {
+                [entry]: 'module.exports = {}',
+                'package.json': JSON.stringify({
+                    name, version: '13.1.1', main: entry, module: entry, types: entry
+                })
+            };
+            if (key === 'highcharts') {
+                for (const product of ['highstock', 'highmaps', 'highcharts-gantt']) {
+                    contents[`${product}.js`] = contents[entry];
+                    contents[`${product}.d.ts`] = 'export {};';
+                }
+                contents['es-modules/masters/highcharts.src.js'] = contents[entry];
+            }
+            if (prepared) {
+                writeCandidateProvenance(directory, name, nightly, contents, '1');
+                const path = join(directory, 'candidate',
+                    key === 'grid-lite' ? 'staging-manifest.json' : 'build-manifest.json');
+                if (breakManifest === 'missing') {
+                    await rm(path);
+                } else if (breakManifest === 'wrong') {
+                    await writeFile(path, '{}');
+                }
+            }
+            const npmCalls = join(root, 'npm-calls');
             await writeFile(npm, `#!/usr/bin/env node
 const fs = require('node:fs');
-const { basename, resolve } = require('node:path');
+const { basename, dirname, join, resolve } = require('node:path');
 const { pathToFileURL } = require('node:url');
 const command = process.argv[2];
 const lane = basename(process.cwd());
-if (lane === 'candidate' && command === ${JSON.stringify(command)}) {
+fs.appendFileSync(process.env.FIXTURE_NPM_CALLS, lane + ' ' + command + '\\n');
+if (process.env.FIXTURE_REPLAY && ['view', 'pack', 'install'].includes(command)) {
+    throw new Error('Replay must use retained inputs');
+} else if (lane === 'candidate' && command === ${JSON.stringify(command)}) {
     console.error(${JSON.stringify(diagnostic)});
     process.exitCode = 1;
 } else if (lane === 'control' && command === 'ci' && ${Boolean(controlInstallFails)}) {
     console.error('npm error setup failed');
     process.exitCode = 1;
 } else if (command === 'view') {
-    console.log(JSON.stringify({ version: '13.1.1', 'dist.integrity': '${integrity}' }));
+    const stable = { version: '13.1.1', 'dist.integrity': '${integrity}' };
+    const count = ${JSON.stringify(viewRecords)};
+    console.log(JSON.stringify(count === undefined ? stable : Array.from({ length: count }, () => stable)));
 } else if (command === 'pack') {
     fs.copyFileSync(process.env.FIXTURE_TARBALL, 'packed-control.tgz');
-    console.log('[{"filename":"packed-control.tgz"}]');
+    console.log(JSON.stringify([{
+        filename: 'packed-control.tgz', name: '${name}', version: '13.1.1', integrity: '${integrity}'
+    }]));
 } else if (command === '--version') {
     console.log('11.20.0');
 } else if (command === 'install') {
@@ -344,11 +428,24 @@ if (lane === 'candidate' && command === ${JSON.stringify(command)}) {
     console.log('false');
 } else if (command === 'ci') {
     const installed = 'node_modules/${name}';
-    fs.mkdirSync(installed, { recursive: true });
-    fs.writeFileSync(installed + '/index.js', 'module.exports = {}');
-    fs.writeFileSync(installed + '/package.json', JSON.stringify({
-        name: '${name}', main: 'index.js', module: 'index.js', types: 'index.js'
-    }));
+    for (const [name, bytes] of Object.entries(${JSON.stringify(contents)})) {
+        const file = join(installed, name);
+        fs.mkdirSync(dirname(file), { recursive: true });
+        fs.writeFileSync(file, bytes);
+    }
+    if ('${key}' === 'highcharts') {
+        fs.mkdirSync('node_modules/@highcharts/react', { recursive: true });
+        fs.writeFileSync('node_modules/@highcharts/react/index.js', 'module.exports = {}');
+    }
+    if (lane === 'candidate' && ${Boolean(installedDrift)}) {
+        fs.writeFileSync(join(installed, '${entry}'), 'Modified during installation');
+    }
+    if (lane === 'candidate' && ${Boolean(failReplayWrite)}) {
+        fs.mkdirSync('../replay.json');
+    }
+    if (lane === 'candidate' && process.env.FIXTURE_REPLAY) {
+        fs.writeFileSync(join(installed, 'generated.js'), 'Created during installation');
+    }
 } else if (command === 'test') {
     import(pathToFileURL(resolve('browser-cases.mjs'))).then(({ browserCases, consumerStartedAttachment }) => {
         const specs = browserCases.map(({ id }) => ({ title: id, tests: [{ results: [
@@ -363,37 +460,96 @@ if (lane === 'candidate' && command === ${JSON.stringify(command)}) {
             await chmod(npm, 0o755);
             const output = join(root, 'output');
             const input = prepared ? ['--prepared', directory] : [tarball];
-            throws(() => execFileSync(process.execPath, [consumerRunner, ...input, sha256, ...args], {
+            const options = {
                 cwd: root,
                 env: {
                     ...environment,
+                    ...nightlyEnv,
                     TMPDIR: root,
                     PATH: root + delimiter + process.env.PATH,
                     FIXTURE_TARBALL: tarball,
+                    FIXTURE_NPM_CALLS: npmCalls,
                     GITHUB_OUTPUT: output
                 },
                 stdio: 'pipe'
-            }), error => error.status === 1);
-            const evidence = (await readdir(root)).find(name =>
-                name.startsWith(`${key}-package-prototype-`));
+            };
+            function invoke() {
+                return execFileSync(process.execPath, [consumerRunner, ...input, sha256, ...args], options);
+            }
+            if (verdict === 'passed') {
+                invoke();
+            } else {
+                throws(invoke, error => error.status === 1 &&
+                    (!failReplayWrite || error.stderr?.includes('EISDIR')));
+            }
+            const evidence = (await readdir(root)).find(file =>
+                file.startsWith(`${key}-package-prototype-`));
             const report = JSON.parse(readFileSync(join(root, evidence, 'results.json'), 'utf8'));
             strictEqual(report.verdict, verdict);
+            strictEqual(report.provenance, prepared ? 'nightly' : 'tarball-only');
+            if (prepared) {
+                strictEqual(report.runId, nightly.runId);
+                strictEqual(report.attempt, nightly.attempt);
+                const [outputVerdict, results] = readFileSync(output, 'utf8').trim().split('\n');
+                strictEqual(outputVerdict, `verdict=${verdict}`);
+                deepEqual(JSON.parse(results.slice('results='.length)), report);
+            } else {
+                ok(!Object.hasOwn(report, 'runId'));
+                ok(!Object.hasOwn(report, 'attempt'));
+                ok(!existsSync(output));
+            }
+            if (breakManifest) {
+                strictEqual(report.candidate.stage, 'candidate input');
+                ok(report.candidate.error.includes(breakManifest === 'missing' ?
+                    'Required package evidence unavailable' : 'Candidate manifest digest mismatch'));
+                strictEqual(report.control.stage, 'not started');
+                ok(!existsSync(npmCalls));
+                ok(!existsSync(join(root, evidence, 'replay.json')));
+                return;
+            }
+            if (viewRecords === 0 || viewRecords > 1) {
+                strictEqual(report.control.outcome, 'blocked');
+                strictEqual(report.control.stage, 'control input');
+                strictEqual(report.control.error, 'Expected one stable release in npm view');
+                strictEqual(report.candidate.outcome, 'blocked');
+                strictEqual(report.candidate.error, 'Control baseline is unavailable');
+                const calls = readFileSync(npmCalls, 'utf8').trim().split('\n');
+                strictEqual(calls.length, 1);
+                ok(calls[0].endsWith(' view'));
+                return;
+            }
             strictEqual(report.control.outcome, drift || controlInstallFails ? 'blocked' : 'passed');
             strictEqual(report.candidate.outcome, verdict);
             if (drift) {
                 ok(report.control.error.includes('Unrelated lock drift'));
-                deepEqual(await readdir(join(root, evidence, 'candidate')), ['candidate.tgz']);
-            } else {
+                ok(!existsSync(join(root, evidence, 'candidate', 'package-lock.json')));
+            } else if (installedDrift) {
+                strictEqual(report.candidate.stage, 'resolution');
+                ok(report.candidate.error.includes(`Installed candidate file digest mismatch: ${entry}`));
+            } else if (verdict !== 'passed') {
                 strictEqual(report.candidate.stage, command === 'ci' ? 'install' : 'lock');
-                strictEqual(report.candidate.error, error);
+                strictEqual(report.candidate.error, expectedError);
             }
             const archives = (await readdir(join(root, evidence), { recursive: true }))
                 .filter(path => path.endsWith('.tgz')).sort();
             deepEqual(archives, [join('candidate', 'candidate.tgz'), join('control', 'control.tgz')]);
             strictEqual(readFileSync(tarball, 'utf8'), bytes);
-            const [outputVerdict, results] = readFileSync(output, 'utf8').trim().split('\n');
-            strictEqual(outputVerdict, `verdict=${verdict}`);
-            deepEqual(JSON.parse(results.slice('results='.length)), report);
+            if (replayDrift) {
+                const replayScript = `
+import { copyFixture, verifyReplaySource } from ${JSON.stringify(join(prototype, 'replay-evidence.mjs'))};
+import { runConsumer } from ${JSON.stringify(consumerRunner)};
+const root = ${JSON.stringify(directory)};
+const fixture = ${JSON.stringify(join(root, 'reviewed-fixture'))};
+const identity = ${JSON.stringify({ ...nightly, gridLite: key === 'grid-lite' })};
+copyFixture(${JSON.stringify(prototype)}, fixture, identity.gridLite);
+const selected = verifyReplaySource(root, fixture, identity);
+process.exitCode = await runConsumer({ gridLite: identity.gridLite, replay: { root, fixture, ...selected } });
+`;
+                throws(() => execFileSync(process.execPath, ['--input-type=module', '-e', replayScript], {
+                    ...options, env: { ...options.env, FIXTURE_REPLAY: 'true' }
+                }), error => error.status === 1 &&
+                    error.stdout?.includes('Installed candidate contains an unpacked file: generated.js'));
+            }
         });
     });
 

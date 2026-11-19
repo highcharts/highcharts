@@ -20,7 +20,6 @@ stage_candidate() {
     consumer=$(mktemp -d "$evidence/$2-package-prototype-XXXXXX")
     mkdir "$consumer/candidate"
     mv -- "$1" "$consumer/candidate/candidate.tgz"
-    printf 'consumer=%s\n' "$consumer" >> "$GITHUB_OUTPUT"
 }
 
 prepare() {
@@ -36,7 +35,10 @@ prepare() {
         return 1
     fi
     stage_candidate "$tarball" highcharts
+    cp -- build-manifest.json pack.json "$consumer/candidate/"
+    node "$prototype/package-evidence.mjs" "$consumer" highcharts
     sha256sum build-manifest.json "${consumer#"$evidence"/}/candidate/candidate.tgz" > SHA256SUMS
+    printf 'consumer=%s\n' "$consumer" >> "$GITHUB_OUTPUT"
 }
 
 prepare_grid_lite() {
@@ -52,6 +54,9 @@ prepare_grid_lite() {
     tarball=$(jq -er '.tarball' "$evidence/staging.json")
     cp -- "$RUNNER_TEMP/grid-lite-staging/staging-manifest.json" "$evidence/"
     stage_candidate "$tarball" grid-lite
+    cp -- "$evidence/staging-manifest.json" "$consumer/candidate/"
+    node tools/nightly-package-validation-prototype/package-evidence.mjs "$consumer" @highcharts/grid-lite
+    printf 'consumer=%s\n' "$consumer" >> "$GITHUB_OUTPUT"
 }
 
 if [[ "${1:-}" == run ]]; then

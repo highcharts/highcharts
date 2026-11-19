@@ -10,6 +10,7 @@ import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { runInNewContext } from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { readPackResult } from '../nightly-package-validation-prototype/npm-pack.mjs';
 
 const require = createRequire(import.meta.url);
 const {
@@ -113,6 +114,41 @@ describe('dist-release cleanup', () => {
 });
 
 describe('Grid release and pilot staging', () => {
+    const { stageGridPackage } = require('../gulptasks/lib/release-package');
+
+    it('reads a single npm pack result in both npm formats', () => {
+        const name = '@highcharts/grid-lite';
+        const packed = {
+            name,
+            filename: 'highcharts-grid-lite-3.2.1.tgz',
+            integrity: 'sha512-example'
+        };
+        assert.deepEqual(readPackResult(JSON.stringify([packed]), name), packed);
+        assert.deepEqual(readPackResult(JSON.stringify({ [name]: packed }), name), packed);
+        assert.throws(() => readPackResult(JSON.stringify([packed, packed]), name),
+            /Expected one npm pack result/u);
+    });
+
+    it('rejects a symlinked release manifest', {
+        skip: process.platform === 'win32' && 'symlink creation requires privileges on Windows'
+    }, async t => {
+        const root = await mkdtemp(join(tmpdir(), 'hc-grid-manifest-'));
+        t.after(() => rm(root, { recursive: true, force: true }));
+        const source = join(root, 'source');
+        const destination = join(root, 'destination');
+        const manifest = join(destination, 'package.json');
+        const original = '{"name":"@highcharts/grid-lite","version":"3.2.0"}';
+        await writeFixtureFile(root, 'metadata.json', original);
+        await mkdir(source);
+        await mkdir(destination);
+        fs.symlinkSync('../metadata.json', manifest);
+
+        assert.throws(() => stageGridPackage(source, destination, '3.2.1'),
+            /ELOOP|Expected Grid release manifest/u);
+        assert.equal(fs.readFileSync(join(root, 'metadata.json'), 'utf8'), original);
+        assert(fs.lstatSync(manifest).isSymbolicLink());
+    });
+
     it('packs pinned release metadata and applies the same build filters', {
         skip: process.platform === 'win32' && 'nightly npm pack uses a POSIX runner'
     }, async t => {
@@ -125,7 +161,6 @@ describe('Grid release and pilot staging', () => {
         const css = '.grid { display: grid; }';
         const stageCLI = fileURLToPath(new URL(
             '../nightly-package-validation-prototype/stage-grid-lite.mjs', import.meta.url));
-        const { stageGridPackage } = require('../gulptasks/lib/release-package');
         const env = { ...process.env, npm_config_cache: join(root, 'npm-cache') };
         function git(cwd, ...args) {
             return execFileSync('git', [
@@ -190,9 +225,9 @@ describe('Grid release and pilot staging', () => {
         fs.writeFileSync(join(metadata, 'bower.json'), 'uncommitted');
         await removeFilesInFolder(release, releaseRepositoryMetadata);
         stageGridPackage(code, release, version);
-        const [packed] = JSON.parse(execFileSync('npm', [
+        const packed = readPackResult(execFileSync('npm', [
             'pack', release, '--ignore-scripts', '--json'
-        ], { cwd: root, env, encoding: 'utf8' }));
+        ], { cwd: root, env, encoding: 'utf8' }), '@highcharts/grid-lite');
         const normal = pilot('normal');
         strictEqual(normal.integrity, packed.integrity);
         const files = normal.stagedFiles.map(([file]) => file);
