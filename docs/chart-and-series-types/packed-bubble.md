@@ -174,7 +174,7 @@ plotOptions: {
 }
 ```
 
-The option [dragBetweenSeries: true](https://api.highcharts.com/highcharts/series.packedbubble.layoutAlgoritm.dragBetweenSeries) is declared in layoutAlgorithm params and allows the user to drag and drop points between series, for changing point related series.
+The option [dragBetweenSeries: true](https://api.highcharts.com/highcharts/series.packedbubble.layoutAlgorithm.dragBetweenSeries) is declared in layoutAlgorithm params and allows the user to drag and drop points between series, for changing point related series.
 
 ```js
 layoutAlgorithm: {
