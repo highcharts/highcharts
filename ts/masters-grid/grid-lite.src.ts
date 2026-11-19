@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: LicenseRef-Highcharts
 /**
- * @license Highcharts Grid v@product.version@ (@product.date@)
+ * @license Highcharts Grid Lite v@product.version@ (@product.date@)
  * @module grid/grid-lite
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use,
- * see www.highcharts.com/license
+ * All use of this software is governed by
+ * the Highsoft EULA for Highcharts Grid Lite,
+ * see www.highcharts.com/license-grid-lite
  */
 
 

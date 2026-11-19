@@ -42,7 +42,7 @@ import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
  * */
 
 /**
- * Logical operator combining the conditions of a filtering group.
+ * Logical operator combining the rules of a filtering group.
  */
 export type AdvancedFilteringLogic = 'and' | 'or';
 
@@ -64,7 +64,7 @@ export interface AdvancedFilteringRule extends FilteringRule {
 /**
  * Filtering rule or nested group of rules.
  */
-export type AdvancedFilteringCondition =
+export type AdvancedFilteringItem =
     AdvancedFilteringGroup | AdvancedFilteringRule;
 
 /**
@@ -76,18 +76,25 @@ export type AdvancedFilteringCondition =
  */
 export interface AdvancedFilteringOptions {
     /**
+     * Logical operator combining the rules.
+     *
+     * @default 'and'
+     */
+    logic?: AdvancedFilteringLogic;
+
+    /**
      * Rules and nested groups of rules to combine.
      *
      * @example
      * ```js
      * filtering: {
-     *     conditions: [{
+     *     rules: [{
      *         columnId: 'age',
      *         operator: 'greaterThan',
      *         value: 20
      *     }, {
      *         logic: 'or',
-     *         conditions: [{
+     *         rules: [{
      *             columnId: 'country',
      *             operator: 'equals',
      *             value: 'PL'
@@ -100,14 +107,7 @@ export interface AdvancedFilteringOptions {
      * }
      * ```
      */
-    conditions?: AdvancedFilteringCondition[];
-
-    /**
-     * Logical operator combining the conditions.
-     *
-     * @default 'and'
-     */
-    logic?: AdvancedFilteringLogic;
+    rules?: AdvancedFilteringItem[];
 }
 
 /**
@@ -115,14 +115,14 @@ export interface AdvancedFilteringOptions {
  */
 export interface AdvancedFilteringGroup extends AdvancedFilteringOptions {
     /**
-     * Rules and nested groups of rules to combine.
-     */
-    conditions: AdvancedFilteringCondition[];
-
-    /**
-     * Logical operator combining the conditions.
+     * Logical operator combining the rules.
      */
     logic: AdvancedFilteringLogic;
+
+    /**
+     * Rules and nested groups of rules to combine.
+     */
+    rules: AdvancedFilteringItem[];
 }
 
 
@@ -169,10 +169,10 @@ function mapGroup(
     const { columnPolicy } = grid;
     const conditions: FilterCondition[] = [];
 
-    for (const item of group.conditions || []) {
+    for (const item of group.rules || []) {
         let condition: FilterCondition | undefined;
 
-        if ('conditions' in item) {
+        if ('rules' in item) {
             condition = mapGroup(grid, table, item);
         } else {
             const sourceColumnId = columnPolicy.getColumnSourceId(
@@ -287,7 +287,8 @@ declare module '../../Core/Options' {
          * logical operators. Updating the option replaces the whole filtering
          * state.
          *
-         * @sample grid-pro/options/advanced-filtering Advanced filtering
+         * For a single rule per column combined with `and`, use
+         * `columns[].filtering.rule` instead, also available in Grid Lite.
          */
         filtering?: AdvancedFilteringOptions;
     }
