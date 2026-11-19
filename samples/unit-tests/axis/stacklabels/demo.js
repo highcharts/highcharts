@@ -269,7 +269,8 @@ QUnit.test(
             yAxis: {
                 stackLabels: {
                     enabled: true,
-                    padding: 5
+                    padding: 5,
+                    backgroundColor: 'silver'
                 }
             },
             plotOptions: {
@@ -370,7 +371,7 @@ QUnit.test(
         column = chart.yAxis[0].stacking.stacks['column,,,'];
 
         assert.strictEqual(
-            column[4].label.text.x - column[4].label.text.getBBox().width,
+            column[5].label.text.x - column[5].label.text.getBBox().width,
             padding,
             'This stack-label text x attribute should be ' +
                 'equal to set padding #12308'
@@ -641,7 +642,8 @@ QUnit.test(
                     assert.strictEqual(
                         labelOpacity > 0 && labelOpacity < 1,
                         true,
-                        'Animation should be started but not finished'
+                        'Animation should be started but not finished. ' +
+                        `(Current labelOpacity = ${labelOpacity})`
                     );
                 }, 250);
 

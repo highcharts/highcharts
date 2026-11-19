@@ -29,10 +29,7 @@ import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Position3DObject from '../../Core/Renderer/Position3DObject';
 import type Series from '../../Core/Series/Series.js';
-import type {
-    StackBoxProps,
-    default as StackItem
-} from '../../Core/Axis/Stacking/StackItem';
+import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -695,43 +692,43 @@ function wrapSeriesJustifyDataLabel(
  */
 function wrapStackItemGetStackBox(
     this: StackItem,
-    proceed: Function,
-    stackBoxProps: StackBoxProps
-): void { // #3946
-    const stackBox = proceed.apply(this, [].slice.call(arguments, 1));
-    // Only do this for 3D graph
-    const stackItem = this,
+    proceed: Function
+): BBoxObject|undefined { // #3946
+    const stackBox: BBoxObject|undefined = proceed
+        .apply(
+            this,
+            [].slice.call(arguments, 1)
+        ),
         chart = this.axis.chart,
-        { width: xWidth } = stackBoxProps;
+        options3d = chart.is3d() && chart.options.chart.options3d;
 
-    if (chart.is3d() && stackItem.base) {
+    if (options3d && this.base && stackBox) {
         // First element of stackItem.base is an index of base series.
-        const baseSeriesInd = +(stackItem.base).split(',')[0];
-        const columnSeries = chart.series[baseSeriesInd];
-        const options3d = chart.options.chart.options3d as any;
+        const baseSeriesInd = +(this.base).split(',')[0],
+            columnSeries = chart.series[baseSeriesInd],
+            xWidth = chart.inverted ? stackBox.height : stackBox.width;
 
-
-        // Only do this if base series is a column or inherited type,
-        // use its barW, z and depth parameters
-        // for correct stackLabels position calculation
-        if (
-            columnSeries &&
-            columnSeries.type === 'column'
-        ) {
+        // Only do this if base series is a column or inherited type, use its
+        // barW, z and depth parameters for correct stackLabels position
+        // calculation
+        if (columnSeries?.type === 'column') {
             let dLPosition = {
                 x: stackBox.x + (chart.inverted ? stackBox.height : xWidth / 2),
                 y: stackBox.y,
-                z: (columnSeries.options as any).depth / 2
+                z: (columnSeries.options.depth || 0) / 2
             };
 
             if (chart.inverted) {
-                // Do not use default offset calculation logic
-                // for 3D inverted stackLabels.
+                // Do not use default offset calculation logic for 3D inverted
+                // stackLabels.
                 stackBox.width = 0;
-                // When chart is upside down
-                // (alpha angle between 180 and 360 degrees)
-                // it is needed to add column width to calculated value.
-                if (options3d.alpha >= 90 && options3d.alpha <= 270) {
+                // When chart is upside down (alpha angle between 180 and 360
+                // degrees) it is needed to add column width to calculated
+                // value.
+                if (
+                    (options3d.alpha || 0) >= 90 &&
+                    (options3d.alpha || 0) <= 270
+                ) {
                     dLPosition.y += xWidth;
                 }
             }

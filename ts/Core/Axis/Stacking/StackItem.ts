@@ -22,19 +22,18 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Renderer/AlignObject';
-import type Axis from '../Axis';
 import type BBoxObject from '../../Renderer/BBoxObject';
 import type StackingAxis from './StackingAxis';
 import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Renderer/SVG/SVGLabel';
 
+import Point from '../../Series/Point.js';
 import T from '../../Templating.js';
 const { format } = T;
 import Series from '../../Series/Series.js';
 import {
     destroyObjectProperties,
-    fireEvent,
     getAlignFactor,
     isNumber
 } from '../../../Shared/Utilities.js';
@@ -59,15 +58,9 @@ export interface AlignOptions {
     y?: number;
 }
 
-/** @internal */
-export interface StackBoxProps {
-    boxBottom?: number;
-    boxTop?: number;
-    defaultX?: number;
-    isNegative: boolean;
-    width: number;
-    xAxis?: Axis;
-    xOffset: number;
+export interface StackTempPoint {
+    low?: number;
+    stackY?: number|null;
 }
 
 /* *
@@ -163,8 +156,15 @@ class StackItem {
     /** @internal */
     public padding?: number;
 
-    /** @internal */
-    public points: Record<string, Array<number>>;
+    /**
+     * A keyed object of the temporary and real points that are part of this
+     * stack item. At first, before Point objects are created, the values are
+     * computed and stored as temporary points, in order for the axis to compute
+     * the data extremes. When the Point objects are created, the
+     * Series.translate function replaces the temporary points with real Point
+     * objects.
+     * */
+    public points: Record<string, StackTempPoint>;
 
     /** @internal */
     public rightCliff: number;
@@ -180,6 +180,9 @@ class StackItem {
 
     /** @internal */
     public stack?: string|number;
+
+    /** @internal */
+    public tip?: string;
 
     /**
      * Total value of the stacked data points
@@ -224,7 +227,27 @@ class StackItem {
                     format(formatOption, this, chart) :
                     options.formatter?.call(this, this)
             ) || '',
-            verb = this.label ? 'animate' : 'attr';
+            verb = this.label ? 'animate' : 'attr',
+            inverted = chart.inverted,
+            isNegative = this.negativeValue !== !!axis.reversed,
+            stackBox = this.getStackBox(),
+            {
+                align = (inverted ? (isNegative ? 'left' : 'right') : 'center'),
+                verticalAlign = (
+                    inverted ? 'middle' : isNegative ? 'bottom' : 'top'
+                ),
+                textAlign = (
+                    inverted ? (!isNegative ? 'left' : 'right') : 'center'
+                ),
+                x = 0,
+                y = 0
+            } = options,
+            alignOptions: AlignOptions = {
+                align,
+                verticalAlign,
+                x,
+                y
+            };
 
         // Create new label
         this.label ||= chart.renderer.label(
@@ -265,55 +288,8 @@ class StackItem {
 
         // Rank it higher than data labels (#8742)
         label.labelrank = chart.plotSizeY;
-        fireEvent(this, 'afterRender');
-    }
 
-    /**
-     * Sets the offset that the stack has from the x value and repositions the
-     * label.
-     * @internal
-     */
-    public setOffset(
-        xOffset: number,
-        width: number,
-        boxBottom?: number,
-        boxTop?: number,
-        defaultX?: number,
-        xAxis?: Axis
-    ): void {
-        const { axis, label } = this,
-            chart = axis.chart,
-            options = axis.options.stackLabels || {},
-            inverted = chart.inverted,
-            isNegative = this.negativeValue !== !!axis.reversed,
-            stackBox = this.getStackBox({
-                boxBottom,
-                boxTop,
-                defaultX,
-                isNegative,
-                width,
-                xAxis,
-                xOffset
-            }),
-            {
-                align = (inverted ? (isNegative ? 'left' : 'right') : 'center'),
-                verticalAlign = (
-                    inverted ? 'middle' : isNegative ? 'bottom' : 'top'
-                ),
-                textAlign = (
-                    inverted ? (!isNegative ? 'left' : 'right') : 'center'
-                ),
-                x = 0,
-                y = 0
-            } = options,
-            alignOptions: AlignOptions = {
-                align,
-                verticalAlign,
-                x,
-                y
-            };
-
-        if (label && stackBox) {
+        if (stackBox) {
             const labelBox = label.getBBox(void 0, 0),
                 padding = label.padding;
             let isJustify = (options.overflow ?? 'justify') === 'justify',
@@ -338,7 +314,7 @@ class StackItem {
             // Check if the label is inside the plotArea #12294
             visible = chart.isInsidePlot(
                 label.alignAttr.x + x + adjustX,
-                label.alignAttr.y + y + adjustY
+                label.alignAttr.y + y + adjustY - 1
             );
 
             if (!visible) {
@@ -379,8 +355,6 @@ class StackItem {
             }
             label[visible ? 'show' : 'hide']();
         }
-
-        fireEvent(this, 'afterSetOffset', { xOffset, width });
     }
 
     /**
@@ -407,47 +381,49 @@ class StackItem {
      * @return {BBoxObject}
      * The x, y, height, width of the stack.
      */
-    public getStackBox(stackBoxProps: StackBoxProps): BBoxObject {
-        const axis = this.axis,
-            chart = axis.chart,
-            {
-                boxBottom,
-                boxTop,
-                defaultX,
-                isNegative,
-                width,
-                xOffset
-            } = stackBoxProps,
-            totalStackValue = axis.stacking.usePercentage ?
-                100 :
-                (boxTop ?? this.total ?? 0),
-            y = axis.toPixels(totalStackValue),
-            xAxis = stackBoxProps.xAxis || chart.xAxis[0],
-            x = (defaultX ?? xAxis.translate(this.x)) + xOffset,
-            yZero = axis.toPixels(
-                boxBottom ||
-                (
-                    isNumber(axis.min) &&
-                    axis.logarithmic &&
-                    axis.logarithmic.lin2log(axis.min)
-                ) ||
-                0
-            ),
-            height = Math.abs(y - yZero),
-            inverted = chart.inverted;
+    public getStackBox(): BBoxObject|undefined {
+        const yAxis = this.axis,
+            chart = yAxis.chart;
+        let left = Infinity,
+            right = -Infinity,
+            top = Infinity,
+            bottom = -Infinity,
+            hasBox: boolean|undefined;
 
-        return inverted ?
-            {
-                x: (isNegative ? y : y - height) - chart.plotLeft,
-                y: xAxis.height - x - width + xAxis.top - chart.plotTop,
-                width: height,
-                height: width
-            } : {
-                x: x + xAxis.transB - chart.plotLeft,
-                y: (isNegative ? y - height : y) - chart.plotTop,
-                width: width,
-                height: height
+        for (const point of Object.values(this.points)) {
+            if (
+                point instanceof Point &&
+                point.series?.visible &&
+                !point.isNull
+            ) {
+                const { x, y, width, height } = point.shapeArgs || {};
+
+                if (isNumber(x) && isNumber(y)) {
+                    const topLeft = point.pos(true, x, y),
+                        bottomRight = point.pos(
+                            true,
+                            x + (width || 0),
+                            y + (height || 0)
+                        );
+                    if (topLeft && bottomRight) {
+                        left = Math.min(left, topLeft[0], bottomRight[0]);
+                        right = Math.max(right, topLeft[0], bottomRight[0]);
+                        top = Math.min(top, topLeft[1], bottomRight[1]);
+                        bottom = Math.max(bottom, topLeft[1], bottomRight[1]);
+                        hasBox = true;
+                    }
+                }
+            }
+        }
+
+        if (hasBox) {
+            return {
+                x: left - chart.plotLeft,
+                y: top - chart.plotTop,
+                width: Math.max(right - left, 0),
+                height: Math.max(bottom - top, 0)
             };
+        }
     }
 }
 

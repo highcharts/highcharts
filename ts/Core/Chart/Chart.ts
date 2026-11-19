@@ -1436,6 +1436,13 @@ class Chart {
             serie.isDirtyData = false;
         });
 
+        // Stack totals (depends on rendered series)
+        if (hasStackedSeries) {
+            for (const axis of axes) {
+                axis.stacking?.renderStacks();
+            }
+        }
+
         // Move tooltip or reset
         if (pointer) {
             pointer.reset(true);
@@ -3126,6 +3133,11 @@ class Chart {
             .add();
 
         chart.renderSeries();
+
+        // Stack totals (depends on rendered series)
+        for (const axis of axes) {
+            axis.stacking?.renderStacks();
+        }
 
         // Credits
         chart.addCredits();

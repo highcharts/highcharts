@@ -32,7 +32,7 @@
         for (const key of Object.keys(stacks)) {
             const stackItem = stacks[key][point.x];
 
-            if (stackItem?.points[series.index]?.[1] === point.stackY) {
+            if (stackItem?.points[series.index]?.stackY === point.stackY) {
                 return stackItem;
             }
         }
