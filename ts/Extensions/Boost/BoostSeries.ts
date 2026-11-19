@@ -1247,9 +1247,14 @@ function seriesRenderCanvas(this: Series): void {
     chart.boosted = true;
 
     if (!this.visible) {
-        // Marker visibility is resolved in `WGLRenderer.render`, which a
-        // hidden series never reaches, so resolve it here (#24307)
-        this.syncLegendSymbol(this.hasEnabledMarkers());
+        // A hidden boosted series runs neither `translate` nor
+        // `pushSeriesData`, so nothing measures its point density. Derive it
+        // from the data range, which `processData` does set (#24307)
+        if (this.closestPointRange) {
+            this.closestPointRangePx ??=
+                this.closestPointRange * this.xAxis.transA;
+        }
+        this.syncLegendSymbol();
         return;
     }
 

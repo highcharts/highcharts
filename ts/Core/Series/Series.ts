@@ -494,6 +494,9 @@ class Series {
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
 
     /** @internal */
+    public hasMarkers?: boolean;
+
+    /** @internal */
     public hasProcessedDataTable?: boolean;
 
     /** @internal */
@@ -1113,40 +1116,21 @@ class Series {
     }
 
     /**
-     * Whether any individual point enables a marker that is actually
-     * drawn, mirroring the point conditions in `drawPoints`. The
-     * `_hasPointMarkers` flag is checked first, so the point loop is
-     * skipped for series without point level marker options.
-     *
-     * @internal
-     * @function Highcharts.Series#hasEnabledPointMarkers
-     */
-    public hasEnabledPointMarkers(): boolean {
-        const nullInteraction = this.options.nullInteraction;
-
-        return !!(
-            this._hasPointMarkers &&
-            this.points?.some((point): boolean => !!(
-                point.marker?.enabled &&
-                (!point.isNull || nullInteraction) &&
-                point.visible !== false
-            ))
-        );
-    }
-
-    /**
-     * Mirror the plot area markers in the legend symbol (#24307). Each
-     * renderer passes its own decision, as SVG and boost resolve marker
-     * visibility independently.
+     * Mirror the plot area markers in the legend symbol (#24307). The
+     * `hasMarkers` flag reports what was drawn; a series that has never
+     * been drawn falls back to the series options.
      *
      * @internal
      * @function Highcharts.Series#syncLegendSymbol
      */
-    public syncLegendSymbol(hasMarkers: boolean): void {
+    public syncLegendSymbol(): void {
         const symbol = this.legendItem?.symbol;
 
         if (symbol?.isMarker) {
-            symbol[hasMarkers ? 'show' : 'hide']();
+            symbol[symbol.placed ? 'animate' : 'attr']({
+                opacity: (this.hasMarkers ?? this.hasEnabledMarkers()) ? 1 : 0
+            });
+            symbol.placed = true;
         }
     }
 
@@ -3230,6 +3214,9 @@ class Series {
             hasPointMarker,
             markerAttribs;
 
+        // Reported to the legend symbol, so it reflects what is drawn (#24307)
+        let hasMarkers = false;
+
         if (
             seriesMarkerOptions.enabled !== false ||
             series._hasPointMarkers
@@ -3253,6 +3240,8 @@ class Series {
 
                 // Only draw the point if y is defined
                 if (shouldDrawMarker) {
+                    hasMarkers = true;
+
                     // Shortcuts
                     const symbol =
                         pointMarkerOptions.symbol ??
@@ -3329,6 +3318,8 @@ class Series {
                 }
             }
         }
+
+        series.hasMarkers = hasMarkers;
     }
 
     /**
@@ -4015,9 +4006,7 @@ class Series {
         }
 
         // Outside the `visible` check, a hidden series still has a legend item
-        series.syncLegendSymbol(
-            series.hasEnabledMarkers() || series.hasEnabledPointMarkers()
-        );
+        series.syncLegendSymbol();
 
         // Draw the data labels
         series.drawDataLabels?.();

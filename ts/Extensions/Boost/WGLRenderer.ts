@@ -1460,7 +1460,8 @@ class WGLRenderer {
 
             // Reported before the early return below, so that a series
             // without drawable data does not keep a stale symbol (#24307)
-            s.series.syncLegendSymbol(showMarkers);
+            s.series.hasMarkers = showMarkers;
+            s.series.syncLegendSymbol();
 
             if (
                 s.segments.length === 0 ||

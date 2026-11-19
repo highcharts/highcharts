@@ -186,12 +186,13 @@ QUnit.test(
     function (assert) {
         const denseData = Array.from({ length: 200 }, (value, i) => i % 50);
 
-        const symbolVisibility = series => series.legendItem.symbol.element
-            .getAttribute('visibility');
+        const symbolOpacity = series => series.legendItem.symbol.element
+            .getAttribute('opacity');
 
         const chart = Highcharts.chart('container', {
             chart: {
-                width: 600
+                width: 600,
+                animation: false
             },
             series: [
                 {
@@ -200,28 +201,39 @@ QUnit.test(
                 {
                     data: denseData,
                     visible: false
+                },
+                {
+                    data: [[0, 1], [50, 2], [100, 3], [150, 4], [199, 5]],
+                    visible: false
                 }
             ]
         });
 
         assert.strictEqual(
-            symbolVisibility(chart.series[0]),
-            'hidden',
+            symbolOpacity(chart.series[0]),
+            '0',
             'Markers hidden by enabledThreshold should be hidden in the ' +
                 'legend too'
         );
 
         assert.strictEqual(
-            symbolVisibility(chart.series[1]),
-            'hidden',
+            symbolOpacity(chart.series[1]),
+            '0',
             'A series hidden from the start should not show a legend marker'
+        );
+
+        assert.strictEqual(
+            symbolOpacity(chart.series[2]),
+            '1',
+            'A hidden series should keep the marker it would show once ' +
+                'visible'
         );
 
         chart.xAxis[0].setExtremes(0, 10);
 
-        assert.notStrictEqual(
-            symbolVisibility(chart.series[0]),
-            'hidden',
+        assert.strictEqual(
+            symbolOpacity(chart.series[0]),
+            '1',
             'Zooming in until the markers reappear should restore the ' +
                 'legend marker'
         );
@@ -236,9 +248,9 @@ QUnit.test(
             }
         });
 
-        assert.notStrictEqual(
-            symbolVisibility(chart.series[0]),
-            'hidden',
+        assert.strictEqual(
+            symbolOpacity(chart.series[0]),
+            '1',
             'An individual point marker should keep the legend marker'
         );
 
@@ -249,8 +261,8 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            symbolVisibility(chart.series[0]),
-            'hidden',
+            symbolOpacity(chart.series[0]),
+            '0',
             'Turning the last point marker off should hide the legend marker'
         );
 
@@ -262,8 +274,8 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            symbolVisibility(chart.series[0]),
-            'hidden',
+            symbolOpacity(chart.series[0]),
+            '0',
             'A marker on a null point should not show in the legend'
         );
 
@@ -271,9 +283,9 @@ QUnit.test(
             type: 'column'
         });
 
-        assert.strictEqual(
-            symbolVisibility(chart.series[0]),
-            null,
+        assert.notStrictEqual(
+            symbolOpacity(chart.series[0]),
+            '0',
             'The rectangle symbol of a column series should never be hidden'
         );
     }
