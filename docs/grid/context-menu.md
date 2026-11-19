@@ -311,7 +311,28 @@ Grid.grid('container', {
 
 Table editing labels are configured under `lang.tableEditing`, for example
 `lang.tableEditing.rows`, `lang.tableEditing.addRowAbove` and
-`lang.tableEditing.deleteColumn`.
+`lang.tableEditing.deleteColumn`. The *Add column* button of a table with no
+column uses `lang.tableEditing.addColumn`.
+
+## Editing an empty table
+
+A table with no row still has a table menu to add one from. A table with no
+column has nothing at all to open a menu on, so with
+[`tableEditing`](https://api.highcharts.com/grid/tableEditing) enabled Grid
+Pro shows an *Add column* button in that one case. The first column makes the
+table menu reachable, and the button is gone for good.
+
+After every structural edit the focus moves to the cell the edit produced, so
+the change is visible and the keyboard stays inside the table.
+
+Two things are worth knowing when building a table from scratch:
+
+- The rows and columns this creates are empty, and filling them in needs
+  [`cells.editMode`](https://www.highcharts.com/docs/grid/editing/index).
+  Enabling `tableEditing` on its own does not make cells editable.
+- A new column is named after its id, `column1`, `column2` and so on. Set
+  [`columns[].header.format`](https://api.highcharts.com/grid/columns.header.format)
+  to show a different name.
 
 ## Demo
 
