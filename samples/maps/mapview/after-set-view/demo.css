@@ -1,0 +1,24 @@
+#container {
+    height: 360px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.camera-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 800px;
+    margin: 0.75rem auto;
+    font: 1rem system-ui, sans-serif;
+}
+
+.camera-controls button {
+    min-width: 5rem;
+    min-height: 2.75rem;
+    font: inherit;
+}
+
+.camera-controls p {
+    margin: 0;
+}

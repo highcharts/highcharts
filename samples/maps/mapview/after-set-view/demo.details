@@ -1,0 +1,4 @@
+---
+name: Pause or interrupt a map camera with afterSetView
+js_wrap: b
+...

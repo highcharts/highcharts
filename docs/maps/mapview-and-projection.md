@@ -1,8 +1,8 @@
 ---
 description: >-
-  Set the map center and zoom, choose or supply a projection, and place
-  insets for non-contiguous regions. The article also describes coordinate
-  conversions and reading longitude and latitude from pointer events.
+  Set the map center and zoom, observe view changes with afterSetView, and
+  build a camera animation that users can pause or interrupt. Learn how
+  projections, insets and coordinate conversions work.
 ---
 
 Map View and Projection
@@ -12,6 +12,21 @@ The map view is the basic class and options set dealing with how the map is proj
 
  * [API options](https://api.highcharts.com/highmaps/mapView)
  * [Class reference](https://api.highcharts.com/class-reference/Highcharts.MapView)
+
+### Respond to view changes with `afterSetView`
+
+Register a listener with `Highcharts.addEvent(chart.mapView, 'afterSetView', handler)`.
+`setView` fires `afterSetView` synchronously after updating the view and before
+the optional chart redraw. The listener runs even when `redraw` is `false` and
+can read the resulting `chart.mapView.center` and `chart.mapView.zoom`. Built-in
+map navigation can also trigger the event when a user pans or zooms.
+
+In the [interruptible map camera example](https://www.highcharts.com/samples/maps/mapview/after-set-view),
+**Pause** stops the animation frames so the center and zoom stay where they are.
+**Play** resumes from there. The sample marks its own `setView` calls with a
+flag to keep the flight going. A `setView` call from elsewhere, such as during
+a drag or when using the zoom buttons, cancels the flight. The next **Play**
+starts from the current view.
 
 ### Center and zoom
 By default, a map is centered within the plot area of the chart. For custom zoom and placement, use the [center](https://api.highcharts.com/highmaps/mapView.center) and [zoom](https://api.highcharts.com/highmaps/mapView.zoom) options, where `center` is given as `[longitude, latitude]` and `zoom` is a number where 0 renders the world as 256x256 pixels, and increase of 1 zooms in to a quarter of the viewed area.
