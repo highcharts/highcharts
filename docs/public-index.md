@@ -1,4 +1,4 @@
----
+https://ctt.ac/M1twK---
 slug: index
 description: >-
   Find starting points for creating charts and dashboards, learning about
