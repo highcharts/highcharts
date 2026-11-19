@@ -3,6 +3,7 @@ import 'highcharts/modules/map';
 
 test_simple();
 test_series();
+test_hcKey();
 
 function test_simple() {
     Highcharts.mapChart('container', {
@@ -129,4 +130,11 @@ function test_series() {
             }]
         }]
     });
+}
+
+/**
+ * Tests the `hc-key` member of the map point options. #25548
+ */
+function test_hcKey() {
+    const point: Highcharts.SeriesMapDataOptions = { 'hc-key': 'no', value: 1 };
 }
