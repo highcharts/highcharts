@@ -140,6 +140,7 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
 
     fillColor?: ColorType;
 
+    /** @default 1 */
     fillOpacity?: number;
 
     /**
@@ -151,8 +152,10 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
 
     states?: SeriesStatesOptions<PolygonSeriesOptions>;
 
+    /** @default false */
     stickyTracking?: boolean;
 
+    /** @default true */
     trackByArea?: boolean;
 
     tooltip?: PolygonSeriesTooltipOptions;

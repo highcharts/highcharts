@@ -16,12 +16,10 @@
  *   (e.g. plotOptions.pie.innerSize)
  * - Separately, scans all Options files for @default doclets with template
  *   expressions (e.g. ${palette.*}), which are never valid default values
- * - Counts defaults that are set in the Defaults const or documented by an
+ * - Reports defaults that are set in the Defaults const or documented by an
  *   @apioption block, but have no @default doclet on the interface member
- * - Counts @default doclets whose property is neither set in the Defaults const
- *   nor documented by an @apioption block, as those can't be verified
- * - To list both counted groups as failures, run from repo root:
- *   `DEFAULT_DOCLETS_STRICT=1 npx tsx --test test/ts-node-unit-tests/tests/default-doclets.test.ts`
+ * - Reports @default doclets whose property is neither set in the Defaults
+ *   const nor documented by an @apioption block, as those can't be verified
  *
  * Limitations:
  * - Properties whose defaults come from parent merges or inheritance are only
@@ -32,8 +30,12 @@
  *   the interface, not for members of parent interfaces or named types
  * - Object values in the Defaults const are not expected to have a @default
  *   doclet, since their members are checked on their own
+ * - Function values in the Defaults const are not expected to have a @default
+ *   doclet, since their source is not a value to document
  * - @default doclets that are not valid TS literals are compared as raw text,
  *   and a quoted string matches the same text without quotes ('y' and y)
+ * - Members with product-specific defaults (e.g. `@default {highstock} true`)
+ *   count as documented, but their values are not compared
  */
 
 import { before, describe, it } from 'node:test';
@@ -52,7 +54,6 @@ const IGNORE_GLOBS = [
     'ts/masters*/**',
     '**/*.d.ts'
 ];
-const STRICT = !!process.env.DEFAULT_DOCLETS_STRICT;
 
 type DefaultMap = Map<string, string>;
 
@@ -64,7 +65,8 @@ interface DefaultsObject {
 /**
  * Collects the `@default` doclets of an interface by property path. If `paths`
  * is given, it also receives the path of every inline member, with or without
- * a doclet.
+ * a doclet, except members with product-specific defaults such as
+ * `@default {highstock} true`, which are documented but not compared.
  */
 function collectDefaultTags(
     sourceFile: TS.SourceFile,
@@ -115,7 +117,9 @@ function collectMembers(
         const path = getPath(prefix, name);
         const docletDefault = getDocletDefault(member);
 
-        paths?.add(path);
+        if (!hasProductDefault(member)) {
+            paths?.add(path);
+        }
 
         if (docletDefault) {
             defaults.set(path, docletDefault);
@@ -200,7 +204,9 @@ function collectApiOptionDefaults(sourceFile: TS.SourceFile): DefaultMap {
  * Collects the defaults that an Options interface should document, by
  * property path: the values set in the Defaults object, and the `@default` of
  * each `@apioption` block below its `@optionparent`. Object values are
- * skipped, since their members are collected on their own.
+ * skipped, since their members are collected on their own, and so are
+ * functions and values computed at runtime, since they have no literal to
+ * document.
  */
 function collectKnownDefaults(
     defaultsObject: DefaultsObject,
@@ -220,7 +226,11 @@ function collectKnownDefaults(
     }
 
     for (const [path, value] of defaults) {
-        if (!value.startsWith('{')) {
+        if (
+            !value.startsWith('{') &&
+            !isComputedDefault(value) &&
+            !isFunctionDefault(value)
+        ) {
             known.set(path, value);
         }
     }
@@ -300,6 +310,29 @@ function getDocletDefault(node: TS.Node): (string|undefined) {
     }
 
     return normalizeDocletDefault(stringifyComment(defaultTag.comment));
+}
+
+function hasProductDefault(node: TS.Node): boolean {
+    return TS.getJSDocTags(node).some(tag => (
+        tag.tagName.text === 'default' &&
+        /^\{[a-z|]+\}\s/u.test(stringifyComment(tag.comment))
+    ));
+}
+
+/**
+ * Whether a Defaults value is computed at runtime, such as a function call or
+ * a template literal with expressions, e.g. `merge(...)` or `` `v=${x}` ``.
+ */
+function isComputedDefault(value: string): boolean {
+    return /^(?!function\b)[\w$.]+\(|^`[\s\S]*\$\{/u.test(value);
+}
+
+/**
+ * Whether a Defaults value is a function, e.g. `function () {}` or `() => x`.
+ */
+function isFunctionDefault(value: string): boolean {
+    return /^(?:async\s+)?(?:function\b|\([^)]*\)[^{]*=>|[\w$]+\s*=>)/u
+        .test(value);
 }
 
 /**
@@ -872,6 +905,22 @@ describe('Helper: collectDefaultTags with paths', () => {
             'enabled,label,label.text,style'
         );
     });
+
+    it('skips members with product-specific defaults', () => {
+        const src = parseSource(`
+            interface FooOptions {
+                /** @default {highstock} true */
+                enabled?: boolean;
+                /** @default 10 */
+                size?: number;
+            }
+        `);
+
+        const paths = new Set<string>();
+
+        collectDefaultTags(src, 'FooOptions', paths);
+        strictEqual([...paths].join(), 'size');
+    });
 });
 
 describe('Helper: getOptionsTypeName', () => {
@@ -899,7 +948,11 @@ describe('Helper: collectKnownDefaults', () => {
                 defaults: new Map([
                     ['enabled', 'true'],
                     ['label', "{ text: 'hello' }"],
-                    ['label.text', "'hello'"]
+                    ['label.text', "'hello'"],
+                    ['marker', 'merge(base, { radius: null })'],
+                    ['formatter', 'function (): string { return this.name; }'],
+                    ['onclick', '(e): void => e.preventDefault()'],
+                    ['url', '`https://example.com?v=${version}`']
                 ]),
                 optionParent: 'plotOptions.foo'
             },
@@ -1067,37 +1120,14 @@ describe('Options @default doclets', () => {
         strictEqual(failures.length, 0, failures.join('\n'));
     });
 
-    it('should only have verifiable @default doclets', (t) => {
+    it('should only have verifiable @default doclets', () => {
         const { unverified } = result;
-
-        if (!STRICT) {
-            if (unverified.length) {
-                t.diagnostic(
-                    `${unverified.length} @default doclet(s) can't be ` +
-                    'verified: property is neither set in Defaults nor ' +
-                    'documented by @apioption. ' +
-                    'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
-                );
-            }
-            return;
-        }
 
         strictEqual(unverified.length, 0, unverified.join('\n'));
     });
 
-    it('should document defaults set in Defaults files', (t) => {
+    it('should document defaults set in Defaults files', () => {
         const { undocumented } = result;
-
-        if (!STRICT) {
-            if (undocumented.length) {
-                t.diagnostic(
-                    `${undocumented.length} default(s) set in Defaults ` +
-                    'have no @default doclet in Options. ' +
-                    'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
-                );
-            }
-            return;
-        }
 
         strictEqual(undocumented.length, 0, undocumented.join('\n'));
     });

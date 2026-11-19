@@ -13,7 +13,6 @@ describe('dist --product Dashboards', async () => {
     await it('dist-examples --product Dashboards creates build/dist/dashboards/index.html ', async () => {
         await exec('npx gulp dist-examples --product Dashboards');
 
-        ok(await stat('build/dist/dashboards/index.html'));
         ok(await stat('build/dist/dashboards/examples/minimal/index.html'));
 
         const html = await readFile('build/dist/dashboards/index.html', 'utf8');

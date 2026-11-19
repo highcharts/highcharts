@@ -934,9 +934,20 @@ class ColorAxis extends Axis implements ColorAxisBase {
                                 }
                             }
                             chart.legend.colorizeItem(this as any, vis);
+
+                            const redraw = vis && this.isDirtyPoints;
                             affectedSeries.forEach((series): void => {
                                 fireEvent(series, 'afterDataClassLegendClick');
+
+                                // Points hidden in a data class have no
+                                // graphic or data label yet (#25083)
+                                if (redraw) {
+                                    series.isDirty = true;
+                                }
                             });
+                            if (redraw) {
+                                chart.redraw(false);
+                            }
                         }
                     },
                     dataClass
@@ -1018,6 +1029,7 @@ namespace ColorAxis {
         visible: boolean;
         setState: Point['setState'];
         isDataClass: true;
+        isDirtyPoints?: boolean;
         setVisible: Function;
     }
 

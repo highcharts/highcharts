@@ -123,13 +123,17 @@ export interface Pyramid3DSeriesOptions extends Funnel3DSeriesOptions {
      */
     data?: Array<(number|Array<number>|Pyramid3DPointOptions)>;
 
+    /** @default 0 */
     neckWidth?: number;
 
+    /** @default 0 */
     neckHeight?: number;
 
     /**
      * A reversed pyramid3d is funnel3d, but the latter supports neck
      * related options: neckHeight and neckWidth
+     *
+     * @default true
      *
      * @product highcharts
      */

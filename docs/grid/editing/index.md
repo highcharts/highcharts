@@ -30,4 +30,4 @@ Validation rules ensure edited values match your expected format and business co
 
 The two options are independent: `tableEditing` decides whether rows and columns can be added, `cells.editMode` whether the resulting cells can be filled in. A table meant to be built from scratch needs both.
 
-- [Editing an empty table](https://www.highcharts.com/docs/grid/cell-context-menu)
+- [Editing an empty table](https://www.highcharts.com/docs/grid/context-menu)

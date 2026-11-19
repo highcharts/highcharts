@@ -21,9 +21,6 @@
 import type Grid from '../../Core/Grid';
 import type DataTable from '../../../Data/DataTable';
 import type {
-    CellContextMenuContext
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions';
-import type {
     Column as DataTableColumn,
     RowObject as DataTableRowObject
 } from '../../../Data/DataTable';
@@ -75,6 +72,32 @@ export interface TableEditingOptions {
     enabled?: boolean;
 }
 
+/**
+ * What the table editing actions need to know about where they were invoked.
+ */
+export interface TableEditingContext {
+
+    /**
+     * Id of the Grid column the action applies to.
+     */
+    columnId: string;
+
+    /**
+     * The Grid instance.
+     */
+    grid: Grid;
+
+    /**
+     * Id of the row the action applies to.
+     */
+    rowId?: RowId;
+
+    /**
+     * Source column id the Grid column reads its data from.
+     */
+    sourceColumnId?: string;
+}
+
 /* *
  *
  *  Class
@@ -118,17 +141,21 @@ class TableEditingController {
     }
 
     /**
+     * Returns whether a row can be added without one to add it next to, which
+     * is what the menu of a table holding no row offers.
+     */
+    public canAppendRow(): boolean {
+        return this.isEnabled() && !!this.getDataTable();
+    }
+
+    /**
      * Returns whether row actions can be used for the current context.
      *
      * @param context
      * Context menu runtime context.
      */
-    public canEditRows(context: CellContextMenuContext): boolean {
-        return (
-            this.isEnabled() &&
-            context.rowId !== void 0 &&
-            !!this.getDataTable()
-        );
+    public canEditRows(context: TableEditingContext): boolean {
+        return this.canAppendRow() && context.rowId !== void 0;
     }
 
     /**
@@ -137,7 +164,7 @@ class TableEditingController {
      * @param context
      * Context menu runtime context.
      */
-    public canEditColumns(context: CellContextMenuContext): boolean {
+    public canEditColumns(context: TableEditingContext): boolean {
         return (
             this.isEnabled() &&
             !!context.sourceColumnId &&
@@ -153,7 +180,7 @@ class TableEditingController {
      * @param context
      * Context menu runtime context.
      */
-    public canDeleteColumn(context: CellContextMenuContext): boolean {
+    public canDeleteColumn(context: TableEditingContext): boolean {
         const table = this.getDataTable();
         const sourceColumnId = context.sourceColumnId;
 
@@ -167,8 +194,8 @@ class TableEditingController {
     }
 
     /**
-     * Returns what an empty table is missing. Context menu actions cannot
-     * cover either case, since they need a body cell to open on.
+     * Returns what an empty table is missing, which is what the empty state
+     * button offers to add.
      */
     public getEmptyState(): 'columns' | 'rows' | undefined {
         const table = this.isEnabled() ? this.getDataTable() : void 0;
@@ -203,17 +230,18 @@ class TableEditingController {
     }
 
     /**
-     * Adds the first row to a table that has columns but no rows.
+     * Adds an empty row at the end of the table, which is the row the menu of
+     * a table holding none offers.
      */
-    public async addFirstRow(): Promise<void> {
+    public async appendRow(): Promise<void> {
         const table = this.getDataTable();
 
-        if (!table) {
-            return;
-        }
+        if (table) {
+            const index = table.getRowCount();
 
-        table.setRows([this.getEmptyRow(table)], 0, true, { fromGrid: true });
-        await this.updateRowsFromTable(table);
+            await this.insertRow(index);
+            this.focusResult(index);
+        }
     }
 
     /**
@@ -223,7 +251,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addRowAbove(
-        context: CellContextMenuContext
+        context: TableEditingContext
     ): Promise<void> {
         await this.addRow(context, 0);
     }
@@ -235,7 +263,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addRowBelow(
-        context: CellContextMenuContext
+        context: TableEditingContext
     ): Promise<void> {
         await this.addRow(context, 1);
     }
@@ -247,7 +275,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async deleteRow(
-        context: CellContextMenuContext
+        context: TableEditingContext
     ): Promise<void> {
         const table = this.getDataTable();
         const rowIndexes = await this.getRowIndexes(context.rowId);
@@ -270,7 +298,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addColumnBefore(
-        context: CellContextMenuContext
+        context: TableEditingContext
     ): Promise<void> {
         await this.addColumn(context, 0);
     }
@@ -282,7 +310,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addColumnAfter(
-        context: CellContextMenuContext
+        context: TableEditingContext
     ): Promise<void> {
         await this.addColumn(context, 1);
     }
@@ -294,7 +322,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async deleteColumn(
-        context: CellContextMenuContext
+        context: TableEditingContext
     ): Promise<void> {
         const table = this.getDataTable();
         const sourceColumnId = context.sourceColumnId;
@@ -318,25 +346,18 @@ class TableEditingController {
     }
 
     private async addRow(
-        context: CellContextMenuContext,
+        context: TableEditingContext,
         offset: 0 | 1
     ): Promise<void> {
-        const table = this.getDataTable();
         const rowIndexes = await this.getRowIndexes(context.rowId);
 
-        if (!table || !rowIndexes) {
+        if (!rowIndexes) {
             return;
         }
 
         const insertIndex = rowIndexes.original + offset;
 
-        table.setRows(
-            [this.getEmptyRow(table)],
-            insertIndex,
-            true,
-            { fromGrid: true }
-        );
-        await this.updateRowsFromTable(table);
+        await this.insertRow(insertIndex);
 
         // Sorting and filtering decide where the row ends up, or whether it
         // shows at all, so ask the provider instead of counting on the offset.
@@ -350,8 +371,24 @@ class TableEditingController {
         );
     }
 
+    private async insertRow(index: number): Promise<void> {
+        const table = this.getDataTable();
+
+        if (!table) {
+            return;
+        }
+
+        table.setRows(
+            [this.getEmptyRow(table)],
+            index,
+            true,
+            { fromGrid: true }
+        );
+        await this.updateRowsFromTable(table);
+    }
+
     private async addColumn(
-        context: CellContextMenuContext,
+        context: TableEditingContext,
         offset: 0 | 1
     ): Promise<void> {
         const table = this.getDataTable();

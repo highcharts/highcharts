@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/grid-pro/css/grid-pro.css");
 
 body {
     font-family:
@@ -22,6 +22,10 @@ body {
 
 .highcharts-description {
     padding: 0 8px;
+}
+
+#container .hcg-container .spark-label {
+    color: var(--highcharts-neutral-color-100);
 }
 
 #container .hcg-container {

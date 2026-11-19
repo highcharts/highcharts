@@ -6,7 +6,6 @@ const { Octokit } = require('@octokit/rest');
 const octokit = new Octokit({
     auth: process.env.GITHUB_LIST_PRS_TOKEN
 });
-const os = require('os');
 const path = require('path');
 
 require('colors');
@@ -145,7 +144,7 @@ const loadPulls = async (
 
 module.exports = async (since, fromCache, branches, productName) => {
     const included = [],
-        tmpFileName = path.join(os.tmpdir(), 'pulls.json');
+        tmpFileName = path.join(__dirname, '..', 'tmp', 'changelog-pulls.json');
 
     let pulls;
     if (fromCache) {
@@ -153,7 +152,20 @@ module.exports = async (since, fromCache, branches, productName) => {
         pulls = JSON.parse(pulls);
     } else {
         pulls = await loadPulls(since, branches, productName);
-        await fs.writeFile(tmpFileName, JSON.stringify(pulls));
+        await fs.mkdir(path.dirname(tmpFileName), { recursive: true });
+        const temporaryRoot = await fs.mkdtemp(path.join(
+            path.dirname(tmpFileName), 'changelog-pulls-'
+        ));
+        try {
+            const temporaryFile = path.join(temporaryRoot, 'pulls.json');
+            await fs.writeFile(temporaryFile, JSON.stringify(pulls), {
+                mode: 0o600,
+                flag: 'wx'
+            });
+            await fs.rename(temporaryFile, tmpFileName);
+        } finally {
+            await fs.rm(temporaryRoot, { recursive: true, force: true });
+        }
     }
 
     // Simplify

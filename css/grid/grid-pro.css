@@ -3,10 +3,12 @@
 /**
  * @license Highcharts Grid Pro v@product.version@
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * Commercial use of this software is governed by
+ * the Highsoft Standard License Agreement, see www.highcharts.com/license.
+ * Non-commercial use is governed by the Highsoft EULA,
+ * see www.highcharts.com/license-eula
  */
 
 @import url("./grid-lite.css");
@@ -14,6 +16,7 @@
 @import url("./grid-row-pinning.css");
 @import url("./grid-summary-rows.css");
 @import url("./grid-summary-columns.css");
+@import url("./grid-row-selection.css");
 @import url("./grid-table-editing.css");
 
 /* Grid Pro specific styles */

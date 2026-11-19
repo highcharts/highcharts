@@ -9,10 +9,3 @@
     margin: 8px auto;
     gap: 6px;
 }
-
-/* Plain holder: a button cannot be a direct child of a table body. */
-.hcg-empty-state-row > td {
-    display: block;
-    padding: 0;
-    text-align: center;
-}

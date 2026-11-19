@@ -45,6 +45,22 @@ function test_grid() {
         }
     );
 
+    Grid.ContextMenu.registerItem('showColumnId', {
+        icon: 'checkmark',
+        label: (context): string => context.target.column.id,
+        targets: ['cell'],
+        visible: (context): boolean => context.target.row.id !== void 0,
+        onClick: function (cell): void {
+            cell.row.id;
+        }
+    });
+
+    Grid.ContextMenu.registerItem('sampleGroup', {
+        defaultIn: ['cell'],
+        items: ['showColumnId', 'showCellValue'],
+        label: 'Sample group'
+    });
+
     const grid = Grid.grid('container', {
         data: {
             providerType: 'remote',
@@ -81,8 +97,8 @@ function test_grid() {
                 addColumnBefore: 'Add column before',
                 addColumnAfter: 'Add column after',
                 deleteColumn: 'Delete column',
-                addFirstRow: 'Add row',
-                addFirstColumn: 'Add column'
+                addRow: 'Add row',
+                addColumn: 'Add column'
             }
         },
         header: [{
@@ -189,6 +205,24 @@ function test_grid() {
                     header: ['x']
                 }
             }]
+        },
+        rowSelection: {
+            enabled: true,
+            mode: 'multiple',
+            trigger: 'both',
+            clickAction: 'toggle',
+            modifierKey: 'ctrlOrMeta',
+            checkbox: {
+                enabled: true
+            }
+        },
+        events: {
+            afterRowSelectionChange: function (e): void {
+                void this.rowSelection?.getSelectedRowIds();
+                void e.selectedRowIds;
+                void e.addedRowIds;
+                void e.removedRowIds;
+            }
         }
     });
 
@@ -199,6 +233,40 @@ function test_grid() {
     grid.rowPinning?.unpin('A');
     grid.rowPinning?.getPinnedRows();
     grid.tableEditing?.isEnabled();
+
+    grid.rowSelection?.select('A');
+    grid.rowSelection?.select(['A', 'B']);
+    grid.rowSelection?.deselect('A');
+    grid.rowSelection?.toggle('A');
+    grid.rowSelection?.isSelected('A');
+    grid.rowSelection?.getSelectedRowIds();
+    grid.rowSelection?.clear();
+
+    const detach = grid.contextMenu.attach(document.createElement('button'), {
+        items: [
+            {
+                label: 'Rename this button',
+                onClick: function (button): void {
+                    button.textContent = 'Renamed';
+                }
+            },
+            {
+                separator: true
+            },
+            {
+                label: 'Branch',
+                items: [{
+                    label: 'Leaf',
+                    visible: context => context.target.type === 'element',
+                    onClick: function (): void {
+                        this.blur();
+                    }
+                }]
+            }
+        ]
+    });
+
+    detach();
 }
 
 /**

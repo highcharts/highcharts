@@ -43,7 +43,8 @@ export interface LangOptions extends LangOptionsCore {
     /**
      * The default chart title.
      *
-     * @since 12.2.0
+     * @default 'Chart title'
+     * @since   12.2.0
      */
     chartTitle: string;
     /**
