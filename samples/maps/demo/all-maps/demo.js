@@ -57,20 +57,15 @@ const baseMapPath = 'https://code.highcharts.com/mapdata/',
     }, {
         label: 'United States of America',
         name: 'United States of America'
-    }, {
-        label: 'European Union (2020)',
-        name: 'European Union (2020)'
     }];
 
-// Demo data: a percentage per area, scaled down to stay within 100%
+// Fake demo data that only spreads the areas over the color range, so the
+// values are not shown
 function getData(mapData) {
-    const geometries = mapData.objects.default.geometries,
-        step = Math.min(1, 100 / Math.max(geometries.length - 1, 1));
-
-    return geometries.map((g, i) => ({
+    return mapData.objects.default.geometries.map((g, i) => ({
         key: g.properties['hc-key'],
         drilldown: g.properties['hc-key'],
-        value: Math.round(i * step * 10) / 10
+        value: i
     }));
 }
 
@@ -90,25 +85,13 @@ function loadMap(mapKey) {
     return loadedMaps[mapKey];
 }
 
-// From 0 to a round tick above the highest value, with some space at the
-// ends to keep the tick dots inside the gradient
+// From 0 to the highest value, so that every map uses the full gradient
 function getColorAxisRange(data) {
-    // The values grow, so the last one is the highest
-    const maxValue = data[data.length - 1].value,
-        tickInterval = Highcharts.normalizeTickInterval(
-            Math.max(maxValue, 1) / 5,
-            void 0,
-            void 0,
-            false
-        ),
-        lastTick = Math.max(Math.ceil(maxValue / tickInterval), 1) *
-            tickInterval,
-        padding = lastTick * 0.03;
-
     return {
-        min: -padding,
-        max: lastTick + padding,
-        tickInterval
+        min: 0,
+        // The values grow, so the last one is the highest. A map with one
+        // area still needs a range.
+        max: Math.max(data[data.length - 1].value, 1)
     };
 }
 
@@ -118,7 +101,7 @@ function resetMapPadding(chart) {
     chart.mapView.update({ padding: 0 }, false);
 }
 
-// Without animation, so that the old tick dots don't fly out of the legend
+// Without animation, so that the new map gets its colors at once
 function updateColorAxis(chart, data) {
     chart.colorAxis[0].update(getColorAxisRange(data), false);
     chart.redraw(false);
@@ -205,9 +188,9 @@ indexGroups.forEach(([label, maps]) => addListGroup(label, maps));
 
 input.placeholder = `Search ${mapNames.length} maps`;
 
-// Thumbnails of the first suggested maps, as quick picks. Each one is a small
-// static map chart.
-const thumbnails = availableSuggestedMaps.slice(0, 3).map(map => {
+// Thumbnails of the suggested maps, as quick picks. Each one is a small static
+// map chart.
+const thumbnails = availableSuggestedMaps.map(map => {
     const button = document.createElement('button'),
         preview = document.createElement('span'),
         label = document.createElement('span');
@@ -636,6 +619,12 @@ function moveActiveOption(step) {
 
     const chart = Highcharts.mapChart('container', {
         accessibility: {
+            // The description is in the side box, not right after the chart
+            linkedDescription: '#demo-description',
+            point: {
+                // Only the name, as the values are fake
+                valueDescriptionFormat: '{xDescription}.'
+            },
             series: {
                 descriptionFormat: '{series.name}, map with ' +
                     '{series.points.length} areas.',
@@ -660,22 +649,9 @@ function moveActiveOption(step) {
                 [0.5, 'var(--map-mid-color)'],
                 [1, 'var(--map-max-color)']
             ],
-            // The grid lines are drawn as a dot on each tick, with the CSS
-            // in demo.css
-            gridLineColor: '#ffffff',
-            gridLineWidth: 5,
-            gridLineDashStyle: '0, 100',
-            width: 11,
-            height: '50%',
             ...getColorAxisRange(series.data),
             startOnTick: false,
-            endOnTick: false,
-            labels: {
-                format: '{value}%',
-                style: {
-                    fontSize: '0.75rem'
-                }
-            }
+            endOnTick: false
         },
 
         drilldown: {
@@ -704,17 +680,9 @@ function moveActiveOption(step) {
             }
         },
 
+        // The data is fake, so the color axis has no legend
         legend: {
-            layout: 'vertical',
-            align: 'left',
-            verticalAlign: 'bottom',
-            backgroundColor: 'var(--highcharts-background-color)',
-            borderColor: 'var(--demo-border-color)',
-            borderWidth: 1,
-            borderRadius: 10,
-            padding: 12,
-            // Rounded ends of the color axis gradient
-            symbolRadius: 5.5
+            enabled: false
         },
 
         plotOptions: {
@@ -746,26 +714,21 @@ function moveActiveOption(step) {
             text: null
         },
 
+        // Only the area name, as the values are fake
         tooltip: {
-            valueSuffix: '%'
+            headerFormat: '',
+            pointFormat: '{point.name}'
         },
 
         responsive: {
             rules: [{
                 condition: {
+                    // The same breakpoint as in demo.css
                     callback() {
-                        return document.body.offsetWidth < 753;
+                        return window.matchMedia('(max-width: 768px)').matches;
                     }
                 },
                 chartOptions: {
-                    colorAxis: {
-                        layout: 'horizontal',
-                        width: '50%',
-                        height: 11
-                    },
-                    legend: {
-                        align: 'center'
-                    },
                     mapNavigation: {
                         buttonOptions: {
                             verticalAlign: 'bottom'
