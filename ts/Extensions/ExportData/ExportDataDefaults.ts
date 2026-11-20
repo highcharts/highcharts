@@ -44,7 +44,6 @@ const exporting: ExportingOptions = {
      *
      * @type      {boolean | string}
      * @since     6.0.4
-     * @requires  modules/exporting
      * @requires  modules/export-data
      * @apioption exporting.tableCaption
      */
@@ -68,7 +67,6 @@ const exporting: ExportingOptions = {
      *          Using a third party XLSX converter
      *
      * @since    6.0.0
-     * @requires  modules/exporting
      * @requires modules/export-data
      */
     csv: {
@@ -77,8 +75,6 @@ const exporting: ExportingOptions = {
          * Options for annotations in the export-data table.
          *
          * @since    8.2.0
-         * @requires modules/exporting
-         * @requires modules/export-data
          * @requires modules/annotations
          */
         annotations: {
@@ -87,9 +83,6 @@ const exporting: ExportingOptions = {
              * combined in one export-data table cell.
              *
              * @since    8.2.0
-             * @requires modules/exporting
-             * @requires modules/export-data
-             * @requires modules/annotations
              */
             itemDelimiter: '; ',
 
@@ -101,9 +94,6 @@ const exporting: ExportingOptions = {
              *         Concatenate point annotations with itemDelimiter set.
              *
              * @since    8.2.0
-             * @requires modules/exporting
-             * @requires modules/export-data
-             * @requires modules/annotations
              */
             join: false
         },
@@ -236,7 +226,6 @@ const exporting: ExportingOptions = {
      *         allow exporting it.
      *
      * @since    6.0.0
-     * @requires modules/exporting
      * @requires modules/export-data
      */
     showTable: false,
@@ -250,7 +239,6 @@ const exporting: ExportingOptions = {
      *         Multiple table headers
      *
      * @since    6.0.4
-     * @requires modules/exporting
      * @requires modules/export-data
      */
     useMultiLevelHeaders: true,
@@ -263,7 +251,6 @@ const exporting: ExportingOptions = {
      *         Multiple table headers
      *
      * @since    6.0.4
-     * @requires modules/exporting
      * @requires modules/export-data
      */
     useRowspanHeaders: true

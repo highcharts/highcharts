@@ -34,7 +34,6 @@ export interface NoDataOptions {
      * An object of additional SVG attributes for the no-data label.
      *
      * @since    3.0.8
-     * @requires modules/no-data-to-display
      */
     attr?: SVGAttributes;
 
@@ -43,7 +42,6 @@ export interface NoDataOptions {
      * SVG.
      *
      * @since    4.1.10
-     * @requires modules/no-data-to-display
      * @default false
      */
     useHTML?: boolean;
@@ -52,7 +50,6 @@ export interface NoDataOptions {
      * The position of the no-data label, relative to the plot area.
      *
      * @since    3.0.8
-     * @requires modules/no-data-to-display
      */
     position?: AlignObject;
 
@@ -60,7 +57,6 @@ export interface NoDataOptions {
      * CSS styles for the no-data label.
      *
      * @since    3.0.8
-     * @requires modules/no-data-to-display
      */
     style?: CSSObject;
 }

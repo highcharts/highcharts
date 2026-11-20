@@ -73,8 +73,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
         /**
          * Contains two arrays of axes that are controlled by control line
          * of the axis.
-         *
-         * @requires modules/drag-panes
          */
         controlledAxis: {
 
@@ -90,7 +88,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
              *
              * @type     {Array<number|string>}
              * @default  []
-             * @requires modules/drag-panes
              */
             next: [],
 
@@ -105,7 +102,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
              *
              * @type     {Array<number|string>}
              * @default  []
-             * @requires modules/drag-panes
              */
             prev: []
         },
@@ -115,8 +111,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
          *
          * @sample {highstock} stock/demo/candlestick-and-volume
          *         Enabled resizer
-         *
-         * @requires modules/drag-panes
          */
         enabled: false,
 
@@ -124,8 +118,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
          * Cursor style for the control line.
          *
          * In styled mode use class `highcharts-axis-resizer` instead.
-         *
-         * @requires modules/drag-panes
          */
         cursor: 'ns-resize',
 
@@ -138,7 +130,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
          *         Styled resizer
          *
          * @type     {Highcharts.ColorString}
-         * @requires modules/drag-panes
          */
         lineColor: 'var(--highcharts-neutral-color-20)',
 
@@ -151,8 +142,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
          *
          * @sample {highstock} stock/yaxis/styled-resizer
          *         Styled resizer
-         *
-         * @requires modules/drag-panes
          */
         lineDashStyle: 'Solid',
 
@@ -163,8 +152,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
          *
          * @sample {highstock} stock/yaxis/styled-resizer
          *         Styled resizer
-         *
-         * @requires modules/drag-panes
          */
         lineWidth: 4,
 
@@ -173,8 +160,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
          *
          * @sample {highstock} stock/yaxis/styled-resizer
          *         Styled resizer
-         *
-         * @requires modules/drag-panes
          */
         x: 0,
 
@@ -183,8 +168,6 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
          *
          * @sample {highstock} stock/yaxis/styled-resizer
          *         Styled resizer
-         *
-         * @requires modules/drag-panes
          */
         y: 0
     }

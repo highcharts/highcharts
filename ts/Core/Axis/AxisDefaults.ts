@@ -125,6 +125,7 @@ namespace AxisDefaults {
          * @type      {Array<*>}
          * @since     4.1.0
          * @product   highcharts highstock gantt
+         * @requires  modules/broken-axis
          * @apioption xAxis.breaks
          */
 
