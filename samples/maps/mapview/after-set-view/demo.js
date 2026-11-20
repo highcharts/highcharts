@@ -1,17 +1,12 @@
 (async () => {
     const play = document.getElementById('play'),
-        status = document.getElementById('status');
-
-    let mapData;
-    try {
-        const response = await fetch(
+        status = document.getElementById('status'),
+        mapData = await fetch(
             'https://code.highcharts.com/mapdata/custom/world.topo.json'
-        );
-        if (!response.ok) {
-            throw new Error('Could not load the map.');
-        }
-        mapData = await response.json();
-    } catch {
+        ).then(response => (response.ok ? response.json() : null))
+            .catch(() => null);
+
+    if (!mapData) {
         status.textContent = 'Could not load the map. Reload to try again.';
         return;
     }
@@ -22,9 +17,7 @@
         reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
     const chart = Highcharts.mapChart('container', {
-        title: {
-            text: 'Fly to Paris'
-        },
+        title: { text: 'Fly to Paris' },
         accessibility: {
             description: 'Use Play or Pause below the map to control the ' +
                 'camera. Pan or zoom to take control.'
@@ -37,17 +30,13 @@
             center: [-15, 42],
             zoom: 2.5
         },
-        series: [{
-            mapData
-        }, {
+        series: [{ mapData }, {
             type: 'mappoint',
             name: 'Destination',
             data: [{
                 name: 'Paris',
-                geometry: {
-                    type: 'Point',
-                    coordinates: paris
-                }
+                lon: paris[0],
+                lat: paris[1]
             }]
         }]
     });
@@ -56,19 +45,17 @@
 
     let flight,
         frame,
-        previousTime,
         settingView = false;
 
-    function pause() {
+    function pause(message) {
         cancelAnimationFrame(frame);
         frame = undefined;
-        previousTime = undefined;
         play.textContent = 'Play';
+        status.textContent = message;
     }
 
     function animate(time) {
-        flight.elapsed += time - (previousTime ?? time);
-        previousTime = time;
+        flight.elapsed = Math.max(0, time - flight.startedAt);
 
         const progress = reducedMotion.matches ?
                 1 : Math.min(1, flight.elapsed / duration),
@@ -86,24 +73,21 @@
         if (progress < 1) {
             frame = requestAnimationFrame(animate);
         } else {
-            pause();
             flight = undefined;
-            status.textContent = 'Arrived in Paris.';
+            pause('Arrived in Paris.');
         }
     }
 
     const unbindViewChange = Highcharts.addEvent(view, 'afterSetView', () => {
         if (flight && !settingView) {
-            pause();
             flight = undefined;
-            status.textContent = 'Manual control. Play to fly to Paris.';
+            pause('Manual control. Play to fly to Paris.');
         }
     });
 
     function togglePlayback() {
         if (frame !== undefined) {
-            pause();
-            status.textContent = 'Paused.';
+            pause('Paused.');
             return;
         }
 
@@ -120,6 +104,7 @@
         flight = flight ?? {
             center: [lon, lat], zoom: view.zoom, elapsed: 0
         };
+        flight.startedAt = performance.now() - flight.elapsed;
         play.textContent = 'Pause';
         status.textContent = 'Drag the map or zoom to take control.';
         frame = requestAnimationFrame(animate);
@@ -130,7 +115,7 @@
     play.disabled = false;
 
     Highcharts.addEvent(chart, 'destroy', () => {
-        pause();
+        pause(status.textContent);
         unbindViewChange();
         play.removeEventListener('click', togglePlayback);
         play.disabled = true;
