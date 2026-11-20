@@ -717,7 +717,7 @@ QUnit.test(
         assert.strictEqual(
             counts.get(added),
             0,
-            'The initial data of an added series is not an update'
+            'The initial data of an added series should not fire updatedData'
         );
         assert.strictEqual(
             counts.get(notRendered),

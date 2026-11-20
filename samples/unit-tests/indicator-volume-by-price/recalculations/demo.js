@@ -396,7 +396,8 @@ QUnit.test('VBP with price data set before render, #20298.', function (assert) {
     assert.strictEqual(
         getVBP([null, 3, 2, 4, 3, 5]).points.length,
         0,
-        'No error when the price range is not defined'
+        'VBP should be empty without errors when the price range is not ' +
+        'defined'
     );
 });
 
