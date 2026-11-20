@@ -711,7 +711,7 @@ class VBPIndicator extends SMAIndicator {
         if (!defined(lowRange) || !defined(highRange)) {
             // No points yet when data is set before the first render
             if (this.points?.length) {
-                this.setData([]);
+                this.setData([], false);
                 this.zoneStarts = [];
                 if (this.zoneLinesSVG) {
                     this.zoneLinesSVG = this.zoneLinesSVG.destroy();

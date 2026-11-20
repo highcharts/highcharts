@@ -389,9 +389,20 @@ QUnit.test('VBP with price data set before render, #20298.', function (assert) {
         return vbp;
     };
 
+    const vbp = getVBP([1, 3, 2, 4, 3, 5]);
+
     assert.ok(
-        getVBP([1, 3, 2, 4, 3, 5]).zoneLinesSVG,
+        vbp.zoneLinesSVG,
         'Zone lines should be drawn after the first render'
+    );
+
+    vbp.linkedParent.setData([null, 3, 2, 4, 3, 5]);
+
+    assert.strictEqual(
+        vbp.points.length,
+        0,
+        'VBP should be emptied without recursive redraws when the price ' +
+        'range becomes undefined'
     );
     assert.strictEqual(
         getVBP([null, 3, 2, 4, 3, 5]).points.length,
