@@ -24,6 +24,7 @@
  * */
 
 import type TableCell from './Body/TableCell';
+import type { MenuContext } from '../ContextMenu/ContextMenuTarget';
 import type { RowId } from '../Data/DataProvider';
 
 import GridUtils from '../GridUtils.js';
@@ -42,7 +43,10 @@ import ColumnLayout from './Layout/ColumnLayout.js';
 import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
 import { addLongPressContextMenu } from '../ContextMenu/ContextMenuLongPress.js';
-import { getCellMenuContext } from '../ContextMenu/ContextMenuTarget.js';
+import {
+    getCellMenuContext,
+    getTableMenuContext
+} from '../ContextMenu/ContextMenuTarget.js';
 import { resolveContextMenu } from '../ContextMenu/ContextMenuResolver.js';
 
 const { makeHTMLElement, applyUserClassNames } = GridUtils;
@@ -253,10 +257,9 @@ class Table {
         this.removeLongPressContextMenu = addLongPressContextMenu(
             this.tableElement,
             (target): boolean => {
-                const cell = this.getTableCellFromTarget(target);
-                return !!cell && resolveContextMenu(
-                    getCellMenuContext(cell)
-                ).length > 0;
+                const context = this.getMenuContext(target);
+                return !!context &&
+                    resolveContextMenu(context).length > 0;
             }
         );
         document.addEventListener('focusin', this.onDocumentFocusIn, true);
@@ -367,6 +370,28 @@ class Table {
         }
 
         return cell as TableCell;
+    }
+
+    /**
+     * Returns the context of the menu the given part of the table belongs to,
+     * which is the menu of the cell under it, or the menu of the body itself
+     * where no cell is. Undefined outside the body, which keeps its own menus.
+     *
+     * @param target
+     * The element the press or the key landed on.
+     */
+    private getMenuContext(
+        target: EventTarget | null
+    ): MenuContext | undefined {
+        const cell = this.getTableCellFromTarget(target);
+
+        if (cell) {
+            return getCellMenuContext(cell);
+        }
+
+        const body = (target as HTMLElement)?.closest?.('tbody');
+
+        return body ? getTableMenuContext(this.grid, body) : void 0;
     }
 
     /**
@@ -770,22 +795,19 @@ class Table {
     };
 
     /**
-     * Delegated context menu handler for cells.
+     * Delegated context menu handler for the table body. A press that misses
+     * every cell opens the menu of the body itself, which is the whole of it
+     * while the table holds no row.
+     *
      * @param e Mouse event
      */
     private onCellContextMenu = (e: MouseEvent): void => {
-        const tableCell = this.getTableCellFromTarget(e.target);
-        if (!tableCell) {
-            return;
-        }
+        const context = this.getMenuContext(e.target);
 
-        const opened = this.grid.contextMenu.open(
-            getCellMenuContext(tableCell),
-            e.clientX,
-            e.clientY
-        );
-
-        if (opened) {
+        if (
+            context &&
+            this.grid.contextMenu.open(context, e.clientX, e.clientY)
+        ) {
             e.preventDefault();
         }
     };
@@ -824,35 +846,40 @@ class Table {
     };
 
     /**
-     * Delegated keydown handler for cells.
+     * Delegated keydown handler for cells, and for the table body itself while
+     * it holds the tab stop.
+     *
      * @param e Keyboard event
      */
     private onCellKeyDown = (e: KeyboardEvent): void => {
         const cell = this.getCellFromElement(e.target);
-        if (!cell) {
-            return;
-        }
 
-        const isContextMenuKey = (
-            e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
-        );
+        if (e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)) {
+            const context = this.getMenuContext(e.target);
+            const target = context?.target;
 
-        if (isContextMenuKey && 'column' in cell && 'row' in cell) {
-            const tableCell = cell as TableCell;
-            const rect = tableCell.htmlElement.getBoundingClientRect();
-            const opened = this.grid.contextMenu.open(
-                getCellMenuContext(tableCell),
-                rect.left + 4,
-                rect.bottom - 2
-            );
-            if (opened) {
-                e.preventDefault();
-                e.stopPropagation();
-                return;
+            if (target) {
+                const isCell = target.type === 'cell';
+                const rect = (
+                    isCell ? target.cell.htmlElement : target.element
+                ).getBoundingClientRect();
+
+                // A cell's menu hangs under the cell, while the body's own
+                // menu has nothing to hang under and opens at its top.
+                if (this.grid.contextMenu.open(
+                    context,
+                    rect.left + 4,
+                    isCell ? rect.bottom - 2 : rect.top + 4
+                )) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
             }
         }
 
-        (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
+        (cell as { onKeyDown(e: KeyboardEvent): void } | undefined)
+            ?.onKeyDown(e);
     };
 
     /**
@@ -1321,15 +1348,23 @@ class Table {
     }
 
     /**
-     * Sets the focus anchor cell.
+     * Sets the focus anchor cell, which is the tab stop of the table body.
      *
      * @param cell
-     * The cell to set as the focus anchor cell.
+     * The cell to set as the focus anchor cell. Left out while the table holds
+     * no cell to take the tab stop, which hands it to the body element itself,
+     * so that the body's own context menu stays reachable by keyboard.
      */
-    public setFocusAnchorCell(cell: Cell): void {
+    public setFocusAnchorCell(cell?: Cell): void {
         this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
         this.focusAnchorCell = cell;
-        this.focusAnchorCell.htmlElement.setAttribute('tabindex', '0');
+
+        if (cell) {
+            cell.htmlElement.setAttribute('tabindex', '0');
+            this.tbodyElement.removeAttribute('tabindex');
+        } else {
+            this.tbodyElement.setAttribute('tabindex', '0');
+        }
     }
 
     /**

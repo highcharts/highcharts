@@ -42,10 +42,20 @@ Highcharts files](https://www.highcharts.com/docs/getting-started/how-to-create-
 for more information.
 
 ## Build and debug
-If you want to do modifications to Highcharts or fix issues, you may build your own files. Highcharts uses Gulp as the build system. After `npm install` in the root folder, run `gulp`, which will set up a watch task for the JavaScript and CSS files. Now any changes in the files of the `/js` or `/css` folders will result in new files being built and saved in the `code` folder. Other tasks are also available, like `gulp lint`.
+If you want to do modifications to Highcharts or fix issues, you may build your own files. Highcharts uses Gulp as the build system. After `npm ci` in the root folder, run `gulp`, which will set up a watch task for the JavaScript and CSS files. Now any changes in the files of the `/js` or `/css` folders will result in new files being built and saved in the `code` folder. Other tasks are also available, like `gulp lint`.
+
+Development expects Node.js 26 (current LTS) and npm 11, as declared in
+`devEngines` in `package.json`. Other versions print an `EBADDEVENGINES`
+warning. With [nvm](https://github.com/nvm-sh/nvm), run `nvm use` to pick the
+version from `.nvmrc`.
+
+Use `npm ci` to install the exact dependency versions from
+`package-lock.json`, as CI does. Use `npm install` only when adding, removing
+or upgrading dependencies, and commit the updated `package-lock.json`.
 
 ```
-npm install
+nvm use
+npm ci
 gulp
 ```
 

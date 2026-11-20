@@ -39,7 +39,10 @@ import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type TableCell from './Table/Body/TableCell';
-import type { CellMenuTarget } from './ContextMenu/ContextMenuTarget';
+import type {
+    CellMenuTarget,
+    TableMenuTarget
+} from './ContextMenu/ContextMenuTarget';
 import type { ContextMenuOptions } from './ContextMenu/ContextMenuOptions';
 import type { IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
@@ -468,6 +471,15 @@ export interface TableSettings {
      * The custom CSS class name for the table.
      */
     className?: string;
+
+    /**
+     * Options for the context menu of the table body, which opens next to the
+     * cells rather than on one, and so on the whole of the body while the
+     * table holds no row.
+     *
+     * @sample grid-pro/options/table-editing-empty Adding the first row
+     */
+    contextMenu?: ContextMenuOptions<TableMenuTarget>;
 }
 
 /**

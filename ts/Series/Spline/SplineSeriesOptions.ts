@@ -25,6 +25,27 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
+/**
+ * A spline series is a special type of line series, where the segments
+ * between the data points are smoothed.
+ *
+ * A `spline` series. If the [type](#series.spline.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @sample {highcharts} highcharts/demo/spline-irregular-time/
+ *         Spline chart
+ *
+ * @sample {highstock} stock/demo/spline/
+ *         Spline chart
+ *
+ * @extends plotOptions.series
+ *
+ * @extends series,plotOptions.spline
+ *
+ * @excluding step, boostThreshold, boostBlending
+ *
+ * @product highcharts highstock
+ */
 export interface SplineSeriesOptions extends LineSeriesOptions {
     states?: SeriesStatesOptions<SplineSeriesOptions>;
 }

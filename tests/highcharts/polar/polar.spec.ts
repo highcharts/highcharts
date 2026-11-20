@@ -41,3 +41,40 @@ test.describe('samples/unit-tests/polar/polar-zoom equivalent', () => {
         await page.mouse.up(); // Not strictly neccessary, but keeping for now
     });
 });
+
+test(
+    'Loading highcharts-more after chart creation should not break redraw ' +
+    '(#25546)',
+    async ({ page }) => {
+        await page.setContent('<div id="container"></div>');
+        await page.addScriptTag({
+            url: 'https://code.highcharts.com/highcharts.js'
+        });
+
+        await page.evaluate(() => {
+            window.Highcharts.chart('container', {
+                series: [{
+                    type: 'line',
+                    data: [1, 3, 2]
+                }]
+            });
+        });
+
+        await page.addScriptTag({
+            url: 'https://code.highcharts.com/highcharts-more.js'
+        });
+
+        const error = await page.evaluate(() => {
+            try {
+                window.Highcharts.charts[0]?.setSize(400, 300, false);
+            } catch (e) {
+                return String(e);
+            }
+        });
+
+        expect(
+            error,
+            'Redraw should succeed on axes created without a pane'
+        ).toBeUndefined();
+    }
+);

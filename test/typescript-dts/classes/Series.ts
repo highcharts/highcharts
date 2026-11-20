@@ -2,6 +2,7 @@ import * as Highcharts from 'highcharts';
 
 test_Series();
 test_Series_registerType();
+test_Series_update();
 
 function test_Series() {
     const chart = new Highcharts.Chart('container', {});
@@ -17,4 +18,12 @@ function test_Series_registerType() {
     class MySeries extends LineSeries {
     }
     Highcharts.Series.registerType('myseries', MySeries);
+}
+
+/**
+ * Tests `Series.update` with options that leave out the series type. #25548
+ */
+function test_Series_update() {
+    const chart = Highcharts.chart('container', {});
+    chart.series[0].update({ enableMouseTracking: true });
 }

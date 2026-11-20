@@ -25,7 +25,7 @@ import type {
     PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import { SeriesTooltipOptions } from '../../Core/TooltipOptions';
+import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -68,11 +68,15 @@ export interface ScatterSeriesJitterOptions {
 
     /**
      * The maximal X offset for the random jitter effect.
+     *
+     * @default 0
      */
     x?: number;
 
     /**
      * The maximal Y offset for the random jitter effect.
+     *
+     * @default 0
      */
     y?: number;
 
@@ -93,9 +97,8 @@ export interface ScatterSeriesJitterOptions {
  *
  * @extends series,plotOptions.scatter
  *
- * @excluding cropThreshold, pointPlacement, shadow, useOhlcData
- *
- * @excluding cropThreshold, useOhlcData
+ * @excluding cropThreshold, legendSymbolColor, pointPlacement, shadow,
+ *            useOhlcData
  *
  * @product highcharts highstock
  */
@@ -218,6 +221,8 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
      *         1px
      *
      * @product highcharts highstock
+     *
+     * @default 0
      */
     lineWidth?: number;
 

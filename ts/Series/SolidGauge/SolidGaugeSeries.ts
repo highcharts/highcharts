@@ -48,7 +48,6 @@ import {
 /**
  * SolidGauge series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.solidgauge
  *
