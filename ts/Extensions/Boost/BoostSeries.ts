@@ -1247,6 +1247,14 @@ function seriesRenderCanvas(this: Series): void {
     chart.boosted = true;
 
     if (!this.visible) {
+        // A hidden boosted series runs neither `translate` nor
+        // `pushSeriesData`, so nothing measures its point density. Derive it
+        // from the data range, which `processData` does set (#24307)
+        if (this.closestPointRange) {
+            this.closestPointRangePx ??=
+                this.closestPointRange * this.xAxis.transA;
+        }
+        this.syncLegendSymbol();
         return;
     }
 

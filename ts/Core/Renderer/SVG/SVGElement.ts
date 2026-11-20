@@ -206,6 +206,9 @@ class SVGElement implements SVGElementBase {
     public inverted: undefined;
 
     /** @internal */
+    public isMarker?: boolean;
+
+    /** @internal */
     public labelStyle?: CSSObject;
 
     /** @internal */
