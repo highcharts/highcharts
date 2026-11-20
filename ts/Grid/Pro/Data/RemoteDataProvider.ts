@@ -35,7 +35,10 @@ import type { DataSourceOptions } from './DataSourceHelper';
 import { DataProvider } from '../../Core/Data/DataProvider.js';
 import DataProviderRegistry from '../../Core/Data/DataProviderRegistry.js';
 import { createQueryFingerprint } from './QuerySerializer.js';
-import { dataSourceFetch } from './DataSourceHelper.js';
+import {
+    dataSourceFetch,
+    dataSourceFetchUniqueValues
+} from './DataSourceHelper.js';
 
 
 /* *
@@ -138,6 +141,12 @@ export class RemoteDataProvider extends DataProvider {
      * Abort controllers for in-flight requests (latest-only policy).
      */
     private pendingControllers: Set<AbortController> = new Set();
+
+    /**
+     * Unique values requests, cached per column until a value is edited.
+     */
+    private uniqueValues: Map<string, Promise<DataTableCellType[]>> =
+        new Map();
 
     /**
      * Whether the positional row id warning was already emitted.
@@ -646,6 +655,49 @@ export class RemoteDataProvider extends DataProvider {
         return this.rowCount ?? 0;
     }
 
+    /**
+     * Returns the unique values of a column from `fetchUniqueValuesCallback`
+     * or `dataSource.uniqueValuesUrlTemplate`, or an empty array when neither
+     * is set. A failed request is not cached.
+     *
+     * @param columnId
+     * The id of the column in the data source.
+     */
+    public override getUniqueValues(
+        columnId: string
+    ): Promise<DataTableCellType[]> {
+        const { dataSource, fetchUniqueValuesCallback } = this.options;
+        let values = this.uniqueValues.get(columnId);
+
+        if (!values) {
+            if (fetchUniqueValuesCallback) {
+                values = (async (): Promise<DataTableCellType[]> =>
+                    fetchUniqueValuesCallback.call(this, columnId)
+                )();
+            } else if (dataSource?.uniqueValuesUrlTemplate) {
+                values = dataSourceFetchUniqueValues({
+                    ...dataSource,
+                    urlTemplate: dataSource.uniqueValuesUrlTemplate
+                }, { query: this.querying, offset: 0, limit: 0 }, columnId);
+            } else {
+                return super.getUniqueValues(columnId);
+            }
+
+            values = values['catch']((err: unknown): DataTableCellType[] => {
+                this.uniqueValues.delete(columnId);
+                // eslint-disable-next-line no-console
+                console.error(
+                    'Error fetching unique values from remote server.\n',
+                    err
+                );
+                return [];
+            });
+            this.uniqueValues.set(columnId, values);
+        }
+
+        return values;
+    }
+
     public override async getValue(
         columnId: string,
         rowIndex: number
@@ -689,6 +741,7 @@ export class RemoteDataProvider extends DataProvider {
             );
 
             this.lastQueryFingerprint = null;
+            this.uniqueValues.clear();
 
             // TODO(optim): Can be optimized by checking if the value was
             // changed in the specific, queried column.
@@ -787,6 +840,7 @@ export class RemoteDataProvider extends DataProvider {
     public override destroy(): void {
         this.abortPendingRequests();
         this.clearChunkCache();
+        this.uniqueValues.clear();
         this.columnIds = null;
         this.prePaginationRowCount = null;
         this.rowCount = null;
@@ -884,6 +938,23 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
         limit: number,
         signal?: AbortSignal
     ) => Promise<RemoteFetchCallbackResult>;
+
+    /**
+     * Custom callback to fetch the unique values of a column from the remote
+     * server, e.g. for the value list of a set filter. Has higher priority
+     * than `dataSource.uniqueValuesUrlTemplate`. The values are cached per
+     * column until a cell value is edited.
+     *
+     * @param columnId
+     * The id of the column in the data source.
+     *
+     * @returns
+     * The unique values of the column.
+     */
+    fetchUniqueValuesCallback?: (
+        this: RemoteDataProvider,
+        columnId: string
+    ) => Promise<DataTableCellType[]>;
 
     /**
      * Callback to persist value changes to the remote server. If not provided,

@@ -132,6 +132,14 @@ test.describe('Grid filtering', () => {
         }
     });
 
+    test('Unique values of a column ignore the filters', async ({ page }) => {
+        await verifyRowCount(page, 3);
+
+        expect(await page.evaluate(() => (window as any).Grid.grids[0]
+            .dataProvider.getUniqueValues('active')
+        )).toEqual([true, null, false]);
+    });
+
     test('Arrow key navigation works across header, filter row, and body', async ({
         page
     }) => {

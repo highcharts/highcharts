@@ -23,6 +23,7 @@
  * */
 
 import type { RemoteFetchCallbackResult } from './RemoteDataProvider';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 import type QueryingController from '../../Core/Querying/QueryingController';
 import type { ColumnSortingOrder } from '../../Core/Options';
 
@@ -328,6 +329,47 @@ export async function dataSourceFetch(
     }
 }
 
+/**
+ * Fetches the unique values of a column from the remote server.
+ *
+ * @param options
+ * The data source options, with `urlTemplate` set to the unique values URL
+ * template.
+ *
+ * @param state
+ * The query state used for the template variables.
+ *
+ * @param columnId
+ * The id of the column, available as the `columnId` template variable.
+ *
+ * @returns
+ * The `data` array of the response.
+ */
+export async function dataSourceFetchUniqueValues(
+    options: DataSourceOptions,
+    state: QueryState,
+    columnId: string
+): Promise<DataTableCellType[]> {
+    const { fetchTimeout = 30000, templateVariables } = options,
+        res = await fetch(buildUrl({
+            ...options,
+            templateVariables: {
+                ...templateVariables,
+                columnId: (): string => columnId
+            }
+        }, state), fetchTimeout > 0 ? {
+            signal: AbortSignal.timeout(fetchTimeout)
+        } : void 0);
+
+    if (!res.ok) {
+        throw new Error(
+            `DataSourceHelper: request failed with status ${res.status}`
+        );
+    }
+
+    return (await res.json()).data || [];
+}
+
 
 /* *
  *
@@ -356,6 +398,16 @@ export interface DataSourceOptions {
      * `templateVariables` option.
      */
     urlTemplate: string;
+
+    /**
+     * The URL template to fetch the unique values of a column from the remote
+     * server, e.g. for the value list of a set filter. Supports the `columnId`
+     * variable and the custom `templateVariables`. The response is expected
+     * to be JSON with the values in the `data` array.
+     *
+     * Example: `https://api.example.com/values?column={columnId}`
+     */
+    uniqueValuesUrlTemplate?: string;
 
     /**
      * Custom template variables to be replaced in the `urlTemplate`, extending

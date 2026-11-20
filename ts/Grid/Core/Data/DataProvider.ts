@@ -156,6 +156,20 @@ export abstract class DataProvider {
     }
 
     /**
+     * Returns the unique values of a column in the whole data set, regardless
+     * of the query. Providers that can't list them return an empty array.
+     *
+     * @param columnId
+     * The id of the column in the data source.
+     */
+    public getUniqueValues(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        columnId: string
+    ): Promise<DataTableCellType[]> {
+        return Promise.resolve([]);
+    }
+
+    /**
      * Helper method to assume the data type of a column based on the sample
      * of the column data.
      *
