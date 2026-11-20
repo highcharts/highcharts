@@ -167,7 +167,7 @@ function describe(group, nested) {
 }
 
 // The grid options are the single source of truth. The builder edits a copy
-// and replaces the whole filtering state on each change.
+// and sends all of it on each change, as the update merges the options.
 function apply(delay) {
     clearTimeout(timer);
     timer = setTimeout(async () => {
@@ -404,7 +404,7 @@ Grid.grid('container', {
     ));
 
     ui.clear.onclick = () => {
-        state = { rules: [] };
+        state = { logic: 'and', rules: [] };
         render('add-root');
         apply(0);
     };
