@@ -97,4 +97,6 @@ function test_grid() {
             }]
         }
     });
+
+    void grid.dataProvider?.getUniqueValues('x');
 }

@@ -73,6 +73,12 @@ function test_grid() {
                     },
                     totalRowCount: 3
                 };
+            },
+            fetchUniqueValuesCallback: async (columnId) => [columnId, null],
+            dataSource: {
+                urlTemplate: 'https://api.example.com/data?page={page}',
+                uniqueValuesUrlTemplate:
+                    'https://api.example.com/values?column={columnId}'
             }
         },
         tableEditing: {
@@ -324,4 +330,5 @@ function test_composedModuleAugmentations() {
     grid.treeView?.expandAll();
     grid.summaryRows?.getRows();
     grid.viewport?.validator?.errorCell;
+    void grid.dataProvider?.getUniqueValues('x');
 }

@@ -533,3 +533,116 @@ test.describe('RemoteDataProvider', () => {
         expect(result.rowIndex1).toBe(1);
     });
 });
+
+test.describe('RemoteDataProvider unique values', () => {
+    test('fetches unique values once per column until a value is edited', async ({
+        page
+    }) => {
+        await openRemoteProviderFixture(page);
+
+        const result = await page.evaluate(async () => {
+            const calls: string[] = [];
+            const grid = await (window as any).Grid.grid('container', {
+                data: {
+                    providerType: 'remote',
+                    fetchCallback: () => Promise.resolve({
+                        columns: { city: ['Oslo', 'Oslo'] },
+                        totalRowCount: 2
+                    }),
+                    fetchUniqueValuesCallback: (columnId: string) => {
+                        calls.push(columnId);
+                        if (calls.length === 1) {
+                            throw new Error('offline');
+                        }
+                        return [columnId + '-a', null];
+                    },
+                    setValueCallback: () => Promise.resolve()
+                }
+            }, true);
+            const dp = grid.dataProvider;
+            const failed = await dp.getUniqueValues('city');
+            const concurrent = await Promise.all([
+                dp.getUniqueValues('city'),
+                dp.getUniqueValues('city')
+            ]);
+
+            await dp.getUniqueValues('country');
+            await dp.getUniqueValues('city');
+            await dp.setValue('Bergen', 'city', 0);
+            await dp.getUniqueValues('city');
+
+            return { failed, concurrent, calls };
+        });
+
+        expect(result.failed).toEqual([]);
+        expect(result.concurrent).toEqual([
+            ['city-a', null],
+            ['city-a', null]
+        ]);
+        expect(result.calls).toEqual(['city', 'city', 'country', 'city']);
+    });
+
+    test('fetches unique values from the data source template', async ({
+        page
+    }) => {
+        await page.route('https://api.example.com/**', (route) => {
+            const url = new URL(route.request().url());
+
+            return route.fulfill({
+                headers: { 'access-control-allow-origin': '*' },
+                json: url.pathname === '/values' ? {
+                    data: [
+                        url.searchParams.get('column'),
+                        url.searchParams.get('token')
+                    ]
+                } : {
+                    data: { name: ['Oslo'] },
+                    meta: { totalRowCount: 1 }
+                }
+            });
+        });
+        await openRemoteProviderFixture(page);
+
+        const values = await page.evaluate(async () => {
+            const grid = await (window as any).Grid.grid('container', {
+                data: {
+                    providerType: 'remote',
+                    dataSource: {
+                        urlTemplate: 'https://api.example.com/data?page={page}',
+                        uniqueValuesUrlTemplate: 'https://api.example.com/' +
+                            'values?column={columnId}&token={token}',
+                        templateVariables: {
+                            token: () => 'a&b'
+                        }
+                    }
+                }
+            }, true);
+
+            return grid.dataProvider.getUniqueValues('first name');
+        });
+
+        expect(values).toEqual(['first name', 'a&b']);
+    });
+
+    test('returns no unique values without a source for them', async ({
+        page
+    }) => {
+        await openRemoteProviderFixture(page);
+
+        const values = await page.evaluate(async () => {
+            const grid = await (window as any).Grid.grid('container', {
+                data: {
+                    providerType: 'remote',
+                    fetchCallback: () => Promise.resolve({
+                        columns: { city: ['Oslo'] },
+                        totalRowCount: 1
+                    })
+                }
+            }, true);
+
+            return grid.dataProvider.getUniqueValues('city');
+        });
+
+        expect(values).toEqual([]);
+    });
+});
