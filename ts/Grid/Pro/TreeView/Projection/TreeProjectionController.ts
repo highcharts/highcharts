@@ -253,6 +253,8 @@ class TreeProjectionController {
 
     private rowGroupingIgnoredWarned?: boolean;
 
+    private sourceTableOverride?: DataTable;
+
     private cacheSource?: {
         table: DataTable;
         versionTag: string;
@@ -297,6 +299,25 @@ class TreeProjectionController {
      * */
 
     /**
+     * Sets the table the tree relations are read from, in place of the table
+     * of the data provider.
+     *
+     * A feature that replaces the queried table with a generated one, such as
+     * the pivot, builds its tree from that table, because the relation columns
+     * exist only there.
+     *
+     * @param table
+     * Generated source table, or `undefined` to read the provider table
+     * again.
+     */
+    public setSourceTableOverride(table?: DataTable): void {
+        if (this.sourceTableOverride !== table) {
+            this.sourceTableOverride = table;
+            this.clearCache();
+        }
+    }
+
+    /**
      * Synchronizes internal state from current Grid options and provider.
      */
     public sync(): void {
@@ -325,7 +346,8 @@ class TreeProjectionController {
             return;
         }
 
-        const table = dataProvider.getDataTable(false);
+        const table = this.sourceTableOverride ||
+            dataProvider.getDataTable(false);
         if (!table) {
             this.resolvedOptions = void 0;
             this.clearCache();
@@ -333,7 +355,7 @@ class TreeProjectionController {
         }
         const versionTag = table.getVersionTag();
 
-        const idColumn = dataOptions?.idColumn;
+        const idColumn = this.getIdColumn();
         let resolvedInput: NormalizedTreeInputOptions;
 
         try {
@@ -471,7 +493,7 @@ class TreeProjectionController {
             return;
         }
 
-        const idColumn = this.getDataOptions()?.idColumn;
+        const idColumn = this.getIdColumn();
         const idValues = idColumn ? table.columns[idColumn] : void 0;
         if (idColumn && !idValues) {
             return;
@@ -726,7 +748,7 @@ class TreeProjectionController {
             return table;
         }
 
-        const idColumn = this.getDataOptions()?.idColumn;
+        const idColumn = this.getIdColumn();
 
         const projectionState = this.projectToVisibleState(table, idColumn);
         this.projectionStateCache = projectionState;
@@ -884,6 +906,19 @@ class TreeProjectionController {
         }
 
         return dataOptions;
+    }
+
+    /**
+     * Returns the column holding stable row IDs. An overriding table is
+     * generated, so the ids of its rows are their row indexes and `idColumn`
+     * of the source data does not address it.
+     */
+    private getIdColumn(): string | undefined {
+        if (this.sourceTableOverride) {
+            return;
+        }
+
+        return this.getDataOptions()?.idColumn;
     }
 
     /**
@@ -1538,7 +1573,10 @@ class TreeProjectionController {
     private requiresProjectedTreeSort(sourceColumnId: string): boolean {
         return (
             this.hasColumnAggregation(sourceColumnId) ||
-            this.isGroupingDisplayColumn(sourceColumnId)
+            this.isGroupingDisplayColumn(sourceColumnId) ||
+            // Pivot columns exist only in the projected table, so the sort
+            // modifier running before the projection cannot order them.
+            !!this.grid.pivot?.isProjectedColumn(sourceColumnId)
         );
     }
 
@@ -1819,7 +1857,7 @@ class TreeProjectionController {
      * Source column id.
      */
     public isTreeSpecialColumn(sourceColumnId: string): boolean {
-        const idColumn = this.getDataOptions()?.idColumn;
+        const idColumn = this.getIdColumn();
         if (sourceColumnId === idColumn) {
             return true;
         }

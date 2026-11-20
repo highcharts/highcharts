@@ -62,6 +62,7 @@ import LicenseValidationComposition from '../Grid/Pro/License/LicenseValidationC
 import RowPinningComposition from '../Grid/Pro/RowPinning/RowPinningComposition.js';
 import RowSelectionComposition from '../Grid/Pro/RowSelection/RowSelectionComposition.js';
 import TableEditingComposition from '../Grid/Pro/TableEditing/TableEditingComposition.js';
+import PivotComposition from '../Grid/Pro/Pivot/PivotComposition.js';
 import TreeViewComposition from '../Grid/Pro/TreeView/TreeViewComposition.js';
 import SummaryRowsComposition from '../Grid/Pro/SummaryRows/SummaryRowsComposition.js';
 import SummaryColumnsComposition from '../Grid/Pro/SummaryColumns/SummaryColumnsComposition.js';
@@ -103,6 +104,7 @@ import '../Grid/Pro/License/LicenseValidationComposition.js';
 import '../Grid/Pro/Pagination/PaginationComposition.js';
 import '../Grid/Pro/SummaryColumns/SummaryColumnsComposition.js';
 import '../Grid/Pro/SummaryRows/SummaryRowsComposition.js';
+import '../Grid/Pro/Pivot/PivotComposition.js';
 import '../Grid/Pro/TableEditing/TableEditingComposition.js';
 import '../Grid/Pro/TreeView/TreeViewComposition.js';
 import '../Grid/Pro/TreeView/TreeViewValidation.js';
@@ -182,6 +184,7 @@ RowPinningComposition.compose(
 );
 RowSelectionComposition.compose(G.Grid, G.Table, G.TableCell);
 TableEditingComposition.compose(G.Grid);
+PivotComposition.compose(G.Grid, G.TableCell);
 TreeViewComposition.compose(G.Grid, G.Table, G.TableCell, G.HeaderCell);
 SummaryRowsComposition.compose(G.Grid, G.Table, G.TableCell);
 SummaryColumnsComposition.compose(G.Grid, G.Column, G.TableCell);

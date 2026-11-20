@@ -43,6 +43,8 @@
         "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
         "../../../ts/Grid/Pro/GridEvents.ts",
 
+        "../../../ts/Grid/Pro/Pivot/PivotOptions.ts",
+
         "../../../ts/Grid/Pro/RowSelection/RowSelectionOptions.ts",
         "../../../ts/Grid/Pro/RowSelection/RowSelectionController.ts",
 
