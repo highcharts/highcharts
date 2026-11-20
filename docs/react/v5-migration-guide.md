@@ -23,7 +23,7 @@ import { Accessibility } from "@highcharts/react/modules/Accessibility";
 
 ## Pure ESM migration
 
-We migrated to the pure ESM paths, replacing the webpack-bundled `/esm` imports with `/es-modules/masters` for better compatibility with modern bundlers. For example, the [Boost module](https://www.highcharts.com/docs/react/components/modules/boost):
+We migrated to the pure ESM paths, replacing the webpack-bundled `/esm` imports with `/es-modules/masters` for better compatibility with modern bundlers. For example, the [marker clusters module](https://www.highcharts.com/docs/advanced-chart-features/marker-clusters):
 
 ```ts
 // Before
