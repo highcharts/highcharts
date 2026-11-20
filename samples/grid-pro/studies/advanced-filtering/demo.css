@@ -123,6 +123,7 @@ select.fb-prefix {
     align-items: center;
     gap: 4px 12px;
     margin: 8px 0;
+    padding: 0 12px;
 }
 
 .fb-bar p {
@@ -130,7 +131,7 @@ select.fb-prefix {
 }
 
 .fb-summary {
-    flex: 1;
+    flex: 1 1 15rem;
     opacity: 0.7;
 }
 
