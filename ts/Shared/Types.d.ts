@@ -55,3 +55,12 @@ export type TypedArrayConstructor = (
  */
 export type MakeOptional<T extends object, K extends keyof T> =
     T extends unknown ? Omit<T, K> & Partial<Pick<T, K>> : never;
+
+/**
+ * Object without a prototype, created with `Object.create(null)`. Members of
+ * `Object.prototype`, like `toString` and `constructor`, are typed as `never`,
+ * so using them fails at compile time. Combine it with a record type, like
+ * `NullProto & Record<string, T>`, for a map with untrusted keys.
+ */
+// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
+export type NullProto = { readonly [K in keyof Object]: never };
