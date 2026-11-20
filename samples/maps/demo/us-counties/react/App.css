@@ -14,6 +14,12 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+#container {
+    max-width: 800px;
+    min-width: 360px;
+    margin: 0 auto;
+}
+
 /* Custom CSS for the color axis ticks and marker */
 .highcharts-coloraxis .highcharts-tick {
     stroke-linecap: round;
