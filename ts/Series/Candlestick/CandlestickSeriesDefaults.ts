@@ -34,7 +34,7 @@ import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
  *         Candlestick chart
  *
  * @extends      plotOptions.ohlc
- * @excluding    borderColor,borderRadius,borderWidth
+ * @excluding    borderColor,borderRadius,borderWidth,stack,stacking
  * @product      highstock
  * @optionparent plotOptions.candlestick
  */
@@ -167,7 +167,8 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  *
  * @type      {*}
  * @extends   series,plotOptions.candlestick
- * @excluding borderColor, borderRadius, borderWidth, marker
+ * @excluding borderColor, borderRadius, borderWidth, marker, stack,
+ *            stacking
  * @product   highstock
  * @apioption series.candlestick
  */

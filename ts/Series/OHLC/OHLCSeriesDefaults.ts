@@ -74,14 +74,6 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
      * @apioption  plotOptions.ohlc.pointValKey
      */
 
-    /**
-     * Line color for up points.
-     *
-     * @type      {Highcharts.ColorType}
-     * @product   highstock
-     * @apioption plotOptions.ohlc.upColor
-     */
-
     tooltip: {
         pointFormat:
             '<span style="color:{point.color}">\u25CF</span> ' +
@@ -93,6 +85,14 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
     }
 
 };
+
+/**
+ * Line color for up points.
+ *
+ * @type      {Highcharts.ColorType}
+ * @product   highstock
+ * @apioption plotOptions.ohlc.upColor
+ */
 
 /**
  * The parameter allows setting line series type and use OHLC indicators.
