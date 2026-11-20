@@ -28,7 +28,7 @@ import type { LangOptions } from '../../../../Options';
 
 import FilterPopup from '../FilterPopup.js';
 import StateHelpers from '../StateHelpers.js';
-import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
+import MenuButton from '../../../../UI/MenuButton.js';
 import { addEvent } from '../../../../../../Shared/Utilities.js';
 
 
@@ -38,7 +38,7 @@ import { addEvent } from '../../../../../../Shared/Utilities.js';
  *
  * */
 
-class FilterToolbarButton extends ContextMenuButton {
+class FilterToolbarButton extends MenuButton {
 
 
     /* *
@@ -47,7 +47,7 @@ class FilterToolbarButton extends ContextMenuButton {
      *
      * */
 
-    public override contextMenu?: MenuPopup;
+    public override menu?: MenuPopup;
 
     public override popup?: FilterPopup;
 
@@ -73,7 +73,7 @@ class FilterToolbarButton extends ContextMenuButton {
      * */
 
     protected override refreshState(): void {
-        const column = this.contextMenu?.button.toolbar?.column;
+        const column = this.menu?.button.toolbar?.column;
         if (column) {
             this.setActive(StateHelpers.isFiltered(column));
         }
@@ -82,7 +82,7 @@ class FilterToolbarButton extends ContextMenuButton {
     protected override addEventListeners(): void {
         super.addEventListeners();
 
-        const toolbar = this.contextMenu?.button.toolbar;
+        const toolbar = this.menu?.button.toolbar;
         if (!toolbar) {
             return;
         }
@@ -96,7 +96,7 @@ class FilterToolbarButton extends ContextMenuButton {
 
     protected override clickHandler(event: MouseEvent): void {
         super.clickHandler(event);
-        const filtering = this.contextMenu?.button.toolbar?.column.filtering;
+        const filtering = this.menu?.button.toolbar?.column.filtering;
 
         if (!filtering) {
             return;

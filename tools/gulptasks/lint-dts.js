@@ -55,7 +55,9 @@ function lintDTS(argv) {
 
         directories.forEach(folder => {
             promiseChain = promiseChain.then(
-                () => processLib.exec('npx tsc -p ' + folder)
+                () => processLib.execFile(process.execPath, [
+                    require.resolve('typescript/bin/tsc'), '-p', folder
+                ])
             );
         });
 

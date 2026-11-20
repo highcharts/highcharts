@@ -104,3 +104,12 @@ function test_beforeParse() {
 
     Highcharts.chart('container', options);
 }
+
+/**
+ * Tests the parsed `columns` and the return value of `parseCSV`. #25548
+ */
+function test_columns() {
+    const data = new Highcharts.Data({ csv: 'A,1' });
+    const columns = data.columns;
+    const length: number = data.parseCSV().length;
+}

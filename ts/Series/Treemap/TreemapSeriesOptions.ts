@@ -395,6 +395,8 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/treemap-allowtraversingtree/
      *         Enabled
      *
+     * @default false
+     *
      * @since 7.0.3
      *
      * @product highcharts
@@ -409,12 +411,16 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/treemap-alternatestartingdirection-true/
      *         Enabled
      *
+     * @default false
+     *
      * @since 4.1.0
      */
     alternateStartingDirection?: boolean;
 
     /**
      * The color of the border surrounding each tree map item.
+     *
+     * @default 'var(--highcharts-neutral-color-10)'
      */
     borderColor?: ColorString;
 
@@ -422,11 +428,15 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
 
     /**
      * The border radius for each treemap item.
+     *
+     * @default 0
      */
     borderRadius?: number;
 
     /**
      * The width of the border surrounding each tree map item.
+     *
+     * @default 1
      */
     borderWidth?: number;
 
@@ -437,6 +447,8 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * collection, this option determines whether the chart should receive
      * one color per series or one color per point.
      *
+     * @default false
+     *
      * @see [series colors](#plotOptions.treemap.colors)
      *
      * @since 2.0
@@ -445,6 +457,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      */
     colorByPoint?: boolean;
 
+    /** @default 'colorValue' */
     colorKey?: string;
 
     /**
@@ -569,6 +582,8 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * Whether to ignore hidden points when the layout algorithm runs.
      * If `false`, hidden points will leave open spaces.
      *
+     * @default true
+     *
      * @since 5.0.8
      */
     ignoreHiddenPoint?: boolean;
@@ -595,6 +610,8 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * This option decides which algorithm is used for setting position
      * and dimensions of the points.
      *
+     * @default 'sliceAndDice'
+     *
      * @see [How to write your own algorithm](https://www.highcharts.com/docs/chart-and-series-types/treemap)
      *
      * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-sliceanddice/
@@ -618,6 +635,8 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     /**
      * Defines which direction the layout algorithm will start drawing.
      *
+     * @default 'vertical'
+     *
      * @since 4.1.0
      *
      * @validvalue ["vertical", "horizontal"]
@@ -634,6 +653,8 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * set to false the first level visible to be level one, which is
      * dynamic when traversing the tree. Otherwise the level will be the
      * same as the tree structure.
+     *
+     * @default true
      *
      * @since 4.1.0
      */
@@ -655,6 +676,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      */
     levels?: Array<TreemapSeriesLevelOptions>;
 
+    /** @default undefined */
     marker?: PointMarkerOptions;
 
     /**
@@ -675,6 +697,8 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * The opacity of a point in treemap. When a point has children, the
      * visibility of the children is determined by the opacity.
      *
+     * @default 0.15
+     *
      * @since 4.2.4
      */
     opacity?: number;
@@ -688,8 +712,6 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/treemap-events-setrootnode/
      *         Alert update information on setRootNode event.
      *
-     * @default undefined
-     *
      * @since 7.0.3
      *
      * @product highcharts
@@ -699,6 +721,8 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     /**
      * Whether to display this series type or specific series item in the
      * legend.
+     *
+     * @default false
      */
     showInLegend?: boolean;
 
@@ -753,6 +777,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      */
     traverseUpButton?: TreemapSeriesUpButtonOptions;
 
+    /** @default false */
     traverseToLeaf?: boolean;
 }
 

@@ -361,7 +361,7 @@ updateNightlyTestResults.flags = {
     '--product-version': 'Product version label for the nightly submission.',
     '--results-path': 'Path to the visual test results JSON file.',
     '--sample-root': 'Root folder containing sample reference images.',
-    '--tag': 'Product version label. Kept for parity with dist-testresults.',
+    '--tag': 'Product version label. Alias for --product-version.',
     '--visual-review-api-url': 'Use VISUAL_REVIEW_API_URL to select the service origin. Defaults to https://vrevs.highsoft.com.',
     '--visual-review-api-key': 'Use VISUAL_REVIEW_API_KEY to authenticate with the Visual Review API.'
 };

@@ -156,14 +156,14 @@ See the [HighchartsComponent](https://www.highcharts.com/docs/dashboards/highcha
 The Grid Component uses [Highcharts Grid](https://www.highcharts.com/docs/grid/general) to render its content. The `Grid` module _must_ be imported before the **Dashboards** module as shown here:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<script src="https://code.highcharts.com/grid-pro/grid-pro.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
 The `Grid` module has its own style set, so the CSS file must be imported for correct rendering.
 
 ```css
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
@@ -187,7 +187,7 @@ Code snippet with data embedded in the `Grid` data table; no data connector used
 }
 ```
 
-The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/grid-lite/demo/minimal) that uses embedded data.
+The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/grid/demo/minimal) that uses embedded data.
 
 Code snippet using a data connector.
 

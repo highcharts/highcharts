@@ -68,8 +68,8 @@ Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css" />
+    <script src="https://code.highcharts.com/grid-lite/grid-lite.js"></script>
+    <link rel="stylesheet" href="https://code.highcharts.com/grid-lite/css/grid-lite.css" />
 </head>
 <body>
     <div id="container"></div>
@@ -91,11 +91,11 @@ Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 For Grid Pro, swap the filenames:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css" />
+<script src="https://code.highcharts.com/grid-pro/grid-pro.js"></script>
+<link rel="stylesheet" href="https://code.highcharts.com/grid-pro/css/grid-pro.css" />
 ```
 
-> **TIP:** Want to lock to a specific version? Use: `https://cdn.jsdelivr.net/npm/@highcharts/grid-lite@2.0.0/grid-lite.js`
+> **TIP:** Want to lock to a specific version? Use: `https://code.highcharts.com/grid-lite/3.2.0/grid-lite.js`
 
 ---
 

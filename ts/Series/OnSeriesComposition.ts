@@ -36,6 +36,7 @@ import { defined, pushUnique, stableSort } from '../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 namespace OnSeriesComposition {
 
     /* *
@@ -44,16 +45,19 @@ namespace OnSeriesComposition {
      *
      * */
 
+    /** @internal */
     export declare class PointComposition extends Point {
         stackIndex?: number;
     }
 
+    /** @internal */
     export declare class SeriesComposition extends Series {
         options: SeriesOptions;
         onSeries?: SeriesComposition;
         points: Array<PointComposition>;
     }
 
+    /** @internal */
     export interface SeriesOptions extends CoreSeriesOptions {
         onSeries?: (string|null);
     }
@@ -65,7 +69,7 @@ namespace OnSeriesComposition {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T
@@ -85,7 +89,7 @@ namespace OnSeriesComposition {
      * Override getPlotBox. If the onSeries option is valid, return the plot box
      * of the onSeries, otherwise proceed as usual.
      *
-     * @private
+     * @internal
      */
     export function getPlotBox(
         this: SeriesComposition,
@@ -103,7 +107,7 @@ namespace OnSeriesComposition {
     /**
      * Extend the translate method by placing the point on the related series
      *
-     * @private
+     * @internal
      */
     export function translate(
         this: SeriesComposition
@@ -344,4 +348,5 @@ namespace OnSeriesComposition {
  *
  * */
 
+/** @internal */
 export default OnSeriesComposition;

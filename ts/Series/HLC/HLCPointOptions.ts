@@ -33,6 +33,20 @@ export interface HLCPointOptions extends ColumnPointOptions {
      */
     close?: number;
 
+    /**
+     * The highest value of each data point.
+     *
+     * @product highstock
+     */
+    high?: number;
+
+    /**
+     * The lowest value of each data point.
+     *
+     * @product highstock
+     */
+    low?: number;
+
 }
 
 export default HLCPointOptions;
