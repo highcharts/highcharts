@@ -272,7 +272,7 @@ class HistogramSeries extends ColumnSeries {
         const yData = this.baseSeries?.getColumn('y');
 
         if (!yData?.length) {
-            this.setData([]);
+            this.setData([], false);
             return;
         }
 

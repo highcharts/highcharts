@@ -366,6 +366,52 @@ QUnit.test('VBP series errors.', function (assert) {
 
 });
 
+QUnit.test('VBP with price data set before render, #20298.', function (assert) {
+    const getVBP = priceData => {
+        const chart = Highcharts.stockChart('container', {}),
+            price = chart.addSeries({ id: 'price' }, false);
+
+        chart.addSeries({
+            type: 'column',
+            id: 'volume',
+            data: [5, 6, 7, 8, 9, 10]
+        }, false);
+
+        const vbp = chart.addSeries({
+            type: 'vbp',
+            linkedTo: 'price',
+            params: { volumeSeriesID: 'volume' }
+        }, false);
+
+        price.setData(priceData, false);
+        chart.redraw();
+
+        return vbp;
+    };
+
+    const vbp = getVBP([1, 3, 2, 4, 3, 5]);
+
+    assert.ok(
+        vbp.zoneLinesSVG,
+        'Zone lines should be drawn after the first render'
+    );
+
+    vbp.linkedParent.setData([null, 3, 2, 4, 3, 5]);
+
+    assert.strictEqual(
+        vbp.points.length,
+        0,
+        'VBP should be emptied without recursive redraws when the price ' +
+        'range becomes undefined'
+    );
+    assert.strictEqual(
+        getVBP([null, 3, 2, 4, 3, 5]).points.length,
+        0,
+        'VBP should be empty without errors when the price range is not ' +
+        'defined'
+    );
+});
+
 QUnit.test('YAxis extremes with VBP series.', function (assert) {
     const data = [[
             1631539800000,
