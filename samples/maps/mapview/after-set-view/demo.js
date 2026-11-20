@@ -1,5 +1,6 @@
 (async () => {
     const play = document.getElementById('play'),
+        reset = document.getElementById('reset'),
         status = document.getElementById('status'),
         mapData = await fetch(
             'https://code.highcharts.com/mapdata/custom/world.topo.json'
@@ -18,10 +19,6 @@
 
     const chart = Highcharts.mapChart('container', {
         title: { text: 'Fly to Paris' },
-        accessibility: {
-            description: 'Use Play or Pause below the map to control the ' +
-                'camera. Pan or zoom to take control.'
-        },
         mapNavigation: {
             enabled: true,
             enableMouseWheelZoom: false
@@ -41,7 +38,9 @@
         }]
     });
 
-    const view = chart.mapView;
+    const view = chart.mapView,
+        startingCenter = [...view.center],
+        startingZoom = view.zoom;
 
     let flight,
         frame,
@@ -110,14 +109,24 @@
         frame = requestAnimationFrame(animate);
     }
 
+    function resetCamera() {
+        flight = undefined;
+        pause('Returned to the starting view.');
+        view.setView(startingCenter, startingZoom, true, false);
+    }
+
     play.addEventListener('click', togglePlayback);
-    status.textContent = 'Play to fly to Paris.';
+    reset.addEventListener('click', resetCamera);
+    status.textContent = 'Ready.';
     play.disabled = false;
+    reset.disabled = false;
 
     Highcharts.addEvent(chart, 'destroy', () => {
         pause(status.textContent);
         unbindViewChange();
         play.removeEventListener('click', togglePlayback);
+        reset.removeEventListener('click', resetCamera);
         play.disabled = true;
+        reset.disabled = true;
     });
 })();

@@ -4,13 +4,18 @@
     margin: 0 auto;
 }
 
+.highcharts-description,
 .camera-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
     max-width: 800px;
     margin: 0.75rem auto;
     font: 1rem system-ui, sans-serif;
+}
+
+.camera-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .camera-controls button {
