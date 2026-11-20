@@ -485,9 +485,17 @@ const ChartDefaults: ChartOptions = {
      * properties of the click event argument (`event.altKey`,
      * `event.ctrlKey`, `event.metaKey` and `event.shiftKey`).
      *
+     * With the [mouse wheel zoom](#chart.zooming.mouseWheel) enabled, the chart
+     * can also be panned by scrolling the mouse wheel while holding the
+     * [panKey](#chart.panKey).
+     *
      * @type       {"alt" | "ctrl" | "meta" | "shift"}
      * @since      4.0.3
-     * @product    highcharts gantt
+     * @sample     {highstock} stock/mouse-wheel-zoom/mouse-wheel-panning
+     *             Mouse wheel panning with a pan key
+     * @sample     {highcharts} highcharts/mouse-wheel-zoom/mouse-wheel-panning
+     *             Mouse wheel panning with a pan key
+     * @product    highcharts highstock gantt
      * @apioption  chart.panKey
      */
 

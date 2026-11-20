@@ -695,7 +695,7 @@ export interface ChartOptions {
      * the pan key while scrolling the mouse wheel pans the chart.
      *
      * @since   4.0.3
-     * @product highcharts gantt
+     * @product highcharts highstock gantt
      */
     panKey?: 'alt'|'ctrl'|'meta'|'shift';
 
