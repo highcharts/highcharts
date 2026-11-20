@@ -12,7 +12,9 @@ Before merging, configure the `nightly-dist` GitHub environment:
 - Allow only the `master` **branch** under selected deployment branches and tags;
   do not allow tags or arbitrary protected branches.
 - Set `NIGHTLY_DIST_TOKEN` to a dedicated bot token with contents write access to
-  `highcharts/highcharts-dist` only.
+  `highcharts/highcharts-dist` and `highcharts/highcharts-skills` only. The
+  [skills publisher](skills-publish.md) shares this environment, token, and
+  signing key.
 - Set `DIST_SSH_SIGNING_KEY_BASE64` to the base64 private SSH signing key
   whose public key is registered on `highsoft-bot`.
 - Remove `highcharts-dist` write access from `PR_COMMENT_TOKEN`, which other

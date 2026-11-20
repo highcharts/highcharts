@@ -5,8 +5,10 @@ description: >-
   define multiple transform zones, and convert coordinates.
 ---
 
-Latitude/longitude
+Legacy latitude/longitude (proj4)
 ===
+
+For modern coordinate handling, see [Map View and Projection](https://www.highcharts.com/docs/maps/mapview-and-projection).
 
 Note: The following content is only relevant to legacy versions of Highcharts. Since Highcharts v9.3, experimental projection is built in, allowing the use of `lat` and `lon` properties to be handled without the use of proj4js, as well as applying GeoJSON-compliant [geometry](https://api.highcharts.com/highmaps/series.data.geometry) configuration to points, maplines and map points directly.
 
