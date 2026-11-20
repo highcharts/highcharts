@@ -26,7 +26,8 @@ In the [interruptible map camera example](https://www.highcharts.com/samples/map
 **Play** resumes from there. The sample marks its own `setView` calls with a
 flag to keep the flight going. A `setView` call from elsewhere, such as during
 a drag or when using the zoom buttons, cancels the flight. The next **Play**
-starts from the current view.
+starts from the current view. **Tab** and **Shift+Tab** can leave the zoom
+controls while preserving the map center and zoom.
 
 ### Center and zoom
 By default, a map is centered within the plot area of the chart. For custom zoom and placement, use the [center](https://api.highcharts.com/highmaps/mapView.center) and [zoom](https://api.highcharts.com/highmaps/mapView.zoom) options, where `center` is given as `[longitude, latitude]` and `zoom` is a number where 0 renders the world as 256x256 pixels, and increase of 1 zooms in to a quarter of the viewed area.

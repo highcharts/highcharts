@@ -1,7 +1,20 @@
 (async () => {
-    const mapData = await fetch(
-        'https://code.highcharts.com/mapdata/custom/world.topo.json'
-    ).then(response => response.json());
+    const play = document.getElementById('play'),
+        status = document.getElementById('status');
+
+    let mapData;
+    try {
+        const response = await fetch(
+            'https://code.highcharts.com/mapdata/custom/world.topo.json'
+        );
+        if (!response.ok) {
+            throw new Error('Could not load the map.');
+        }
+        mapData = await response.json();
+    } catch {
+        status.textContent = 'Could not load the map. Reload to try again.';
+        return;
+    }
 
     const paris = [2.35, 48.86],
         destinationZoom = 6,
@@ -39,9 +52,7 @@
         }]
     });
 
-    const view = chart.mapView,
-        play = document.getElementById('play'),
-        status = document.getElementById('status');
+    const view = chart.mapView;
 
     let flight,
         frame,
@@ -93,17 +104,29 @@
         if (frame !== undefined) {
             pause();
             status.textContent = 'Paused.';
-        } else {
-            flight = flight ?? {
-                center: [...view.center], zoom: view.zoom, elapsed: 0
-            };
-            play.textContent = 'Pause';
-            status.textContent = 'Drag the map or zoom to take control.';
-            frame = requestAnimationFrame(animate);
+            return;
         }
+
+        const [lon, lat] = view.center;
+        if (
+            !flight &&
+            view.zoom === destinationZoom &&
+            Math.hypot(lon - paris[0], lat - paris[1]) < 1e-6
+        ) {
+            status.textContent = 'Arrived in Paris.';
+            return;
+        }
+
+        flight = flight ?? {
+            center: [lon, lat], zoom: view.zoom, elapsed: 0
+        };
+        play.textContent = 'Pause';
+        status.textContent = 'Drag the map or zoom to take control.';
+        frame = requestAnimationFrame(animate);
     }
 
     play.addEventListener('click', togglePlayback);
+    status.textContent = 'Play to fly to Paris.';
     play.disabled = false;
 
     Highcharts.addEvent(chart, 'destroy', () => {

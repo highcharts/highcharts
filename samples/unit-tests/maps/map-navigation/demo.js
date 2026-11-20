@@ -133,6 +133,51 @@ QUnit.test(
             ),
             'The map should not flip when drag causes invalid center, #19190.'
         );
+
+        chart.update({ mapNavigation: { enabled: true } });
+        const { mapView } = chart,
+            keyboard = chart.accessibility.components.zoom
+                .getMapZoomNavigation(),
+            tabKey = 9;
+
+        for (const direction of [1, -1]) {
+            mapView.setView([10, 50], mapView.minZoom + 2);
+            const center = mapView.center.slice(),
+                zoom = mapView.zoom,
+                expected = direction === 1 ? 'next' : 'prev';
+            let viewChanges = 0;
+            const unbind = Highcharts.addEvent(mapView, 'afterSetView', () => {
+                ++viewChanges;
+            });
+
+            keyboard.init(-direction);
+            const result = keyboard.run(new KeyboardEvent('keydown', {
+                keyCode: tabKey,
+                shiftKey: direction === -1
+            }));
+
+            assert.strictEqual(
+                result,
+                keyboard.response[expected],
+                'Focus should leave the map zoom controls'
+            );
+            assert.deepEqual(
+                mapView.center,
+                center,
+                'Focus traversal should preserve the map center'
+            );
+            assert.strictEqual(
+                mapView.zoom,
+                zoom,
+                'Focus traversal should preserve the map zoom'
+            );
+            assert.strictEqual(
+                viewChanges,
+                0,
+                'Focus traversal should not fire afterSetView'
+            );
+            unbind();
+        }
     }
 );
 
