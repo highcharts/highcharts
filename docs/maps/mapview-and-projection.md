@@ -1,8 +1,8 @@
 ---
 description: >-
-  Set the map center and zoom, choose a projection, configure insets, and
-  convert between geographic, projected and pixel coordinates. Learn how
-  to observe view changes with afterSetView.
+  Set the map center and zoom, choose or supply a projection, and place
+  insets for non-contiguous regions. The article also describes coordinate
+  conversions and reading longitude and latitude from pointer events.
 ---
 
 Map View and Projection
@@ -17,8 +17,6 @@ The map view is the basic class and options set dealing with how the map is proj
 By default, a map is centered within the plot area of the chart. For custom zoom and placement, use the [center](https://api.highcharts.com/highmaps/mapView.center) and [zoom](https://api.highcharts.com/highmaps/mapView.zoom) options, where `center` is given as `[longitude, latitude]` and `zoom` is a number where 0 renders the world as 256x256 pixels, and increase of 1 zooms in to a quarter of the viewed area.
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/maps/mapview/center-zoom" allow="fullscreen"></iframe>
-
-The center and zoom options can be updated in run time by the [setView](https://api.highcharts.com/class-reference/Highcharts.MapView#setView) function.
 
 ### Projection
 The map view also controls the map's projection settings. Highcharts Maps includes some basic built-in projections, other projections can be [custom built and plugged in](https://www.highcharts.com/samples/maps/mapview/projection-custom-proj4js). By default, Highcharts will guess the best projection to use for a map, based on the geographic extent. For more details see the [API docs](https://api.highcharts.com/highmaps/mapView.projection) or try out the Projection Explorer below.
@@ -39,17 +37,17 @@ A map view operates with three different coordinate systems:
 
 The [MapView class](https://api.highcharts.com/class-reference/Highcharts.MapView) contains conversion functions between these coordinate systems. In addition to that, all pointer events are extended with `lon` and `lat` properties, allowing longitude and latitude to be read directly from for example a click event.
 
-### Pause or interrupt a map camera with `afterSetView`
+### Updating the view at runtime
 
-Register a listener with `Highcharts.addEvent(chart.mapView, 'afterSetView', handler)`.
-`setView` fires `afterSetView` synchronously after updating the view and before
-the optional chart redraw. The listener runs even when `redraw` is `false` and
-can read the resulting `chart.mapView.center` and `chart.mapView.zoom`. Built-in
-map navigation can also trigger the event when a user pans or zooms.
+Use [`setView`](https://api.highcharts.com/class-reference/Highcharts.MapView#setView)
+to change the map's center and zoom. For example,
+`chart.mapView.setView([2.35, 48.86], 5)` centers the map on Paris at zoom level 5.
 
-In the [interruptible map camera example](https://www.highcharts.com/samples/maps/mapview/after-set-view),
-**Pause** stops the animation frames so the center and zoom stay where they are.
-**Play** resumes from there. The sample marks its own `setView` calls with a
-flag to keep the flight going. A `setView` call from elsewhere, such as during
-a drag or when using the zoom buttons, cancels the flight. The next **Play**
-starts from the current view.
+To observe changes made by `setView`, including those from built-in pan and zoom,
+register a listener with `Highcharts.addEvent(chart.mapView, 'afterSetView', handler)`.
+The event fires synchronously after the center and zoom are updated and before
+the optional redraw, even when `redraw` is `false`.
+
+The [map flight example](https://www.highcharts.com/samples/maps/mapview/after-set-view)
+uses `setView` to animate the map and `afterSetView` to stop the flight when
+you pan or zoom. You can also pause and resume from the current view.
