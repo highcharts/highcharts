@@ -1,0 +1,6 @@
+---
+ name: Boost2 - line series on WebGPU
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...
