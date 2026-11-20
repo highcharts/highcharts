@@ -27,5 +27,5 @@ G.dataGrouping.approximations = (
     G.dataGrouping.approximations ||
     ApproximationRegistry
 );
-DataGrouping.compose(G.Axis, G.Series, G.Tooltip);
+DataGrouping.compose(G.Axis, G.Series);
 export default Highcharts;
