@@ -45,6 +45,7 @@ Build `npx gulp scripts`. Type-check `npx tsc -p ts --noEmit`, and `npx tsc -p t
 - Follow `samples/README.md`.
 - Load the accessibility module unless there is a concrete reason not to. Cover the chart type description, axis titles and keyboard navigation.
 - Check the layout at 320px wide.
+- Reuse designs that existing demos already have instead of making up new ones. The color axis of the US counties demo is the design for every map demo, not only US maps. Copy it from `samples/maps/demo/us-counties` (https://www.highcharts.com/demo/maps/us-counties): the `colorAxis` with tick dots and a circle `marker`, the rounded `legend` box, and the tick CSS in its `demo.css`.
 
 ### Changelog
 

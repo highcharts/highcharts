@@ -40,6 +40,7 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 - New/changed options and public types should have doclets and type coverage.
 - Flag undocumented behavior changes.
 - For doclet wording and style, apply the `api-ref-tone` skill.
+- Changed demos reuse designs that existing demos already have, such as the color axis from `samples/maps/demo/us-counties`, which every map demo should use. See the Samples section of the [Highcharts development guide](../../../.agents/skills/hc-development/highcharts/index.md#samples). Flag a demo that makes up its own version.
 
 6. Verify tests:
 - Require unit/regression tests.
