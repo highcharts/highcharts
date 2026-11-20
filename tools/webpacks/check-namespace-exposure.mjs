@@ -22,6 +22,9 @@ const CONFIGS = [
  * not by externalized secondary bundles.
  */
 const ALLOWLIST = new Set([
+    // Core/Defaults - internal plot options snapshots
+    'builtinPlotOptions',
+    'globalUserPlotOptions',
     // Core/Globals - internal state
     'SVG_NS',
     'charts',
