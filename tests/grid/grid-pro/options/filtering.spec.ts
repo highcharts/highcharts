@@ -97,9 +97,7 @@ test.describe('Advanced filtering', () => {
         ]);
 
         await page.evaluate(async (): Promise<void> => {
-            await (window as any).grid.update(
-                { filtering: { rules: [] } }
-            );
+            await (window as any).grid.update({ filtering: {} });
         });
 
         await expect(page.locator(names)).toHaveCount(10);

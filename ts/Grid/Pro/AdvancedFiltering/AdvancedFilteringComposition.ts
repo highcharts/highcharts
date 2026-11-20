@@ -208,7 +208,8 @@ function mapGroup(
 
 /**
  * Replaces the whole filtering state on update instead of merging it, so
- * that a state saved with `getOptions()` can be restored.
+ * that a state saved with `getOptions()` can be restored, and requeries the
+ * data. The flag is set here, as the update diff skips an empty object.
  *
  * @param e
  * Update event.
@@ -226,6 +227,7 @@ function onBeforeUpdate(
     if (e.scope === 'grid' && 'filtering' in e.options) {
         delete this.userOptions.filtering;
         delete this.options?.filtering;
+        this.dirtyFlags.add('filtering');
     }
 }
 
@@ -260,17 +262,14 @@ function onGetFilterConditions(
 }
 
 /**
- * Requeries the data instead of re-rendering the grid when the global
- * filtering options change.
+ * Keeps the global filtering options from re-rendering the grid, as they only
+ * need a requery.
  *
  * @param e
  * Update diff event.
  */
-function onProcessUpdateDiff(this: Grid, e: ProcessUpdateDiffEvent): void {
-    if ('filtering' in e.diff) {
-        delete e.diff.filtering;
-        e.flags.add('filtering');
-    }
+function onProcessUpdateDiff(e: ProcessUpdateDiffEvent): void {
+    delete e.diff.filtering;
 }
 
 
