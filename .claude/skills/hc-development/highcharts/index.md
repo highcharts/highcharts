@@ -30,7 +30,7 @@ If a module needs to change core behavior, add a `fireEvent` hook to core and ke
 
 ### Tests
 
-- Extend an existing QUnit test in `samples/unit-tests/<area>/` and reuse its chart. Playwright specs for what QUnit can't do go in `tests/highcharts/<area>/`.
+- Extend an existing QUnit test in `samples/unit-tests/<area>/` and reuse its chart. Playwright specs for what QUnit can't do go in `tests/highcharts/<area>/`. `page.goto('/highcharts/e2e/<name>')` opens a test page from `samples/highcharts/e2e/<name>/`; helpers are in `tests/highcharts/helpers.ts` and `tests/helpers.ts`.
 - One test: `QUNIT_TEST_PATH=unit-tests/<area>/<test> npx playwright test --project=qunit`. A whole area: `QUNIT_TEST_PATH='unit-tests/<area>/*'` the same way, and `npx playwright test tests/highcharts/<area> --project=highcharts`.
 - `npx gulp test --modified` selects tests from staged files only, by product names in their paths; most `ts/Series` and `ts/Extensions` changes select nothing. Run the area's tests directly.
 - Dashboards and Grid Pro sparklines call chart APIs at runtime ([list](../shared.md#apis-used-across-products-at-runtime)). After changing one, run `npx gulp scripts`, `npm run dtest` and `npm run gtest`.

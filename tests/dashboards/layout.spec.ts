@@ -538,29 +538,47 @@ test.describe('Layout Tests', () => {
     });
 
     test('Cell width persists after destroy/render', async ({ page }) => {
-        await page.goto('/dashboards/cypress/cell-size', { waitUntil: 'networkidle' });
+        await page.setContent(dashboardsWithLayoutHTML, { waitUntil: 'networkidle' });
 
-        const widthBeforeDestroy = await page.evaluate(() => {
+        const result = await page.evaluate(() => {
             const Dashboards = (window as any).Dashboards;
-            const board = Dashboards.boards[Dashboards.boards.length - 1];
-            const cell = board.layouts[0].rows[0].cells[0];
-            cell.setSize('30%');
-            return cell.options.width;
-        });
+            const getCell = (board: any) => board.layouts[0].rows[0].cells[0];
 
-        await page.locator('#destroy').click();
-        await page.locator('#render').click();
+            const board = Dashboards.board('container', {
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{
+                                id: 'cell-1',
+                                width: '65%'
+                            }]
+                        }]
+                    }]
+                }
+            });
 
-        const widthAfterRender = await page.evaluate(() => {
-            const Dashboards = (window as any).Dashboards;
-            const board = Dashboards.boards[Dashboards.boards.length - 1];
-            return board.layouts[0].rows[0].cells[0].options.width;
+            getCell(board).setSize('30%');
+
+            const options = board.getOptions();
+
+            board.destroy();
+
+            const cell = getCell(Dashboards.board('container', options));
+
+            return {
+                width: cell.options.width,
+                flex: cell.container.style.flex
+            };
         });
 
         expect(
-            widthAfterRender,
+            result.width,
             'Cell width should be preserved after destroy and render.'
-        ).toBe(widthBeforeDestroy);
+        ).toBe('0 0 30%');
+        expect(
+            result.flex,
+            'The new cell should be rendered with the preserved width.'
+        ).toBe('0 0 30%');
     });
 
     // #24258 - CellEditToolbar should fire layoutChanged with type cellDestroyed

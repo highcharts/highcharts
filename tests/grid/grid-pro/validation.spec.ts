@@ -109,6 +109,54 @@ test.describe('Grid Pro - validation', () => {
         await expect(notification).toBeVisible();
         await expect(notification).toContainText('Value must be unique within this column (case-insensitive).');
     });
+
+    test('Array number validation', async ({ page }) => {
+        // Act
+        await editGridCell(page, 1, 'csvString', '2,5,5something');
+
+        // Assert
+        const notification = page.locator('.hcg-notification-error').first();
+        await expect(notification).toBeVisible();
+        await expect(notification).toContainText('Value should be a list of numbers separated by commas.');
+
+        // Act
+        await editGridCell(page, 1, 'csvString', '2,5,6');
+
+        // Assert
+        await expect(page.locator('.hcg-notification-error')).toBeHidden();
+    });
+
+    test('JSON validation', async ({ page }) => {
+        // Act
+        await editGridCell(page, 1, 'columnJSON', '2, 451, something');
+
+        // Assert
+        const notification = page.locator('.hcg-notification-error').first();
+        await expect(notification).toBeVisible();
+        await expect(notification).toContainText('Value should be a valid JSON.');
+
+        // Act
+        await editGridCell(page, 1, 'columnJSON', '[1, 2, 3]');
+
+        // Assert
+        await expect(page.locator('.hcg-notification-error')).toBeHidden();
+    });
+
+    test('Default sparkline validator', async ({ page }) => {
+        // Act
+        await editGridCell(page, 1, 'defaultValidator', '[1, 2, 3re]');
+
+        // Assert
+        const notification = page.locator('.hcg-notification-error').first();
+        await expect(notification).toBeVisible();
+        await expect(notification).toContainText('Value should be a valid JSON or a list of numbers separated by commas.');
+
+        // Act
+        await editGridCell(page, 1, 'defaultValidator', '[1, 2, 3, 4]');
+
+        // Assert
+        await expect(page.locator('.hcg-notification-error')).toBeHidden();
+    });
 });
 
 test.describe('Grid Pro - notification escaping', () => {
