@@ -333,6 +333,9 @@ class ZoomComponent extends AccessibilityComponent {
         chart.mapNavigation.navButtons[this.focusedMapNavButtonIx].setState(0);
 
         if (isMoveOutOfRange) {
+            if (chart.mapView) {
+                chart.mapView.zoomBy(); // Reset zoom
+            }
             return response[isBackwards ? 'prev' : 'next'];
         }
 

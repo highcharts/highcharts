@@ -1,8 +1,8 @@
 ---
 description: >-
-  Set the map center and zoom, observe view changes with afterSetView, and
-  build a camera animation that users can pause or interrupt. Learn how
-  projections, insets and coordinate conversions work.
+  Set the map center and zoom, choose a projection, configure insets, and
+  convert between geographic, projected and pixel coordinates. Learn how
+  to observe view changes with afterSetView.
 ---
 
 Map View and Projection
@@ -12,22 +12,6 @@ The map view is the basic class and options set dealing with how the map is proj
 
  * [API options](https://api.highcharts.com/highmaps/mapView)
  * [Class reference](https://api.highcharts.com/class-reference/Highcharts.MapView)
-
-### Respond to view changes with `afterSetView`
-
-Register a listener with `Highcharts.addEvent(chart.mapView, 'afterSetView', handler)`.
-`setView` fires `afterSetView` synchronously after updating the view and before
-the optional chart redraw. The listener runs even when `redraw` is `false` and
-can read the resulting `chart.mapView.center` and `chart.mapView.zoom`. Built-in
-map navigation can also trigger the event when a user pans or zooms.
-
-In the [interruptible map camera example](https://www.highcharts.com/samples/maps/mapview/after-set-view),
-**Pause** stops the animation frames so the center and zoom stay where they are.
-**Play** resumes from there. The sample marks its own `setView` calls with a
-flag to keep the flight going. A `setView` call from elsewhere, such as during
-a drag or when using the zoom buttons, cancels the flight. The next **Play**
-starts from the current view. **Tab** and **Shift+Tab** can leave the zoom
-controls while preserving the map center and zoom.
 
 ### Center and zoom
 By default, a map is centered within the plot area of the chart. For custom zoom and placement, use the [center](https://api.highcharts.com/highmaps/mapView.center) and [zoom](https://api.highcharts.com/highmaps/mapView.zoom) options, where `center` is given as `[longitude, latitude]` and `zoom` is a number where 0 renders the world as 256x256 pixels, and increase of 1 zooms in to a quarter of the viewed area.
@@ -55,3 +39,17 @@ A map view operates with three different coordinate systems:
 
 The [MapView class](https://api.highcharts.com/class-reference/Highcharts.MapView) contains conversion functions between these coordinate systems. In addition to that, all pointer events are extended with `lon` and `lat` properties, allowing longitude and latitude to be read directly from for example a click event.
 
+### Pause or interrupt a map camera with `afterSetView`
+
+Register a listener with `Highcharts.addEvent(chart.mapView, 'afterSetView', handler)`.
+`setView` fires `afterSetView` synchronously after updating the view and before
+the optional chart redraw. The listener runs even when `redraw` is `false` and
+can read the resulting `chart.mapView.center` and `chart.mapView.zoom`. Built-in
+map navigation can also trigger the event when a user pans or zooms.
+
+In the [interruptible map camera example](https://www.highcharts.com/samples/maps/mapview/after-set-view),
+**Pause** stops the animation frames so the center and zoom stay where they are.
+**Play** resumes from there. The sample marks its own `setView` calls with a
+flag to keep the flight going. A `setView` call from elsewhere, such as during
+a drag or when using the zoom buttons, cancels the flight. The next **Play**
+starts from the current view.
