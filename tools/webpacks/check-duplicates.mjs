@@ -1,3 +1,6 @@
+// These CLI checks report diagnostics and return an explicit exit status.
+/* eslint no-console: 0, node/no-process-exit: 0 */
+
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -47,7 +50,7 @@ function collectJsFiles(directory) {
     for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
         const entryPath = path.join(directory, entry.name);
 
-        if (entryPath.replace(/\\/g, '/').includes('/es-modules/')) {
+        if (entryPath.replace(/\\/gu, '/').includes('/es-modules/')) {
             continue;
         }
 
@@ -76,12 +79,10 @@ for (const externalsFile of externalsFiles) {
     }
 }
 
-const jsFiles = collectJsFiles(codeRoot).filter((filePath) => {
-    return !masterBundleBasenames.has(path.basename(filePath)) &&
-        !filePath.replace(/\\/g, '/').includes('/es-modules/') &&
-        !filePath.replace(/\\/g, '/').includes('/es5/') &&
-        !filePath.replace(/\\/g, '/').includes('/esm/');
-});
+const jsFiles = collectJsFiles(codeRoot).filter(filePath => !masterBundleBasenames.has(path.basename(filePath)) &&
+        !filePath.replace(/\\/gu, '/').includes('/es-modules/') &&
+        !filePath.replace(/\\/gu, '/').includes('/es5/') &&
+        !filePath.replace(/\\/gu, '/').includes('/esm/'));
 
 if (!fs.existsSync(codeRoot) || jsFiles.length === 0) {
     console.log('Warning: code/ has no .js files yet; build may not have been run.');

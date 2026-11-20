@@ -42,8 +42,9 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 - For doclet wording and style, apply the `api-ref-tone` skill.
 
 6. Verify tests:
-- Require unit/regression tests.
-- Prefer adding to existing test files.
+- Require regression coverage for changed results or safety guarantees that normal command execution would not verify.
+- Prefer existing suites and observable results over mocked task wiring or ordinary error propagation alone.
+- Retain focused security regression tests when CI or nightly runs cover only the normal path.
 - If not automatable, require a manual test plan.
 
 7. For PRs from outside the team, check the rules in `CONTRIBUTING.md`. Needs PR data from GitHub; without it, skip this step.

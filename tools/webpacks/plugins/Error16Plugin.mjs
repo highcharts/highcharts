@@ -19,7 +19,6 @@
 
 import * as FS from 'node:fs';
 import * as Path from 'node:path';
-import Webpack from 'webpack';
 
 
 /* *
@@ -50,7 +49,10 @@ export class Error16Plugin {
 
 
     /**
+     * Creates the plugin with the given options.
+     *
      * @param {Error16PluginOptions} [options]
+     * Plugin options.
      */
     constructor(options = {}) {
         this.options = options;
@@ -78,15 +80,21 @@ export class Error16Plugin {
 
 
     /**
-     * @param {Webpack.Compiler} compiler 
+     * Registers the output processing hook.
+     *
+     * @param {import('webpack').Compiler} compiler
+     * Webpack compiler.
      */
     apply(compiler) {
-        compiler.hooks.done.tap(HOOKS_NAME, (stats) => this.onDone(stats));
+        compiler.hooks.done.tap(HOOKS_NAME, stats => this.onDone(stats));
     }
 
 
     /**
-     * @param {Webpack.Stats} stats
+     * Updates the emitted bundle after compilation.
+     *
+     * @param {import('webpack').Stats} stats
+     * Compilation statistics.
      */
     onDone(stats) {
         const compilation = stats.compilation;
