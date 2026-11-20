@@ -60,13 +60,12 @@ test.describe('Advanced filtering', () => {
         ]);
     });
 
-    test('replaces the filtering state on update', async ({ page }) => {
+    test('merges the filtering options on update', async ({ page }) => {
         const isSameTable = await page.evaluate(async (): Promise<boolean> => {
             const grid = (window as any).grid;
             const tableElement = grid.tableElement;
-            const { rules } = grid.getOptions().filtering;
 
-            await grid.update({ filtering: { logic: 'or', rules } });
+            await grid.update({ filtering: { logic: 'or' } });
 
             return grid.tableElement === tableElement;
         });
@@ -87,9 +86,9 @@ test.describe('Advanced filtering', () => {
 
         await page.evaluate(async (): Promise<void> => {
             const grid = (window as any).grid;
-            const { rules } = grid.getOptions().filtering;
 
-            await grid.update({ filtering: { rules } });
+            await grid.update({ filtering: { logic: 'and' } });
+            await grid.update({ filtering: {} });
         });
 
         await expect(page.locator(names)).toHaveText([
@@ -97,7 +96,7 @@ test.describe('Advanced filtering', () => {
         ]);
 
         await page.evaluate(async (): Promise<void> => {
-            await (window as any).grid.update({ filtering: {} });
+            await (window as any).grid.update({ filtering: { rules: [] } });
         });
 
         await expect(page.locator(names)).toHaveCount(10);
