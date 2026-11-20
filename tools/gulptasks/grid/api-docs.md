@@ -24,6 +24,9 @@ Options for the description placed below the grid.
 <strong><a href="/grid/#interfaces/Grid_Pro_GridEvents.GridEvents" target="_blank">events</a></strong> \
 Events triggered by the grid elements. **Grid Pro** only.
 
+<strong><a href="/grid/#interfaces/Grid_Pro_AdvancedFiltering_AdvancedFilteringComposition.AdvancedFilteringOptions" target="_blank">filtering</a></strong> \
+Global filtering combining rules for multiple columns with logical operators. **Grid Pro** only.
+
 <strong><a href="/grid/#interfaces/Grid_Core_Options.GroupedHeaderOptions" target="_blank">header</a></strong> \
 Options to control the structure of table header.
 

@@ -444,8 +444,10 @@ class FilteringController {
      *
      * @param options
      * Filtering options of the column.
+     *
+     * @internal
      */
-    private createColumnCondition(
+    public createColumnCondition(
         columnId: string,
         sourceColumnId: string,
         options: ColumnFilteringOptions
@@ -467,12 +469,17 @@ class FilteringController {
 
     /**
      * Updates the modifier based on the current column conditions.
+     *
+     * Features can contribute their own conditions through the
+     * `getFilterConditions` event. All conditions are combined with `and`.
      */
     private updateModifier(): void {
-        const columnConditions = Object.values(this.columnConditions);
+        const conditions = Object.values(this.columnConditions);
         this.querying.shouldBeUpdated = true;
 
-        if (columnConditions.length < 1) {
+        fireEvent(this.querying.grid, 'getFilterConditions', { conditions });
+
+        if (conditions.length < 1) {
             delete this.modifier;
             return;
         }
@@ -480,7 +487,7 @@ class FilteringController {
         this.modifier = new FilterModifier({
             condition: {
                 operator: 'and',
-                conditions: columnConditions
+                conditions
             }
         });
     }
