@@ -1,14 +1,25 @@
-Highcharts.stockChart('container', {
-    chart: {
-        panKey: 'shift',
-        panning: true
-    },
+(async () => {
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Hold shift and scroll to pan'
-    },
+    Highcharts.stockChart('container', {
+        chart: {
+            panning: true,
+            panKey: 'shift'
+        },
 
-    series: [{
-        data: [1, 4, 3, 5, 3, 2, 3, 4, 5, 6, 7, 7, 5, 5, 4, 4, 3]
-    }]
-});
+        rangeSelector: {
+            selected: 1
+        },
+
+        title: {
+            text: 'Hold Shift and scroll to pan'
+        },
+
+        series: [{
+            name: 'AAPL',
+            data
+        }]
+    });
+})();

@@ -20,6 +20,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type Axis from '../../Core/Axis/Axis';
+import type { ChartPanningOptions } from '../../Core/Chart/ChartOptions';
 import type GlobalsBase from '../../Core/GlobalsBase';
 import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
@@ -165,12 +166,12 @@ const panBy = function (
     chart: Chart,
     howMuch: number,
     allAxes: Array<Axis>,
-    options: MouseWheelZoomOptions
+    options: MouseWheelZoomOptions,
+    type: ChartPanningOptions['type'] = 'x'
 ): boolean {
-    const type = chart.options.chart.panning?.type || 'x',
-        axes = allAxes.filter((axis): boolean =>
-            axis.options.panningEnabled && !axis.options.isInternal
-        );
+    const axes = allAxes.filter((axis): boolean =>
+        axis.options.panningEnabled && !axis.options.isInternal
+    );
 
     // Nothing to pan (e.g. no zooming type set).
     if (!axes.length) {
@@ -221,7 +222,10 @@ const panBy = function (
         mouseWheel: true
     };
 
-    chart.mouseDownX = 0;
+    // The pan event carries the wheel delta as `chartX`, so measure it from
+    // zero. The ordinal axis stores `lastPanX` after each pan, which would
+    // otherwise be subtracted from the next delta.
+    chart.mouseDownX = chart.lastPanX = 0;
     chart.mouseDownY = 0;
 
     chartOptions.panning = {
@@ -290,22 +294,26 @@ function onAfterGetContainer(this: Chart): void {
                     xAxis = xAxisCoords ? [xAxisCoords.axis] : this.xAxis,
                     yAxis = yAxisCoords ? [yAxisCoords.axis] : this.yAxis;
 
-                let axes: Array<Axis> = [];
-                switch (wheelZoomOptions.type ?? this.zooming.type ?? '') {
-                    case 'x':
-                        axes = xAxis;
-                        break;
-                    case 'y':
-                        axes = yAxis;
-                        break;
-                    case 'xy':
-                        axes = this.axes;
-                        break;
-                }
+                const getAxes = (type?: string): Array<Axis> => {
+                    switch (type) {
+                        case 'x':
+                            return xAxis;
+                        case 'y':
+                            return yAxis;
+                        case 'xy':
+                            return this.axes;
+                        default:
+                            return [];
+                    }
+                };
 
-                const panning = this.options.chart.panning,
+                const zoomType = wheelZoomOptions.type ?? this.zooming.type,
+                    panning = this.options.chart.panning,
                     panningEnabled = isObject(panning) ?
-                        panning.enabled : panning;
+                        panning.enabled : panning,
+                    // A panning object decides the panning direction,
+                    // otherwise pan in the zooming direction.
+                    panType = isObject(panning) ? panning.type : zoomType;
                 const panKey = this.options.chart.panKey,
                     panKeyPressed = panKey && e[`${panKey}Key`],
                     // On Apple platforms, holding shift natively moves the
@@ -321,8 +329,9 @@ function onAfterGetContainer(this: Chart): void {
                     const hasPanned = panBy(
                         this,
                         delta * 15 * wheelSensitivity,
-                        axes,
-                        wheelZoomOptions
+                        getAxes(panType),
+                        wheelZoomOptions,
+                        panType
                     );
 
                     // Prevent page scroll
@@ -336,7 +345,7 @@ function onAfterGetContainer(this: Chart): void {
                             wheelSensitivity,
                             delta
                         ),
-                        axes,
+                        getAxes(zoomType),
                         e.chartX,
                         e.chartY,
                         wheelZoomOptions
