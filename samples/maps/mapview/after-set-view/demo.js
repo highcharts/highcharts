@@ -19,6 +19,9 @@
 
     const chart = Highcharts.mapChart('container', {
         title: { text: 'Fly to Paris' },
+        accessibility: {
+            linkedDescription: '#camera-description'
+        },
         mapNavigation: {
             enabled: true,
             enableMouseWheelZoom: false
