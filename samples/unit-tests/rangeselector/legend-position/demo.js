@@ -47,3 +47,38 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Input box should not overlap a vertical legend on the right, #24041.',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 3,
+                dropdown: 'never',
+                inputPosition: {
+                    align: 'right'
+                }
+            },
+            legend: {
+                enabled: true,
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top'
+            },
+            series: [
+                {
+                    data: [101, 343, 11]
+                }
+            ]
+        });
+
+        const inputRect = chart.rangeSelector.inputGroup.element
+                .getBoundingClientRect(),
+            legendRect = chart.legend.group.element.getBoundingClientRect();
+
+        assert.ok(
+            inputRect.right <= legendRect.left,
+            'The input box is left of the vertical legend.'
+        );
+    }
+);
