@@ -71,13 +71,13 @@ declare module '../../Extensions/Annotations/NavigationBindingsBase' {
  * */
 
 /**
- * @internal
  * @sample {highstock} stock/stocktools/custom-stock-tools-bindings
  *         Custom stock tools bindings
  *
  * @type         {Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject>}
  * @since        7.0.0
  * @optionparent navigation.bindings
+ * @internal
  */
 const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
 

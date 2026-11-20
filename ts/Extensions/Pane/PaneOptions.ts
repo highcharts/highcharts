@@ -49,7 +49,6 @@ export interface PaneBackgroundOptions {
      *           Pane background options
      * @default 'var(--highcharts-neutral-color-3)'
      * @since    2.3.0
-     * @requires highcharts-more
      */
     backgroundColor?: ColorType;
     /**
@@ -59,7 +58,6 @@ export interface PaneBackgroundOptions {
      *           Pane background options
      * @default  'var(--highcharts-neutral-color-20)'
      * @since    2.3.0
-     * @requires highcharts-more
      */
     borderColor?: ColorType;
     /**
@@ -70,7 +68,6 @@ export interface PaneBackgroundOptions {
      *           Circular gauge and pane with equal border radius
      * @default  undefined
      * @since    11.4.2
-     * @requires highcharts-more
      */
     borderRadius?: number|string;
     /**
@@ -80,7 +77,6 @@ export interface PaneBackgroundOptions {
      *           Pane background options
      * @default  0
      * @since    2.3.0
-     * @requires highcharts-more
      */
     borderWidth?: number;
     /**
@@ -94,7 +90,6 @@ export interface PaneBackgroundOptions {
      *           Panes styled by CSS
      *
      * @since    5.0.0
-     * @requires highcharts-more
      */
     className?: string;
     /**
@@ -108,7 +103,6 @@ export interface PaneBackgroundOptions {
      * (pixels) or a percentage string.
      *
      * @since    2.3.0
-     * @requires highcharts-more
      */
     innerRadius?: (number|string);
     /**
@@ -118,7 +112,6 @@ export interface PaneBackgroundOptions {
      * @default '100%'
      *
      * @since    2.3.0
-     * @requires highcharts-more
      */
     outerRadius?: (number|string);
     /**
@@ -129,7 +122,6 @@ export interface PaneBackgroundOptions {
      * @default 'arc'
      *
      * @since    2.3.0
-     * @requires highcharts-more
      */
     shape?: PaneBackgroundShapeValue;
     /**
@@ -152,7 +144,6 @@ export interface PaneOptions {
      *           Pane background options
      * @sample   {highcharts} highcharts/demo/gauge-speedometer/
      *           Speedometer gauge with multiple backgrounds
-     * @requires highcharts-more
      */
     background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>|null;
     /**
@@ -164,7 +155,6 @@ export interface PaneOptions {
      *          Border radius
      * @type    {number|string}
      * @since   13.0.0
-     * @requires highcharts-more
      */
     borderRadius?: number|string;
     /**
@@ -179,7 +169,6 @@ export interface PaneOptions {
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           Two gauges with different center
      * @since    2.3.0
-     * @requires highcharts-more
      */
     center?: Array<(string|number)>;
     /**
@@ -193,13 +182,10 @@ export interface PaneOptions {
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           VU-meter with custom start and end angle
      * @since    2.3.0
-     * @requires highcharts-more
      */
     endAngle?: number;
     /**
      * An id for the pane.
-     *
-     * @requires highcharts-more
      */
     id?: string;
     /**
@@ -211,7 +197,6 @@ export interface PaneOptions {
      *           Gauge with pane sizing
      * @sample   {highcharts} highcharts/series-polar/column-inverted-inner
      *           The inner size set to 20%
-     * @requires highcharts-more
      */
     innerSize?: (number|string);
     /**
@@ -241,7 +226,6 @@ export interface PaneOptions {
      *         Responsive pane size and center
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           Smaller size
-     * @requires highcharts-more
      */
     size?: (number|string);
     /**
@@ -253,7 +237,6 @@ export interface PaneOptions {
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           VU-meter with custom start and end angle
      * @since    2.3.0
-     * @requires highcharts-more
      */
     startAngle?: number;
     /**
@@ -264,14 +247,12 @@ export interface PaneOptions {
      * @since    13.0.0
      * @sample   {highcharts} highcharts/pane/thickness
      *           Pane thickness
-     * @requires highcharts-more
      */
     thickness?: number;
     /**
      * The z-index of the pane group.
      *
      * @default 0
-     * @requires highcharts-more
      */
     zIndex?: number;
 }
