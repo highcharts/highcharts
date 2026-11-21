@@ -18,8 +18,6 @@ By default, a map is centered within the plot area of the chart. For custom zoom
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/maps/mapview/center-zoom" allow="fullscreen"></iframe>
 
-The center and zoom options can be updated in run time by the [setView](https://api.highcharts.com/class-reference/Highcharts.MapView#setView) function.
-
 ### Projection
 The map view also controls the map's projection settings. Highcharts Maps includes some basic built-in projections, other projections can be [custom built and plugged in](https://www.highcharts.com/samples/maps/mapview/projection-custom-proj4js). By default, Highcharts will guess the best projection to use for a map, based on the geographic extent. For more details see the [API docs](https://api.highcharts.com/highmaps/mapView.projection) or try out the Projection Explorer below.
 
@@ -39,3 +37,17 @@ A map view operates with three different coordinate systems:
 
 The [MapView class](https://api.highcharts.com/class-reference/Highcharts.MapView) contains conversion functions between these coordinate systems. In addition to that, all pointer events are extended with `lon` and `lat` properties, allowing longitude and latitude to be read directly from for example a click event.
 
+### Updating the view at runtime
+
+Use [`setView`](https://api.highcharts.com/class-reference/Highcharts.MapView#setView)
+to change the map's center and zoom. For example,
+`chart.mapView.setView([2.35, 48.86], 5)` centers the map on Paris at zoom level 5.
+
+To observe changes made by `setView`, including those from built-in pan and zoom,
+register a listener with `Highcharts.addEvent(chart.mapView, 'afterSetView', handler)`.
+The event fires synchronously after the center and zoom are updated and before
+the optional redraw, even when `redraw` is `false`.
+
+The [map flight example](https://www.highcharts.com/samples/maps/mapview/after-set-view)
+uses `setView` to animate the map and `afterSetView` to stop the flight when
+you pan or zoom. You can also pause and resume from the current view.

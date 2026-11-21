@@ -1004,6 +1004,12 @@ class MapView {
 
     /**
      * Set the view to given center and zoom values.
+     *
+     * Listen with `Highcharts.addEvent(mapView, 'afterSetView', handler)` to
+     * respond to view changes. The event fires synchronously after the view is
+     * updated and before the optional chart redraw, including when `redraw`
+     * is `false`. It also fires when built-in map navigation calls `setView`.
+     *
      * @function Highcharts.MapView#setView
      * @param {Highcharts.LonLatArray|undefined} center
      *        The center point
@@ -1016,6 +1022,8 @@ class MapView {
      *
      * @sample maps/mapview/setview
      *        Set the view programmatically
+     * @sample maps/mapview/after-set-view
+     *        Pause and interrupt a camera animation with afterSetView
      */
     public setView(
         center?: LonLatArray,
