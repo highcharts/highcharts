@@ -389,3 +389,75 @@ QUnit.test('Basic shape annotations', function (assert) {
         'Adding annotation with point as series key should not throw an error.'
     );
 });
+
+// #22356 - End marker (arrow) color should follow `stroke` when the user
+// did not explicitly set `fill`, so that the arrow head and the line have
+// matching colors.
+QUnit.test('Arrow marker color follows stroke (#22356)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 400
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }],
+        annotations: [{
+            shapes: [{
+                type: 'path',
+                points: [
+                    { x: 0, y: 1, xAxis: 0, yAxis: 0 },
+                    { x: 4, y: 5, xAxis: 0, yAxis: 0 }
+                ],
+                markerEnd: 'arrow',
+                stroke: '#ff0000',
+                strokeWidth: 2
+            }, {
+                type: 'path',
+                points: [
+                    { x: 0, y: 5, xAxis: 0, yAxis: 0 },
+                    { x: 4, y: 1, xAxis: 0, yAxis: 0 }
+                ],
+                markerEnd: 'arrow',
+                stroke: '#00aa00',
+                fill: '#0000ff',
+                strokeWidth: 2
+            }]
+        }]
+    });
+
+    var shapeStrokeOnly = chart.annotations[0].shapes[0],
+        markerStrokeOnly = document.getElementById(
+            shapeStrokeOnly.markerEnd.id
+        ),
+        markerPathStrokeOnly = markerStrokeOnly &&
+            markerStrokeOnly.querySelector('path');
+
+    assert.ok(
+        markerPathStrokeOnly,
+        'Marker path element should exist for stroke-only shape.'
+    );
+    assert.strictEqual(
+        markerPathStrokeOnly.getAttribute('fill'),
+        '#ff0000',
+        'Arrow head fill should follow `stroke` when user did not set `fill`.'
+    );
+    assert.strictEqual(
+        markerPathStrokeOnly.getAttribute('stroke'),
+        '#ff0000',
+        'Arrow head stroke should follow `stroke` when user did not set `fill`.'
+    );
+
+    var shapeWithFill = chart.annotations[0].shapes[1],
+        markerWithFill = document.getElementById(
+            shapeWithFill.markerEnd.id
+        ),
+        markerPathWithFill = markerWithFill &&
+            markerWithFill.querySelector('path');
+
+    assert.strictEqual(
+        markerPathWithFill.getAttribute('fill'),
+        '#0000ff',
+        'Arrow head should still honor explicitly user-set `fill`.'
+    );
+});
