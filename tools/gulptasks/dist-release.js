@@ -13,7 +13,8 @@ const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
 const childProcess = require('child_process');
-const semver = require('semver');
+const { releaseRepositoryMetadata, stageGridPackage } = require('./lib/release-package');
+const { getReleaseVersion } = require('./lib/release-version');
 const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
 const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
 
@@ -25,18 +26,6 @@ const releaseRepos = {
     },
     Dashboards: 'dashboards-dist'
 };
-
-const releaseRepositoryMetadata = [
-    '^[.]git($|/)',
-    '^[.]github($|/)',
-    '^[.]gitignore$',
-    '^[.]npmignore$',
-    '^README[.]md$',
-    '^LICENSE[.]txt$',
-    '^SECURITY[.]md$',
-    '^package[.]json$',
-    '^bower[.]json$'
-];
 
 function getFilesForReleaseCleanup(folder) {
     return glob.sync('**/*', {
@@ -128,38 +117,6 @@ async function runGit(version, push, productName) {
             log.message('\n-----(Dryrun)------\n Would have ran the following commands:\n\n' + previews.join(' &&\n') + '\n');
         }
     }
-}
-
-/**
- * Select an exact product entry before changing any release repository.
- * @param {object} products Parsed product manifest.
- * @param {string} productName Product being released.
- * @return {string} Validated version shared by all product packages.
- */
-function getReleaseVersion(products, productName) {
-    const keys = {
-        Highcharts: ['Highcharts'],
-        Grid: ['Highcharts Grid Lite', 'Highcharts Grid Pro'],
-        Dashboards: ['Highcharts Dashboards']
-    };
-    if (!Object.hasOwn(keys, productName)) {
-        throw new Error('Unsupported release product: ' + productName);
-    }
-    const versions = keys[productName].map(key => {
-        const entry = products && Object.hasOwn(products, key) && products[key];
-        const version = entry && entry.nr;
-        const parsed = typeof version === 'string' && semver.parse(version);
-        const canonical = parsed && parsed.version +
-            (parsed.build.length ? '+' + parsed.build.join('.') : '');
-        if (!parsed || canonical !== version) {
-            throw new Error('Missing or invalid release version for ' + key);
-        }
-        return version;
-    });
-    if (versions.some(version => version !== versions[0])) {
-        throw new Error('Grid Lite and Pro release versions must match');
-    }
-    return versions[0];
 }
 
 /**
@@ -372,48 +329,6 @@ function copyFiles() {
 }
 
 /**
- * Copy the Grid JavaScript and CSS files over.
- */
-function copyGridFiles() {
-    const mapFromTo = {};
-    const folders = [
-        {
-            from: join('build', 'dist', 'grid-lite', 'code'),
-            to: join('..', releaseRepos.Grid.lite)
-        },
-        {
-            from: join('build', 'dist', 'grid-pro', 'code'),
-            to: join('..', releaseRepos.Grid.pro)
-        }
-    ];
-
-    const filesToIgnore = [
-        'package.json'
-    ];
-
-    // Copy all the files in the code folder
-    folders.forEach(folder => {
-        const {
-            from,
-            to
-        } = folder;
-        getFilesInFolder(from, true)
-            .filter(path => !filesToIgnore.some(pattern => path.endsWith(pattern)))
-            .forEach(filename => {
-                mapFromTo[join(from, filename)] = join(to, filename);
-            });
-    });
-
-    // Copy all the files to release repository
-    Object.keys(mapFromTo).forEach(from => {
-        const to = mapFromTo[from];
-        // libFS.copyAllFiles(from, to);
-        fs.copySync(from, to);
-    });
-    log.message('Files copied successfully!');
-}
-
-/**
  * Copy the Dashboards JavaScript and CSS files over.
  */
 function copyDashboardsFiles() {
@@ -609,8 +524,13 @@ async function release() {
         copyFiles();
         updateJSONFiles(version, ['bower', 'package'], productName);
     } else if (productName === 'Grid') {
-        copyGridFiles();
-        updateJSONFiles(version, ['package'], productName);
+        for (const [edition, repo] of Object.entries(releaseRepos.Grid)) {
+            stageGridPackage(
+                join('build', 'dist', 'grid-' + edition, 'code'),
+                join('..', repo),
+                version
+            );
+        }
     } else if (productName === 'Dashboards') {
         copyDashboardsFiles();
         updateJSONFiles(version, ['package'], productName);

@@ -1,0 +1,21 @@
+{
+  "name": "grid-lite-package-validation-consumer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "types": "tsc --noEmit",
+    "build": "vite build",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@highcharts/grid-lite": "3.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "typescript": "6.0.3",
+    "vite": "8.1.4"
+  },
+  "allowScripts": {
+    "fsevents": false
+  }
+}
