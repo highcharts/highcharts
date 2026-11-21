@@ -34,23 +34,11 @@ import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
  *         Candlestick chart
  *
  * @extends      plotOptions.ohlc
- * @excluding    borderColor,borderRadius,borderWidth
+ * @excluding    borderColor,borderRadius,borderWidth,stack,stacking
  * @product      highstock
  * @optionparent plotOptions.candlestick
  */
 const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
-    /**
-     * The specific line color for up candle sticks. The default is to
-     * inherit the general `lineColor` setting.
-     *
-     * @sample {highstock} stock/plotoptions/candlestick-linecolor/
-     *         Candlestick line colors
-     *
-     * @type      {Highcharts.ColorType}
-     * @since     1.3.6
-     * @product   highstock
-     * @apioption plotOptions.candlestick.upLineColor
-     */
     states: {
         /**
          * @extends plotOptions.column.states.hover
@@ -137,15 +125,61 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
 };
 
 /**
+ * The approximate pixel width of each group. If for example a series
+ * with 30 points is displayed over a 600 pixel wide plot area, no
+ * grouping is performed. If however the series contains so many points
+ * that the spacing is less than the `groupPixelWidth`, Highcharts will
+ * try to group it into appropriate groups so that each is more or less
+ * two pixels wide.
+ *
+ * @type      {number}
+ * @default   10
+ * @product   highstock
+ * @apioption plotOptions.candlestick.dataGrouping.groupPixelWidth
+ */
+
+/**
+ * The color of the line/border of the hovered candlestick. When `undefined`,
+ * the line color of the normal state is used.
+ *
+ * @type      {Highcharts.ColorType}
+ * @product   highstock
+ * @apioption plotOptions.candlestick.states.hover.lineColor
+ */
+
+/**
+ * The specific line color for up candle sticks. The default is to
+ * inherit the general `lineColor` setting.
+ *
+ * @sample {highstock} stock/plotoptions/candlestick-linecolor/
+ *         Candlestick line colors
+ *
+ * @type      {Highcharts.ColorType}
+ * @since     1.3.6
+ * @product   highstock
+ * @apioption plotOptions.candlestick.upLineColor
+ */
+
+/**
  * A `candlestick` series. If the [type](#series.candlestick.type)
  * option is not specified, it is inherited from [chart.type](
  * #chart.type).
  *
  * @type      {*}
  * @extends   series,plotOptions.candlestick
- * @excluding borderColor, borderRadius, borderWidth, marker
+ * @excluding borderColor, borderRadius, borderWidth, marker, stack,
+ *            stacking
  * @product   highstock
  * @apioption series.candlestick
+ */
+
+/**
+ * Options for the selected point. These settings override the normal state
+ * options when a point is selected.
+ *
+ * @excluding borderColor
+ * @product   highstock
+ * @apioption series.candlestick.states.select
  */
 
 /**
@@ -161,9 +195,9 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  *    series options.
  *    ```js
  *    data: [
- *        [0, 7, 2, 0, 4],
- *        [1, 1, 4, 2, 8],
- *        [2, 3, 3, 9, 3]
+ *        [0, 4, 7, 2, 6],
+ *        [1, 6, 8, 4, 5],
+ *        [2, 5, 9, 3, 8]
  *    ]
  *    ```
  *
@@ -175,18 +209,18 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  *    ```js
  *    data: [{
  *        x: 1,
- *        open: 9,
- *        high: 2,
- *        low: 4,
- *        close: 6,
+ *        open: 3,
+ *        high: 9,
+ *        low: 2,
+ *        close: 7,
  *        name: "Point2",
  *        color: "#00FF00"
  *    }, {
  *        x: 1,
- *        open: 1,
- *        high: 4,
- *        low: 7,
- *        close: 7,
+ *        open: 7,
+ *        high: 8,
+ *        low: 4,
+ *        close: 5,
  *        name: "Point1",
  *        color: "#FF00FF"
  *    }]
@@ -198,6 +232,33 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  * @excluding y
  * @product   highstock
  * @apioption series.candlestick.data
+ */
+
+/**
+ * A name for the dash style to use for the candlestick. Overrides
+ * `dashStyle` on the series.
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @product   highstock
+ * @apioption series.candlestick.data.dashStyle
+ */
+
+/**
+ * The color of the line/border of the candlestick. Overrides `lineColor` and
+ * `upLineColor` on the series.
+ *
+ * @type      {Highcharts.ColorType}
+ * @product   highstock
+ * @apioption series.candlestick.data.lineColor
+ */
+
+/**
+ * A pixel value specifying a fixed width for the candlestick. Overrides
+ * `pointWidth` on the series.
+ *
+ * @type      {number}
+ * @product   highstock
+ * @apioption series.candlestick.data.pointWidth
  */
 
 ''; // Adds doclets above to transpiled
