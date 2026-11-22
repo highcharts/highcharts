@@ -12,6 +12,7 @@ test_navigatorSeries();
 test_seriesLine();
 test_seriesCandleStick();
 test_theme();
+test_stockChart_promise();
 
 /**
  * Tests the documented `navigator.series.fillColor` option. The default
@@ -140,4 +141,29 @@ function test_theme() {
             data: []
         }]
     });
+}
+
+/**
+ * Tests that `Highcharts.stockChart()` returns a promise of the chart when
+ * the callback is `true`, and the chart otherwise. #25648
+ */
+function test_stockChart_promise() {
+    const chart: Highcharts.StockChart = Highcharts.stockChart('container', {});
+    const withCallback: Highcharts.StockChart = Highcharts.stockChart(
+        'container',
+        {},
+        function (chart) {
+            chart.redraw();
+        }
+    );
+    const promise: Promise<Highcharts.StockChart> = Highcharts.stockChart(
+        'container',
+        {},
+        true
+    );
+    const promiseWithoutRenderTo: Promise<Highcharts.StockChart> =
+        Highcharts.stockChart({}, true);
+    // @ts-expect-error: with `true`, the result is a promise, not a chart
+    const notChart: Highcharts.StockChart = Highcharts.stockChart('container', {}, true);
+    promise.then((resolved) => resolved.redraw());
 }
