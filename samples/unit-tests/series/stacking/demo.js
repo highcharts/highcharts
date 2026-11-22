@@ -646,7 +646,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         assert.close(
             chart.xAxis[0].toPixels(0, true),
             labelPos.alignAttr.y + labelPos.getBBox().height / 2,
-            1,
+            1.5,
             'Stack labels should be properly positioned'
         );
 

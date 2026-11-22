@@ -4380,10 +4380,6 @@ class Axis {
             axisTitle.isNew = false;
         }
 
-
-        // Stacked totals
-        axis.stacking?.renderStackTotals();
-
         // First time, save the existing state
         if (!this.old) {
             this.saveOld();

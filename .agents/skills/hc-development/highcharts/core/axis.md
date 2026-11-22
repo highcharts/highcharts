@@ -22,10 +22,10 @@ Modules: `OrdinalAxis` (stock), `BrokenAxis` (broken-axis, stock, gantt), `GridA
 - Translation: `setAxisTranslation` sets `pointRange`, `minPointOffset`, `transA`, `minPixelPadding`. `translate`/`toPixels`/`toValue` use `linkedParent || this` and call `val2lin`/`lin2val` for ordinal, breaks or log.
 - Layout in `Chart.render`: up to `chart.axisLayoutRuns` (2) passes: `setScale` → `getAxisMargins` (`getOffset` per axis), then `setTickInterval(true)` on axes whose plot size changed → `getMargins`. `Chart.redraw` does one pass.
 - `getOffset`: creates ticks (`Tick` fires `init`, `labelFormat`), `renderUnsquish` (rotation, ellipsis), title, line, offsets; fires `afterGetOffset`.
-- `render`: ticks (`Tick.render` → grid line, mark, label), alternate bands, plot lines/bands, line, title, `renderStackTotals`, `saveOld`; fires `afterRender`.
+- `render`: ticks (`Tick.render` → grid line, mark, label), alternate bands, plot lines/bands, line, title, `renderStacks`, `saveOld`; fires `afterRender`.
 - Extremes: `setExtremes` fires `setExtremes`; default action sets `userMin`/`userMax` and redraws; `afterSetExtremes` fires after redraw. Zoom and pan go through `Chart.transform`, which sets `axis.isPanning`.
 - `update()` merges `userOptions` and re-runs `init()` on the same instance.
-- Stacks: `chart.getStacks` → `setStackedPoints` → `modifyStacks` → `Series.getExtremes` uses `stackedYData` → `Series.translate` sets `stackY`/`yBottom` and calls `StackItem.setOffset` → `renderStackTotals`.
+- Stacks: `chart.getStacks` → `setStackedPoints` → `modifyStacks` → `Series.getExtremes` uses `stackedYData` → `Series.translate` sets `stackY`/`yBottom` and calls `StackItem.setOffset` → `renderStacks`.
 
 ## Where to fix
 

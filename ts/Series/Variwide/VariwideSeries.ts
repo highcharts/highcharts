@@ -20,7 +20,6 @@
  *
  * */
 
-import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type { TypedArray } from '../../Shared/Types';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
@@ -199,50 +198,6 @@ class VariwideSeries extends ColumnSeries {
         this.options.crisp = this.crispOption;
     }
 
-    /**
-     * Function that corrects stack labels positions
-     * @internal
-     */
-    public correctStackLabels(): void {
-        const series = this,
-            options = series.options,
-            yAxis = series.yAxis as StackingAxis;
-
-        let pointStack,
-            pointWidth,
-            stack,
-            xValue;
-
-        for (const point of series.points) {
-            xValue = point.x;
-            pointWidth = (point.shapeArgs as any).width;
-            stack = yAxis.stacking.stacks[(
-                series.negStacks &&
-                (point.y as any) < (
-                    options.startFromThreshold ?
-                        0 :
-                        (options.threshold as any)
-                ) ?
-                    '-' :
-                    ''
-            ) + series.stackKey];
-
-            if (stack) {
-                pointStack = stack[xValue as any];
-                if (pointStack && !point.isNull) {
-                    pointStack.setOffset(
-                        -(pointWidth / 2) || 0,
-                        pointWidth || 0,
-                        void 0,
-                        void 0,
-                        point.plotX,
-                        series.xAxis
-                    );
-                }
-            }
-        }
-    }
-
     /** @internal */
     public getXExtremes(
         xData: Array<number>|TypedArray
@@ -306,10 +261,6 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
                 tooltipPos[1] = xAxis.len - shapeArgs.x - shapeArgs.width / 2;
             }
         }
-    }
-
-    if (this.options.stacking) {
-        this.correctStackLabels();
     }
 
 }, { order: 2 });

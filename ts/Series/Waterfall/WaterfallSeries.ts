@@ -464,6 +464,7 @@ class WaterfallSeries extends ColumnSeries {
                         if (!actualStack[x] || changed) {
                             actualStack[x] = {
                                 negTotal: 0,
+                                points: {},
                                 posTotal: 0,
                                 stackTotal: 0,
                                 threshold: 0,
@@ -746,18 +747,12 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                     true
                 ) - box.y;
 
+
+                actualStack[i].points[series.index] = point;
                 const dummyStackItem = yAxis.waterfall?.dummyStackItem;
                 if (dummyStackItem) {
                     dummyStackItem.x = i;
                     dummyStackItem.label = actualStack[i].label;
-                    dummyStackItem.setOffset(
-                        series.pointXOffset || 0,
-                        series.barW || 0,
-                        series.stackedYNeg[i],
-                        series.stackedYPos[i],
-                        void 0,
-                        this.xAxis
-                    );
                 }
             }
         } else {

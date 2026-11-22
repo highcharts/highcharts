@@ -418,26 +418,25 @@ class ColumnSeries extends Series {
             objectEach(
                 this.xAxis.stacking?.stacks,
                 (stack: Record<string, StackItem>): void => {
-                    const points = typeof point.x === 'number' ?
+                    const values = typeof point.x === 'number' ?
                             stack[point.x.toString()]?.points :
                             void 0,
-                        pointValues = points?.[this.index],
+                        stackPoint = values?.[this.index],
                         yStackMap: Record<string, number> = {};
 
                     // Look for the index
-                    if (points && isArray(pointValues)) {
+                    if (values && stackPoint) {
                         let baseIndex = this.index;
 
                         // If there are multiple points with the same X then
                         // gather all series in category, and assign index
                         const seriesIndexes = Object
-                            .keys(points)
+                            .keys(values)
                             .filter((pointKey): boolean =>
                                 // Filter out duplicate X's
                                 !pointKey.match(',') &&
                                 // Filter out null points
-                                points[pointKey] &&
-                                points[pointKey].length > 1
+                                isNumber(values[pointKey]?.stackY)
                             )
                             .map(parseFloat)
                             .filter((index): boolean =>

@@ -22,6 +22,7 @@ import type Axis from './Axis';
 import type Chart from '../Chart/Chart.js';
 import type StackingAxis from './Stacking/StackingAxis';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
+import type Point from '../../Core/Series/Point.js';
 
 import H from '../Globals.js';
 const { composed } = H;
@@ -92,6 +93,9 @@ namespace WaterfallAxis {
         negTotal: number;
 
         /** @internal */
+        points: Record<string, Point>;
+
+        /** @internal */
         posTotal: number;
 
         /** @internal */
@@ -123,9 +127,9 @@ namespace WaterfallAxis {
         if (pushUnique(composed, 'Axis.Waterfall')) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterBuildStacks', onAxisAfterBuildStacks);
-            addEvent(AxisClass, 'afterRender', onAxisAfterRender);
 
             addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
+            addEvent(ChartClass, 'render', onChartRender);
         }
 
     }
@@ -142,15 +146,18 @@ namespace WaterfallAxis {
     }
 
     /** @internal */
-    function onAxisAfterRender(this: Axis): void {
-        const axis = this as WaterfallAxis,
-            stackLabelOptions = axis.options.stackLabels;
+    function onChartRender(this: Chart): void {
+        const chart = this,
+            axes = chart.axes || [] as Array<WaterfallAxis>;
 
-        if (
-            stackLabelOptions?.enabled &&
-            axis.waterfall?.stacks
-        ) {
-            axis.waterfall.renderStackTotals();
+        for (const axis of axes) {
+            const stackLabelOptions = axis.options.stackLabels;
+            if (
+                stackLabelOptions?.enabled &&
+                axis.waterfall?.stacks
+            ) {
+                axis.waterfall.renderStacks();
+            }
         }
     }
 
@@ -227,7 +234,7 @@ namespace WaterfallAxis {
          * @internal
          * @function Highcharts.Axis#renderWaterfallStackTotals
          */
-        public renderStackTotals(): void {
+        public renderStacks(): void {
             const yAxis = this.axis,
                 waterfallStacks = yAxis.waterfall?.stacks,
                 stackTotalGroup = yAxis.stacking?.stackTotalGroup,
@@ -242,8 +249,8 @@ namespace WaterfallAxis {
 
             // Render each waterfall stack total
             if (stackTotalGroup) {
-                objectEach(waterfallStacks, (type): void => {
-                    objectEach(type, (
+                objectEach(waterfallStacks, (stack): void => {
+                    objectEach(stack, (
                         stackItem: StacksItemObject,
                         key: string
                     ): void => {
@@ -252,6 +259,8 @@ namespace WaterfallAxis {
                         if (stackItem.label) {
                             dummyStackItem.label = stackItem.label;
                         }
+
+                        dummyStackItem.points = stackItem.points;
 
                         StackItem.prototype.render.call(
                             dummyStackItem,
