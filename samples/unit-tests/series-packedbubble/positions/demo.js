@@ -175,6 +175,48 @@ QUnit.test('PackedBubble layout simulation', function (assert) {
     );
 });
 
+QUnit.test('Circular initial positions', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'packedbubble'
+            },
+            plotOptions: {
+                packedbubble: {
+                    layoutAlgorithm: {
+                        enableSimulation: false,
+                        initialPositionRadius: 20
+                    }
+                }
+            },
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        }),
+        layout = chart.series[0].layout,
+        nodes = layout.nodes,
+        angle = 2 * Math.PI / (nodes.length + 1),
+        centerX = layout.box.width / 2,
+        centerY = layout.box.height / 2;
+
+    nodes.forEach(node => {
+        node.plotX = node.plotY = void 0;
+    });
+    layout.setCircularPositions();
+
+    assert.close(
+        nodes[1].plotX,
+        centerX + 20 * Math.cos(angle),
+        1e-8,
+        'The second node should use one angular step on the x axis'
+    );
+    assert.close(
+        nodes[1].plotY,
+        centerY + 20 * Math.sin(angle),
+        1e-8,
+        'The second node should use one angular step on the y axis'
+    );
+});
+
 QUnit.test('PackedBubble hover and dehover (#12537)', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
