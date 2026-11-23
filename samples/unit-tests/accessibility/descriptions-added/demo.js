@@ -45,6 +45,30 @@ QUnit.test('Accessible chart with multiple series', function (assert) {
     );
 });
 
+QUnit.test('Zero decimals in point descriptions', function (assert) {
+    var chart = Highcharts.chart('container', {
+            accessibility: {
+                point: {
+                    valueDecimals: 0
+                }
+            },
+            tooltip: {
+                valueDecimals: 2
+            },
+            series: [{
+                data: [1.23]
+            }]
+        }),
+        label = chart.series[0].points[0].graphic.element.getAttribute(
+            'aria-label'
+        );
+
+    assert.notOk(
+        label.includes('1.23'),
+        'An explicit zero should override the tooltip decimals'
+    );
+});
+
 QUnit.test('Empty chart', function (assert) {
     var chart = Highcharts.chart('container', {});
     assert.ok(
