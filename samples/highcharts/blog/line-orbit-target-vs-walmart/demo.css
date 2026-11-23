@@ -1,3 +1,15 @@
+body {
+    font-family:
+        var(
+            --highcharts-font-family,
+            "Lucida Grande",
+            "Lucida Sans Unicode",
+            Arial,
+            Helvetica,
+            sans-serif
+        );
+}
+
 @media (prefers-color-scheme: dark) {
     html,
     body {
@@ -27,6 +39,5 @@
     gap: 2px;
     padding: 4px 8px;
     background: var(--highcharts-background-color);
-    font-family: var(--highcharts-font-family, "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif);
     flex-shrink: 0;
 }
