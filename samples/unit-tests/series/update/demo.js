@@ -754,6 +754,27 @@ QUnit.test('Series.update showInLegend dynamically', function (assert) {
         'Points should start from 100 (#7933)'
     );
 
+    chart.update({
+        plotOptions: {
+            area: {
+                pointStart: 50
+            }
+        }
+    }, false);
+    chart.addSeries({
+        type: 'area',
+        data: [1, 2]
+    }, false);
+    chart.series[1].update({});
+
+    assert.deepEqual(
+        chart.series[1].points.map(p => p.x),
+        [50, 51],
+        'Update should keep pointStart from type-specific plotOptions ' +
+        '(#25386)'
+    );
+    chart.series[1].remove();
+
     chart.addSeries({
         type: 'pie',
         data: [1, 2, 3],
