@@ -976,7 +976,7 @@ function react() {
             },
             {
                 type: 'bubble',
-                name: 'Purple bubbles',
+                name: 'Green bubbles',
                 data: [
                     [42, 38, 20],
                     [6, 18, 1],
