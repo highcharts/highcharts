@@ -17,6 +17,7 @@
 
 
 export type BoostBlendingValue = ('add'|'darken'|'multiply');
+export type BoostShapeValue = ('lines'|'triangles');
 
 export interface BoostDebugOptions {
     /**
@@ -281,6 +282,16 @@ declare module '../../Core/Series/SeriesOptions' {
          * @requires   modules/boost
          */
         boostBlending?: BoostBlendingValue;
+
+        /**
+         * Sets the shape used when drawing boosted area and arearange series.
+         *
+         * By default, these series are drawn as one pixel wide lines. Set this
+         * option to `triangles` to draw the boosted area as a filled surface.
+         *
+         * @requires modules/boost
+         */
+        boostShape?: BoostShapeValue;
 
         /**
          * Set the point threshold for when a series should enter boost mode.
