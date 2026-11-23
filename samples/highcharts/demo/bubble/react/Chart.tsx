@@ -1,12 +1,12 @@
 import {
     Chart,
     Highcharts,
+    Legend,
     Title,
     Subtitle,
     XAxis,
     YAxis,
     Tooltip,
-    Legend,
     PlotOptions
 } from '@highcharts/react';
 import { BubbleSeries } from '@highcharts/react/series/Bubble';
@@ -77,8 +77,9 @@ export default function BubbleChart() {
                     }
                 }
             }}
-            containerProps={{ style: { height: '400px' } }}
+            containerProps={{ id: 'container' }}
         >
+            <Legend enabled={false} />
             <Title align="left">Sugar and fat intake per country</Title>
             <Subtitle align="left">
                 Source: <a href="http://www.euromonitor.com/">Euromonitor</a>{' '}
@@ -88,7 +89,9 @@ export default function BubbleChart() {
                 gridLineWidth={1}
                 minPadding={0.06}
                 lineWidth={3}
-                labels={{ format: '{value} gr' }}
+                labels={{
+                    format: '{value} gr'
+                }}
                 plotLines={[
                     {
                         color: 'light-dark(#00b066, #007D49)',
@@ -115,14 +118,18 @@ export default function BubbleChart() {
                         zIndex: 3
                     }
                 ]}
-                accessibility={{ rangeDescription: 'Range: 60 to 100 grams.' }}
+                accessibility={{
+                    rangeDescription: 'Range: 60 to 100 grams.'
+                }}
             >
                 Daily fat intake
             </XAxis>
             <YAxis
                 startOnTick={false}
                 endOnTick={false}
-                labels={{ format: '{value} gr' }}
+                labels={{
+                    format: '{value} gr'
+                }}
                 maxPadding={0.2}
                 min={0}
                 plotLines={[
@@ -150,7 +157,9 @@ export default function BubbleChart() {
                         zIndex: 3
                     }
                 ]}
-                accessibility={{ rangeDescription: 'Range: 0 to 160 grams.' }}
+                accessibility={{
+                    rangeDescription: 'Range: 0 to 160 grams.'
+                }}
             >
                 Daily sugar intake
             </YAxis>
@@ -163,9 +172,8 @@ export default function BubbleChart() {
                     '<tr><th>Obesity (adults):</th><td>{point.z}%</td></tr>'
                 }
                 footerFormat="</table>"
-                followPointer={true}
+                followPointer
             />
-            <Legend enabled={false} />
             <PlotOptions
                 bubble={{
                     dataLabels: {
@@ -175,7 +183,6 @@ export default function BubbleChart() {
                     minSize: 20
                 }}
             />
-            <Exporting />
             <Accessibility
                 point={{
                     valueDescriptionFormat:
@@ -183,6 +190,7 @@ export default function BubbleChart() {
                         'sugar: {point.y}g, obesity: {point.z}%.'
                 }}
             />
+            <Exporting />
             <BubbleSeries
                 options={{
                     dataMapping: {

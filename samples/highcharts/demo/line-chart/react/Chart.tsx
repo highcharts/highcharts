@@ -30,7 +30,7 @@ export default function LineChart() {
             <YAxis>Unique users</YAxis>
             <XAxis
                 type="datetime"
-                crosshair={true}
+                crosshair
                 dateTimeLabelFormats={{
                     // Don't show the date
                     day: {
@@ -44,7 +44,7 @@ export default function LineChart() {
             />
             <Legend enabled={false} />
             <Tooltip
-                shared={true}
+                shared
                 headerFormat={`<table>
                 <caption>{point.x:%[HM]} → {(add point.x 3540000):%[HM]}</caption>`}
                 pointFormat={`
@@ -73,6 +73,9 @@ export default function LineChart() {
                     }
                 }}
             />
+            <SeriesLabel />
+            <Exporting />
+            <Accessibility />
             <LineSeries
                 name="Users"
                 color="light-dark(#0097FF, #27A6FE)"
@@ -85,16 +88,15 @@ export default function LineChart() {
             <LineSeries
                 name="Average"
                 color="#8791BA"
-                options={{ dashStyle: 'ShortDot' }}
                 data={[
                     865, 832, 775, 728, 779, 812, 989, 1095, 1623, 2102, 2289,
                     2315, 2412, 2662, 3089, 2812, 2427, 2112, 2356, 2305, 1858,
                     1084, 932, 899
                 ]}
+                options={{
+                    dashStyle: 'ShortDot'
+                }}
             />
-            <SeriesLabel />
-            <Exporting />
-            <Accessibility />
         </Chart>
     );
 }
