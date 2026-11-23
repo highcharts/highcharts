@@ -1,0 +1,65 @@
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+#container {
+    display: grid;
+    grid-template-areas:
+        "map"
+        "grid";
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+#grid-panel {
+    grid-area: grid;
+}
+
+#grid-panel label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+#group-select {
+    margin-bottom: 8px;
+    min-width: 120px;
+    padding: 6px 8px;
+}
+
+#grid {
+    min-height: 245px;
+}
+
+#map {
+    grid-area: map;
+    min-height: 430px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+@media (max-width: 720px) {
+    #chart {
+        min-height: 360px;
+    }
+}
