@@ -656,7 +656,7 @@ class Oscillator {
                 filterOptions: FilterOptions
             ): void => {
                 const multiplier = getPitchTrackedMultiplierVal(
-                        filterOptions.frequencyPitchTrackingMultiplier || 1,
+                        filterOptions.frequencyPitchTrackingMultiplier ?? 1,
                         frequency
                     ),
                     f = clamp(
