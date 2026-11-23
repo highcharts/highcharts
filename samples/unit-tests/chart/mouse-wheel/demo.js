@@ -83,3 +83,56 @@ QUnit.test('Mouse wheel zoom on chart', function (assert) {
 
     TestUtilities.lolexRunAndUninstall(clock);
 });
+
+QUnit.test('Mouse wheel drop timers are isolated per chart', function (assert) {
+    const clock = TestUtilities.lolexInstall(),
+        firstContainer = document.createElement('div'),
+        secondContainer = document.createElement('div'),
+        getOptions = () => ({
+            chart: {
+                zooming: {
+                    mouseWheel: {
+                        type: 'x'
+                    }
+                }
+            },
+            navigator: {
+                enabled: false
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5]
+            }]
+        });
+
+    document.body.append(firstContainer, secondContainer);
+
+    const firstChart = Highcharts.stockChart(firstContainer, getOptions()),
+        secondChart = Highcharts.stockChart(secondContainer, getOptions()),
+        firstController = new TestController(firstChart),
+        secondController = new TestController(secondChart);
+
+    let firstDrops = 0,
+        secondDrops = 0;
+
+    firstChart.pointer.drop = () => ++firstDrops;
+    secondChart.pointer.drop = () => ++secondDrops;
+
+    firstController.mouseWheel(200, 100, {
+        deltaY: -1000,
+        target: firstChart.container
+    });
+    secondController.mouseWheel(200, 100, {
+        deltaY: -1000,
+        target: secondChart.container
+    });
+    clock.tick(401);
+
+    assert.strictEqual(firstDrops, 1, 'The first chart should run drop');
+    assert.strictEqual(secondDrops, 1, 'The second chart should run drop');
+
+    firstChart.destroy();
+    secondChart.destroy();
+    firstContainer.remove();
+    secondContainer.remove();
+    TestUtilities.lolexRunAndUninstall(clock);
+});
