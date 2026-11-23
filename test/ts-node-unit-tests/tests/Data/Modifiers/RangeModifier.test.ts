@@ -1,10 +1,23 @@
 import { describe, it } from 'node:test';
-import { deepStrictEqual, strictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual, throws } from 'node:assert';
 
 import DataTable from '../../../../../ts/Data/DataTable.js';
+import DataModifier from '../../../../../ts/Data/Modifiers/DataModifier.js';
 import RangeModifier from '../../../../../ts/Data/Modifiers/RangeModifier.js';
 
 describe('RangeModifier', () => {
+
+    class RecordingModifier extends DataModifier {
+        public readonly options = { type: 'Range' as const };
+        public calls = 0;
+
+        public modifyTable(table: DataTable): DataTable {
+            ++this.calls;
+            this.emit({ type: 'modify', table });
+            this.emit({ type: 'afterModify', table });
+            return table;
+        }
+    }
 
     describe('modify', () => {
         it('should keep all rows when no range is specified', async () => {
@@ -104,6 +117,50 @@ describe('RangeModifier', () => {
                 originalRowIndexes,
                 [4],
                 'Original row indexes should be set correctly.'
+            );
+        });
+    });
+
+    describe('benchmark', () => {
+        it('should isolate the source table and repeated runs', () => {
+            const table = new DataTable({ columns: { x: [1, 2, 3] } });
+            const sourceColumns = table.getColumns();
+            const rangeModifier = new RangeModifier({ start: 1 });
+
+            strictEqual(rangeModifier.benchmark(table).length, 1);
+            deepStrictEqual(table.getColumns(), sourceColumns);
+
+            const modifier = new RecordingModifier();
+            let benchmarkEvents = 0;
+            let iterationEvents = 0;
+
+            modifier.on('afterBenchmark', (): void => ++benchmarkEvents);
+            modifier.on(
+                'afterBenchmarkIteration',
+                (): void => ++iterationEvents
+            );
+
+            strictEqual(modifier.benchmark(table, { iterations: 2 }).length, 2);
+            strictEqual(modifier.benchmark(table, { iterations: 1 }).length, 1);
+            strictEqual(modifier.calls, 3);
+            strictEqual(iterationEvents, 3);
+            strictEqual(benchmarkEvents, 2);
+        });
+
+        it('should handle bounded iteration counts without recursion', () => {
+            const table = new DataTable();
+            const modifier = new RecordingModifier();
+
+            strictEqual(modifier.benchmark(table, { iterations: 0 }).length, 0);
+            strictEqual(
+                modifier.benchmark(table, { iterations: 10_000 }).length,
+                10_000
+            );
+            throws(
+                (): void => {
+                    modifier.benchmark(table, { iterations: 1.5 });
+                },
+                /non-negative integer/
             );
         });
     });

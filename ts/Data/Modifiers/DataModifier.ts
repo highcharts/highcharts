@@ -32,7 +32,7 @@ import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
 import type { DataModifierTypes } from './DataModifierType';
 
-import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
+import { addEvent, fireEvent } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -120,54 +120,47 @@ abstract class DataModifier implements DataEventEmitter<DataModifierEvent> {
         dataTable: DataTable,
         options?: BenchmarkOptions
     ): Array<number> {
-        const results: Array<number> = [];
-        const modifier = this;
-        const execute = (): void => {
-            modifier.modifyTable(dataTable);
-            modifier.emit<DataModifierEvent>({
-                type: 'afterBenchmarkIteration'
-            });
-        };
+        const modifier = this,
+            iterations = options?.iterations ?? 1,
+            results: Array<number> = [];
 
-        const defaultOptions = {
-            iterations: 1
-        };
+        if (!Number.isInteger(iterations) || iterations < 0) {
+            throw new Error(
+                'Benchmark iterations must be a non-negative integer.'
+            );
+        }
 
-        const { iterations } = merge(
-            defaultOptions,
-            options
-        );
+        if (iterations && !dataTable.modified) {
+            dataTable.modified = dataTable.clone();
+        }
 
-        modifier.on('afterBenchmarkIteration', (): void => {
-            if (results.length === iterations) {
-                modifier.emit<DataModifierEvent>({
-                    type: 'afterBenchmark',
-                    results
-                });
-                return;
-            }
-
-            // Run again
-            execute();
-        });
-
-        const times = {
-            startTime: 0,
-            endTime: 0
-        };
+        let startTime = 0;
 
         // Add timers
-        modifier.on('modify', (): void => {
-            times.startTime = window.performance.now();
+        const removeModifyTimer = modifier.on('modify', (): void => {
+            startTime = globalThis.performance.now();
         });
 
-        modifier.on('afterModify', (): void => {
-            times.endTime = window.performance.now();
-            results.push(times.endTime - times.startTime);
+        const removeAfterModifyTimer = modifier.on('afterModify', (): void => {
+            results.push(globalThis.performance.now() - startTime);
         });
 
-        // Initial run
-        execute();
+        try {
+            for (let i = 0; i < iterations; ++i) {
+                modifier.modifyTable(dataTable);
+                modifier.emit<DataModifierEvent>({
+                    type: 'afterBenchmarkIteration'
+                });
+            }
+        } finally {
+            removeModifyTimer();
+            removeAfterModifyTimer();
+        }
+
+        modifier.emit<DataModifierEvent>({
+            type: 'afterBenchmark',
+            results
+        });
 
         return results;
     }
