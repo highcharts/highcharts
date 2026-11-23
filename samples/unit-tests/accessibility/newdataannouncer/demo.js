@@ -72,3 +72,71 @@ QUnit.test('Chart with newDataAnnouncer', function (assert) {
         done();
     }, 3200); // make sure clearAnnouncementTimerRegion is done
 });
+
+QUnit.test('Chart destruction clears announcer timers', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+            accessibility: {
+                announceNewData: {
+                    enabled: true
+                }
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }),
+        win = Highcharts.win,
+        originalSetTimeout = win.setTimeout,
+        originalClearTimeout = win.clearTimeout,
+        pendingTimeouts = new Set(),
+        nextTimeoutId = 1,
+        newDataAnnouncer = chart.accessibility.components.series
+            .newDataAnnouncer,
+        clearRegionTimer,
+        queuedAnnouncementTimer;
+
+    win.setTimeout = function () {
+        var timeoutId = nextTimeoutId++;
+        pendingTimeouts.add(timeoutId);
+        return timeoutId;
+    };
+    win.clearTimeout = function (timeoutId) {
+        pendingTimeouts.delete(timeoutId);
+    };
+
+    try {
+        newDataAnnouncer.announcer.announce('Announcement');
+        clearRegionTimer = newDataAnnouncer.announcer
+            .clearAnnouncementRegionTimer;
+        chart.series[0].addPoint(4);
+        queuedAnnouncementTimer = newDataAnnouncer.queuedAnnouncementTimer;
+
+        assert.ok(
+            pendingTimeouts.has(clearRegionTimer),
+            'Announce-region cleanup should be scheduled'
+        );
+        assert.ok(
+            pendingTimeouts.has(queuedAnnouncementTimer),
+            'New-data announcement should be scheduled'
+        );
+
+        chart.destroy();
+
+        assert.notOk(
+            pendingTimeouts.has(clearRegionTimer),
+            'Announce-region cleanup should be cancelled'
+        );
+        assert.notOk(
+            pendingTimeouts.has(queuedAnnouncementTimer),
+            'New-data announcement should be cancelled'
+        );
+    } finally {
+        win.setTimeout = originalSetTimeout;
+        win.clearTimeout = originalClearTimeout;
+        if (chart.renderer) {
+            chart.destroy();
+        }
+    }
+});
