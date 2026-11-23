@@ -15,7 +15,6 @@
  * */
 
 import type Grid from '../../Core/Grid';
-import Table from '../../Core/Table/Table';
 
 import Globals from '../../../Core/Globals.js';
 import Credits from '../../Core/Credits.js';
@@ -29,7 +28,7 @@ import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
  *
  * */
 
-let creditsObserver: MutationObserver | undefined;
+const creditsObservers = new WeakMap<Grid, MutationObserver>();
 
 /**
  * Extends the grid classes with credits.
@@ -37,26 +36,23 @@ let creditsObserver: MutationObserver | undefined;
  * @param GridClass
  * The class to extend.
  *
- * @param TableClass
- * The class to extend.
- *
  */
 export function compose(
-    GridClass: typeof Grid,
-    TableClass: typeof Table
+    GridClass: typeof Grid
 ): void {
     if (!pushUnique(Globals.composed, 'CreditsLite')) {
         return;
     }
 
     addEvent(GridClass, 'afterRenderViewport', initCredits);
-    addEvent(TableClass, 'afterDestroy', destroyCredits);
+    addEvent(GridClass, 'beforeDestroy', destroyCredits);
+    addEvent(GridClass, 'beforeRenderViewport', destroyCredits);
 }
 
 /**
  * Callback function called before table initialization.
  */
-function initCredits(this: Grid): Credits {
+function initCredits(this: Grid): void {
     const credits = new Credits(this);
     const containerStyle = credits.containerElement.style;
 
@@ -68,7 +64,7 @@ function initCredits(this: Grid): Credits {
     );
 
     // Create an observer that check credits modifications
-    creditsObserver = new MutationObserver((): void => {
+    const creditsObserver = new MutationObserver((): void => {
         if (!credits.containerElement.querySelector('.hcg-credits')) {
             credits.render();
         }
@@ -81,14 +77,15 @@ function initCredits(this: Grid): Credits {
         subtree: true
     });
 
-    return credits;
+    creditsObservers.set(this, creditsObserver);
 }
 
 /**
  * Callback function called after credits destroy.
  */
-function destroyCredits(this: Table): void {
-    creditsObserver?.disconnect();
+function destroyCredits(this: Grid): void {
+    creditsObservers.get(this)?.disconnect();
+    creditsObservers.delete(this);
 }
 
 
