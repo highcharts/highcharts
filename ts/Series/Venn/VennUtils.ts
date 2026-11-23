@@ -116,7 +116,8 @@ function addOverlapToSets(
     relations: Array<VennRelationObject>
 ): Array<VennRelationObject> {
     // Calculate the amount of overlap per set.
-    const mapOfIdToProps: Record<string, VennPropsObject> = {};
+    const mapOfIdToProps: Record<string, VennPropsObject> =
+        Object.create(null);
 
     relations
         // Filter out relations consisting of 2 sets.
@@ -423,7 +424,7 @@ function isSet(
 function isValidRelation(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {
-    const map: Record<string, boolean> = {};
+    const map: Record<string, boolean> = Object.create(null);
 
     return (
         isObject(x) &&
@@ -464,7 +465,7 @@ function layoutGreedyVenn(
     relations: Array<VennRelationObject>
 ): Record<string, CircleObject> {
     const positionedSets: Array<VennRelationObject> = [],
-        mapOfIdToCircles: Record<string, CircleObject> = {};
+        mapOfIdToCircles: Record<string, CircleObject> = Object.create(null);
 
     // Define a circle for each set.
     relations
@@ -879,7 +880,7 @@ function processVennData(
             };
         }
         return mapOfIdToRelation;
-    }, {});
+    }, Object.create(null));
 
     validSets.reduce(function (
         combinations: Array<string>,

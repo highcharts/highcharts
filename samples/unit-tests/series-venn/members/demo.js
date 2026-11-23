@@ -569,6 +569,36 @@ QUnit.test('processVennData', function (assert) {
         [],
         'should remove relations that has invalid values in sets.'
     );
+
+    data = [{
+        sets: ['toString'],
+        value: 2
+    }, {
+        sets: ['__proto__'],
+        value: 3
+    }, {
+        sets: ['toString', '__proto__'],
+        value: 1
+    }];
+
+    const relations = processVennData(data, defaultSplitter),
+        layout = vennSeries.layout(relations);
+
+    assert.deepEqual(
+        relations.map(relation => relation.sets),
+        [
+            ['toString'],
+            ['__proto__'],
+            ['__proto__', 'toString']
+        ],
+        'should accept set names matching built-in object properties.'
+    );
+
+    assert.deepEqual(
+        Object.keys(layout.mapOfIdToShape),
+        ['toString', '__proto__', '__proto__,toString'],
+        'should create every built-in-named set and intersection shape.'
+    );
 });
 
 QUnit.test('sortByTotalOverlap', function (assert) {
