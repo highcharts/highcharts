@@ -178,16 +178,19 @@ class PivotController {
      * pivot is disabled or cannot be applied.
      */
     private resolveOptions(): ResolvedPivotOptions | undefined {
-        const gridOptions = this.grid.options;
-        const options = gridOptions?.pivot;
+        const options = this.grid.options?.pivot;
 
         if (!options?.enabled) {
             return;
         }
 
+        // Read the user options, because an applied pivot writes a tree view
+        // input of its own into the merged options.
+        const userOptions = this.grid.userOptions;
+
         if (
-            gridOptions?.treeView?.enabled ||
-            gridOptions?.rowGrouping?.enabled
+            userOptions.treeView?.enabled ||
+            userOptions.rowGrouping?.enabled
         ) {
             // eslint-disable-next-line no-console
             console.error(

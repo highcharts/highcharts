@@ -150,6 +150,41 @@ test.describe('Grid Pro - pivot', () => {
         ).toStrictEqual(['Total', '3.5']);
     });
 
+    test('keeps the projection when a row is collapsed and expanded',
+        async ({ page }) => {
+            await loadGridPro(page);
+            await createGrid(page, BASE_PIVOT_OPTIONS);
+
+            const toggle = page.locator('[data-hcg-tree-toggle]');
+
+            await toggle.first().click();
+            await expect(
+                page.locator('tbody:not(.hcg-tbody-summary) .hcg-row')
+            ).toHaveCount(4);
+            expect(await getRowLabels(page)).toStrictEqual([
+                'Asia',
+                'Europe',
+                'Norway',
+                'Poland'
+            ]);
+
+            // Toggling re-runs the query, so the projection has to survive it
+            // with its values and its generated columns intact.
+            expect(await getColumnValues(page, 'pivot-total-sales'))
+                .toStrictEqual(['200', '320', '240', '80']);
+
+            await toggle.first().click();
+            expect(await getRowLabels(page)).toStrictEqual([
+                'Asia',
+                'Japan',
+                'Europe',
+                'Norway',
+                'Poland'
+            ]);
+            expect(await getColumnValues(page, 'pivot-total-sales'))
+                .toStrictEqual(['200', '200', '320', '240', '80']);
+        });
+
     test('inherits header and cell formatting from the source columns',
         async ({ page }) => {
             await loadGridPro(page);
