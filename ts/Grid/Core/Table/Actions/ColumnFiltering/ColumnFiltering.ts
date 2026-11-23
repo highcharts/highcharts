@@ -389,7 +389,8 @@ class ColumnFiltering {
         };
 
         if (this.filterInput) {
-            result.value = this.filterInput.value;
+            // Input shorter than `filtering.minLength` clears the filter.
+            result.value = this.isInputTooShort() ? '' : this.filterInput.value;
         }
 
         if (
@@ -578,7 +579,9 @@ class ColumnFiltering {
         const delay = column.options.filtering?.debounce ??
             column.viewport.grid.dataProvider?.filterDebounce ?? 0;
 
-        if (!delay) {
+        // Input shorter than `filtering.minLength` clears the filter right
+        // away, instead of waiting for the delay.
+        if (!delay || this.isInputTooShort()) {
             this.applyFilterFromForm();
             return;
         }
@@ -588,6 +591,17 @@ class ColumnFiltering {
         this.debounceTimer = setTimeout((): void => {
             this.applyFilterFromForm();
         }, delay);
+    }
+
+    /**
+     * Checks if the filter input is shorter than `filtering.minLength`.
+     *
+     * @returns
+     * `true` if the input is too short to filter by, `false` otherwise.
+     */
+    private isInputTooShort(): boolean {
+        return (this.filterInput?.value.length ?? 0) <
+            (this.column.options.filtering?.minLength ?? 0);
     }
 
     /**

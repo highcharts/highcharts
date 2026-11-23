@@ -1176,6 +1176,30 @@ export interface ColumnFilteringOptions {
     debounce?: number;
 
     /**
+     * Minimum number of characters in the filter input before the filter is
+     * applied. Shorter input clears the column filter, so no query is sent
+     * for values a remote API would reject. Combined with
+     * {@link ColumnFilteringOptions.debounce}, the delay only starts once the
+     * input is long enough.
+     *
+     * @example
+     * ```js
+     * columnDefaults: {
+     *   filtering: {
+     *     enabled: true,
+     *     minLength: 3
+     *   }
+     * }
+     * ```
+     *
+     * @sample grid-lite/options/filtering-min-length
+     *         Minimum filter input length
+     *
+     * @default 0
+     */
+    minLength?: number;
+
+    /**
      * Hides the operator select in filtering UI.
      *
      * Uses {@link ColumnFilteringOptions.rule} operator when valid, otherwise

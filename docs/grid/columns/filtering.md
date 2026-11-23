@@ -145,6 +145,25 @@ columnDefaults: {
 
 See also: [Debounced filtering](https://www.highcharts.com/samples/grid/options/filtering-debounce).
 
+## Minimum input length
+
+`filtering.minLength` sets how many characters the filter input needs before
+the filter is applied. This is useful for APIs that reject short queries.
+Shorter input clears the column filter, so deleting characters below the
+minimum removes the filter instead of keeping the last one. With
+`filtering.debounce`, the delay only starts once the input is long enough.
+
+```js
+columnDefaults: {
+    filtering: {
+        enabled: true,
+        minLength: 3
+    }
+}
+```
+
+See also: [Minimum filter input length](https://www.highcharts.com/samples/grid/options/filtering-min-length).
+
 ## Filter operators by data type
 
 Available filter operators depend on the column’s `dataType`.

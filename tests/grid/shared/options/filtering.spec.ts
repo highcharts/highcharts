@@ -821,15 +821,24 @@ test.describe('Grid filtering debounce', () => {
         await page.waitForFunction(() => (window as any).Grid?.grids?.length);
     });
 
-    async function createGrid(page: Page, debounce?: number): Promise<void> {
-        await page.evaluate(async (debounce) => {
+    async function createGrid(
+        page: Page,
+        debounce?: number,
+        minLength?: number
+    ): Promise<void> {
+        await page.evaluate(async ({ debounce, minLength }) => {
             const win = window as any;
             const data = win.grid.userOptions.data;
             win.grid.destroy();
             win.grid = await win.Grid.grid('container', {
                 data,
                 columnDefaults: {
-                    filtering: { enabled: true, inline: true, debounce }
+                    filtering: {
+                        enabled: true,
+                        inline: true,
+                        debounce,
+                        minLength
+                    }
                 },
                 columns: [{ id: 'product', dataType: 'string' }]
             }, true);
@@ -842,7 +851,7 @@ test.describe('Grid filtering debounce', () => {
                 win.applyFilterCalls++;
                 return applyFilter.apply(this, args);
             };
-        }, debounce);
+        }, { debounce, minLength });
     }
 
     const getCalls = (page: Page): Promise<number> =>
@@ -923,5 +932,78 @@ test.describe('Grid filtering debounce', () => {
 
         expect(await getCalls(page)).toBe(0);
         expect(errors).toEqual([]);
+    });
+});
+
+test.describe('Grid filtering minLength', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/inline-filtering', {
+            waitUntil: 'networkidle'
+        });
+        await page.waitForFunction(() => (window as any).Grid?.grids?.length);
+    });
+
+    async function createGrid(
+        page: Page,
+        minLength: number,
+        debounce?: number
+    ): Promise<number> {
+        return await page.evaluate(async ({ minLength, debounce }) => {
+            const win = window as any;
+            const data = win.grid.userOptions.data;
+            win.grid.destroy();
+            win.grid = await win.Grid.grid('container', {
+                data,
+                columnDefaults: {
+                    filtering: { enabled: true, inline: true }
+                },
+                columns: [{
+                    id: 'product',
+                    dataType: 'string',
+                    filtering: { minLength, debounce }
+                }]
+            }, true);
+            return win.grid.dataProvider.getRowCount();
+        }, { minLength, debounce });
+    }
+
+    const getRule = (page: Page): Promise<unknown> => page.evaluate(() =>
+        (window as any).grid.viewport.getColumn('product').options
+            .filtering.rule?.value
+    );
+
+    test('Filters only once the input reaches minLength', async ({
+        page
+    }) => {
+        const totalRows = await createGrid(page, 3);
+
+        await typeFilterValue(page, inputProductFilter, 'ap');
+        expect(await getRule(page)).toBeUndefined();
+        expect(await page.locator(gridRows).count()).toBeGreaterThan(4);
+
+        await page.locator(inputProductFilter).press('p');
+        await verifyRowCount(page, 2);
+        expect(await getRule(page)).toBe('app');
+
+        // Dropping below minLength clears the filter.
+        await page.locator(inputProductFilter).press('Backspace');
+        await expect.poll(() => getRule(page)).toBe('');
+        await expect.poll(() => page.evaluate(() =>
+            (window as any).grid.dataProvider.getRowCount()
+        )).toBe(totalRows);
+    });
+
+    test('Short input cancels a pending debounced filter', async ({
+        page
+    }) => {
+        await createGrid(page, 3, 300);
+
+        await typeFilterValue(page, inputProductFilter, 'app');
+        await page.locator(inputProductFilter).press('Backspace');
+        await page.evaluate(() => new Promise((resolve) => {
+            setTimeout(resolve, 500);
+        }));
+
+        expect(await getRule(page)).toBeUndefined();
     });
 });
