@@ -420,8 +420,8 @@ function compose(
 
         addEvent(PointClass, 'mouseOut', onPointMouseOut);
         addEvent(PointClass, 'mouseOver', onPointMouseOver);
-        addEvent(PointClass, 'remove', onPointRemove);
 
+        addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
         seriesProto.dragDropProps = DragDropProps.line;
         seriesProto.getGuideBox = seriesGetGuideBox;
 
@@ -570,17 +570,20 @@ function onPointMouseOver(
 }
 
 /**
- * Hide drag handles on a point if it is removed.
+ * Hide drag handles on a point if the series is re-rendered with dirty data.
  * @internal
  */
-function onPointRemove(
-    this: Point
+function onSeriesAfterRender(
+    this: Series
 ): void {
-    const chart = this.series.chart,
-        dragHandles = chart.dragHandles;
+    const dragHandles = this.chart.dragHandles;
 
-    if (dragHandles && dragHandles.point === this.id) {
-        chart.hideDragHandles();
+    if (
+        this.isDirtyData &&
+        dragHandles &&
+        !this.points.find((p): boolean => p.id === dragHandles.point)
+    ) {
+        this.chart.hideDragHandles();
     }
 }
 

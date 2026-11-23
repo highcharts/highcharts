@@ -266,6 +266,14 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
         1,
         '1 resize handle (that is in the visible range) should be visible.'
     );
+
+    chart.series[1].update({ data: [] });
+    assert.strictEqual(
+        typeof chart.dragHandles,
+        'undefined',
+        'Drag handles should be removed with associated point (#25412)'
+    );
+
 });
 
 QUnit.test('Dragdrop and logarithmic axes', function (assert) {
