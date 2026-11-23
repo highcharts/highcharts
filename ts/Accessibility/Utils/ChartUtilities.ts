@@ -159,7 +159,7 @@ function getAxisRangeDescription(axis: Axis): string {
 function getCategoryAxisRangeDesc(axis: Axis): string {
     const chart = axis.chart;
 
-    if (axis.dataMax && axis.dataMin) {
+    if (defined(axis.dataMax) && defined(axis.dataMin)) {
         return chart.langFormat(
             'accessibility.axis.rangeCategories',
             {
@@ -182,8 +182,8 @@ function getCategoryAxisRangeDesc(axis: Axis): string {
 function getAxisTimeLengthDesc(axis: Axis): string {
     const chart = axis.chart,
         range: Record<string, number> = {},
-        min = axis.dataMin || axis.min || 0,
-        max = axis.dataMax || axis.max || 0;
+        min = axis.dataMin ?? axis.min ?? 0,
+        max = axis.dataMax ?? axis.max ?? 0;
     let rangeUnit = 'Seconds';
 
     range.Seconds = (max - min) / 1000;
@@ -229,8 +229,8 @@ function getAxisFromToDescription(axis: Axis): string {
             ''
         ),
         extremes: Record<string, number> = {
-            min: axis.dataMin || axis.min || 0,
-            max: axis.dataMax || axis.max || 0
+            min: axis.dataMin ?? axis.min ?? 0,
+            max: axis.dataMax ?? axis.max ?? 0
         },
         format = function (key: ('max'|'min')): string {
             return axis.dateTime ?

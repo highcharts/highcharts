@@ -270,8 +270,8 @@ QUnit.test('Chart lang can be configured', function (assert) {
         .screenReaderSections.before.element.innerHTML;
 
     assert.ok(
-        screenReaderHTML.includes('类别') &&
-        !screenReaderHTML.includes('categories'),
+        screenReaderHTML.includes('displaying 类别.') &&
+        !screenReaderHTML.includes('displaying categories.'),
         'Screen reader uses translated "类别" instead of default "categories"'
     );
 
