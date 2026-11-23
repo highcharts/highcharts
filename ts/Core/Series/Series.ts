@@ -1110,7 +1110,7 @@ class Series {
             // Use larger or equal as radius is null in bubbles (#6321)
             ((this.closestPointRangePx ?? -Infinity) >= (
                 (markerOptions.enabledThreshold ?? 2) *
-                (markerOptions as any).radius
+                (markerOptions.radius || 0)
             ));
     }
 
@@ -1125,7 +1125,7 @@ class Series {
     public syncLegendSymbol(): void {
         const symbol = this.legendItem?.symbol;
 
-        if (symbol?.isMarker) {
+        if (symbol?.hasClass('highcharts-marker')) {
             symbol[symbol.placed ? 'animate' : 'attr']({
                 opacity: (this.hasMarkers ?? this.hasEnabledMarkers()) ? 1 : 0
             });

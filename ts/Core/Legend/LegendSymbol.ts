@@ -154,8 +154,7 @@ namespace LegendSymbol {
             ),
             attr: SVGAttributes = {};
 
-        let legendSymbol,
-            markerOptions = options.marker,
+        let markerOptions = options.marker,
             lineSizer = 0;
 
         // Draw the line
@@ -225,7 +224,7 @@ namespace LegendSymbol {
                 radius = 0;
             }
 
-            legendItem.symbol = legendSymbol = renderer
+            legendItem.symbol = renderer
                 .symbol(
                     symbol,
                     (symbolWidth / 2) - radius,
@@ -234,9 +233,8 @@ namespace LegendSymbol {
                     2 * radius,
                     extend<SymbolOptions>({ context: 'legend' }, markerOptions)
                 )
-                .addClass('highcharts-point')
+                .addClass('highcharts-point highcharts-marker')
                 .add(legendItemGroup);
-            legendSymbol.isMarker = true;
         }
     }
 
