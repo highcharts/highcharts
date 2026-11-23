@@ -960,35 +960,34 @@ test.describe('Grid filtering minLength', () => {
     test('Filters only once the input reaches minLength', async ({
         page
     }) => {
-        const totalRows = await createGrid(page, 3);
+        const totalRows = await createGrid(page, 3, 300);
+        const input = page.locator(inputProductFilter);
+        const getPendingTimer = (): Promise<unknown> => page.evaluate(() =>
+            (window as any).grid.viewport.getColumn('product').filtering
+                .debounceTimer
+        );
 
+        // Too short: nothing is applied or scheduled.
         await typeFilterValue(page, inputProductFilter, 'ap');
+        expect(await getPendingTimer()).toBeUndefined();
         expect(await getRule(page)).toBeUndefined();
-        expect(await page.locator(gridRows).count()).toBeGreaterThan(4);
 
-        await page.locator(inputProductFilter).press('p');
+        // Long enough: applied after the debounce delay.
+        await input.press('p');
         await verifyRowCount(page, 2);
         expect(await getRule(page)).toBe('app');
 
-        // Dropping below minLength clears the filter.
-        await page.locator(inputProductFilter).press('Backspace');
+        // Dropping below minLength clears the filter right away.
+        await input.press('Backspace');
         await expect.poll(() => getRule(page)).toBe('');
         await expect.poll(() => page.evaluate(() =>
             (window as any).grid.dataProvider.getRowCount()
         )).toBe(totalRows);
-    });
 
-    test('Short input cancels a pending debounced filter', async ({
-        page
-    }) => {
-        await createGrid(page, 3, 300);
-
-        await typeFilterValue(page, inputProductFilter, 'app');
-        await page.locator(inputProductFilter).press('Backspace');
-        await page.evaluate(() => new Promise((resolve) => {
-            setTimeout(resolve, 500);
-        }));
-
-        expect(await getRule(page)).toBeUndefined();
+        // Short input cancels a pending debounced filter.
+        await input.press('p');
+        expect(await getPendingTimer()).toBeDefined();
+        await input.press('Backspace');
+        expect(await getPendingTimer()).toBeUndefined();
     });
 });
