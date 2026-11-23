@@ -878,4 +878,50 @@ test.describe('Grid filtering debounce', () => {
         await verifyRowCount(page, 2, 2000);
         expect(await getCalls(page)).toBe(1);
     });
+
+    test('Clear filter is enabled while the filter is pending', async ({
+        page
+    }) => {
+        await createGrid(page, 10000);
+        const clearButton = page.locator(
+            '.hcg-header-cell[data-column-id="product"] .hcg-clear-filter-button'
+        );
+        await expect(clearButton).toBeDisabled();
+
+        await typeFilterValue(page, inputProductFilter, 'ap');
+        await expect(clearButton).toBeEnabled();
+        expect(await getCalls(page)).toBe(0);
+    });
+
+    test('Re-rendering the inputs applies the pending filter', async ({
+        page
+    }) => {
+        await createGrid(page, 10000);
+        await typeFilterValue(page, inputProductFilter, 'ap');
+
+        await page.evaluate(() => {
+            (window as any).grid.viewport.getColumn('product').filtering
+                .renderFilteringContent(document.createElement('div'));
+        });
+
+        expect(await getCalls(page)).toBe(1);
+        await verifyRowCount(page, 4);
+    });
+
+    test('Destroying the grid cancels the pending filter', async ({
+        page
+    }) => {
+        const errors: string[] = [];
+        page.on('pageerror', (e: Error) => errors.push(e.message));
+
+        await createGrid(page, 200);
+        await typeFilterValue(page, inputProductFilter, 'ap');
+        await page.evaluate(async () => {
+            (window as any).grid.destroy();
+            await new Promise((resolve) => setTimeout(resolve, 400));
+        });
+
+        expect(await getCalls(page)).toBe(0);
+        expect(errors).toEqual([]);
+    });
 });
