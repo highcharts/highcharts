@@ -60,7 +60,7 @@ declare module '../../Series/Column/ColumnSeries' {
          * grouping is performed. If however the series contains so many points
          * that the spacing is less than the `groupPixelWidth`, Highcharts will
          * try to group it into appropriate groups so that each is more or less
-         * two pixels wide. Defaults to `10`.
+         * `groupPixelWidth` pixels wide. Defaults to `10`.
          *
          * @sample {highstock} stock/plotoptions/series-datagrouping-grouppixelwidth/
          * Two series with the same data density but different groupPixelWidth
@@ -267,7 +267,7 @@ export interface DataGroupingOptions {
      * is performed. If however the series contains so many points that
      * the spacing is less than the `groupPixelWidth`, Highcharts will try
      * to group it into appropriate groups so that each is more or less
-     * two pixels wide. If multiple series with different group pixel widths
+     * `groupPixelWidth` pixels wide. If multiple series with different group pixel widths
      * are drawn on the same x axis, all series will take the greatest width.
      * For example, line series have 2px default group width, while column
      * series have 10px. If combined, both the line and the column will

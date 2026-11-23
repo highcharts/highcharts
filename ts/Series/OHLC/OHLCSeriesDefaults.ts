@@ -62,18 +62,6 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
      */
     legendSymbol: 'ohlc',
 
-    /**
-     * Determines which one of  `open`, `high`, `low`, `close` values should
-     * be represented as `point.y`, which is later used to set dataLabel
-     * position and [compare](#plotOptions.series.compare).
-     *
-     * @declare    Highcharts.OptionsPointValKeyValue
-     * @default    close
-     * @validvalue ["open", "high", "low", "close"]
-     * @product    highstock
-     * @apioption  plotOptions.ohlc.pointValKey
-     */
-
     tooltip: {
         pointFormat:
             '<span style="color:{point.color}">\u25CF</span> ' +
@@ -85,6 +73,18 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
     }
 
 };
+
+/**
+ * Determines which one of  `open`, `high`, `low`, `close` values should
+ * be represented as `point.y`, which is later used to set dataLabel
+ * position and [compare](#plotOptions.series.compare).
+ *
+ * @declare    Highcharts.OptionsPointValKeyValue
+ * @default    close
+ * @validvalue ["open", "high", "low", "close"]
+ * @product    highstock
+ * @apioption  plotOptions.ohlc.pointValKey
+ */
 
 /**
  * Line color for up points.
