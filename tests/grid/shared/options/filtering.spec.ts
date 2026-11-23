@@ -821,15 +821,24 @@ test.describe('Grid filtering debounce', () => {
         await page.waitForFunction(() => (window as any).Grid?.grids?.length);
     });
 
-    async function createGrid(page: Page, debounce?: number): Promise<void> {
-        await page.evaluate(async (debounce) => {
+    async function createGrid(
+        page: Page,
+        debounce?: number,
+        minLength?: number
+    ): Promise<void> {
+        await page.evaluate(async ({ debounce, minLength }) => {
             const win = window as any;
             const data = win.grid.userOptions.data;
             win.grid.destroy();
             win.grid = await win.Grid.grid('container', {
                 data,
                 columnDefaults: {
-                    filtering: { enabled: true, inline: true, debounce }
+                    filtering: {
+                        enabled: true,
+                        inline: true,
+                        debounce,
+                        minLength
+                    }
                 },
                 columns: [{ id: 'product', dataType: 'string' }]
             }, true);
@@ -842,7 +851,7 @@ test.describe('Grid filtering debounce', () => {
                 win.applyFilterCalls++;
                 return applyFilter.apply(this, args);
             };
-        }, debounce);
+        }, { debounce, minLength });
     }
 
     const getCalls = (page: Page): Promise<number> =>
@@ -908,5 +917,77 @@ test.describe('Grid filtering debounce', () => {
         expect(pendingAfterDestroy).toBeUndefined();
         expect(await getCalls(page)).toBe(1);
         expect(errors).toEqual([]);
+    });
+});
+
+test.describe('Grid filtering minLength', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/inline-filtering', {
+            waitUntil: 'networkidle'
+        });
+        await page.waitForFunction(() => (window as any).Grid?.grids?.length);
+    });
+
+    async function createGrid(
+        page: Page,
+        minLength: number,
+        debounce?: number
+    ): Promise<number> {
+        return await page.evaluate(async ({ minLength, debounce }) => {
+            const win = window as any;
+            const data = win.grid.userOptions.data;
+            win.grid.destroy();
+            win.grid = await win.Grid.grid('container', {
+                data,
+                columnDefaults: {
+                    filtering: { enabled: true, inline: true }
+                },
+                columns: [{
+                    id: 'product',
+                    dataType: 'string',
+                    filtering: { minLength, debounce }
+                }]
+            }, true);
+            return win.grid.dataProvider.getRowCount();
+        }, { minLength, debounce });
+    }
+
+    const getRule = (page: Page): Promise<unknown> => page.evaluate(() =>
+        (window as any).grid.viewport.getColumn('product').options
+            .filtering.rule?.value
+    );
+
+    test('Filters only once the input reaches minLength', async ({
+        page
+    }) => {
+        const totalRows = await createGrid(page, 3, 300);
+        const input = page.locator(inputProductFilter);
+        const getPendingTimer = (): Promise<unknown> => page.evaluate(() =>
+            (window as any).grid.viewport.getColumn('product').filtering
+                .debounceTimer
+        );
+
+        // Too short: nothing is applied or scheduled.
+        await typeFilterValue(page, inputProductFilter, 'ap');
+        expect(await getPendingTimer()).toBeUndefined();
+        expect(await getRule(page)).toBeUndefined();
+
+        // Long enough: applied after the debounce delay.
+        await input.press('p');
+        await verifyRowCount(page, 2);
+        expect(await getRule(page)).toBe('app');
+
+        // Dropping below minLength clears the filter right away.
+        await input.press('Backspace');
+        await expect.poll(() => getRule(page)).toBe('');
+        await expect.poll(() => page.evaluate(() =>
+            (window as any).grid.dataProvider.getRowCount()
+        )).toBe(totalRows);
+
+        // Short input cancels a pending debounced filter.
+        await input.press('p');
+        expect(await getPendingTimer()).toBeDefined();
+        await input.press('Backspace');
+        expect(await getPendingTimer()).toBeUndefined();
     });
 });
