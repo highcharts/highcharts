@@ -322,8 +322,8 @@ namespace FocusBorderComposition {
                     x: isRotated ? 1 : 0,
                     y: 0
                 };
-            const attrX = +this.attr('x');
-            const attrY = +this.attr('y');
+            const attrX = +(this.attr('x') || 0);
+            const attrY = +(this.attr('y') || 0);
 
             if (!isNaN(attrX)) {
                 borderPosX = attrX - (bb.width * correction.x) - pad;

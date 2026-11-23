@@ -127,7 +127,7 @@ QUnit.test('Inside or outside plot area', function (assert) {
         chart.series[0].points.some(function (point) {
             return (
                 point.graphic &&
-                point.graphic.attr('translateY').toString() === 'NaN'
+                point.graphic.attr('translateY')?.toString() === 'NaN'
             );
         }),
         false,
