@@ -628,7 +628,7 @@ class Oscillator {
     ): void {
         if (this.volTrackingNode) {
             const v = getPitchTrackedMultiplierVal(
-                    this.options.volumePitchTrackingMultiplier || 1,
+                    this.options.volumePitchTrackingMultiplier ?? 1,
                     frequency
                 ),
                 rampTime = glideDuration ? glideDuration / 1000 :
@@ -749,7 +749,7 @@ class Oscillator {
     private createVolTracking(): void {
         const opts = this.options;
         if (
-            opts.volumePitchTrackingMultiplier &&
+            defined(opts.volumePitchTrackingMultiplier) &&
             opts.volumePitchTrackingMultiplier !== 1
         ) {
             this.volTrackingNode = new GainNode(this.audioContext, {
