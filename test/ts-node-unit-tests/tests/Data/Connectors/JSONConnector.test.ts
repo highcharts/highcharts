@@ -73,6 +73,35 @@ describe('JSONConnector', () => {
                 'Should have correct column Names'
             );
         });
+
+        it('should not mutate input while extracting column names', async () => {
+            const data = [
+                    ['name', 'A', 'B'],
+                    ['value', 1, 2]
+                ],
+                originalData = data.map((column) => column.slice()),
+                connector = new JSONConnector({
+                    orientation: 'columns',
+                    firstRowAsNames: true,
+                    data
+                });
+
+            await connector.load();
+
+            deepStrictEqual(
+                data,
+                originalData,
+                'Input columns should remain unchanged.'
+            );
+            deepStrictEqual(
+                connector.getTable().getColumns(),
+                {
+                    name: ['A', 'B'],
+                    value: [1, 2]
+                },
+                'Headers and values should still be parsed.'
+            );
+        });
     });
 
     describe('from objects', () => {
