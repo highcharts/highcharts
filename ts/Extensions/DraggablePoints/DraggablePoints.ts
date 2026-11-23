@@ -420,6 +420,7 @@ function compose(
 
         addEvent(PointClass, 'mouseOut', onPointMouseOut);
         addEvent(PointClass, 'mouseOver', onPointMouseOver);
+        addEvent(PointClass, 'remove', onPointRemove);
 
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
         seriesProto.dragDropProps = DragDropProps.line;
@@ -567,6 +568,21 @@ function onPointMouseOver(
     const point = this;
 
     setTimeout((): void => mouseOver(point), 12);
+}
+
+/**
+ * Hide drag handles on a point if it is removed.
+ * @internal
+ */
+function onPointRemove(
+    this: Point
+): void {
+    const chart = this.series.chart,
+        dragHandles = chart.dragHandles;
+
+    if (dragHandles && dragHandles.point === this.id) {
+        chart.hideDragHandles();
+    }
 }
 
 /**
