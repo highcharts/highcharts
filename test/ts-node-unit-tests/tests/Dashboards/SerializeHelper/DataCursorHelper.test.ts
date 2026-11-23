@@ -112,4 +112,29 @@ describe('DataCursorHelper', () => {
             'A `constructor` table ID should not change Object.'
         );
     });
+
+    it('should keep states and table IDs named like prototype members', () => {
+        const json = JSON.parse(
+            '{"$class":"Data.DataCursor","stateMap":{' +
+            '"__proto__":{"__proto__":[],"constructor":[]},' +
+            '"constructor":{"__proto__":[],"constructor":[]}' +
+            '}}'
+        );
+        const cursor = DataCursorHelper.fromJSON(json);
+
+        for (const id of ['__proto__', 'constructor']) {
+            const states = cursor.stateMap[id];
+
+            strictEqual(
+                Object.prototype.hasOwnProperty.call(cursor.stateMap, id),
+                true,
+                `The \`${id}\` table ID should be kept.`
+            );
+            deepStrictEqual(
+                Object.keys(states),
+                ['__proto__', 'constructor'],
+                `The states of the \`${id}\` table should be kept.`
+            );
+        }
+    });
 });

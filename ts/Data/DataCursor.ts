@@ -25,7 +25,7 @@
 import type DataTable from './DataTable';
 import type { NullProto } from '../Shared/Types';
 
-import { extend, objectEach } from '../Shared/Utilities.js';
+import { objectEach } from '../Shared/Utilities.js';
 
 
 /* *
@@ -68,8 +68,14 @@ class DataCursor {
         this.listenerMap = Object.create(null);
         this.stateMap = Object.create(null);
 
+        // Copy own keys plainly. `extend` would skip `__proto__` and
+        // `constructor`, which are safe keys on prototype-less maps.
         objectEach(stateMap, (states, tableId): void => {
-            this.stateMap[tableId] = extend(Object.create(null), states);
+            const copy = this.stateMap[tableId] = Object.create(null);
+
+            objectEach(states, (cursors, state): void => {
+                copy[state] = cursors;
+            });
         });
     }
 
