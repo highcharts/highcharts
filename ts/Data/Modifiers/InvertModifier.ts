@@ -123,8 +123,10 @@ class InvertModifier extends DataModifier {
 
         if (table.hasColumns(['columnIds'])) { // Inverted table
             const columnIdsColumn = (
-                    (table.deleteColumns(['columnIds']) || {})
-                        .columnIds || []
+                    table.getColumn('columnIds') || []
+                ),
+                sourceColumnIds = table.getColumnIds().filter(
+                    (columnId): boolean => columnId !== 'columnIds'
                 ),
                 columns: DataTableColumnCollection = {},
                 columnIds: Array<string> = [];
@@ -140,7 +142,7 @@ class InvertModifier extends DataModifier {
                 i < iEnd;
                 ++i
             ) {
-                row = table.getRow(i);
+                row = table.getRow(i, sourceColumnIds);
                 if (row) {
                     columns[columnIds[i]] = row;
                 }
