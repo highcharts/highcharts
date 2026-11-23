@@ -42,3 +42,39 @@ QUnit.test('variable-pie', function (assert) {
     ];
     assert.ok(!isNaN(pos[0]) && !isNaN(pos[1]), 'dataLabel drawn correctly');
 });
+
+QUnit.test('Label of a removed point stays by its slice (#25504)', assert => {
+    let clock;
+    try {
+        clock = TestUtilities.lolexInstall();
+
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    animation: {
+                        duration: 100
+                    }
+                },
+                series: [{
+                    type: 'variablepie',
+                    data: [[10, 10], [20, 20], [30, 30]]
+                }]
+            }),
+            point = chart.series[0].points[2],
+            { x, y } = point.dataLabel;
+
+        point.remove();
+
+        setTimeout(() => {
+            assert.close(
+                Math.hypot(point.dataLabel.x - x, point.dataLabel.y - y),
+                0,
+                5,
+                'The data label should stay by its fading slice'
+            );
+        }, 50);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});
