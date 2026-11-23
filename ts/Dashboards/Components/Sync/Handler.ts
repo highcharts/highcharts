@@ -41,7 +41,7 @@ class SyncHandler {
      * Registry for reusable handlers.
      * The handler is stored by ID.
      */
-    public static registry: Record<string, SyncHandler> = {};
+    public static registry: Record<string, SyncHandler> = Object.create(null);
 
     /**
      * Adds a handler to the handler registry.
