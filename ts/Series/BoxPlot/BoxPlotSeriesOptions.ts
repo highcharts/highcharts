@@ -213,6 +213,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
+     * @default 1
+     *
      * @since 3.0
      *
      * @product highcharts
@@ -284,6 +286,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
+     *
+     * @default 2
      *
      * @since 3.0
      *
@@ -442,6 +446,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker lengths
      *
+     * @default '50%'
+     *
      * @since 3.0
      *
      * @product highcharts
@@ -461,6 +467,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
+     *
+     * @default 2
      *
      * @since 3.0
      *

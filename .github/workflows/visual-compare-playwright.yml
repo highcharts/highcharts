@@ -51,6 +51,8 @@ jobs:
     name: Playwright visual comparison
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      VISUAL_TEST_BATCHES: '2'
     steps:
       - name: Checkout candidate
         uses: actions/checkout@v6
@@ -103,9 +105,6 @@ jobs:
           clean: true
           fetch-depth: 0
 
-      - name: Restore candidate visual harness
-        run: tar -xzf "$RUNNER_TEMP/visual-harness.tar.gz" -C "$GITHUB_WORKSPACE"
-
       - name: Use Node.js lts/*
         uses: actions/setup-node@v6
         with:
@@ -114,6 +113,21 @@ jobs:
           cache-dependency-path: |
             package-lock.json
             tests/package-lock.json
+
+      - name: Install reference toolchain
+        run: npm ci
+
+      # Build before overlaying any candidate files or dependencies.
+      - name: Build reference products
+        run: npx playwright test --project=setup-visual --pass-with-no-tests
+
+      - name: Preserve reference build
+        run: |
+          tar -czf "$RUNNER_TEMP/visual-reference-build.tar.gz" \
+            code tmp/json-sources.js
+
+      - name: Restore candidate visual harness
+        run: tar -xzf "$RUNNER_TEMP/visual-harness.tar.gz" -C "$GITHUB_WORKSPACE"
 
       - name: Install candidate toolchain for reference
         run: npm ci
@@ -131,6 +145,10 @@ jobs:
             tests/package.json \
             tests/package-lock.json \
             tools/docs-preview/package.json
+
+      # npm ci runs clean, so restore the build only after installation.
+      - name: Restore reference build
+        run: tar -xzf "$RUNNER_TEMP/visual-reference-build.tar.gz" -C "$GITHUB_WORKSPACE"
 
       - name: Select comparable visual samples
         env:
@@ -159,7 +177,9 @@ jobs:
         env:
           VISUAL_TEST_MANIFEST: ${{ runner.temp }}/visual-samples.json
           VISUAL_TEST_REFERENCE: '1'
-        run: npx playwright test tests/visual/visual.spec.ts --project=visual
+        # The products were built with the reference toolchain above. Running
+        # setup-visual here would rebuild them with candidate dependencies.
+        run: npx playwright test tests/visual/visual.spec.ts --project=visual --no-deps
 
       - name: Preserve reference visual evidence
         if: always()
@@ -176,6 +196,7 @@ jobs:
 
           for file in \
             test/visual-test-results.json \
+            test/visual-test-timing.json \
             test/visual-test-errors.log \
             test/visual-reference-failures.json; do
             if [ -f "$file" ]; then
@@ -343,6 +364,8 @@ jobs:
             samples/**/candidate.svg
             samples/**/diff.gif
             test/visual-test-results.json
+            test/visual-test-results/
+            test/visual-test-timing.json
             test/visual-test-errors.log
             test/visual-test-complete
             tmp/pr-visual-test-comment.json

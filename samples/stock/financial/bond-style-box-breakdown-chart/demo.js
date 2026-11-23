@@ -21,11 +21,20 @@ async function renderChart() {
     // Load data
     await securityDetailsConnector.load();
 
+    // Original table has 10 rows (3×3 style box + unclassified).
+    // Keep rows 0–8 only (the unclassified row is read by a11y
+    // and breaks the heatmap layout).
+    const bondStyleTable = securityDetailsConnector
+        .getTable('BondStyleBoxBreakdown')
+        .clone();
+    bondStyleTable.deleteRows(9);
+
     // Create chart
     Highcharts.chart('container', {
         chart: {
             type: 'heatmap'
         },
+        dataTable: bondStyleTable,
         title: {
             text: 'Aviva Investors - Emerging Markets Bond Fund K USD Acc',
             align: 'left'
@@ -103,9 +112,11 @@ async function renderChart() {
             name: 'Portfolio Weight',
             borderWidth: 1,
             borderColor: '#e5e7e9',
-            keys: ['Type', 'value', 'x', 'y'],
-            data: securityDetailsConnector.getTable('BondStyleBoxBreakdown')
-                .getRows(0, 9),
+            dataMapping: {
+                x: 'Term',
+                y: 'Quality',
+                value: 'N'
+            },
             dataLabels: {
                 enabled: true,
                 style: {

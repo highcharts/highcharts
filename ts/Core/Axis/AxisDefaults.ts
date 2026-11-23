@@ -125,6 +125,7 @@ namespace AxisDefaults {
          * @type      {Array<*>}
          * @since     4.1.0
          * @product   highcharts highstock gantt
+         * @requires  modules/broken-axis
          * @apioption xAxis.breaks
          */
 
@@ -472,6 +473,15 @@ namespace AxisDefaults {
          * @default   2
          * @since     4.1
          * @apioption xAxis.crosshair.zIndex
+         */
+
+        /**
+         * A reserved subspace to store options and values for customized
+         * functionality. Here you can add additional data for your own event
+         * callbacks and formatter callbacks.
+         *
+         * @type      {Highcharts.Dictionary<*>}
+         * @apioption xAxis.custom
          */
 
         /**
@@ -1191,12 +1201,13 @@ namespace AxisDefaults {
 
             /**
              * Rotation of the labels in degrees. When `undefined`, the
-             * `autoRotation` option takes precedence.
+             * `autoRotation` option takes precedence. On radial axes, labels
+             * can be rotated along the axis by setting the rotation to 'auto'.
              *
              * @sample {highcharts} highcharts/xaxis/labels-rotation/
              *         X axis labels rotated 90°
              *
-             * @type      {number}
+             * @type      {number|"auto"}
              * @default   0
              * @apioption xAxis.labels.rotation
              */

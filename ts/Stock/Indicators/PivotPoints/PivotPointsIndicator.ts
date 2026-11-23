@@ -27,10 +27,8 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import PivotPointsPoint from './PivotPointsPoint.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { defined, extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /**

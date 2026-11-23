@@ -3,6 +3,9 @@
         "allowJs": true,
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "target": "ES2021"
+        "rootDir": "..",
+        "strict": false,
+        "target": "ES2021",
+        "types": ["node"]
     }
 }

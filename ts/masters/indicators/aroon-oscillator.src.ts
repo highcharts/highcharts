@@ -4,6 +4,8 @@
  * @module highcharts/indicators/aroon-oscillator
  * @requires highcharts
  * @requires highcharts/modules/stock
+ * @requires highcharts/indicators/indicators
+ * @requires highcharts/indicators/aroon
  *
  * Indicator series type for Highcharts Stock
  *

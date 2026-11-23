@@ -196,6 +196,61 @@ QUnit.test('Add point with entrance animation', assert => {
     }
 });
 
+QUnit.test('Chart.update with entrance animation', assert => {
+    let clock;
+    try {
+        clock = TestUtilities.lolexInstall();
+
+        const chart = Highcharts.chart('container', {
+            series: [{
+                data: [
+                    [0, 1],
+                    [1, 3],
+                    [2, 2],
+                    [3, 4]
+                ],
+                type: 'column'
+            }]
+        });
+
+        const exitingPoint = chart.series[0].points[0];
+
+        chart.update({
+            series: [{
+                data: [
+                    [1, 3],
+                    [2, 2],
+                    [3, 4],
+                    [4, 1]
+                ]
+            }]
+        }, true, true, { duration: 2000 });
+
+        const enteringPoint = chart.series[0].points[3];
+
+        setTimeout(() => {
+            // Testing with long animation because the point was destroyed
+            // before the animation was finished
+            assert.close(
+                exitingPoint.graphic.opacity,
+                0.5,
+                0.3,
+                'The old point should be semi-opaque mid exit'
+            );
+            assert.close(
+                enteringPoint.graphic.opacity,
+                0.5,
+                0.3,
+                'The new point should be semi-opaque mid entrance'
+            );
+        }, 1000);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});
+
 QUnit.test('Set extremes with entrance and exit animations', assert => {
     let clock;
     try {

@@ -16,15 +16,29 @@ Use this skill for changes in `tools/`, build scripts, test runners, or reposito
 2. Keep stack consistency:
 - Prefer Node-based scripts for cross-platform support unless shell behavior is explicitly required.
 - Avoid adding repo-wide dependencies for one-off automation.
+- When changing the required Node.js or npm version, update `devEngines` in
+  `package.json`, `.nvmrc`, `readme.md` ("Build and debug") and `AGENTS.md`
+  together.
 
 3. Keep automation safe and predictable:
 - Default scripts to non-destructive behavior.
 - Require explicit confirmation flags for destructive replacements.
 - Support non-interactive CI mode.
+- For changes to file paths, network requests, credentials, dependencies/install hooks, CI permissions or publishing, apply normal security review. Follow [review-pr's security guidance](../review-pr/SKILL.md#security-review) for a plugin suggestion only when a plausible concern's reachability, impact or scope needs further analysis.
 
 4. Verify tooling changes:
+- For package-manager or install-policy changes, verify a clean install with
+  the affected version and the repository's lifecycle-script policy enabled.
+  `--ignore-scripts` checks dependency fetching only; report any skipped
+  install work separately.
+- Inspect `package.json`'s `lint-staged` rules and `.husky/pre-commit` when
+  choosing checks. Count passing hook runs as validation and add manual checks
+  for behavior they do not cover.
 - Add or update usage docs/help output (`--help`) for new scripts.
 - Include a minimal validation checklist in task/PR output with exact commands used.
+- Before committing, run `node tools/validate-commit-msg.js <message-file>` on
+  the planned message. This catches message errors before the expensive
+  pre-commit checks run.
 
 ## Output format
 

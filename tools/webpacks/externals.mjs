@@ -311,7 +311,13 @@ export async function resolveExternals(
     for (const external of myExternals) {
         if (external.files.includes(path)) {
 
-            if (external.included.includes(masterName)) {
+            if (
+                external.included.includes(masterName) &&
+                !(
+                    externalsType === 'module-import' &&
+                    external.esmExcluded?.includes(masterName)
+                )
+            ) {
                 return void 0;
             }
 
@@ -374,6 +380,7 @@ export default {
  * @typedef ExternalsDefinition
  * @property {Array<string>} files
  * @property {Array<string>} included
+ * @property {Array<string>} [esmExcluded]
  * @property {string} namespacePath
  */
 

@@ -49,6 +49,16 @@ import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions';
 const Pyramid3DSeriesDefaults: Pyramid3DSeriesOptions = {
 
     /**
+     * The center of the series. By default, it is centered in the middle
+     * of the plot area, so it fills the plot area height.
+     *
+     * @type    {Array<number|string>}
+     * @default ["50%", "50%"]
+     * @since   7.1.0
+     */
+    center: ['50%', '50%'],
+
+    /**
      * A reversed pyramid3d is funnel3d, but the latter supports neck
      * related options: neckHeight and neckWidth
      *

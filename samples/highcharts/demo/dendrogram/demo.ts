@@ -142,7 +142,7 @@ document.querySelectorAll('.button-row button').forEach(btn => {
             link: {
                 type: val as ('curved' | 'orthogonal' | 'straight')
             }
-        } as Highcharts.SeriesTreegraphOptions);
+        } as Highcharts.SeriesOptionsRegistry['SeriesTreegraphOptions']);
         document.querySelectorAll('.button-row button')
             .forEach(b => b.classList.remove('active'));
         btn.classList.add('active');

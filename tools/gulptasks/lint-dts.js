@@ -53,7 +53,7 @@ function isAllowedTestFolder(folder) {
 function lintDTS(argv) {
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
-    const childProcess = require('node:child_process');
+    const processLib = require('../libs/process');
     const product = argv.product || 'Highcharts';
 
     return new Promise((resolve, reject) => {
@@ -92,23 +92,13 @@ function lintDTS(argv) {
 
         let promiseChain = Promise.resolve();
 
-        // Run tsc via Node directly (no shell / npx) to avoid Windows
-        // DEP0190 when spawnSync is used with shell: true + args.
-        const tsc = require.resolve('typescript/bin/tsc');
-
+        // Run tsc via Node directly (no shell / npx) so folder paths stay
+        // literal arguments and Windows avoids DEP0190.
         directories.forEach(folder => {
             promiseChain = promiseChain.then(
-                () => {
-                    const result = childProcess.spawnSync(
-                        process.execPath,
-                        [tsc, '-p', folder],
-                        { stdio: 'inherit' }
-                    );
-
-                    if (result.error || result.status !== 0) {
-                        throw result.error || new Error(`tsc failed for ${folder}`);
-                    }
-                }
+                () => processLib.execFile(process.execPath, [
+                    require.resolve('typescript/bin/tsc'), '-p', folder
+                ])
             );
         });
 

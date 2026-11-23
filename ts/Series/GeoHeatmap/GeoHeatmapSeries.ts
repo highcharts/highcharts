@@ -43,12 +43,8 @@ const {
 } = IU;
 import Point from '../../Core/Series/Point.js';
 import PointerEvent from '../../Core/PointerEvent.js';
+import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        map: MapSeries
-    }
-} = SeriesRegistry;
 import {
     addEvent,
     extend,

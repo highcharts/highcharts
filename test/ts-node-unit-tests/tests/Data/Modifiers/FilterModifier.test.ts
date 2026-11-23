@@ -246,6 +246,34 @@ describe('FilterModifier', () => {
             );
         });
 
+        it('should not match rows with an unsupported operator', async () => {
+            const data = ['Apple', 'banana', 'Cherry'];
+            const table = new DataTable({ columns: { name: data } });
+            const condition = {
+                operator: 'repeat',
+                columnId: 'name',
+                value: '1'
+            } as any;
+
+            await new FilterModifier({ condition }).modify(table);
+
+            deepStrictEqual(
+                table.modified.getColumns(),
+                { name: [] },
+                'Unsupported repeat operator matches no rows.'
+            );
+
+            await new FilterModifier({
+                condition: { operator: 'not', condition }
+            }).modify(table);
+
+            deepStrictEqual(
+                table.modified.getColumns(),
+                { name: data },
+                'Negated unsupported operator matches all rows.'
+            );
+        });
+
         it('should filter with nested not and logical conditions', async () => {
             const rows = {
                 x: [-5, -1, 0, 5],
@@ -345,6 +373,45 @@ describe('FilterModifier', () => {
                     country: ['CA', 'US']
                 },
                 'Selects adults in US or CA.'
+            );
+        });
+
+        it('should filter with in operator', async () => {
+            const table = new DataTable({
+                columns: { x: [1, '1', 2, null, 3] }
+            });
+            const condition = {
+                operator: 'in' as const,
+                columnId: 'x',
+                value: [1, null, 4]
+            };
+
+            await new FilterModifier({ condition }).modify(table);
+
+            deepStrictEqual(
+                table.getModified().getColumns(),
+                { x: [1, null] },
+                'Operator in keeps strictly equal values, including null.'
+            );
+
+            await new FilterModifier({
+                condition: { operator: 'not', condition }
+            }).modify(table);
+
+            deepStrictEqual(
+                table.getModified().getColumns(),
+                { x: ['1', 2, 3] },
+                'Negated operator in keeps the remaining values.'
+            );
+
+            await new FilterModifier({
+                condition: { ...condition, value: [] }
+            }).modify(table);
+
+            deepStrictEqual(
+                table.getModified().getColumns(),
+                { x: [] },
+                'Operator in with no values matches no rows.'
             );
         });
     });

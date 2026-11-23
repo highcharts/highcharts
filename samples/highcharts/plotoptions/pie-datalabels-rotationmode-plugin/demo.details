@@ -1,0 +1,6 @@
+---
+ name: Pie data labels rotation mode plugin
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

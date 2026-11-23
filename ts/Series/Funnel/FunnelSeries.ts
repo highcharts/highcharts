@@ -36,11 +36,10 @@ const {
     noop
 } = H;
 import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import PieSeries from '../Pie/PieSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
 import {
     addEvent,
     correctFloat,
@@ -59,7 +58,7 @@ import {
  *
  * */
 
-const baseAlignDataLabel = SeriesRegistry.series.prototype.alignDataLabel;
+const baseAlignDataLabel = Series.prototype.alignDataLabel;
 
 /* *
  *

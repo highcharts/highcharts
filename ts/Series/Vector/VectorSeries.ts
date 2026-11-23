@@ -28,13 +28,9 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import H from '../../Core/Globals.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
 import VectorSeriesDefaults from './VectorSeriesDefaults.js';
 import { arrayMax, extend, merge } from '../../Shared/Utilities.js';
 
@@ -47,7 +43,6 @@ import { arrayMax, extend, merge } from '../../Shared/Utilities.js';
 /**
  * The vector series class.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.vector
  *
@@ -93,7 +88,7 @@ class VectorSeries extends ScatterSeries {
 
     /**
      * Fade in the arrows on initializing series.
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         if (init) {
@@ -110,7 +105,7 @@ class VectorSeries extends ScatterSeries {
     /**
      * Create a single arrow. It is later rotated around the zero
      * centerpoint.
-     * @private
+     * @internal
      */
     public arrow(point: VectorPoint): SVGPath {
         const fraction: number = (point.length as any) / this.lengthMax,
@@ -163,7 +158,7 @@ class VectorSeries extends ScatterSeries {
     */
 
     /**
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const chart = this.chart;
@@ -213,7 +208,7 @@ class VectorSeries extends ScatterSeries {
 
     /**
      * Get presentational attributes.
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: VectorPoint,
@@ -237,7 +232,7 @@ class VectorSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public translate(): void {
         Series.prototype.translate.call(this);

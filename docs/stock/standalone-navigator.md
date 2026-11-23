@@ -65,8 +65,15 @@ are set, `chartOptions` takes precedence.
 The `height` option applies to the navigator series area only. The scrollbar is
 a separate component with its own `scrollbar.height`, and it is rendered below
 the navigator, so the chart height must leave room for both. When the navigator
-is inverted, `height` still means the thickness of the navigator strip, which
-in that orientation runs horizontally.
+is inverted, the strip runs vertically with the scrollbar to its left, so
+`height` is measured horizontally and it is the chart width that must leave
+room for both.
+
+If you are planning to switch the navigator orientation via `update`,
+remember to set a CSS height on the navigator container. A chart without an
+explicit height takes it from its container, and the container keeps the
+height it was first rendered at, so an inverted navigator would otherwise
+stay as short as the horizontal one it replaced after the update.
 
 ## Managing Navigator Range
 

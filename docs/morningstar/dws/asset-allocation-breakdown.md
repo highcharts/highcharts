@@ -85,8 +85,7 @@ Highcharts.chart('container', {
 You will find examples of how to use `AssetAllocationBreakdown` converter in
 our demos.
 
-- **Highcharts Core + Morningstar Asset Allocation Breakdown**
-- **Highcharts Core + Morningstar Asset Allocation Breakdown (Pre-fetched JSON)**
+- [Highcharts Dashboards + Morningstar Asset Allocation Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/asset-allocation-pie/)
 
 ## Morningstar API Reference
 

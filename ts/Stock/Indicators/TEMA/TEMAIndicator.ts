@@ -24,8 +24,8 @@ import type {
 } from './TEMAOptions';
 import type TEMAPoint from './TEMAPoint';
 
+import EMAIndicator from '../EMA/EMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { ema: EMAIndicator } = SeriesRegistry.seriesTypes;
 import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *

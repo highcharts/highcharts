@@ -61,6 +61,7 @@ const connectorsDefaults: ConnectorsDefaults = {
      *
      * @declare      Highcharts.ConnectorsOptions
      * @product      gantt
+     * @requires     modules/pathfinder
      * @optionparent connectors
      */
     connectors: {
@@ -218,6 +219,22 @@ const connectorsDefaults: ConnectorsDefaults = {
              */
 
             /**
+             * The x offset of the marker.
+             *
+             * @type      {number}
+             * @since     13.0.0
+             * @apioption connectors.marker.xOffset
+             */
+
+            /**
+             * The y offset of the marker.
+             *
+             * @type      {number}
+             * @since     13.0.0
+             * @apioption connectors.marker.yOffset
+             */
+
+            /**
              * Enable markers for the connectors.
              */
             enabled: false,
@@ -245,22 +262,6 @@ const connectorsDefaults: ConnectorsDefaults = {
              * Set the line/border width of the pathfinder markers.
              */
             lineWidth: 1
-
-            /**
-             * The x offset of the marker.
-             *
-             * @since 13.0.0
-             * @type number
-             * @apioption connectors.marker.xOffset
-             */
-
-            /**
-             * The y offset of the marker.
-             *
-             * @since 13.0.0
-             * @type number
-             * @apioption connectors.marker.yOffset
-             */
         },
 
         /**
@@ -320,6 +321,7 @@ export default connectorsDefaults;
  * @since     6.2.0
  * @excluding enabled, algorithmMargin
  * @product   gantt
+ * @requires  modules/pathfinder
  * @apioption plotOptions.series.connectors
  */
 
@@ -337,7 +339,7 @@ export default connectorsDefaults;
  * @since     6.2.0
  * @excluding enabled
  * @product   gantt
- * @requires  highcharts-gantt
+ * @requires  modules/pathfinder
  * @apioption series.xrange.data.connect
  */
 

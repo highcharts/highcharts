@@ -74,7 +74,7 @@ const DrilldownDefaults: DrilldownOptions = {
      * These drilldown series are hidden by default. The drilldown series is
      * linked to the parent series' point by its `id`.
      *
-     * @type      {Array<Highcharts.SeriesOptionsType>}
+     * @type      {Array<Highcharts.SeriesOptionsType|Highcharts.UnknownSeriesOptions>}
      * @since     3.0.8
      * @product   highcharts highmaps
      * @apioption drilldown.series

@@ -11,24 +11,13 @@
  *
  * */
 
-import type Point from '../Core/Series/Point';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
-import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: seriesProto,
-        prototype: {
-            pointClass: {
-                prototype: pointProto
-            }
-        }
-    }
-} = SeriesRegistry;
+import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import {
     addEvent,
     defined,
@@ -44,12 +33,14 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
         name?: string;
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
         nodes?: Array<NodesComposition.PointComposition>;
@@ -62,6 +53,7 @@ declare module '../Core/Series/SeriesBase' {
  *
  * */
 
+/** @internal */
 namespace NodesComposition {
 
     /* *
@@ -70,6 +62,7 @@ namespace NodesComposition {
      *
      * */
 
+    /** @internal */
     export declare class PointComposition extends Point {
         public from: string;
         public fromNode: PointComposition;
@@ -100,6 +93,7 @@ namespace NodesComposition {
         ): void;
     }
 
+    /** @internal */
     export interface PointCompositionOptions extends PointOptions {
         id?: string;
         level?: number;
@@ -108,6 +102,7 @@ namespace NodesComposition {
         weight?: (number|null);
     }
 
+    /** @internal */
     export declare class SeriesComposition extends Series {
         public data: Array<PointComposition>;
         public nodeLookup: Record<string, PointComposition>;
@@ -121,6 +116,7 @@ namespace NodesComposition {
         public generatePoints(): void;
     }
 
+    /** @internal */
     export interface SeriesCompositionOptions extends SeriesOptions {
         mass?: number;
         nodes?: Array<PointCompositionOptions>;
@@ -133,7 +129,7 @@ namespace NodesComposition {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Series>(
         PointClass: typeof Point,
@@ -156,7 +152,7 @@ namespace NodesComposition {
 
     /**
      * Destroy data labels on nodes.
-     * @private
+     * @internal
      */
     function afterUpdate(this: Series): void {
         if (!this.hasDataLabels?.() && this.nodes) { // #23385
@@ -169,7 +165,7 @@ namespace NodesComposition {
     /**
      * Create a single node that holds information on incoming and outgoing
      * links.
-     * @private
+     * @internal
      */
     export function createNode(
         this: SeriesComposition,
@@ -204,7 +200,7 @@ namespace NodesComposition {
 
             /**
              * Return the largest sum of either the incoming or outgoing links.
-             * @private
+             * @internal
              */
             newNode.getSum = function (): number {
                 let sumTo = 0,
@@ -220,7 +216,7 @@ namespace NodesComposition {
             };
             /**
              * Get the offset in weight values of a point/link.
-             * @private
+             * @internal
              */
             newNode.offset = function (
                 point: PointComposition,
@@ -271,7 +267,7 @@ namespace NodesComposition {
 
     /**
      * Destroy all nodes and links.
-     * @private
+     * @internal
      */
     export function destroy(
         this: SeriesComposition
@@ -280,13 +276,13 @@ namespace NodesComposition {
         this.data = ([] as Array<PointComposition>)
             .concat(this.points || [], this.nodes);
 
-        return seriesProto.destroy.apply(this, arguments);
+        return Series.prototype.destroy.apply(this, arguments);
     }
 
     /**
      * Extend generatePoints by adding the nodes, which are Point objects but
      * pushed to the this.nodes array.
-     * @private
+     * @internal
      */
     export function generatePoints(
         this: SeriesComposition
@@ -294,7 +290,7 @@ namespace NodesComposition {
         const chart = this.chart,
             nodeLookup = {} as Record<string, PointComposition>;
 
-        seriesProto.generatePoints.call(this);
+        Series.prototype.generatePoints.call(this);
 
         if (!this.nodes) {
             this.nodes = []; // List of Point-like node items
@@ -345,7 +341,7 @@ namespace NodesComposition {
 
     /**
      * Destroy all nodes on setting new data
-     * @private
+     * @internal
      */
     function setData(
         this: SeriesComposition
@@ -356,13 +352,13 @@ namespace NodesComposition {
             });
             this.nodes.length = 0;
         }
-        seriesProto.setData.apply(this, arguments);
+        Series.prototype.setData.apply(this, arguments);
     }
 
     /**
      * When hovering node, highlight all connected links. When hovering a link,
      * highlight all connected nodes.
-     * @private
+     * @internal
      */
     export function setNodeState(
         this: PointComposition,
@@ -374,17 +370,17 @@ namespace NodesComposition {
         if (state !== 'select') {
             others.forEach((linkOrNode): void => {
                 if (linkOrNode && linkOrNode.series) {
-                    pointProto.setState.apply(linkOrNode, args);
+                    Point.prototype.setState.apply(linkOrNode, args);
 
                     if (!linkOrNode.isNode) {
                         if (linkOrNode.fromNode.graphic) {
-                            pointProto.setState.apply(
+                            Point.prototype.setState.apply(
                                 linkOrNode.fromNode,
                                 args
                             );
                         }
                         if (linkOrNode.toNode && linkOrNode.toNode.graphic) {
-                            pointProto.setState.apply(
+                            Point.prototype.setState.apply(
                                 linkOrNode.toNode,
                                 args
                             );
@@ -394,13 +390,13 @@ namespace NodesComposition {
             });
         }
 
-        pointProto.setState.apply(this, args);
+        Point.prototype.setState.apply(this, args);
     }
 
     /**
      * When updating a node, don't update `series.options.data`, but
      * `series.options.nodes`
-     * @private
+     * @internal
      */
     export function updateNode(
         this: PointComposition,
@@ -414,7 +410,7 @@ namespace NodesComposition {
             dataLength = data?.length || 0,
             linkConfig = data?.[this.index];
 
-        pointProto.update.call(
+        Point.prototype.update.call(
             this,
             options,
             this.isNode ? false : redraw, // Hold the redraw for nodes
@@ -472,4 +468,5 @@ namespace NodesComposition {
  *
  * */
 
+/** @internal */
 export default NodesComposition;

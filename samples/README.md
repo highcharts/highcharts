@@ -130,6 +130,29 @@ TypeScript
 You can create demos with TypeScript-code, which comes with similar limitations
 as our official NPM packages.
 
+To typecheck `demo.ts` files in Highcharts, Stock, Maps and Gantt samples against
+the current API declarations, run from the repository root:
+
+```sh
+npx gulp jsdoc-dts
+npx gulp typecheck-samples
+```
+
+Rebuild the declarations after changing the API. To check a selection of demos,
+pass a file path or glob. Repeat `--path` for multiple selections:
+
+```sh
+npx gulp typecheck-samples --path "samples/stock/**/demo.ts"
+npx gulp typecheck-samples \
+    --path "samples/{maps,gantt}/**/demo.ts" \
+    --path samples/highcharts/demo/scatter/demo.ts
+```
+
+The task reports TypeScript errors without writing JavaScript, declarations or
+build-info files. Each demo is checked separately so variables and type extensions
+in unrelated demos do not conflict. Unit-test samples, Dashboards and Grid are
+outside this task's scope.
+
 **Note:** The `type` option in `Options.series` is not required in demos thanks
 to a experimental `UnknownSeriesOptions` type. This should not be mentioned in
 any documentation, as a native solution has not been worked out yet.

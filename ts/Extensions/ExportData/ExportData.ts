@@ -710,7 +710,8 @@ namespace ExportData {
             while (j--) {
                 val = row[j];
                 if (typeof val === 'string') {
-                    val = `"${val}"`;
+                    // Escape embedded quotes by doubling them, #25571
+                    val = `"${val.replace(/"/g, '""')}"`;
                 }
                 if (typeof val === 'number') {
                     if (decimalPoint !== '.') {
@@ -1816,11 +1817,6 @@ export default ExportData;
  *  API Declarations
  *
  * */
-
-/**
- * @class
- * @name Highcharts.Exporting
- */
 
 /**
  * Function callback to execute while data rows are processed for exporting.

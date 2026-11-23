@@ -38,8 +38,6 @@ import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
  *
  * @param PaginationClass
  * The class to extend.
- *
- * @internal
  */
 export function compose(
     PaginationClass: typeof Pagination

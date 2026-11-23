@@ -3,9 +3,11 @@ import {
     existsSync,
     mkdirSync,
     readFileSync,
+    readdirSync,
     rmSync,
     writeFileSync
 } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 
 type VisualResults = Record<string, number>;
@@ -82,6 +84,21 @@ function requireSamplePaths(samplePaths: string[]): string[] {
 
 function sharedFile(root: string, filename: string): string {
     return join(root, 'test', filename);
+}
+
+function candidateResultsDirectory(root: string): string {
+    return sharedFile(root, 'visual-test-results');
+}
+
+function candidateResultFilename(samplePath: string): string {
+    return `${createHash('sha256').update(samplePath).digest('hex')}.json`;
+}
+
+function candidateResultFile(root: string, samplePath: string): string {
+    return join(
+        candidateResultsDirectory(root),
+        candidateResultFilename(samplePath)
+    );
 }
 
 export function readReferenceFailures(root: string): VisualReferenceFailure[] {
@@ -178,11 +195,85 @@ export function recordCandidateResult(
         writeFileSync(diffPath, diffGif);
     }
 
-    const resultsPath = join(root, 'test', 'visual-test-results.json');
-    const results = readResults(resultsPath);
-    results[samplePath] = pixels;
+    const resultFile = candidateResultFile(root, samplePath);
+    ensureParent(resultFile);
+    writeFileSync(resultFile, JSON.stringify({ sample: samplePath, pixels }), {
+        flag: 'wx'
+    });
+}
+
+/** Merge per-sample writes into the established aggregate results file. */
+export function aggregateCandidateResults(root: string): VisualResults {
+    const resultsDirectory = candidateResultsDirectory(root);
+    const results: VisualResults = Object.create(null) as VisualResults;
+    const resultFiles: { filename: string; samplePath: string }[] = [];
+
+    if (existsSync(resultsDirectory)) {
+        const entries = readdirSync(resultsDirectory, {
+            withFileTypes: true
+        }).sort((a, b) => a.name.localeCompare(b.name));
+        for (const entry of entries) {
+            if (!entry.isFile() || !entry.name.endsWith('.json')) {
+                throw new Error(
+                    `Unexpected visual result file: ${entry.name}`
+                );
+            }
+
+            const resultPath = join(resultsDirectory, entry.name);
+            let result: unknown;
+            try {
+                result = JSON.parse(readFileSync(resultPath, 'utf8'));
+            } catch (error) {
+                throw new Error(
+                    `Invalid visual test result in ${entry.name}: ${
+                        error instanceof Error ? error.message : String(error)
+                    }`
+                );
+            }
+
+            if (
+                !result || typeof result !== 'object' || Array.isArray(result)
+            ) {
+                throw new Error(
+                    `Visual test result in ${entry.name} must be an object.`
+                );
+            }
+
+            const record = result as Record<string, unknown>;
+            const samplePath = record.sample;
+            const pixels = record.pixels;
+            if (
+                typeof samplePath !== 'string' || !samplePath.trim() ||
+                !Number.isInteger(pixels) || (pixels as number) < 0 ||
+                Object.keys(record).length !== 2
+            ) {
+                throw new Error(
+                    `Visual test result in ${entry.name} must contain a sample ID and a non-negative integer.`
+                );
+            }
+
+            if (Object.prototype.hasOwnProperty.call(results, samplePath)) {
+                throw new Error(
+                    `Duplicate visual test result for ${samplePath}.`
+                );
+            }
+            results[samplePath] = pixels as number;
+            resultFiles.push({ filename: entry.name, samplePath });
+        }
+    }
+
+    for (const { filename, samplePath } of resultFiles) {
+        if (filename !== candidateResultFilename(samplePath)) {
+            throw new Error(
+                `Visual test result filename does not match ${samplePath}.`
+            );
+        }
+    }
+
+    const resultsPath = sharedFile(root, 'visual-test-results.json');
     ensureParent(resultsPath);
     writeFileSync(resultsPath, JSON.stringify(results, null, ' '));
+    return results;
 }
 
 export function appendError(root: string, message: string): void {
@@ -199,6 +290,8 @@ export function resetVisualRun(
     const selectedSamples = requireSamplePaths(samplePaths);
 
     rmSync(sharedFile(root, 'visual-test-results.json'), { force: true });
+    rmSync(sharedFile(root, 'visual-test-timing.json'), { force: true });
+    rmSync(candidateResultsDirectory(root), { recursive: true, force: true });
     rmSync(sharedFile(root, 'visual-test-errors.log'), { force: true });
     rmSync(sharedFile(root, 'visual-test-complete'), { force: true });
 

@@ -25,11 +25,11 @@
         min-height: var(--ig-menu-item-min-height);
     }
 
-    .hcg-menu-item:focus-visible {
+    &.hcg-menu-keyboard .hcg-menu-item:focus-visible {
         box-shadow: var(--ig-focus-ring);
     }
 
-    .hcg-menu-item:focus-visible,
+    &.hcg-menu-keyboard .hcg-menu-item:focus-visible,
     .hcg-menu-item:not(:disabled):hover,
     .hcg-menu-item.highlighted {
         background: var(--ig-menu-item-hover-background);

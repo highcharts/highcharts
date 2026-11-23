@@ -56,6 +56,13 @@ export interface ButtonThemeObject extends SVGAttributes {
      */
     'stroke-linecap'?: SVGAttributes['stroke-linecap'];
 
+    /**
+     * Stroke width for the buttons.
+     *
+     * @default 1
+     */
+    'stroke-width'?: SVGAttributes['stroke-width'];
+
     states?: ButtonThemeStatesObject;
     style?: CSSObject;
 }

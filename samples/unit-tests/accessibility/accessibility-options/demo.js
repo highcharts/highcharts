@@ -21,6 +21,13 @@ function isPointAriaHidden(point) {
     return point.graphic.element.getAttribute('aria-hidden') === 'true';
 }
 
+// The forced colors opt-out is scoped to the series group, so that axes,
+// legend and tooltip still follow the user's system setting.
+function getForcedColorAdjust(chart) {
+    return chart.seriesGroup &&
+        chart.seriesGroup.element.style.forcedColorAdjust;
+}
+
 QUnit.test('Accessibility disabled', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
@@ -252,6 +259,347 @@ QUnit.test('Keyboard navigation', function (assert) {
         'The colors array should be updated with high contrast colors.'
     );
 });
+
+QUnit.test('HCM colors override series colors', function (assert) {
+    var colors = ['#f00', '#0f0', '#00f'],
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    colors: colors
+                }
+            },
+            series: [{
+                type: 'area',
+                data: [1, 2, 3]
+            }, {
+                type: 'line',
+                color: '#abc',
+                data: [3, 2, 1]
+            }, {
+                type: 'column',
+                color: '#def',
+                data: [2, 2, 2]
+            }]
+        });
+
+    assert.strictEqual(
+        chart.series[0].area && chart.series[0].area.attr('fill'),
+        colors[0],
+        'Area series should use the configured high contrast fill.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].graph && chart.series[0].graph.attr('stroke'),
+        'windowText',
+        'Area series should keep a visible high contrast outline.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic &&
+        chart.series[0].points[0].graphic.attr('stroke'),
+        'windowText',
+        'Area series markers should keep a visible high contrast outline.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic &&
+        chart.series[0].points[0].graphic.element.getAttribute('stroke-width'),
+        '1',
+        'Area series markers should render a visible outline width.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].graph && chart.series[1].graph.attr('stroke'),
+        colors[1],
+        'Line series should use the configured high contrast stroke.'
+    );
+
+    assert.strictEqual(
+        chart.series[2].points[0].graphic &&
+        chart.series[2].points[0].graphic.attr('fill'),
+        colors[2],
+        'Column series should use the configured high contrast fill.'
+    );
+
+    assert.strictEqual(
+        getForcedColorAdjust(chart),
+        'none',
+        'Custom high contrast colors should be preserved in forced colors mode.'
+    );
+
+    chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                colors: colors
+            }
+        },
+        series: [{
+            type: 'column',
+            data: [5, 4, 3]
+        }, {
+            type: 'pareto',
+            baseSeries: 0
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[1].graph && chart.series[1].graph.attr('stroke'),
+        colors[1],
+        'Pareto series should use the configured high contrast stroke.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].color,
+        colors[1],
+        'Pareto series color should be updated for tooltip and legend state.'
+    );
+
+    chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                plotOptions: {
+                    series: {
+                        color: '#0f0'
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'line',
+            data: [1, 2, 3]
+        }]
+    });
+
+    const series = chart.series[0];
+
+    assert.strictEqual(
+        getForcedColorAdjust(chart),
+        'none',
+        'Single custom high contrast series colors should also be preserved.'
+    );
+
+    assert.strictEqual(
+        series.graph && series.graph.attr('stroke'),
+        '#0f0',
+        'Single custom high contrast series colors should drive the ' +
+        'line stroke.'
+    );
+
+    assert.strictEqual(
+        series.points[0].graphic && series.points[0].graphic.attr('fill'),
+        '#0f0',
+        'Single custom high contrast series colors should drive marker colors.'
+    );
+
+    chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                colors: ['windowText']
+            }
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.notOk(
+        getForcedColorAdjust(chart),
+        'System color high contrast themes should keep browser adjustments.'
+    );
+
+    chart.update({
+        accessibility: {
+            highContrastTheme: {
+                colors: ['#f00']
+            }
+        }
+    });
+
+    assert.strictEqual(
+        getForcedColorAdjust(chart),
+        'none',
+        'Switching to author colors should opt out of browser adjustments.'
+    );
+
+    chart.update({
+        accessibility: {
+            highContrastTheme: {
+                colors: ['windowText']
+            }
+        }
+    });
+
+    assert.notOk(
+        getForcedColorAdjust(chart),
+        'Switching back to system colors should restore browser adjustments.'
+    );
+
+    chart.options.accessibility.highContrastTheme.plotOptions.series
+        .marker.lineWidth = 3;
+    chart.update({
+        title: {
+            text: 'Reapply high contrast theme'
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic &&
+        chart.series[0].points[0].graphic.element.getAttribute('stroke-width'),
+        '3',
+        'Reapplying the theme should preserve its marker line width.'
+    );
+});
+
+QUnit.test('HCM colors set through global options', function (assert) {
+    const colors = ['#f00', '#0f0'],
+        originalTheme = Highcharts.merge(
+            Highcharts.defaultOptions.accessibility.highContrastTheme
+        );
+
+    Highcharts.setOptions({
+        accessibility: {
+            highContrastTheme: {
+                colors: colors
+            }
+        }
+    });
+
+    const chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].graph && chart.series[0].graph.attr('stroke'),
+        colors[0],
+        'Global high contrast colors should be rendered.'
+    );
+
+    assert.strictEqual(
+        getForcedColorAdjust(chart),
+        'none',
+        'Global high contrast colors should be preserved in forced colors ' +
+        'mode.'
+    );
+
+    Highcharts.defaultOptions.accessibility.highContrastTheme = originalTheme;
+});
+
+QUnit.test(
+    'HCM recognizes gradient, pattern and type specific theme colors',
+    function (assert) {
+        const linearGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
+
+        let chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    colors: [{
+                        linearGradient: linearGradient,
+                        stops: [[0, '#f00'], [1, '#00f']]
+                    }]
+                }
+            },
+            series: [{
+                type: 'column',
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.strictEqual(
+            getForcedColorAdjust(chart),
+            'none',
+            'Gradient high contrast colors should be preserved in forced ' +
+            'colors mode.'
+        );
+
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    plotOptions: {
+                        pie: {
+                            colors: ['#f00', '#0f0']
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                data: [1, 2]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].points[1].graphic.attr('fill'),
+            '#0f0',
+            'Type specific high contrast colors should be rendered.'
+        );
+
+        assert.strictEqual(
+            getForcedColorAdjust(chart),
+            'none',
+            'Type specific high contrast colors should be preserved in ' +
+            'forced colors mode.'
+        );
+
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    colors: [{
+                        pattern: {
+                            path: 'M 0 0 L 10 10',
+                            width: 10,
+                            height: 10
+                        }
+                    }]
+                }
+            },
+            series: [{
+                type: 'column',
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.strictEqual(
+            getForcedColorAdjust(chart),
+            'none',
+            'Pattern high contrast colors should be preserved in forced ' +
+            'colors mode.'
+        );
+
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    colors: [{
+                        linearGradient: linearGradient,
+                        stops: [[0, 'window'], [1, 'windowText']]
+                    }]
+                }
+            },
+            series: [{
+                type: 'column',
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.notOk(
+            getForcedColorAdjust(chart),
+            'Gradients built from system colors should keep browser ' +
+            'adjustments.'
+        );
+    }
+);
 
 QUnit.test(
     'skipNullPoints only skips null points, not valid ones (#24650)',

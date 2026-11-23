@@ -33,11 +33,9 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import OrganizationPoint from './OrganizationPoint.js';
 import OrganizationSeriesDefaults from './OrganizationSeriesDefaults.js';
+import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import PathUtilities from '../PathUtilities.js';
-const {
-    sankey: SankeySeries
-} = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import {
     crisp,
@@ -57,7 +55,6 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.organization
  *
@@ -72,6 +69,7 @@ class OrganizationSeries extends SankeySeries {
      * */
 
 
+    /** @internal */
     public static defaultOptions = merge(
         SankeySeries.defaultOptions,
         OrganizationSeriesDefaults

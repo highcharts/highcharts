@@ -24,8 +24,8 @@ import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
 
 import BellcurveSeriesDefaults from './BellcurveSeriesDefaults.js';
 import DerivedComposition from '../DerivedComposition.js';
+import AreaSplineSeries from '../AreaSpline/AreaSplineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { areaspline: AreaSplineSeries } = SeriesRegistry.seriesTypes;
 import AnimationOptions from '../../Core/Animation/AnimationOptions';
 import { correctFloat, isNumber, merge } from '../../Shared/Utilities.js';
 

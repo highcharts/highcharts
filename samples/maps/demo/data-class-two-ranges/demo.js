@@ -185,7 +185,12 @@
                         accessibility: {
                             enabled: false
                         }
-                    }]
+                    }],
+                    credits: {
+                        position: {
+                            y: -5
+                        }
+                    }
                 };
             keys = keys.map(function (key) {
                 return key.toUpperCase();

@@ -431,6 +431,126 @@
         );
     });
 
+    QUnit.test(
+        'Forced data grouping zoomed in between sparse points (#23958)',
+        function (assert) {
+            const chart = Highcharts.stockChart('container', {
+                xAxis: {
+                    min: Date.UTC(2024, 0, 1)
+                },
+                series: [{
+                    dataGrouping: {
+                        forced: true
+                    },
+                    data: [
+                        [Date.UTC(2024, 0, 1), 1],
+                        [Date.UTC(2024, 0, 8), 2],
+                        [Date.UTC(2024, 0, 15), 3]
+                    ]
+                }]
+            });
+
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 10),
+                Date.UTC(2024, 0, 10, 0, 0, 1)
+            );
+
+            assert.deepEqual(
+                chart.series[0].getColumn('x', true),
+                [Date.UTC(2024, 0, 8), Date.UTC(2024, 0, 15)],
+                'A one second range between weekly points, with xAxis.min ' +
+                'disabling the automatic minRange, should group the shoulder ' +
+                'points without excessive group positions'
+            );
+
+            chart.series[0].setData([
+                [Date.UTC(2024, 0, 5, 16), 1],
+                ...Array.from({ length: 61 }, (_, i) => [
+                    Date.UTC(2024, 0, 8, 9, 30 + i),
+                    i
+                ]),
+                [Date.UTC(2024, 0, 9, 9, 30), 1]
+            ], false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 8, 9, 30),
+                Date.UTC(2024, 0, 8, 10, 30)
+            );
+
+            assert.ok(
+                chart.series[0].currentDataGrouping.totalRange < 6e4,
+                'An hour of minute data next to a shoulder point three ' +
+                'days away should be grouped by less than a minute'
+            );
+
+            const hourOfSeconds = Array.from({ length: 3600 }, (_, i) => [
+                Date.UTC(2024, 0, 8, 9) + i * 1000,
+                i
+            ]);
+
+            chart.series[0].setData(hourOfSeconds, false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 8, 9),
+                Date.UTC(2024, 0, 8, 10)
+            );
+
+            const { totalRange } = chart.series[0].currentDataGrouping;
+
+            chart.series[0].setData([
+                [Date.UTC(2023, 0, 8, 9), 0],
+                ...hourOfSeconds
+            ], false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 8, 9),
+                Date.UTC(2024, 0, 8, 10)
+            );
+
+            assert.strictEqual(
+                chart.series[0].currentDataGrouping.totalRange,
+                totalRange,
+                'An hour of second data should keep its grouping when a ' +
+                'stray point a year earlier is added'
+            );
+
+            chart.series[0].update({
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: Array.from({ length: 8760 }, (_, i) => [
+                    Date.UTC(2024, 0, 1) + i * 36e5,
+                    i
+                ])
+            }, false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 5, 1),
+                Date.UTC(2024, 5, 1, 2)
+            );
+
+            assert.ok(
+                chart.series[0].currentDataGrouping.totalRange < 3e5,
+                'With groupAll, a two hour range of hourly data from a ' +
+                'whole year should be grouped by less than five minutes'
+            );
+
+            chart.series[0].setData([
+                [Date.UTC(2024, 0, 1), 1],
+                [Date.UTC(2024, 0, 8), 2],
+                [Date.UTC(2024, 0, 15), 3]
+            ], false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 10),
+                Date.UTC(2024, 0, 10, 0, 0, 1)
+            );
+
+            assert.deepEqual(
+                chart.series[0].getColumn('x', true),
+                [Date.UTC(2024, 0, 8), Date.UTC(2024, 0, 15)],
+                'With groupAll, a one second range between weekly points ' +
+                'should group the shoulder points without excessive group ' +
+                'positions'
+            );
+        }
+    );
+
     QUnit.test('Switch from grouped to non-grouped', function (assert) {
         var chart = Highcharts.stockChart('container', {
             chart: {

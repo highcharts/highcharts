@@ -5,7 +5,8 @@
         "resolveJsonModule": true,
         "allowImportingTsExtensions": true,
         "allowJs": true,
-        "baseUrl": ".",
+        "noEmit": true,
+        "strict": false,
         "paths": {
             "~/*": ["./*"],
             "~code/*": ["../code/*"],

@@ -140,3 +140,82 @@ QUnit.test('Data classes - interactions', function (assert) {
         'The shown point should be hovered.'
     );
 });
+
+QUnit.test('Data classes - visibility after setData (#25083)', function (
+    assert
+) {
+    const chart = Highcharts.chart('container', {
+        colorAxis: {
+            dataClasses: [
+                { from: 0, to: 5, name: 'low' },
+                { from: 5, to: 10, name: 'high' }
+            ]
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        series: [
+            {
+                type: 'scatter',
+                data: [
+                    { x: 0, y: 1 },
+                    { x: 0, y: 7 },
+                    { x: 1, y: 3 },
+                    { x: 1, y: 9 }
+                ]
+            }
+        ]
+    });
+
+    const low = chart.legend.allItems.find(item => item.name === 'low'),
+        high = chart.legend.allItems.find(item => item.name === 'high'),
+        highPoints = () => chart.series[0].points.filter(point => point.y >= 5);
+
+    let redraws = 0;
+    Highcharts.addEvent(chart, 'redraw', () => redraws++);
+
+    low.setVisible(); // Hide
+    low.setVisible(); // Show again
+
+    assert.strictEqual(
+        redraws,
+        0,
+        'Toggling a data class should not redraw the chart'
+    );
+
+    high.setVisible(); // Hide
+
+    chart.series[0].setData([
+        { x: 0, y: 2 },
+        { x: 0, y: 8 },
+        { x: 1, y: 4 },
+        { x: 1, y: 3 },
+        { x: 2, y: 6 }
+    ]);
+
+    assert.ok(
+        highPoints().every(point => !point.visible),
+        'Points created by setData should be hidden while their data class ' +
+        'is toggled off'
+    );
+
+    assert.ok(
+        chart.series[0].points[3].visible &&
+        chart.series[0].points[3].graphic.visibility !== 'hidden',
+        'A point moved out of the hidden data class should be shown'
+    );
+
+    high.setVisible(); // Show again
+
+    assert.ok(
+        highPoints().every(
+            point => point.visible && point.graphic && point.dataLabel
+        ),
+        'They should come back with a graphic and a data label when the ' +
+        'data class is toggled on again'
+    );
+});

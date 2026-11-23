@@ -26,10 +26,8 @@ import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import ErrorBarSeriesDefaults from './ErrorBarSeriesDefaults.js';
+import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    arearange: AreaRangeSeries
-} = SeriesRegistry.seriesTypes;
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 import RangeDataLabel from '../RangeDataLabel.js';
 

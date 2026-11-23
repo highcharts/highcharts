@@ -1,7 +1,7 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.8.0" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.9.0" type="module"></script>
 
 <figure class="highcharts-figure">
   <div id="container"></div>
@@ -14,7 +14,7 @@
         Text elements use different blends of the neutral
         color and background color
       </highcharts-group-description>
-      <highcharts-control path="palette.colorScheme" value="light dark" options="light dark,light,dark"></highcharts-control>
+      <highcharts-control type="select" path="palette.colorScheme" value="light dark" options="light dark,light,dark"></highcharts-control>
       <highcharts-separator></highcharts-separator>
       <highcharts-control path="palette.light.backgroundColor"></highcharts-control>
       <highcharts-control path="palette.light.neutralColor"></highcharts-control>

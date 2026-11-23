@@ -532,21 +532,30 @@ export default Color;
  *
  * @interface Highcharts.LinearGradientColorObject
  *//**
- * Start horizontal position of the gradient. Float ranges 0-1.
+ * Units for the gradient. Can be either 'userSpaceOnUse' or
+ * 'objectBoundingBox'.
+ * @name Highcharts.LinearGradientColorObject#gradientUnits
+ * @type {'userSpaceOnUse'|'objectBoundingBox'|undefined}
+ *//**
+ * Start horizontal position of the gradient. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.LinearGradientColorObject#x1
- * @type {number}
+ * @type {number|string}
  *//**
- * End horizontal position of the gradient. Float ranges 0-1.
+ * End horizontal position of the gradient. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.LinearGradientColorObject#x2
- * @type {number}
+ * @type {number|string}
  *//**
- * Start vertical position of the gradient. Float ranges 0-1.
+ * Start vertical position of the gradient. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.LinearGradientColorObject#y1
- * @type {number}
+ * @type {number|string}
  *//**
- * End vertical position of the gradient. Float ranges 0-1.
+ * End vertical position of the gradient. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.LinearGradientColorObject#y2
- * @type {number}
+ * @type {number|string}
  */
 
 /**
@@ -554,17 +563,25 @@ export default Color;
  *
  * @interface Highcharts.RadialGradientColorObject
  *//**
- * Center horizontal position relative to the shape. Float ranges 0-1.
+ * Units for the gradient. Can be either 'userSpaceOnUse' or
+ * 'objectBoundingBox'.
+ * @name Highcharts.RadialGradientColorObject#gradientUnits
+ * @type {'userSpaceOnUse'|'objectBoundingBox'|undefined}
+ *//**
+ * Center horizontal position relative to the shape. Float ranges 0-1
+ * or percentage strings.
  * @name Highcharts.RadialGradientColorObject#cx
- * @type {number}
+ * @type {number|string}
  *//**
- * Center vertical position relative to the shape. Float ranges 0-1.
+ * Center vertical position relative to the shape. Float ranges 0-1 or
+ * percentage strings.
  * @name Highcharts.RadialGradientColorObject#cy
- * @type {number}
+ * @type {number|string}
  *//**
- * Radius relative to the shape. Float ranges 0-1.
+ * Radius relative to the shape. Float ranges 0-1 or percentage
+ * strings.
  * @name Highcharts.RadialGradientColorObject#r
- * @type {number}
+ * @type {number|string}
  */
 
 /**

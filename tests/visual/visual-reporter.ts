@@ -1,9 +1,10 @@
 import type {
     FullConfig, FullResult, Reporter, Suite, TestCase, TestError, WorkerInfo
 } from '@playwright/test/reporter';
-import { appendFileSync, readFileSync } from 'node:fs';
+import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+    aggregateCandidateResults,
     appendError,
     readReferenceFailures,
     resetVisualRun,
@@ -15,6 +16,8 @@ import {
 export default class VisualReporter implements Reporter {
     private tests: TestCase[] = [];
     private started = false;
+    private runStart = 0;
+    private samplesStart = 0;
     private setupError?: unknown;
     private runError?: TestError;
     private root: string;
@@ -27,6 +30,7 @@ export default class VisualReporter implements Reporter {
     }
 
     onBegin(_config: FullConfig, suite: Suite): void {
+        this.runStart = Date.now();
         this.tests = suite.allTests().filter(test =>
             test.location.file.replace(/\\/g, '/')
                 .endsWith('/visual/visual.spec.ts')
@@ -36,6 +40,7 @@ export default class VisualReporter implements Reporter {
     onTestBegin(test: TestCase): void {
         if (!this.started && this.tests.includes(test)) {
             this.started = true;
+            this.samplesStart = Date.now();
             try {
                 resetVisualRun(
                     this.root,
@@ -94,6 +99,27 @@ export default class VisualReporter implements Reporter {
                         'Reference render failed.'
                 })));
             }
+            if (!this.referenceMode) {
+                aggregateCandidateResults(this.root);
+            }
+            const sumTiming = (type: string): number => this.tests.reduce(
+                (sum, test) => sum + test.annotations
+                    .filter(a => a.type === type)
+                    .reduce((total, a) => total + Number(a.description), 0), 0
+            );
+            const timing = {
+                samples: ids.length,
+                beforeSamplesMs: this.samplesStart - this.runStart,
+                samplesWallMs: Date.now() - this.samplesStart,
+                sampleTotalMs: this.tests.reduce(
+                    (sum, test) => sum + (test.results.at(-1)?.duration || 0), 0
+                ),
+                captureTotalMs: sumTiming('visual-capture-ms'),
+                comparisonTotalMs: sumTiming('visual-comparison-ms')
+            };
+            writeFileSync(join(this.root, 'test/visual-test-timing.json'),
+                JSON.stringify(timing, null, 2));
+            console.log('Visual timing:', JSON.stringify(timing));
             if (failedSamples.length) {
                 // Sample errors are already logged by the spec. The run
                 // completed, but still fails and must not be published.

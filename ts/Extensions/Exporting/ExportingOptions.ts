@@ -160,6 +160,8 @@ export interface ExportingOptions {
     /**
      * Allows the end user to sort the data table by clicking on column headers.
      *
+     * @default true
+     *
      * @since 10.3.3
      */
     allowTableSorting?: boolean;
@@ -183,8 +185,6 @@ export interface ExportingOptions {
      * to the default buttons listed here, custom buttons can be added.
      * See [navigation.buttonOptions](#navigation.buttonOptions) for general
      * options.
-     *
-     * @requires modules/exporting
      */
     buttons?: ExportingButtonsOptions;
 
@@ -235,7 +235,6 @@ export interface ExportingOptions {
      * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
      *
      * @since     5.0.0
-     * @requires  modules/exporting
      * @requires  modules/offline-exporting
      */
     error?: Exporting.ErrorCallbackFunction;
@@ -260,7 +259,6 @@ export interface ExportingOptions {
      *
      * @default  true
      * @since    4.1.8
-     * @requires modules/exporting
      * @requires modules/offline-exporting
      */
     fallbackToExportServer?: boolean;
@@ -335,7 +333,6 @@ export interface ExportingOptions {
      *
      * @default  true
      * @since    12.3.0
-     * @requires modules/exporting
      */
     local?: boolean;
 
@@ -393,6 +390,8 @@ export interface ExportingOptions {
      * fit into typical paper format. Note that this does not affect the
      * chart when printing the web page as a whole.
      *
+     * @default 780
+     *
      * @since 4.2.5
      */
     printMaxWidth?: number;
@@ -402,6 +401,8 @@ export interface ExportingOptions {
      * to the on-screen display. While for instance a 600px wide chart
      * may look good on a website, it will look bad in print. The default
      * scale of 2 makes this chart export to a 1200px PNG or JPG.
+     *
+     * @default 2
      *
      * @see [chart.width](#chart.width)
      * @see [exporting.sourceWidth](#exporting.sourceWidth)
@@ -445,6 +446,8 @@ export interface ExportingOptions {
      * Default MIME type for exporting if `chart.exportChart()` is called
      * without specifying a `type` option. Possible values are `image/png`,
      *  `image/jpeg`, `application/pdf` and `image/svg+xml`.
+     *
+     * @default 'image/png'
      *
      * @since 2.0
      */
@@ -655,7 +658,7 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-symbolfill/
      *         Blue symbol stroke for one of the buttons
      *
-     * @default ${palette.neutralColor60}
+     * @default 'var(--highcharts-neutral-color-60)'
      * @since 2.0
      */
     symbolFill?: ColorString;
@@ -733,8 +736,6 @@ export interface ExportingButtonOptions {
      *
      * @sample highcharts/navigation/buttonoptions-theme/
      *         Theming the buttons
-     *
-     * @requires modules/exporting
      *
      * @since 3.0
      */
@@ -815,7 +816,6 @@ export interface ExportingButtonsOptions {
      *
      * @declare  Highcharts.ExportingButtonsOptionsObject
      * @extends  navigation.buttonOptions
-     * @requires modules/exporting
      */
     contextButton: ExportingButtonOptions;
 }

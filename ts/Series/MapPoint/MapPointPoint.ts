@@ -23,9 +23,8 @@ import type MapPointSeries from './MapPointSeries';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type ScatterPoint from './../Scatter/ScatterPoint';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const { scatter: ScatterSeries } = SeriesRegistry.seriesTypes;
 
 /* *
  *

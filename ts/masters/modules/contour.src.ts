@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highmaps JS v@product.version@ (@product.date@)
  * @module highcharts/modules/contour

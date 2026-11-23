@@ -7,6 +7,7 @@ on:
       'tools/*'
     ]
     paths:
+      - '.npmrc'
       - 'package.json'
       - 'package-lock.json'
       - 'tsconfig.json'
@@ -17,6 +18,7 @@ on:
       - 'tools/**/*'
       - '.github/workflows/visual-compare-playwright.yml'
       - '.github/workflows/test-tooling.yml'
+      - '.github/workflows/nightly.yml'
       - 'tests/internal/*'
   workflow_dispatch:
 
@@ -26,8 +28,10 @@ permissions:
 jobs:
   notify:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+        # latest intentionally catches upcoming Node/npm compatibility changes.
         node-version: ['lts/*', 'latest']
 
     runs-on: ${{ matrix.os }}

@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highstock JS v@product.version@ (@product.date@)
- * @module highcharts/indicators/indicators
+ * @module highcharts/indicators/slow-stochastic
  * @requires highcharts
  * @requires highcharts/modules/stock
+ * @requires highcharts/indicators/indicators
+ * @requires highcharts/indicators/stochastic
  *
  * Slow Stochastic series type for Highcharts Stock
  *

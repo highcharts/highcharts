@@ -250,3 +250,136 @@ QUnit.test(
         }
     }
 );
+
+QUnit.test(
+    'Initial animation - repeated updates while animating (#25439)',
+    function (assert) {
+        var clock = null;
+
+        try {
+            clock = TestUtilities.lolexInstall();
+
+            const chart = Highcharts.chart('container', {
+                    series: [{
+                        animation: {
+                            duration: 500
+                        },
+                        data: [1, 2, 3, 4, 5]
+                    }]
+                }),
+                done = assert.async();
+
+            let afterAnimateCount = 0;
+            Highcharts.addEvent(chart.series[0], 'afterAnimate', () => {
+                afterAnimateCount++;
+            });
+
+            const interval = setInterval(() => {
+                chart.series[0].update({});
+            }, 200);
+
+            setTimeout(function () {
+                assert.strictEqual(
+                    afterAnimateCount,
+                    1,
+                    'afterAnimate should fire when the initial animation ' +
+                    'ends, even if the series was updated during it'
+                );
+            }, 550);
+
+            setTimeout(function () {
+                chart.setSize(chart.chartWidth + 200);
+
+                const clipRect = chart.sharedClips[
+                    chart.series[0].sharedClipKey
+                ];
+                assert.strictEqual(
+                    chart.series[0].group.attr('clip-path'),
+                    `url(#${clipRect.id})`,
+                    'The series should use the plot clip, not the ' +
+                    'temporary animation clip'
+                );
+                assert.strictEqual(
+                    clipRect.attr('width'),
+                    chart.plotWidth,
+                    'The series clip should follow the plot width after ' +
+                    'resizing'
+                );
+
+                clearInterval(interval);
+                done();
+            }, 900);
+
+            TestUtilities.lolexRunAndUninstall(clock);
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
+    }
+);
+
+QUnit.test(
+    'Initial animation - update, then remove while animating (#25439)',
+    function (assert) {
+        var clock = null;
+
+        try {
+            clock = TestUtilities.lolexInstall();
+
+            const chart = Highcharts.chart('container', {
+                    series: [{
+                        animation: {
+                            duration: 500
+                        },
+                        data: [1, 2, 3]
+                    }, {
+                        animation: {
+                            duration: 500
+                        },
+                        data: [3, 2, 1]
+                    }]
+                }),
+                [kept, removed] = chart.series,
+                done = assert.async(),
+                start = Date.now(),
+                times = [];
+
+            let removedCount = 0;
+            Highcharts.addEvent(kept, 'afterAnimate', () => {
+                times.push(Date.now() - start);
+            });
+            Highcharts.addEvent(removed, 'afterAnimate', () => {
+                removedCount++;
+            });
+
+            setTimeout(function () {
+                kept.update({});
+                removed.update({});
+            }, 200);
+
+            setTimeout(function () {
+                removed.remove();
+            }, 300);
+
+            setTimeout(function () {
+                assert.deepEqual(
+                    times,
+                    [500],
+                    'afterAnimate should fire once, when the initial ' +
+                    'animation ends'
+                );
+                assert.strictEqual(
+                    removedCount,
+                    0,
+                    'afterAnimate should not fire for a series removed ' +
+                    'after an update'
+                );
+
+                done();
+            }, 1500);
+
+            TestUtilities.lolexRunAndUninstall(clock);
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
+    }
+);

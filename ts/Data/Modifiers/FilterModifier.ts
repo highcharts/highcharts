@@ -105,6 +105,11 @@ class FilterModifier extends DataModifier {
                 const sub = this.compile(condition.condition);
                 return (row, table, i): boolean => !sub(row, table, i);
             }
+            case 'in': {
+                const { columnId } = condition,
+                    values = new Set(condition.value);
+                return (row): boolean => values.has(row[columnId]);
+            }
         }
 
         const { columnId: col, value } = condition;
@@ -140,9 +145,11 @@ class FilterModifier extends DataModifier {
         switch (op) {
             case 'contains':
                 return (row): boolean => str(row[col]).includes(str(value));
-            default:
+            case 'startsWith':
+            case 'endsWith':
                 return (row): boolean => str(row[col])[op](str(value));
         }
+        return (): boolean => false;
     }
 
 

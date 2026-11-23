@@ -1,5 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const visualBatches = Number(process.env.VISUAL_TEST_BATCHES || 1);
+if (!Number.isInteger(visualBatches) || visualBatches < 1 || visualBatches > 2) {
+    throw new Error('VISUAL_TEST_BATCHES must be 1 or 2.');
+}
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -71,7 +76,7 @@ export default defineConfig({
             name: 'visual',
             testDir: './tests/visual',
             fullyParallel: false,
-            workers: 1,
+            workers: visualBatches,
             use: {
                 ...devices['Desktop Chrome'],
                 headless: true,
