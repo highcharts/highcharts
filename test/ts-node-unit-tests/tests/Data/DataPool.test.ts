@@ -132,6 +132,26 @@ describe('DataPool', () => {
     });
 
     describe('promises', () => {
+        it('should load connectors with prototype-named IDs', async () => {
+            const dataPool = new DataPool({
+                connectors: ['toString', '__proto__'].map((id) => ({
+                    id,
+                    type: 'CSV' as const,
+                    csv: 'a\n1'
+                }))
+            });
+
+            const connectors = await Promise.all([
+                dataPool.getConnector('toString'),
+                dataPool.getConnector('__proto__')
+            ]);
+
+            deepStrictEqual(
+                connectors.map((connector) => connector.options.id),
+                ['toString', '__proto__']
+            );
+        });
+
         it('should resolve second connector request after first one', async () => {
             // Using a simpler modifier chain (the old RangeModifier API with conditions
             // has been deprecated/removed)
