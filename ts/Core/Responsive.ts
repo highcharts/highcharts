@@ -76,7 +76,7 @@ namespace Responsive {
      * */
 
     export interface CallbackFunction {
-        (this: Chart, ctx?: Chart): boolean;
+        (this: Chart, ctx: Chart): boolean;
     }
 
     /** @internal */
@@ -379,7 +379,7 @@ export default Responsive;
  * @param {Highcharts.Chart} this
  * Chart context.
  *
- * @param {Highcharts.Chart} [ctx]
+ * @param {Highcharts.Chart} ctx
  * Since v12.6.0, the chart context passed as an extra argument for arrow
  * functions.
  *

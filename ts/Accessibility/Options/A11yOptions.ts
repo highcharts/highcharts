@@ -57,9 +57,9 @@ export interface AccessibilityAnnouncementFormatter {
      */
     (
         updatedSeries: Array<Series>,
-        addedSeries?: Series,
-        addedPoint?: Point,
-        ctx?: AnnouncementFormatterContext
+        addedSeries: Series|undefined,
+        addedPoint: Point|undefined,
+        ctx: AnnouncementFormatterContext
     ): false|string;
 }
 
@@ -929,10 +929,10 @@ export interface ScreenReaderClickCallbackFunction {
      * @param {global.MouseEvent} evt
      *        Mouse click event
      *
-     * @param {Highcharts.Chart} [chart]
+     * @param {Highcharts.Chart} chart
      *        Chart context.
      *
-     * @param {global.GlobalEventHandlers} [ctx]
+     * @param {global.GlobalEventHandlers} ctx
      *        Since v12.6.0, the global event handlers context passed as an
      *        extra argument for arrow functions.
      *
@@ -940,8 +940,8 @@ export interface ScreenReaderClickCallbackFunction {
      */
     (
         evt: MouseEvent,
-        chart?: ScreenReaderClickCallbackContext,
-        ctx?: GlobalEventHandlers
+        chart: ScreenReaderClickCallbackContext,
+        ctx: GlobalEventHandlers
     ): void;
 }
 
