@@ -25,7 +25,7 @@
 import type DataTable from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
 import type { ProcessUpdateDiffEvent } from '../../Core/Grid';
-import type { FilteringRule, Options } from '../../Core/Options';
+import type { FilteringRule } from '../../Core/Options';
 import type {
     FilterCondition
 } from '../../../Data/Modifiers/FilterModifierOptions';
@@ -143,7 +143,6 @@ export function compose(GridClass: typeof Grid): void {
         return;
     }
 
-    addEvent(GridClass, 'beforeUpdate', onBeforeUpdate);
     addEvent(GridClass, 'getFilterConditions', onGetFilterConditions);
     addEvent(GridClass, 'processUpdateDiff', onProcessUpdateDiff);
 }
@@ -207,29 +206,6 @@ function mapGroup(
 }
 
 /**
- * Replaces the whole filtering state on update instead of merging it, so
- * that a state saved with `getOptions()` can be restored.
- *
- * @param e
- * Update event.
- *
- * @param e.options
- * Options passed to the update.
- *
- * @param e.scope
- * Scope of the update.
- */
-function onBeforeUpdate(
-    this: Grid,
-    e: { options: Options; scope: 'grid' | 'column' }
-): void {
-    if (e.scope === 'grid' && 'filtering' in e.options) {
-        delete this.userOptions.filtering;
-        delete this.options?.filtering;
-    }
-}
-
-/**
  * Adds the global filtering condition to the column conditions. Skipped for
  * providers without a local data table, e.g. the remote one.
  *
@@ -266,7 +242,7 @@ function onGetFilterConditions(
  * @param e
  * Update diff event.
  */
-function onProcessUpdateDiff(this: Grid, e: ProcessUpdateDiffEvent): void {
+function onProcessUpdateDiff(e: ProcessUpdateDiffEvent): void {
     if ('filtering' in e.diff) {
         delete e.diff.filtering;
         e.flags.add('filtering');
@@ -284,8 +260,8 @@ declare module '../../Core/Options' {
     interface Options {
         /**
          * Global filtering options, combining rules for multiple columns with
-         * logical operators. Updating the option replaces the whole filtering
-         * state.
+         * logical operators. On update, `rules` replaces the whole list of
+         * rules, so `rules: []` clears the filtering.
          *
          * For a single rule per column combined with `and`, use
          * `columns[].filtering.rule` instead, also available in Grid Lite.

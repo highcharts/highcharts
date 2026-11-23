@@ -78,6 +78,27 @@ function test_grid() {
         tableEditing: {
             enabled: true
         },
+        filtering: {
+            logic: 'and',
+            rules: [{
+                columnId: 'y',
+                operator: 'greaterThan',
+                value: 1
+            }, {
+                // A nested group needs both of its properties, unlike the
+                // option it is nested in.
+                logic: 'or',
+                rules: [{
+                    columnId: 'x',
+                    operator: 'equals',
+                    value: 'A'
+                }, {
+                    columnId: 'x',
+                    operator: 'empty',
+                    value: null
+                }]
+            }]
+        },
         lang: {
             rowPinning: {
                 label: 'Pinning',
@@ -148,8 +169,30 @@ function test_grid() {
                 },
                 contextMenu: {
                     items: [
+                        // Registered items, referred to by id.
                         'pinning',
                         'rows',
+                        {
+                            id: 'columns'
+                        },
+                        {
+                            id: 'pinRowTop',
+                            icon: 'customPinIcon'
+                        },
+                        {
+                            separator: true
+                        },
+                        {
+                            label: 'More',
+                            items: [{
+                                label: 'Custom',
+                                onClick: function (cell): void {
+                                    cell.row.id;
+                                }
+                            }, 'addRowAbove']
+                        },
+                        // Deprecated in 3.3.0: `actionId` and `groupId`
+                        // became `id`, and `type` was dropped.
                         {
                             type: 'group',
                             groupId: 'columns'
@@ -288,6 +331,15 @@ function test_composedModuleAugmentations() {
             id: 'total',
             aggregator: 'SUM'
         }],
+        // CreditsProComposition
+        credits: {
+            enabled: true,
+            text: 'Highcharts'
+        },
+        // ExportingComposition
+        exporting: {
+            filename: 'grid'
+        },
         // PaginationComposition
         pagination: {
             enabled: true,
@@ -322,4 +374,6 @@ function test_composedModuleAugmentations() {
     grid.treeView?.expandAll();
     grid.summaryRows?.getRows();
     grid.viewport?.validator?.errorCell;
+    grid.credits?.update({ text: 'Updated' });
+    void grid.exporting?.downloadCSV();
 }
