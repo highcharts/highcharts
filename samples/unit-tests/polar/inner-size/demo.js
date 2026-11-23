@@ -60,3 +60,48 @@ QUnit.test('(#12850) Inner size of pane.', function (assert) {
         'The inner size is not negative.'
     );
 });
+
+QUnit.test(
+    'Linked axis across differently-sized polar panes',
+    function (assert) {
+        const paneAngles = { startAngle: 0, endAngle: 270 };
+        const chart = Highcharts.chart('container', {
+            chart: {
+                polar: true
+            },
+            pane: [
+                { size: '80%', ...paneAngles },
+                { size: '50%', ...paneAngles }
+            ],
+            xAxis: [
+                { pane: 0, min: 0, max: 10 },
+                { pane: 1, linkedTo: 0 }
+            ],
+            series: [
+                { data: [1, 2, 3], xAxis: 0 },
+                { data: [3, 2, 1], xAxis: 1 }
+            ]
+        });
+
+        const master = chart.xAxis[0],
+            linked = chart.xAxis[1];
+
+        assert.notEqual(
+            master.len,
+            linked.len,
+            'The two panes should have different arc lengths.'
+        );
+
+        assert.strictEqual(
+            linked.lenRatio,
+            1,
+            'A linked radial axis should not scale by arc-length ratio.'
+        );
+
+        assert.strictEqual(
+            linked.translate(5),
+            master.translate(5),
+            'A value should map to the same angle regardless of pane radius.'
+        );
+    }
+);

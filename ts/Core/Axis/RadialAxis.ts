@@ -1696,6 +1696,9 @@ namespace RadialAxis {
                 this.transA = (this.endAngleRad - this.startAngleRad) /
                     ((this.max - this.min) || 1);
 
+                // `len` is arc length, which scales with pane radius alone,
+                // so `lenRatio` must not reconcile it against the parent (#25325)
+                this.lenRatio = 1;
 
             } else {
                 // The transA here is the length of the axis, so in case
