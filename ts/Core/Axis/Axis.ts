@@ -3272,6 +3272,7 @@ class Axis {
                 tickInterval
             ),
             rotationOption = labelOptions.rotation,
+            maxLabelLength = this.maxLabelLength,
             // We don't know the actual rendered line height at this point, but
             // it defaults to 0.8em
             lineHeight = correctFloat(this.labelMetrics().h * 0.8),
@@ -3324,8 +3325,18 @@ class Axis {
                         (rot && rot >= -90 && rot <= 90)
                     ) { // #3891
 
+                        // The space needed between the labels, computed from
+                        // the label height and the label width (#5463)
+                        const rad = deg2rad * rot,
+                            spaceLineHeight = Math.abs(
+                                lineHeight / Math.sin(rad)
+                            ),
+                            spaceLabelWidth = rot && maxLabelLength ?
+                                Math.abs(maxLabelLength / Math.cos(rad)) :
+                                Infinity;
+
                         step = getStep(
-                            Math.abs(lineHeight / Math.sin(deg2rad * rot))
+                            Math.min(spaceLineHeight, spaceLabelWidth)
                         );
 
                         score = step + Math.abs(rot / 360);
