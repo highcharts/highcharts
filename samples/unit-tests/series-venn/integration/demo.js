@@ -47,6 +47,12 @@ QUnit.test('zIndex. #10490', assert => {
     }, {});
 
     assert.deepEqual(
+        unsortedData[1].sets,
+        ['B', 'C', 'A'],
+        'should not mutate the input set order'
+    );
+
+    assert.deepEqual(
         mapOfIdToZIndex,
         {
             A: 1,
