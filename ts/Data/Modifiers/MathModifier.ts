@@ -127,22 +127,12 @@ class MathModifier extends DataModifier {
             ),
             modified = table.getModified();
 
-        for (
-            let i = 0,
-                iEnd = formulaColumns.length,
-                columnId: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnId = formulaColumns[i];
-
-            if (formulaColumns.indexOf(columnId) >= 0) {
-                modified.setColumn(
-                    columnId,
-                    modifier.processColumn(table, columnId)
-                );
-            }
-        }
+        new Set(formulaColumns).forEach((columnId): void => {
+            modified.setColumn(
+                columnId,
+                modifier.processColumn(table, columnId)
+            );
+        });
 
         const columnFormulas = (modifier.options.columnFormulas || []);
 
