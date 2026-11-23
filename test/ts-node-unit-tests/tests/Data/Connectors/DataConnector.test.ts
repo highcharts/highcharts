@@ -5,7 +5,7 @@ import DataConnector from '../../../../../ts/Data/Connectors/DataConnector';
 import CSVConnector from '../../../../../ts/Data/Connectors/CSVConnector';
 import JSONConnector from '../../../../../ts/Data/Connectors/JSONConnector';
 // Import these to register them with DataConnector.types
-import '../../../../../ts/Data/Connectors/GoogleSheetsConnector';
+import { buildQueryRange } from '../../../../../ts/Data/Connectors/GoogleSheetsConnector';
 import '../../../../../ts/Data/Connectors/HTMLTableConnector';
 
 describe('DataConnector', () => {
@@ -261,5 +261,20 @@ describe('DataConnector', () => {
                 );
             });
         }
+    });
+
+    describe('Google Sheets ranges', () => {
+        it('should translate zero-based end rows to A1 notation', () => {
+            strictEqual(
+                buildQueryRange({ startRow: 0, endRow: 5 }),
+                'A1:Z6',
+                'A bounded end row should be incremented.'
+            );
+            strictEqual(
+                buildQueryRange({ startRow: 0, endRow: 0 }),
+                'A1:Z1',
+                'Row zero should remain a bounded first row.'
+            );
+        });
     });
 });
