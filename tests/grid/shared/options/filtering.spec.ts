@@ -812,3 +812,70 @@ test.describe('Grid datetime filtering', () => {
 
     });
 });
+
+test.describe('Grid filtering debounce', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/inline-filtering', {
+            waitUntil: 'networkidle'
+        });
+        await page.waitForFunction(() => (window as any).Grid?.grids?.length);
+    });
+
+    async function createGrid(page: Page, debounce?: number): Promise<void> {
+        await page.evaluate(async (debounce) => {
+            const win = window as any;
+            const data = win.grid.userOptions.data;
+            win.grid.destroy();
+            win.grid = await win.Grid.grid('container', {
+                data,
+                columnDefaults: {
+                    filtering: { enabled: true, inline: true, debounce }
+                },
+                columns: [{ id: 'product', dataType: 'string' }]
+            }, true);
+
+            // Count how many times the filter is applied.
+            const filtering = win.grid.viewport.getColumn('product').filtering;
+            const applyFilter = filtering.applyFilter;
+            win.applyFilterCalls = 0;
+            filtering.applyFilter = function (...args: unknown[]): unknown {
+                win.applyFilterCalls++;
+                return applyFilter.apply(this, args);
+            };
+        }, debounce);
+    }
+
+    const getCalls = (page: Page): Promise<number> =>
+        page.evaluate(() => (window as any).applyFilterCalls);
+
+    test('Filters on every keystroke by default for local data', async ({
+        page
+    }) => {
+        await createGrid(page);
+        await typeFilterValue(page, inputProductFilter, 'ap');
+        expect(await getCalls(page)).toBe(2);
+        await verifyRowCount(page, 4);
+    });
+
+    test('Filters once after typing stops with debounce', async ({
+        page
+    }) => {
+        await createGrid(page, 1000);
+        await typeFilterValue(page, inputProductFilter, 'ap');
+        expect(await getCalls(page)).toBe(0);
+
+        await verifyRowCount(page, 4);
+        expect(await getCalls(page)).toBe(1);
+    });
+
+    test('Operator change applies the pending filter immediately', async ({
+        page
+    }) => {
+        await createGrid(page, 10000);
+        await typeFilterValue(page, inputProductFilter, 'ap');
+        await setFilterCondition(page, selectProductFilter, 'beginsWith');
+
+        await verifyRowCount(page, 2, 2000);
+        expect(await getCalls(page)).toBe(1);
+    });
+});

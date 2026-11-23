@@ -533,3 +533,16 @@ test.describe('RemoteDataProvider', () => {
         expect(result.rowIndex1).toBe(1);
     });
 });
+
+test.describe('RemoteDataProvider filtering', () => {
+    test('debounces filter input by 300 ms by default', async ({ page }) => {
+        await openRemoteProviderFixture(page);
+        const filterDebounce = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            await api.createGrid({ totalRowCount: 10 });
+            return api.getGrid().dataProvider.filterDebounce;
+        });
+
+        expect(filterDebounce).toBe(300);
+    });
+});

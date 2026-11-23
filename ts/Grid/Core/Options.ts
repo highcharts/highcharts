@@ -1153,6 +1153,29 @@ export interface ColumnFilteringOptions {
     inline?: boolean;
 
     /**
+     * Delay in milliseconds between the last keystroke in the filter input and
+     * applying the filter. Each keystroke restarts the delay, so the filter is
+     * applied once when the user stops typing. Changing the operator applies
+     * the filter immediately. Set to `0` to filter on every keystroke.
+     *
+     * @example
+     * ```js
+     * columnDefaults: {
+     *   filtering: {
+     *     enabled: true,
+     *     debounce: 500
+     *   }
+     * }
+     * ```
+     *
+     * @sample grid-lite/options/filtering-debounce
+     *         Debounced filtering
+     *
+     * @default 300 for remote data, otherwise `0`
+     */
+    debounce?: number;
+
+    /**
      * Hides the operator select in filtering UI.
      *
      * Uses {@link ColumnFilteringOptions.rule} operator when valid, otherwise

@@ -123,6 +123,28 @@ columns: [{
 
 See also: [Inline filtering with hidden operator select](https://www.highcharts.com/samples/grid/options/inline-filtering-hide-select).
 
+## Debouncing filter input
+
+`filtering.debounce` sets how many milliseconds the Grid waits after the last
+keystroke before it applies the filter. Each keystroke restarts the delay, so
+the filter is applied once when the user stops typing. This avoids a query per
+keystroke, which matters most with remote data. Changing the operator applies
+the filter immediately.
+
+Grids with remote data use a 300 ms delay by default. Grids with local data
+filter on every keystroke (`0`).
+
+```js
+columnDefaults: {
+    filtering: {
+        enabled: true,
+        debounce: 500
+    }
+}
+```
+
+See also: [Debounced filtering](https://www.highcharts.com/samples/grid/options/filtering-debounce).
+
 ## Filter operators by data type
 
 Available filter operators depend on the column’s `dataType`.

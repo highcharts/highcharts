@@ -43,7 +43,9 @@ import {
 } from './FilteringTypes.js';
 import {
     defined,
-    fireEvent
+    fireEvent,
+    internalClearTimeout,
+    syncTimeout
 } from '../../../../../Shared/Utilities.js';
 
 /* *
@@ -172,6 +174,11 @@ class ColumnFiltering {
      */
     public clearButton?: HTMLButtonElement;
 
+    /**
+     * Timer of the pending debounced filter input.
+     */
+    private debounceTimer?: number;
+
 
     /* *
     *
@@ -206,6 +213,8 @@ class ColumnFiltering {
      * The operator to set.
      */
     public async set(value?: string, operator?: Condition): Promise<void> {
+        internalClearTimeout(this.debounceTimer);
+
         if (this.filterInput) {
             this.filterInput.value = value ?? '';
         }
@@ -361,6 +370,8 @@ class ColumnFiltering {
      * to the column.
      */
     private applyFilterFromForm(): void {
+        internalClearTimeout(this.debounceTimer);
+
         const result: FilteringCondition = {
             condition: this.getActiveCondition()
         };
@@ -541,9 +552,32 @@ class ColumnFiltering {
 
         for (const eventType of eventTypes[columnType]) {
             this.filterInput.addEventListener(eventType, (): void => {
-                this.applyFilterFromForm();
+                if (eventType === 'keyup') {
+                    this.debounceFilterFromForm();
+                } else {
+                    this.applyFilterFromForm();
+                }
             });
         }
+    }
+
+    /**
+     * Applies the filter from the inputs once the user stops typing, after the
+     * `filtering.debounce` delay.
+     */
+    private debounceFilterFromForm(): void {
+        const { column } = this;
+        const { viewport } = column;
+        const delay = column.options.filtering?.debounce ??
+            viewport.grid.dataProvider?.filterDebounce ?? 0;
+
+        internalClearTimeout(this.debounceTimer);
+        this.debounceTimer = syncTimeout((): void => {
+            // Skip if the grid was destroyed or re-rendered meanwhile.
+            if (viewport.grid.viewport === viewport) {
+                this.applyFilterFromForm();
+            }
+        }, delay);
     }
 
     /**
