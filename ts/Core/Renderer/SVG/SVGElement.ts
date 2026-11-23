@@ -327,13 +327,12 @@ class SVGElement implements SVGElementBase {
      * @return {number|string}
      * Property value.
      */
-    private _defaultGetter(key: string): (number|string) {
+    private _defaultGetter(key: string): number|string|undefined {
         let ret = (
             (this as AnyRecord)[key + 'Value'] ??
             (this as AnyRecord)[key] ??
-            (this.element ? this.element.getAttribute(key) : null) ??
-            this.box?.[key] ?? // For labels, when animating border radius
-            0
+            this.element?.getAttribute(key) ??
+            this.box?.[key] // For labels, when animating border radius
         );
 
         if (/^-?[\d\.]+$/.test(ret)) { // Is numerical
@@ -766,7 +765,7 @@ class SVGElement implements SVGElementBase {
         }
     }
 
-    public attr(key: string): (number|string);
+    public attr(key: string): (number|string|undefined);
     /** @internal */
     public attr(
         key: string,
@@ -896,7 +895,7 @@ class SVGElement implements SVGElementBase {
         val?: (number|string|ColorType|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
-    ): (number|string|this) {
+    ): (number|string|undefined|this) {
         const { element } = this,
             symbolCustomAttribs = SVGElement.symbolCustomAttribs;
 
@@ -2405,7 +2404,7 @@ class SVGElement implements SVGElementBase {
      * @internal
      * @function Highcharts.SVGElement#xGetter
      */
-    public xGetter(key: string): (number|string|null) {
+    public xGetter(key: string): (number|string|undefined) {
         if (this.element.nodeName === 'circle') {
             if (key === 'x') {
                 key = 'cx';
@@ -2548,7 +2547,7 @@ interface SVGElement extends SVGElementBase {
     /** @internal */
     verticalAlignSetter: SVGElement.SetterFunction<(number|string|null)>;
     /** @internal */
-    yGetter(key: string): (number|string|null);
+    yGetter(key: string): (number|string|undefined);
 }
 
 // Some shared setters and getters

@@ -1267,20 +1267,28 @@ class SVGRenderer implements SVGRendererBase {
         strokeWidth?: number
     ): SVGElement {
 
-        const attribs = (
-                isObject(x) ?
-                    x :
-                    typeof x === 'undefined' ?
-                        {} :
-                        {
-                            x,
-                            y,
-                            r,
-                            width: Math.max(width || 0, 0),
-                            height: Math.max(height || 0, 0)
-                        }
-            ),
-            wrapper = this.createElement('rect');
+        let attribs: SVGAttributes = {};
+        if (isObject(x)) {
+            attribs = x;
+        } else {
+            if (defined(x)) {
+                attribs.x = x;
+            }
+            if (defined(y)) {
+                attribs.y = y;
+            }
+            if (defined(width)) {
+                attribs.width = Math.max(width, 0);
+            }
+            if (defined(height)) {
+                attribs.height = Math.max(height, 0);
+            }
+            if (defined(r)) {
+                attribs.r = r;
+            }
+        }
+
+        const wrapper = this.createElement('rect');
 
         if (!this.styledMode) {
             if (typeof strokeWidth !== 'undefined') {

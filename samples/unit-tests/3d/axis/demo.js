@@ -47,11 +47,11 @@ QUnit.test(
         });
 
         var plotBandZIndex = parseFloat(
-                chart.yAxis[0].plotLines[0].svgElem.attr('zIndex'),
+                chart.yAxis[0].plotLines[0].svgElem.attr('zIndex') || 0,
                 10
             ),
             backFrameZIndex = parseFloat(
-                chart.frameShapes.back.attr('zIndex'),
+                chart.frameShapes.back.attr('zIndex') || 0,
                 10
             );
 

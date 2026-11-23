@@ -546,14 +546,12 @@ class GeoHeatmapSeries extends MapSeries {
             chart.tooltip &&
             chart.tooltip.options.enabled
         ) {
+            const animator = +(series.image.attr('animator') || 0);
             if (
                 // If user drags map do not build k-d-tree
                 !chart.pointer.hasDragged &&
                 // If user zooms in/out map do not build k-d-tree
-                (
-                    +series.image.attr('animator') <= 0.01 ||
-                    +series.image.attr('animator') >= 0.99
-                )
+                (animator <= 0.01 || animator >= 0.99)
             ) {
                 const topLeft = mapView.projectedUnitsToPixels({
                         x: series.bounds.x1,

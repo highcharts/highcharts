@@ -18,19 +18,27 @@ QUnit.test('Hide label with useHTML (#4938)', function (assert) {
         renderer = chart.renderer,
         g = renderer.g().add(),
         text = renderer.text('Label', 140, 140, true).add(g);
-    assert.strictEqual(text.attr('visibility'), 0, 'Text element is visible');
-    assert.strictEqual(g.attr('visibility'), 0, 'Group element is visible');
+    assert.strictEqual(
+        text.attr('visibility'),
+        undefined,
+        'Text element should be visible (visibility not set)'
+    );
+    assert.strictEqual(
+        g.attr('visibility'),
+        undefined,
+        'Group element should be visible (visibility not set)'
+    );
     text.hide();
     assert.strictEqual(
         text.attr('visibility'),
         'hidden',
-        'Text element is hidden'
+        'Text element should be hidden'
     );
     g.hide();
     assert.strictEqual(
         g.attr('visibility'),
         'hidden',
-        'Group element is hidden'
+        'Group element should be hidden'
     );
 });
 
