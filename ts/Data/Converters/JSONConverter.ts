@@ -329,8 +329,12 @@ class JSONConverter extends DataConverter {
                     name
                 ): void => {
                     newRow.push(arrayWithPath.reduce(
-                        (acc: any, key: string | number): any =>
-                            acc[key], rowObj
+                        (acc: any, key: string | number): any => (
+                            acc === null || typeof acc === 'undefined' ?
+                                void 0 :
+                                acc[key]
+                        ),
+                        rowObj
                     ));
                     if (converter.headers.indexOf(name) < 0) {
                         converter.headers.push(name);
