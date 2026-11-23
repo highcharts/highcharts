@@ -181,16 +181,10 @@ class CSVConverter extends DataConverter {
             // If the first row contain names, add them to the
             // headers array and skip the row.
             if (firstRowAsNames) {
-                const headers = lines[0].split(
+                converter.headers = converter.parseCSVHeader(
+                    lines[startRow],
                     itemDelimiter || converter.guessedItemDelimiter || ','
                 );
-
-                // Remove ""s from the headers
-                for (let i = 0; i < headers.length; i++) {
-                    headers[i] = headers[i].trim().replace(/^["']|["']$/g, '');
-                }
-
-                converter.headers = headers;
 
                 startRow++;
             }
@@ -253,6 +247,49 @@ class CSVConverter extends DataConverter {
         return DataConverterUtils.getColumnsCollection(
             columnsArray, converter.headers
         );
+    }
+
+    /**
+     * Parses one CSV header row while preserving delimiters, escaped quotes,
+     * and whitespace inside quoted fields.
+     */
+    private parseCSVHeader(
+        row: string,
+        itemDelimiter: string
+    ): string[] {
+        const headers: string[] = [];
+        let inQuotes = false,
+            quoted = false,
+            token = '';
+
+        const push = (): void => {
+            headers.push(
+                quoted ? token : token.trim().replace(/^'|'$/g, '')
+            );
+            quoted = false;
+            token = '';
+        };
+
+        for (let i = 0; i < row.length; ++i) {
+            const character = row[i];
+
+            if (character === '"') {
+                if (inQuotes && row[i + 1] === '"') {
+                    token += '"';
+                    ++i;
+                } else {
+                    inQuotes = !inQuotes;
+                    quoted = true;
+                }
+            } else if (character === itemDelimiter && !inQuotes) {
+                push();
+            } else {
+                token += character;
+            }
+        }
+        push();
+
+        return headers;
     }
 
     /**
