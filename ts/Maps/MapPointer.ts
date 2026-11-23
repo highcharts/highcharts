@@ -48,6 +48,8 @@ declare module '../Core/PointerEvent' {
 /** @internal */
 interface MapPointer extends Pointer {
     chart: MapChart;
+    mapWheelDelta?: number;
+    mapWheelDeltaTimer?: number;
     mapNavigation: MapNavigation;
     onContainerDblClick(e: PointerEvent): void;
     onContainerMouseWheel(e: PointerEvent): void;
@@ -61,15 +63,6 @@ interface MapPointer extends Pointer {
 
 /** @internal */
 namespace MapPointer {
-
-    /* *
-     *
-     *  Variables
-     *
-     * */
-
-    let totalWheelDelta = 0;
-    let totalWheelDeltaTimer: number;
 
     /* *
      *
@@ -156,16 +149,17 @@ namespace MapPointer {
         // WebKit however, the delta is < 1, so we simply disable animation in
         // the `chart.mapZoom` call below.
         if (Math.abs(delta) >= 1) {
-            totalWheelDelta += Math.abs(delta);
-            if (totalWheelDeltaTimer) {
-                internalClearTimeout(totalWheelDeltaTimer);
+            this.mapWheelDelta = (this.mapWheelDelta || 0) + Math.abs(delta);
+            if (defined(this.mapWheelDeltaTimer)) {
+                internalClearTimeout(this.mapWheelDeltaTimer);
             }
-            totalWheelDeltaTimer = setTimeout((): void => {
-                totalWheelDelta = 0;
+            this.mapWheelDeltaTimer = setTimeout((): void => {
+                this.mapWheelDelta = 0;
+                this.mapWheelDeltaTimer = void 0;
             }, 50);
         }
 
-        if (totalWheelDelta < 10 && chart.isInsidePlot(
+        if ((this.mapWheelDelta || 0) < 10 && chart.isInsidePlot(
             e.chartX - chart.plotLeft,
             e.chartY - chart.plotTop
         ) && chart.mapView) {
