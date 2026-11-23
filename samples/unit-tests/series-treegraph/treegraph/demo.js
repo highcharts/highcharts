@@ -212,3 +212,49 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Treegraph with unequal endpoint widths', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+            series: [{
+                type: 'treegraph',
+                data: [{
+                    id: 'root',
+                    marker: {
+                        symbol: 'rect',
+                        width: 100
+                    }
+                }, {
+                    id: 'leaf',
+                    parent: 'root',
+                    marker: {
+                        symbol: 'rect',
+                        width: 20
+                    }
+                }],
+                dataLabels: {
+                    enabled: false
+                },
+                link: {
+                    lineWidth: 0
+                },
+                marker: {
+                    lineWidth: 0
+                }
+            }]
+        }),
+        points = chart.series[0].points;
+
+    assert.strictEqual(
+        points[0].shapeArgs.x,
+        0,
+        'The wider root starts at the left plot edge.'
+    );
+    assert.strictEqual(
+        points[1].shapeArgs.x + points[1].shapeArgs.width,
+        chart.plotSizeX,
+        'The narrower leaf ends at the right plot edge.'
+    );
+});
