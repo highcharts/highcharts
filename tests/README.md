@@ -708,6 +708,10 @@ fresh QUnit run on that page and has its own Playwright result. Samples that
 change browser globals should restore them. Use `QUNIT_FRESH_PAGE=1` to
 diagnose failures that only occur when samples run together.
 
+Samples that declare QUnit in `demo.details` must register at least one case.
+Skipped cases count as registered cases. Chart-only demos can finish with
+zero cases and still fail if their scripts throw.
+
 When QUnit tests fail, browser logs are written to per-worker files:
 
 ```text

@@ -53,6 +53,15 @@ export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
         > = [];
         window.__qunitFailedTests__ = failedTests;
         window.__qunitFailedAssertions__ = failedAssertions;
+        const lateErrors: string[] = [];
+        window.checkQUnitLateErrors = async () => {
+            // Let the browser deliver unhandled rejections from teardown.
+            await new Promise(resolve => setTimeout(resolve, 0));
+            if (lateErrors.length) {
+                throw new Error('Uncaught after QUnit runEnd:\n' +
+                    lateErrors.join('\n'));
+            }
+        };
 
         qunit.on('runEnd', ({ status, testCounts, runtime }) => {
             window.__qunitResults__ = { ...testCounts, status, runtime };
@@ -92,6 +101,14 @@ export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
         qunit.on('error', error => {
             const message = typeof error === 'string' ? error :
                 error instanceof Error ? error.message : 'Unknown error';
+            const stack = error instanceof Error ? error.stack : undefined;
+            if (window.__qunitResults__) {
+                // runEnd has published its counts, so Playwright must report
+                // this error when the sample fixture finishes.
+                // Firefox stacks contain locations only.
+                lateErrors.push(stack && !stack.includes(message) ?
+                    `${message}\n${stack}` : stack || message);
+            }
             failedAssertions.push({
                 result: false,
                 name: 'Uncaught error',
@@ -99,7 +116,7 @@ export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
                 actual: error instanceof Error ? undefined : error,
                 expected: undefined,
                 runtime: 0,
-                stack: error instanceof Error ? error.stack : undefined
+                stack
             });
         });
     });

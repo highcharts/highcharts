@@ -191,6 +191,7 @@ test('QUnit samples run independently on a shared page', async ({ page }) => {
             );
             assert.strictEqual(label, 'expected', 'deliberate failure');
         });
+        //# sourceURL=first-sample.js
     `);
     expect(first.qunitResults).toMatchObject({
         status: 'failed', total: 1, failed: 1
@@ -201,6 +202,14 @@ test('QUnit samples run independently on a shared page', async ({ page }) => {
         actual: 'first',
         expected: 'expected'
     }]);
+    expect(first.failedAssertions[0].source).toContain('first-sample.js:9:');
+
+    await expect(runSample('late error', `
+        QUnit.test('passes before the rejection', assert => assert.ok(true));
+        QUnit.on('runEnd', () => {
+            Promise.reject(new Error('rejected after runEnd'));
+        });
+    `)).rejects.toThrow('rejected after runEnd');
 
     const second = await runSample('second sample', `
         const label = 'second';
@@ -220,6 +229,9 @@ test('QUnit samples run independently on a shared page', async ({ page }) => {
     expect(second.failedAssertions).toEqual([]);
     expect(await originalTime.evaluate(time => time === Highcharts.time))
         .toBe(true);
+    expect(await page.evaluate(() =>
+        performance.getEntriesByName('QUnit Run', 'measure')
+    )).toHaveLength(0);
 });
 
 test.describe('Redirects for data', () => {

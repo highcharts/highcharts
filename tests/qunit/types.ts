@@ -72,7 +72,11 @@ interface QUnitEventMap {
 }
 
 interface BrowserQUnit {
-    config: { autostart: boolean };
+    config: {
+        autostart: boolean;
+        failOnZeroTests?: boolean;
+        reporters?: { perf?: boolean };
+    };
     version: string;
     start(): void;
     on<K extends keyof QUnitEventMap>(
@@ -89,6 +93,7 @@ declare global {
         __qunitBrowserLogs__?: string[];
         __qunitConsoleErrors__?: string[];
         QUnit: BrowserQUnit;
+        checkQUnitLateErrors(): Promise<void>;
         installQUnitHooks(): void;
         resetQUnitSample(): void;
     }

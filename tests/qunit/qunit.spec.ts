@@ -54,7 +54,13 @@ const test = base.extend<{ qunitPage: Page }, {
     qunitPage: useFreshPage ?
         async ({ page, setupScripts }, use) => {
             await initializeFreshPage(page, setupScripts);
-            await use(page);
+            try {
+                await use(page);
+            } finally {
+                if (!page.isClosed()) {
+                    await page.evaluate(() => window.checkQUnitLateErrors());
+                }
+            }
         } :
         async ({ warmPage, qunitSource }, use) => {
             const cleanup = await prepareWarmSample(warmPage, qunitSource);
@@ -218,12 +224,6 @@ test.describe('QUnit tests', () => {
                 sample.script = transpileTS(sample.script);
             }
 
-            if (!sample.script.includes('QUnit.test')) {
-                sample.script =
-                    sample.script +
-                    'QUnit.test("", (assert) => { assert.ok(true)  })';
-            }
-
             const content = useFreshPage ? sample.script :
                 scopeWarmSample(sample.script);
             const scriptLoadStart = Date.now();
@@ -242,7 +242,16 @@ test.describe('QUnit tests', () => {
                 });
                 const scriptLoadEnd = Date.now();
 
-                await page.evaluate(() => window.QUnit.start());
+                const isQUnitSample = sample.details?.resources?.some(
+                    resource => resource.includes('qunit')
+                );
+                await page.evaluate(isQUnitSample => {
+                    // Chart-only demos exercise setup without registering cases.
+                    if (!isQUnitSample) {
+                        window.QUnit.config.failOnZeroTests = false;
+                    }
+                    window.QUnit.start();
+                }, isQUnitSample);
 
                 const results = await waitForQUnitWithTimeout(
                     page,

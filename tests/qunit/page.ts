@@ -127,14 +127,14 @@ export async function readQUnitSource(): Promise<string> {
 }
 
 export function scopeWarmSample(source: string): string {
-    // Function scope keeps declarations local while preserving directives.
-    return `(function () {\n${source}\n}).call(window);`;
+    // Keep directives and source line numbers intact in assertion stacks.
+    return `(function () {${source}\n}).call(window);`;
 }
 
 export async function prepareWarmSample(
     page: Page,
     source: string
-): Promise<JSHandle<() => void>> {
+): Promise<JSHandle<() => Promise<void>>> {
     await clearConsoleLogs(page);
 
     return page.evaluateHandle(({ source, body }) => {
@@ -142,7 +142,7 @@ export async function prepareWarmSample(
         document.body.style.cssText = 'margin: 8px';
         window.__qunitResults__ = undefined;
         window.QUnit = {
-            config: { autostart: false }
+            config: { autostart: false, reporters: { perf: false } }
         } as typeof window.QUnit;
 
         const headNodes = new Set(document.head.childNodes);
@@ -180,21 +180,21 @@ export async function prepareWarmSample(
             }
         }
 
-        return (): void => {
-            for (const args of listeners) {
-                window.removeEventListener(...args);
-            }
-            window.onerror = originalOnError;
-            Reflect.deleteProperty(window, 'QUnit');
-
+        return async (): Promise<void> => {
             try {
                 window.resetQUnitSample();
-            } finally {
                 for (const node of Array.from(document.head.childNodes)) {
                     if (!headNodes.has(node)) {
                         node.remove();
                     }
                 }
+                await window.checkQUnitLateErrors();
+            } finally {
+                for (const args of listeners) {
+                    window.removeEventListener(...args);
+                }
+                window.onerror = originalOnError;
+                Reflect.deleteProperty(window, 'QUnit');
             }
         };
     }, { source, body: sampleBody });
