@@ -18,7 +18,7 @@ import { EMASeries } from "@highcharts/react/indicators/EMA";
 import { RSISeries } from "@highcharts/react/indicators/RSI";
 import { MACDSeries } from "@highcharts/react/indicators/MACD";
 
-// Fetch stock data`
+// Fetch stock data
 const stockData = await fetch(
   "https://demo-live-data.highcharts.com/aapl-ohlc.json",
 ).then((res) => (res.ok ? res.json() : null));
@@ -34,12 +34,14 @@ export default function TechnicalIndicatorsChart() {
         }}
       />
       <CandlestickSeries id="price" data={stockData} name="AAPL" />
-      <SMASeries linkedTo="price" params={{ period: 14 }} />
-      <EMASeries linkedTo="price" params={{ period: 26 }} />
-      <RSISeries linkedTo="price" params={{ period: 14 }} />
+      <SMASeries options={{ linkedTo: "price", params: { period: 14 } }} />
+      <EMASeries options={{ linkedTo: "price", params: { period: 26 } }} />
+      <RSISeries options={{ linkedTo: "price", params: { period: 14 } }} />
       <MACDSeries
-        linkedTo="price"
-        params={{ shortPeriod: 12, longPeriod: 26, signalPeriod: 9 }}
+        options={{
+          linkedTo: "price",
+          params: { shortPeriod: 12, longPeriod: 26, signalPeriod: 9 },
+        }}
       />
     </StockChart>
   );
