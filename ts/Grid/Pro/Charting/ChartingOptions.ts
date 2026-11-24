@@ -163,6 +163,22 @@ declare module '../../Core/Options' {
     }
 }
 
+declare module '../../Core/Options' {
+    interface LangOptions {
+        /**
+         * Language options for creating charts from the Grid data.
+         */
+        charting?: {
+            /**
+             * The accessible label of the button closing the chart popup.
+             *
+             * @default 'Close chart'
+             */
+            closeChart?: string;
+        };
+    }
+}
+
 declare module '../GridEvents' {
     interface GridEvents {
         /**

@@ -3,6 +3,11 @@
     width: min(640px, calc(100% - 16px));
     box-sizing: border-box;
 
+    .hcg-chart-popup-header {
+        display: flex;
+        justify-content: flex-end;
+    }
+
     .hcg-chart-popup-chart {
         height: 360px;
     }

@@ -25,12 +25,35 @@
 
 import type Grid from '../../Core/Grid';
 import type { AnyRecord } from '../../../Shared/Types';
+import type { SVGDefinition } from '../../Core/UI/SvgIcons';
 
 import Popup from '../../Core/UI/Popup.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Globals from '../../Core/Globals.js';
+import { createGridIcon } from '../../Core/UI/SvgIcons.js';
 
 const { makeHTMLElement } = GridUtils;
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * The icon of the close button, an X. Override it with a `close` icon in
+ * `rendering.icons`.
+ */
+const closeIcon: SVGDefinition = {
+    width: 16,
+    height: 16,
+    viewBox: '0 0 24 24',
+    children: [{
+        d: 'M18 6L6 18M6 6L18 18',
+        'stroke-width': 2
+    }]
+};
 
 
 /* *
@@ -64,6 +87,11 @@ class ChartPopup extends Popup {
      * The chart container element.
      */
     private chartContainer?: HTMLElement;
+
+    /**
+     * The button closing the popup.
+     */
+    private closeButton?: HTMLButtonElement;
 
 
     /* *
@@ -105,16 +133,16 @@ class ChartPopup extends Popup {
     public override show(anchorElement?: HTMLElement): void {
         super.show(anchorElement);
 
-        const { container, chartContainer } = this;
-        if (!container || !chartContainer) {
+        const { chartContainer } = this;
+        if (!chartContainer) {
             return;
         }
 
         this.chart = this.createChart(chartContainer);
 
-        // Let Escape close the popup without clicking into it first.
-        container.tabIndex = -1;
-        container.focus();
+        // Focus inside the popup, so that Escape closes it without clicking
+        // into it first.
+        this.closeButton?.focus();
     }
 
     /**
@@ -124,6 +152,7 @@ class ChartPopup extends Popup {
         this.chart?.destroy();
         delete this.chart;
         delete this.chartContainer;
+        delete this.closeButton;
         super.hide();
     }
 
@@ -139,6 +168,26 @@ class ChartPopup extends Popup {
         this.container?.classList.add(
             Globals.classNamePrefix + 'chart-popup'
         );
+        const { grid } = this;
+        const prefix = Globals.classNamePrefix;
+        const header = makeHTMLElement('div', {
+            className: prefix + 'chart-popup-header'
+        }, contentElement);
+        const closeButton = this.closeButton = makeHTMLElement('button', {
+            className: Globals.getClassName('button')
+        }, header);
+
+        closeButton.type = 'button';
+        closeButton.setAttribute(
+            'aria-label',
+            grid.options?.lang?.charting?.closeChart || 'Close chart'
+        );
+        closeButton.appendChild(createGridIcon('close', {
+            close: closeIcon,
+            ...grid.options?.rendering?.icons
+        }));
+        closeButton.addEventListener('click', (): void => this.hide());
+
         this.chartContainer = makeHTMLElement('div', {
             className: Globals.classNamePrefix + 'chart-popup-chart'
         }, contentElement);

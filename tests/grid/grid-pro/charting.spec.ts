@@ -144,6 +144,18 @@ test.describe('Creating charts from Grid data', () => {
         await page.keyboard.press('Escape');
         await expect(popup).toHaveCount(0);
 
+        // The close button gets the focus and closes the popup
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0].charting.createChart({
+                columns: ['region', 'sales']
+            });
+        });
+
+        const closeButton = popup.getByRole('button', { name: 'Close chart' });
+        await expect(closeButton).toBeFocused();
+        await closeButton.click();
+        await expect(popup).toHaveCount(0);
+
         const charts = await page.evaluate(
             () => (window as any).Highcharts.charts.filter(Boolean).length
         );

@@ -32,7 +32,7 @@ import type {
 import Charting from './Charting.js';
 import { defaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
-import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
+import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -54,7 +54,14 @@ export function compose(
         return;
     }
 
-    defaultOptions.charting = Charting.defaultOptions;
+    merge(true, defaultOptions, {
+        charting: Charting.defaultOptions,
+        lang: {
+            charting: {
+                closeChart: 'Close chart'
+            }
+        }
+    });
 
     addEvent(GridClass, 'beforeLoad', initCharting);
     addEvent(GridClass, 'beforeDestroy', destroyCharting);
