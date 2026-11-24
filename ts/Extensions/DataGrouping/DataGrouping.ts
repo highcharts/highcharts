@@ -220,7 +220,7 @@ export default DataGroupingComposition;
  * @type {Highcharts.DataTable}
  *//**
  * @name Highcharts.DataGroupingResultObject#groupMap
- * @type {Array<DataGroupingInfoObject>}
+ * @type {Array<Highcharts.DataGroupingInfoObject>}
  */
 
 /**

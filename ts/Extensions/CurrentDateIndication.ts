@@ -51,8 +51,9 @@ declare module '../Core/Axis/AxisOptions' {
          * @sample gantt/current-date-indicator/object-config
          *         Current date indicator with custom options
          *
-         * @default true
-         * @product gantt
+         * @default  true
+         * @product  gantt
+         * @requires modules/current-date-indicator
          */
         currentDateIndicator?: (boolean|CurrentDateIndicatorOptions);
     }
@@ -120,6 +121,7 @@ interface CurrentDateIndicatorOptions extends PlotLineOptions {
  * @extends   xAxis.plotLines
  * @excluding className, value
  * @product   gantt
+ * @requires  modules/current-date-indicator
  * @apioption xAxis.currentDateIndicator
  */
 const defaultOptions: CurrentDateIndicatorOptions = {

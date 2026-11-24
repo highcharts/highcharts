@@ -47,8 +47,6 @@ export interface NavigationOptions {
      *
      * In styled mode, the buttons are styled with the
      * `.highcharts-contextbutton` and `.highcharts-button-symbol` classes.
-     *
-     * @requires modules/exporting
      */
     buttonOptions?: ExportingButtonOptions;
 

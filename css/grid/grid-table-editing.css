@@ -1,0 +1,11 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
+/* Grid Pro table editing styles */
+
+/* The surface comes from the themed `.hcg-button` rules — do not repeat it
+   here. */
+.hcg-container .hcg-empty-state-button {
+    align-self: center;
+    margin-block: 8px;
+    gap: 6px;
+}

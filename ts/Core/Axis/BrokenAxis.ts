@@ -127,6 +127,7 @@ declare module './AxisOptions' {
          *
          * @since     4.1.0
          * @product   highcharts highstock gantt
+         * @requires  modules/broken-axis
          */
         breaks?: Array<AxisBreakOptions>;
     }

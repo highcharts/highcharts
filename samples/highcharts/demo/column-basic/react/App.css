@@ -21,6 +21,10 @@ body {
     margin: 1em auto;
 }
 
+#container {
+    height: 400px;
+}
+
 /* Custom CSS for the tooltip */
 .highcharts-tooltip {
     caption {

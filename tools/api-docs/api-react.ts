@@ -226,6 +226,28 @@ function getJSDoc(
 }
 
 
+// The pages a `@see` of the package points at: an option in the API, or a
+// component in the React docs.
+const SEE_API_RE = /^https:\/\/api\.highcharts\.com\/\w+\/(.+)$/;
+const SEE_DOCS_RE = /\/docs\/react\/components\/(\w)(\w*)$/;
+
+
+// Name where a `@see` link goes instead of spelling out its URL.
+function seeAlso(url: string): string {
+    const option = url.match(SEE_API_RE);
+    const component = url.match(SEE_DOCS_RE);
+
+    if (option) {
+        return `Highcharts API: [${option[1]}](${url})`;
+    }
+    if (component) {
+        return 'Documentation: ' +
+            `[${component[1].toUpperCase()}${component[2]} component](${url})`;
+    }
+    return `See also: <${url}>`;
+}
+
+
 // Render a JSDoc comment as HTML. Its tags are Markdown too: an `@example`
 // becomes a code block and a `@see` a link, the only tags the package uses.
 function toHTML(jsdoc: string): string {
@@ -240,7 +262,7 @@ function toHTML(jsdoc: string): string {
         }
         parts.push(tag.startsWith('@example') ?
             '```jsx\n' + content + '\n```' :
-            `See also: <${content}>`);
+            seeAlso(content));
     }
 
     return md.render(
@@ -249,6 +271,18 @@ function toHTML(jsdoc: string): string {
             (_, link, name) => `[${name || link}](${link})`
         )
     );
+}
+
+
+// Point the mentions of the `options` prop in a component description at
+// the prop's own page.
+function linkOptionsProp(html: string, optionsPage?: string): string {
+    return optionsPage ?
+        html.replace(
+            /<code>options<\/code>(?=\s+prop\b)/g,
+            `<a href="${optionsPage}">options</a>`
+        ) :
+        html;
 }
 
 
@@ -1010,7 +1044,12 @@ function buildTreeReact(
             componentChildren[c.name] = {
                 doclet: {
                     // Its examples show how to import it.
-                    description: toHTML(c.description),
+                    description: linkOptionsProp(
+                        toHTML(c.description),
+                        c.props.some(p => p.name === 'options') ?
+                            `${catKey}.${c.name}.options` :
+                            void 0
+                    ),
                     ...(c.crossref ?
                         { crossref: [CROSSREF_PRODUCT, c.crossref] } :
                         {}),

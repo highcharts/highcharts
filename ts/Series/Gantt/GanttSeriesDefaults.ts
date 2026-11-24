@@ -36,7 +36,7 @@ import { isNumber } from '../../Shared/Utilities.js';
  *
  * @extends      plotOptions.xrange
  * @product      gantt
- * @requires     highcharts-gantt
+ * @requires     modules/gantt
  * @optionparent plotOptions.gantt
  */
 const GanttSeriesDefaults: GanttSeriesOptions = {
@@ -157,7 +157,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  *
  * @extends   series,plotOptions.gantt
  * @product   gantt
- * @requires  highcharts-gantt
+ * @requires  modules/gantt
  * @apioption series.gantt
  */
 

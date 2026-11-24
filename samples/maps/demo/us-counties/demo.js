@@ -17,8 +17,6 @@
         }
     });
 
-    document.getElementById('container').innerHTML = 'Rendering map...';
-
     // Create the map
     Highcharts.mapChart('container', {
         chart: {
