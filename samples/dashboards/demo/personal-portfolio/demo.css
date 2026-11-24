@@ -25,13 +25,6 @@ body {
     --highcharts-color-1: #30cbea;
 }
 
-.dashboard-description {
-    background-color: var(--highcharts-neutral-color-5);
-    color: var(--highcharts-neutral-color-100);
-    margin: 0;
-    padding-left: 20px;
-}
-
 .dotted-line {
     stroke-dasharray: 2, 12;
 }
@@ -124,4 +117,14 @@ body {
     .highcharts-dashboards-component-kpi-value {
         font-size: 1.2rem;
     }
+}
+
+.highcharts-description {
+    background: light-dark(#f2f6f2, #323232);
+    border-radius: 0 4px 4px 0;
+    border-left: 2px solid light-dark(#1d6aff, #fff);
+    font-size: 0.8rem;
+    font-style: italic;
+    padding: 8px 16px;
+    margin: 2em 10px 1em;
 }
