@@ -68,7 +68,7 @@ Highcharts.chart('container', {
                 format: '{point.name}',
                 color: '#000000',
                 style: {
-                    textOutline: false
+                    textOutline: 'none'
                 }
             }
         }

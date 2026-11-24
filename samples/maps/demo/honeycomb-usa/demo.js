@@ -83,7 +83,7 @@ Highcharts.chart('container', {
                 format: '{point.hc-a2}',
                 color: '#000000',
                 style: {
-                    textOutline: false
+                    textOutline: 'none'
                 }
             }
         }
