@@ -1,9 +1,10 @@
 # Nightly distribution
 
-`nightly_dist` builds the exact run SHA without distribution credentials. Before
-uploading, it checks that the assembled tree contains only regular files and
-directories, rejects nested `.git` entries, and skips the checkout's top-level
-`.git` directory. The artifact includes release metadata and other hidden files.
+`nightly_dist` builds the exact run SHA without distribution credentials. It
+stages a fresh Core distribution using release metadata from the checked-out
+`highcharts-dist` commit. The job verifies that the staged tree contains only
+regular files and directories and rejects any `.git` entries. The artifact
+includes release metadata and other hidden files.
 `nightly_dist_publish` runs on `master` only, downloads that same run's artifact,
 checks its file types, and signs and pushes from a separate runner. It never runs
 build scripts or package lifecycle hooks. Other refs and `pushToDist: false`
@@ -23,6 +24,8 @@ Actions, set the repository variable `NIGHTLY_PACKAGE_VALIDATION` to `true`
 to include the lane in scheduled runs.
 
 The build job records and uploads a build manifest when validation is enabled.
+Its `metadataBefore` and `metadataAfter` fields identify the same metadata
+commit for a staged build.
 The validation job downloads the distribution and build manifest by artifact ID,
 checks the directory digest, and packs the candidate once. It installs the
 candidate and the stable npm control in separate fixtures and runs the consumer

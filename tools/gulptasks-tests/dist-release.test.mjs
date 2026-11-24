@@ -113,6 +113,74 @@ describe('dist-release cleanup', () => {
     });
 });
 
+it('stages Core from committed metadata and built files in release order', async t => {
+    const root = await mkdtemp(join(tmpdir(), 'hc-stage-core-'));
+    t.after(() => rm(root, { recursive: true, force: true }));
+    const source = join(root, 'source');
+    const metadata = join(root, 'metadata');
+    const output = join(root, 'output');
+    for (const [file, contents] of Object.entries({
+        'code/highcharts.js': 'Core bundle',
+        'code/css/highcharts.css': 'generated styles',
+        'css/highcharts.css': 'release styles',
+        'code/es5/highcharts.js': 'archive only',
+        'code/es-modules/masters/highcharts.src.d.ts': 'public declaration',
+        'code/es-modules/Core/internal.d.ts': 'internal declaration',
+        'code/highcharts.js.map': 'source map',
+        'build/dist/products.js': 'var products = {"Highcharts":{"nr":"13.2.0"}}',
+        'SECURITY.md': 'source policy'
+    })) {
+        await writeFixtureFile(source, file, contents);
+    }
+    const original = '{"name":"highcharts","main":"highcharts.js","module":"esm/highcharts.js"}';
+    const largeAsset = Buffer.alloc(1024 * 1024 + 1, 0xff);
+    for (const [file, contents] of Object.entries({
+        'package.json': original, 'bower.json': original, 'SECURITY.md': 'old policy',
+        '.github/banner.bin': largeAsset,
+        '.github/workflows/publish.yml': 'retained metadata', 'obsolete.js': 'prior release'
+    })) {
+        await writeFixtureFile(metadata, file, contents);
+    }
+    function commit(cwd) {
+        const git = (...args) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim();
+        git('init', '-q');
+        git('add', '-f', '.');
+        git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+            '-c', 'commit.gpgSign=false', 'commit', '-qm', 'Fixture');
+        return git('rev-parse', 'HEAD');
+    }
+    const sourceSha = commit(source);
+    const revision = commit(metadata);
+    await writeFile(join(metadata, 'package.json'), 'uncommitted');
+    const cli = fileURLToPath(new URL('../nightly-package-validation-prototype/stage-core.mjs', import.meta.url));
+    const stage = dest => execFileSync(process.execPath, [cli, sourceSha, source, metadata, revision, dest], {
+        stdio: 'pipe'
+    });
+    stage(output);
+    const read = file => readFileSync(join(output, file), 'utf8');
+    strictEqual(read('css/highcharts.css'), 'release styles');
+    strictEqual(read('SECURITY.md'), 'source policy');
+    strictEqual(read('es-modules/masters/highcharts.src.d.ts'), 'public declaration');
+    strictEqual(read('.github/workflows/publish.yml'), 'retained metadata');
+    assert.deepEqual(readFileSync(join(output, '.github/banner.bin')), largeAsset);
+    for (const file of ['es5', 'es-modules/Core/internal.d.ts', 'highcharts.js.map', 'obsolete.js', '.git']) {
+        ok(!existsSync(join(output, file)), file);
+    }
+    for (const file of ['package.json', 'bower.json']) {
+        const pkg = JSON.parse(read(file));
+        strictEqual(pkg.version, '13.2.0');
+        strictEqual(pkg.types, 'highcharts.d.ts');
+        strictEqual(pkg.module, undefined);
+    }
+    strictEqual(readFileSync(join(metadata, 'package.json'), 'utf8'), 'uncommitted');
+    throws(() => stage(output));
+    strictEqual(read('highcharts.js'), 'Core bundle');
+    await rm(join(source, 'SECURITY.md'));
+    const incomplete = join(root, 'incomplete');
+    throws(() => stage(incomplete));
+    ok(!existsSync(incomplete));
+});
+
 describe('Grid release and pilot staging', () => {
     const { stageGridPackage } = require('../gulptasks/lib/release-package');
 

@@ -47,6 +47,25 @@ build manifest and npm pack inventory. For Grid Lite and Grid Pro it checks the 
 manifest. After installation it compares the candidate's files and their
 contents with the recorded package inventory.
 
+## Stage Core locally
+
+Use a disposable Highcharts source checkout at `SOURCE_SHA` and a
+`highcharts-dist` checkout at `METADATA_SHA`. From the source checkout, run
+the Nightly build commands and stage the distribution in a new directory
+under an existing scratch directory.
+
+```sh
+npm ci
+npm run build -- --CI true
+npx gulp scripts-es5
+npx gulp dist-verify
+node tools/nightly-package-validation-prototype/stage-core.mjs \
+  "$SOURCE_SHA" . "$HIGHCHARTS_DIST" "$METADATA_SHA" "$OUTPUT"
+```
+
+Set `HIGHCHARTS_DIST` to the metadata checkout and `OUTPUT` to the new
+directory. Pass `OUTPUT` to `npm pack` as shown above.
+
 ## Validate Grid Lite locally
 
 In a disposable source checkout at the revision under test, run `npm ci` and

@@ -92,7 +92,7 @@ describe('nightly distribution credential boundary', () => {
         strictEqual(build.steps[0].with.ref, '${{ github.sha }}');
         const artifact = build.steps.find(item =>
             item.uses?.startsWith('actions/upload-artifact@'));
-        ok(artifact.with.path.includes('!highcharts-dist/.git'));
+        strictEqual(artifact.with.path, '${{ runner.temp }}/staged-core/');
         strictEqual(artifact.with['include-hidden-files'], true);
         for (const id of ['distribution', 'build_evidence']) {
             const upload = build.steps.find(item => item.id === id);
@@ -104,23 +104,23 @@ describe('nightly distribution credential boundary', () => {
         skip: process.platform === 'win32'
     }, async () => {
         const guard = build.steps.find(item => item.name === 'Validate assembled distribution tree');
-        const assembly = build.steps.find(item => item.name === 'Install and build');
+        const assembly = build.steps.find(item => item.name === 'Stage Core distribution');
         const upload = build.steps.find(item => item.id === 'distribution');
+        strictEqual(assembly.env.METADATA_REVISION, '${{ steps.metadata.outputs.commit }}');
         ok(build.steps.indexOf(assembly) < build.steps.indexOf(guard));
         ok(build.steps.indexOf(guard) < build.steps.indexOf(upload));
         strictEqual(guard.if, undefined);
         strictEqual(guard['continue-on-error'], undefined);
 
         await withFixture(async root => {
-            const distribution = join(root, 'highcharts-dist');
+            const distribution = join(root, 'staged-core');
             await rename(join(root, 'nightly-dist'), distribution);
+            const validate = () => run(guard.run, root, { RUNNER_TEMP: root });
             await writeFile(join(distribution, '.npmignore'), 'hidden metadata');
-            await mkdir(join(distribution, '.git/objects'), { recursive: true });
-            await symlink('missing', join(distribution, '.git/objects/ignored'));
-            run(guard.run, root);
-            await rm(join(distribution, '.git'), { recursive: true });
+            validate();
 
             const cases = [
+                ['.git', path => mkdir(path)],
                 ['.git', path => writeFile(path, 'gitdir: ../metadata')],
                 ['.git', path => symlink(root, path)],
                 ['nested/.git', path => writeFile(path, 'gitdir: ../../metadata')],
@@ -134,7 +134,7 @@ describe('nightly distribution credential boundary', () => {
             for (const [name, create] of cases) {
                 const path = join(distribution, name);
                 await create(path);
-                throws(() => run(guard.run, root), error =>
+                throws(validate, error =>
                     error.status === 1 && error.stdout?.includes(
                         'Assembled distribution contains unexpected Git metadata or special files.'
                     ), name);
@@ -144,9 +144,9 @@ describe('nightly distribution credential boundary', () => {
             const original = join(root, 'original');
             await rename(distribution, original);
             await symlink(original, distribution);
-            throws(() => run(guard.run, root), error =>
+            throws(validate, error =>
                 error.status === 1 && error.stdout?.includes(
-                    'Expected a regular highcharts-dist directory.'
+                    'Expected a regular staged Core directory.'
                 ));
         });
     });
@@ -653,6 +653,15 @@ process.exitCode = await runConsumer({ gridPackage: identity.gridPackage, replay
             for (const name of ['package.json', 'highcharts.js']) {
                 await writeFile(join(transferred, name), readFileSync(join(distribution, name)));
             }
+            runTool('verify', transferred, manifest);
+            // A git-free staging directory takes its identity from the metadata checkout.
+            throws(() => runTool('record', transferred, manifest, before, '11.20.0', distribution),
+                /Metadata checkout SHA changed after staging/u);
+            runTool('record', transferred, manifest, after, '11.20.0', distribution);
+            const staged = JSON.parse(readFileSync(manifest, 'utf8'));
+            strictEqual(staged.metadataBefore, after);
+            strictEqual(staged.metadataAfter, after);
+            strictEqual(staged.directorySha256, record.directorySha256);
             runTool('verify', transferred, manifest);
             await writeFile(join(transferred, 'highcharts.js'), 'changed');
             throws(() => runTool('verify', transferred, manifest), /Distribution digest mismatch/u);

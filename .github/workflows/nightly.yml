@@ -313,7 +313,6 @@ jobs:
           repository: highcharts/highcharts-dist
           path: highcharts-dist
           ref: 'master'
-          fetch-depth: 0
           persist-credentials: false
 
       - name: Use Node.js
@@ -330,16 +329,23 @@ jobs:
           npm run build -- --CI true
           npx gulp scripts-es5
           npx gulp dist-verify
-          npx gulp dist-release --force-yes
+
+      - name: Stage Core distribution
+        working-directory: ./highcharts
+        env:
+          METADATA_REVISION: ${{ steps.metadata.outputs.commit }}
+        run: |
+          node tools/nightly-package-validation-prototype/stage-core.mjs \
+            "$GITHUB_SHA" . ../highcharts-dist "$METADATA_REVISION" "$RUNNER_TEMP/staged-core"
 
       - name: Validate assembled distribution tree
         run: |
-          if [ ! -d highcharts-dist ] || [ -L highcharts-dist ]; then
-            echo '::error::Expected a regular highcharts-dist directory.'
+          directory="$RUNNER_TEMP/staged-core"
+          if [ ! -d "$directory" ] || [ -L "$directory" ]; then
+            echo '::error::Expected a regular staged Core directory.'
             exit 1
           fi
-          invalid_files=$(find -P highcharts-dist \
-            \( -path highcharts-dist/.git -type d -prune \) -o \
+          invalid_files=$(find -P "$directory" \
             \( -name .git -o \( ! -type f -a ! -type d \) \) -print -quit)
           if [ -n "$invalid_files" ]; then
             echo '::error::Assembled distribution contains unexpected Git metadata or special files.'
@@ -351,10 +357,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: nightly-dist-${{ github.sha }}-${{ github.run_attempt }}
-          path: |
-            highcharts-dist/
-            !highcharts-dist/.git
-            !highcharts-dist/.git/**
+          path: ${{ runner.temp }}/staged-core/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
@@ -365,11 +368,12 @@ jobs:
         continue-on-error: true
         working-directory: ./highcharts
         env:
-          METADATA_BEFORE: ${{ steps.metadata.outputs.commit }}
+          METADATA_REVISION: ${{ steps.metadata.outputs.commit }}
         run: |
           npm_version=$(npm --version)
           node tools/nightly-package-validation-prototype/distribution.mjs record \
-            ../highcharts-dist "$RUNNER_TEMP/build-manifest.json" "$METADATA_BEFORE" "$npm_version"
+            "$RUNNER_TEMP/staged-core" "$RUNNER_TEMP/build-manifest.json" \
+            "$METADATA_REVISION" "$npm_version" ../highcharts-dist
 
       - name: Upload build evidence
         id: build_evidence

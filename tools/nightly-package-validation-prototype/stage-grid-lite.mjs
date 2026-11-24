@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import {
-    chmodSync, mkdirSync, readFileSync, rmSync, writeFileSync
-} from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { releaseRepositoryMetadata, stageGridPackage } from '../gulptasks/lib/release-package.js';
+import { stageGridPackage } from '../gulptasks/lib/release-package.js';
 import { getReleaseVersion } from '../gulptasks/lib/release-version.js';
 import { readPackResult } from './npm-pack.mjs';
 import { fileInventory, gridPackages, sha256 } from './package-evidence.mjs';
+import { copyReleaseMetadata } from './release-metadata.mjs';
 const usage = 'Usage: node stage-grid-lite.mjs <source-sha> <source-checkout> <dist-checkout> <metadata-revision> <new-output-dir> [--package grid-lite|grid-pro] [--missing-css]';
 if (process.argv.includes('--help')) {
     console.log(usage);
@@ -37,28 +36,8 @@ const packageDirectory = join(outputDirectory, 'package');
 const missingCss = values['missing-css'];
 const packageName = `@highcharts/${packageKey}`;
 
-function git(args) {
-    const result = spawnSync('git', args, {
-        cwd: metadataRepo,
-        encoding: 'utf8'
-    });
-    assert.equal(result.status, 0, result.stderr || `git ${args.join(' ')} failed`);
-    return result.stdout.trim();
-}
-
-function metadataAtRevision(file) {
-    const result = spawnSync('git', ['show', `${metadataRevision}:${file}`], {
-        cwd: metadataRepo,
-        encoding: null
-    });
-    assert.equal(result.status, 0, `Metadata file unavailable at ${metadataRevision}: ${file}`);
-    return result.stdout;
-}
-
 let createdOutput = false;
 try {
-    const revision = git(['rev-parse', '--verify', `${metadataRevision}^{commit}`]);
-    assert.equal(revision, metadataRevision, 'Pass a full immutable metadata commit SHA');
     const sourceHead = spawnSync('git', ['rev-parse', 'HEAD'], {
         cwd: sourceRepo,
         encoding: 'utf8'
@@ -75,20 +54,8 @@ try {
     createdOutput = true;
     mkdirSync(packageDirectory);
 
-    const entries = git(['ls-tree', '-r', '-z', '--full-tree', revision]).split('\0').filter(Boolean);
-    for (const entry of entries) {
-        const separator = entry.indexOf('\t');
-        const file = entry.slice(separator + 1);
-        if (releaseRepositoryMetadata.some(pattern => file.match(pattern))) {
-            assert(!file.includes('\\'), `Unexpected metadata path: ${file}`);
-            const mode = entry.slice(0, 6);
-            assert(mode === '100644' || mode === '100755', `Expected regular release metadata: ${file}`);
-            const destination = join(packageDirectory, file);
-            mkdirSync(dirname(destination), { recursive: true });
-            writeFileSync(destination, metadataAtRevision(file));
-            chmodSync(destination, mode === '100755' ? 0o755 : 0o644);
-        }
-    }
+    await copyReleaseMetadata(metadataRepo, metadataRevision, packageDirectory);
+    const metadataPackageJsonSha256 = sha256(readFileSync(join(packageDirectory, 'package.json')));
     const packageJson = stageGridPackage(codeDirectory, packageDirectory, gridVersion);
     assert.equal(packageJson.name, packageName, `Expected ${packageName} metadata`);
     if (missingCss) {
@@ -114,8 +81,8 @@ try {
         sourceSha,
         runId: process.env.GITHUB_RUN_ID,
         attempt: process.env.GITHUB_RUN_ATTEMPT,
-        metadataRevision: revision,
-        metadataPackageJsonSha256: sha256(metadataAtRevision('package.json')),
+        metadataRevision,
+        metadataPackageJsonSha256,
         packageManifestSha256,
         missingCssControl: missingCss,
         stagedFiles: files,

@@ -13,7 +13,12 @@ const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
 const childProcess = require('child_process');
-const { releaseRepositoryMetadata, stageGridPackage } = require('./lib/release-package');
+const {
+    releaseRepositoryMetadata,
+    stageCorePackage,
+    stageGridPackage,
+    updateReleaseJSON
+} = require('./lib/release-package');
 const { getReleaseVersion } = require('./lib/release-version');
 const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
 const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
@@ -188,53 +193,6 @@ async function removeFilesInFolder(folder, exceptions) {
 }
 
 /**
- * Synchronize release package metadata before versioning.
- * @param {Record<string, any>} json
- * JSON object to update.
- * @param {string} [productName] The product name.
- * @return {Record<string, any>}
- * Updated JSON object.
- */
-function updateReleaseJSON(json, productName) {
-    if (productName === 'Highcharts') {
-        // The UMD submodules in `modules/*.js` read the shared namespace from
-        // `window._Highcharts`, which only the UMD bundle assigns. Declaring an
-        // ESM entry point makes bundlers resolve the bare specifier to the pure
-        // ESM bundle, while subpath imports keep loading UMD, leaving the
-        // namespace unassigned (#25072). Until subpath resolution follows the
-        // same bundle, the release package must not advertise one.
-        delete json.module;
-
-        json.types = (
-            json.main ?
-                json.main.replace(/\.js$/u, '.d.ts') :
-                'highcharts.d.ts'
-        );
-
-        if (json.dependencies) {
-            delete json.dependencies.jspdf;
-            delete json.dependencies['svg2pdf.js'];
-        }
-
-        json.peerDependencies = Object.assign({}, json.peerDependencies, {
-            jspdf: '^4.1.0',
-            'svg2pdf.js': '^2.7.0'
-        });
-
-        json.peerDependenciesMeta = Object.assign(
-            {},
-            json.peerDependenciesMeta,
-            {
-                jspdf: { optional: true },
-                'svg2pdf.js': { optional: true }
-            }
-        );
-    }
-
-    return json;
-}
-
-/**
  * Add the current version to the Bower and package.json files
  * @param {string} version
  * To replace with
@@ -257,75 +215,6 @@ function updateJSONFiles(version, files, productName) {
     }
 
     log.message('Json files updated!');
-}
-
-/**
- * Copy the JavaScript files over
- */
-function copyFiles() {
-    const pathToDistRepo = join('..', releaseRepos.Highcharts);
-
-    const mapFromTo = {};
-    const folders = [{
-        from: 'code',
-        to: pathToDistRepo
-    }, {
-        from: 'css',
-        to: join(pathToDistRepo, 'css')
-    }];
-
-    const files = {
-        'SECURITY.md': join(pathToDistRepo, 'SECURITY.md')
-        // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
-        // 'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
-        // 'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
-        // 'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
-        // 'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
-    };
-
-    const filesToIgnore = [
-        '.DS_Store',
-        'package.json', // Is handled in `updateJSONFiles`
-        '.js.map'
-    ];
-
-    const pathsToIgnore = [
-        'dashboards',
-        'grid',
-        'es5'
-    ];
-
-    // Copy all the files in the code folder
-    folders.forEach(folder => {
-        const {
-            from,
-            to
-        } = folder;
-        getFilesInFolder(from, true)
-            .filter(path => (
-                (
-                    path.startsWith('es-modules/masters') ||
-                    !path.startsWith('es-modules') ||
-                    !path.endsWith('.d.ts')
-                ) &&
-                !pathsToIgnore.some(pattern => path.startsWith(pattern)) &&
-                !filesToIgnore.some(pattern => path.endsWith(pattern))
-            ))
-            .forEach(filename => {
-                mapFromTo[join(from, filename)] = join(to, filename);
-            });
-    });
-
-    // Add additional files to list.
-    Object.assign(mapFromTo, files);
-
-    // Copy all the files to release repository
-    Object.keys(mapFromTo).forEach(from => {
-        const to = mapFromTo[from];
-        // libFS.copyAllFiles(from, to);
-        fs.copySync(from, to);
-    });
-    log.message('Files copied successfully!');
 }
 
 /**
@@ -521,8 +410,12 @@ async function release() {
     }
 
     if (productName === 'Highcharts') {
-        copyFiles();
-        updateJSONFiles(version, ['bower', 'package'], productName);
+        stageCorePackage({
+            sourceRoot: process.cwd(),
+            destination: join('..', releaseRepos.Highcharts),
+            version
+        });
+        log.message('Core release files copied and versioned successfully!');
     } else if (productName === 'Grid') {
         for (const [edition, repo] of Object.entries(releaseRepos.Grid)) {
             stageGridPackage(
