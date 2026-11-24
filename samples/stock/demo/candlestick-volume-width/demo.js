@@ -119,7 +119,6 @@
         }],
         tooltip: {
             shape: 'square',
-            headerShape: 'callout',
             borderWidth: 0,
             shadow: false,
             fixed: true
