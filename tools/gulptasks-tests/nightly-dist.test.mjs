@@ -270,6 +270,7 @@ describe('nightly advisory package validation', () => {
         `npm error ${peer}`
     ].join('\n');
     const candidatePeer = 'peerOptional vite@"^7.0.0 || ^6.0.0" from @highcharts/grid-lite@4.0.0';
+    const gridReactPeer = 'peer @highcharts/grid-lite@">=3.1.0" from @highcharts/grid-lite-react@3.3.0';
     const peerCases = [
         {
             test: 'fails when the candidate requires an incompatible peer at lock resolution',
@@ -277,9 +278,9 @@ describe('nightly advisory package validation', () => {
             verdict: 'failed'
         },
         {
-            test: 'fails when a fixture dependency rejects the candidate as a peer at install',
-            command: 'ci', diagnostic: resolutionError('peer @highcharts/grid-lite@"^3.0.0" from wrapper@1.0.0'),
-            error: 'ERESOLVE: peer @highcharts/grid-lite@"^3.0.0" from wrapper@1.0.0', verdict: 'failed'
+            test: 'fails when Grid Lite React rejects the candidate as a peer at install',
+            command: 'ci', diagnostic: resolutionError(gridReactPeer),
+            error: `ERESOLVE: ${gridReactPeer}`, verdict: 'failed'
         },
         {
             test: 'blocks when npm reports a registry error alongside a peer warning',
@@ -309,6 +310,12 @@ describe('nightly advisory package validation', () => {
             drift: true, verdict: 'blocked'
         })),
         ...peerCases.map(testCase => ({ ...grid, ...testCase })),
+        {
+            ...grid,
+            nestedGrid: true,
+            verdict: 'failed',
+            test: 'fails when Grid Lite React resolves a separate Grid Lite installation'
+        },
         {
             ...grid,
             installedDrift: true,
@@ -353,7 +360,7 @@ describe('nightly advisory package validation', () => {
         await withFixture(async root => {
             const {
                 name, key, args, prepared, drift, command, diagnostic, error: expectedError, controlInstallFails,
-                verdict, breakManifest, installedDrift, replayDrift, failReplayWrite, viewRecords
+                verdict, breakManifest, installedDrift, replayDrift, failReplayWrite, viewRecords, nestedGrid
             } = testCase;
             const directory = join(root, `${key}-package-prototype-prepared`);
             const tarball = prepared ? join(directory, 'candidate', 'candidate.tgz') : join(root, 'candidate.tgz');
@@ -433,9 +440,13 @@ if (process.env.FIXTURE_REPLAY && ['view', 'pack', 'install'].includes(command))
         fs.mkdirSync(dirname(file), { recursive: true });
         fs.writeFileSync(file, bytes);
     }
-    if ('${key}' === 'highcharts') {
-        fs.mkdirSync('node_modules/@highcharts/react', { recursive: true });
-        fs.writeFileSync('node_modules/@highcharts/react/index.js', 'module.exports = {}');
+    const wrapper = join('node_modules', '@highcharts', '${key === 'grid-lite' ? 'grid-lite-react' : 'react'}');
+    fs.mkdirSync(wrapper, { recursive: true });
+    fs.writeFileSync(join(wrapper, 'index.js'), 'module.exports = {}');
+    if (lane === 'candidate' && ${Boolean(nestedGrid)}) {
+        const nestedEntry = join(wrapper, installed, '${entry}');
+        fs.mkdirSync(dirname(nestedEntry), { recursive: true });
+        fs.writeFileSync(nestedEntry, 'module.exports = {}');
     }
     if (lane === 'candidate' && ${Boolean(installedDrift)}) {
         fs.writeFileSync(join(installed, '${entry}'), 'Modified during installation');
@@ -526,6 +537,11 @@ if (process.env.FIXTURE_REPLAY && ['view', 'pack', 'install'].includes(command))
             } else if (installedDrift) {
                 strictEqual(report.candidate.stage, 'resolution');
                 ok(report.candidate.error.includes(`Installed candidate file digest mismatch: ${entry}`));
+            } else if (nestedGrid) {
+                strictEqual(report.candidate.stage, 'resolution');
+                ok(report.candidate.error.includes(
+                    join('node_modules', '@highcharts/grid-lite-react', 'node_modules', name, entry)
+                ));
             } else if (verdict !== 'passed') {
                 strictEqual(report.candidate.stage, command === 'ci' ? 'install' : 'lock');
                 strictEqual(report.candidate.error, expectedError);

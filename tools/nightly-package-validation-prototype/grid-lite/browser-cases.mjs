@@ -1,5 +1,18 @@
 export const consumerStartedAttachment = 'consumer-check-started';
 
+async function prepare(page) {
+    // The credits CDN is external to the package checks.
+    await page.route(/^https:\/\/assets\.highcharts\.com\/grid\/logo_(light|dark)(x2)?\.png$/u, route =>
+        route.fulfill({
+            contentType: 'image/png',
+            body: Buffer.from(
+                'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAXpeqz8AAAAASUVORK5CYII=',
+                'base64'
+            )
+        })
+    );
+}
+
 export const browserCases = [
     {
         id: 'Grid Lite renders styled rows and sorts a column',
@@ -8,18 +21,7 @@ export const browserCases = [
             'es-modules/masters/grid-lite.src.js',
             'css/grid-lite.css'
         ],
-        async prepare(page) {
-            // The credits CDN is external to the check for packaged styles and sorting.
-            await page.route(/^https:\/\/assets\.highcharts\.com\/grid\/logo_(light|dark)(x2)?\.png$/u, route =>
-                route.fulfill({
-                    contentType: 'image/png',
-                    body: Buffer.from(
-                        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAXpeqz8AAAAASUVORK5CYII=',
-                        'base64'
-                    )
-                })
-            );
-        },
+        prepare,
         async check(page, expect) {
             const grid = page.locator('#grid');
             const rows = grid.locator('tbody tr');
@@ -35,6 +37,25 @@ export const browserCases = [
 
             await grid.getByRole('columnheader', { name: 'fruit' }).click();
             await expect(fruitCells).toHaveText(['Apple', 'Pear']);
+        }
+    },
+    {
+        id: 'Grid Lite React renders rows and updates from React props',
+        page: 'app/grid-lite-react.html',
+        modules: [],
+        prepare,
+        async check(page, expect) {
+            const table = page.locator('#app table');
+            const fruitCells = table.locator('tbody tr td:first-child');
+            const quantityCells = table.locator('tbody tr td:nth-child(2)');
+            await expect(table).toBeVisible();
+            await expect(table).toHaveCSS('table-layout', 'fixed');
+            await expect(fruitCells).toHaveText(['Pear', 'Apple']);
+            await expect(quantityCells).toHaveText(['2', '5']);
+
+            await page.getByRole('button', { name: 'Update inventory' }).click();
+            await expect(fruitCells).toHaveText(['Pear', 'Apple', 'Peach']);
+            await expect(quantityCells).toHaveText(['2', '7', '3']);
         }
     }
 ];

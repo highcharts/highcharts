@@ -51,8 +51,10 @@ Run it again with `gridLiteMissingCss: true` to test the missing-stylesheet
 diagnostic. The pilot runs alongside the existing Nightly jobs and skips
 publication to Visual Review. The Grid Lite job builds and packs Grid Lite
 using release metadata from a pinned
-`grid-lite-dist` commit. Open **Validate nightly Grid Lite npm package** for
-the stable and candidate outcomes and the evidence link.
+`grid-lite-dist` commit. Both the candidate and stable consumers check vanilla
+Grid Lite and a React-driven data update using the same pinned
+`@highcharts/grid-lite-react` release. Open **Validate nightly Grid Lite npm
+package** for the stable and candidate outcomes and the evidence link.
 
 ```sh
 gh workflow run nightly.yml --ref "$REF" -f validateGridLite=true -f pushToDist=false

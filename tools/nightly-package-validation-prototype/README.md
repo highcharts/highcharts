@@ -70,7 +70,10 @@ node "$prototype/run.mjs" "$TARBALL" "$SHA256" --package grid-lite
 The pilot uses the Grid release task's assembly rules with metadata from
 `METADATA_SHA`. It compares the packed candidate with an exact stable release
 in separate consumers, checking package entries, types, and a production build.
-Chromium verifies the packaged styling and column sorting.
+Each consumer installs the same pinned published `@highcharts/grid-lite-react`
+package and resolves its Grid Lite peer to that consumer's tarball. In Chromium,
+the vanilla Grid Lite page checks packaged styling and column sorting, and the
+React page checks the initial rows and how they change after a React state update.
 
 The staged and packed file inventories are retained with the tarball. Missing
 `main`, `module`, or `types` entries fail during consumer resolution.

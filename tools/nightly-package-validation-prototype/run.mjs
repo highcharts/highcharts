@@ -201,6 +201,8 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
                 statSync(file).isFile() && statSync(file).size > 0, `Invalid Grid Lite ${field} entry`);
         }
         assert.equal(require.resolve(packageName), resolve(installed, pkg.main));
+        const wrapperRequire = createRequire(require.resolve('@highcharts/grid-lite-react'));
+        assert.equal(wrapperRequire.resolve(packageName), resolve(installed, pkg.main));
     }
 
     function verifyHighchartsEntries(manifest, installed) {
