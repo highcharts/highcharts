@@ -578,7 +578,6 @@ function nav() {
         },
         navigator: {
             enabled: true,
-            liveRedraw: true,
             margin: 0,
             maskFill: 'rgba(180, 198, 220, 0.5)',
             series: {
