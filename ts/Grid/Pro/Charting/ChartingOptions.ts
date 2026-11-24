@@ -27,6 +27,7 @@ import type Grid from '../../Core/Grid';
 import type Charting from './Charting';
 import type { AnyRecord } from '../../../Shared/Types';
 import type { GridEvent } from '../../Core/GridUtils';
+import type { RowId } from '../../Core/Data/DataProvider';
 
 
 /* *
@@ -36,10 +37,13 @@ import type { GridEvent } from '../../Core/GridUtils';
  * */
 
 /**
- * Chart types the Grid can create from its data.
+ * Chart types the Grid can create from its data. `stackedColumn` is a column
+ * chart with the series stacked on top of each other.
  */
-export type ChartingChartType =
-    'area' | 'bar' | 'bubble' | 'column' | 'line' | 'pie' | 'scatter';
+export type ChartingChartType = (
+    'area' | 'bar' | 'bubble' | 'column' | 'line' | 'pie' | 'scatter' |
+    'stackedColumn'
+);
 
 /**
  * Options for creating charts from the Grid data.
@@ -55,7 +59,7 @@ export interface ChartingOptions {
      * The chart types to offer, in order of preference. Types that do not fit
      * the selected data are left out.
      *
-     * @default ['line', 'area', 'column', 'bar', 'pie', 'scatter', 'bubble']
+     * @default ['line', 'area', 'column', 'stackedColumn', 'bar', 'pie', 'scatter', 'bubble']
      */
     types?: Array<ChartingChartType>;
 }
@@ -81,6 +85,14 @@ export interface CreateChartOptions {
      * opens in a popup over the Grid.
      */
     renderTo?: string | HTMLElement;
+
+    /**
+     * The ids of the rows to chart, such as the ids returned by
+     * `grid.rowSelection.getSelectedRowIds()`. The rows are charted in the
+     * order the Grid presents them, and rows filtered out are left out.
+     * Defaults to every row after sorting and filtering.
+     */
+    rows?: Array<RowId>;
 
     /**
      * The chart type. Defaults to the first recommended type for the columns.

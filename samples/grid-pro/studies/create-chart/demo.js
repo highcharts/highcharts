@@ -21,10 +21,12 @@ const monthlyGridPromise = Grid.grid('monthly', {
         cells: { format: '{value:%b %Y}' }
     }, {
         id: 'revenue',
-        header: { format: 'Revenue (k€)' }
+        header: { format: 'Revenue' },
+        cells: { format: '{value} k€' }
     }, {
         id: 'cost',
-        header: { format: 'Cost (k€)' }
+        header: { format: 'Cost' },
+        cells: { format: '{value} k€' }
     }, {
         id: 'visitors',
         header: { format: 'Visitors' }
@@ -58,6 +60,11 @@ const regionGridPromise = Grid.grid('regions', {
         id: 'customers',
         header: { format: 'Customers' }
     }],
+    rowSelection: {
+        enabled: true,
+        mode: 'multiple',
+        checkbox: { enabled: true }
+    },
     charting: {
         chartOptions: {
             credits: { enabled: false }
@@ -107,6 +114,25 @@ Promise.all([monthlyGridPromise, regionGridPromise]).then(([
     addButton('region-buttons', 'Sales & customers by region', regionGrid, {
         columns: ['region', 'sales', 'customers']
     });
+    addButton('region-buttons', 'Sales & customers stacked', regionGrid, {
+        columns: ['region', 'sales', 'customers'],
+        type: 'stackedColumn'
+    });
+
+    // Charts the rows checked in the Grid
+    const selectedButton = document.createElement('button');
+    selectedButton.textContent = 'Sales of the selected regions';
+    selectedButton.addEventListener('click', () => {
+        const rows = regionGrid.rowSelection.getSelectedRowIds();
+
+        if (rows.length) {
+            regionGrid.charting.createChart({
+                columns: ['region', 'sales'],
+                rows
+            });
+        }
+    });
+    document.getElementById('region-buttons').appendChild(selectedButton);
 
     regionGrid.charting.createChart({
         columns: ['region', 'customers'],

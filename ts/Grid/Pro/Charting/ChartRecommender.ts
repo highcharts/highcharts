@@ -54,6 +54,11 @@ export interface ChartColumn {
     dataType: ColumnDataType;
 
     /**
+     * The `cells.format` of the column, if set.
+     */
+    format?: string;
+
+    /**
      * The column values, in the order the Grid presents them.
      */
     values: Array<DataTableCellType>;
@@ -146,7 +151,7 @@ export function recommend(
         if (measureCount === 1 && isPieFriendly(measures[0])) {
             return ['column', 'pie', 'bar', 'line'];
         }
-        return ['column', 'bar', 'line', 'area'];
+        return ['column', 'stackedColumn', 'bar', 'line', 'area'];
     }
 
     // Numbers only

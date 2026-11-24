@@ -15,6 +15,7 @@ Grid.grid('container', {
         dataType: 'datetime'
     }, {
         id: 'sales',
-        header: { format: 'Sales' }
+        header: { format: 'Sales' },
+        cells: { format: '${value}k' }
     }]
 });

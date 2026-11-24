@@ -14,6 +14,9 @@ test.describe('Creating charts from Grid data', () => {
             return {
                 datetime: charting.getRecommendations(['date', 'sales']),
                 category: charting.getRecommendations(['region', 'sales']),
+                categories: charting.getRecommendations(
+                    ['region', 'sales', 'cost']
+                ),
                 numbers: charting.getRecommendations(['sales', 'cost']),
                 text: charting.getRecommendations(['region'])
             };
@@ -22,6 +25,9 @@ test.describe('Creating charts from Grid data', () => {
         expect(recommendations.datetime[0]).toBe('line');
         expect(recommendations.category).toEqual(
             ['column', 'pie', 'bar', 'line']
+        );
+        expect(recommendations.categories).toEqual(
+            ['column', 'stackedColumn', 'bar', 'line', 'area']
         );
         expect(recommendations.numbers[0]).toBe('scatter');
         expect(recommendations.text).toEqual([]);
@@ -49,6 +55,50 @@ test.describe('Creating charts from Grid data', () => {
         expect(result.name).toBe('Sales');
         expect(result.categories).toEqual(['North', 'East', 'South']);
         expect(result.data).toEqual([30, 20, 10]);
+    });
+
+    test('Charts only the given rows, in the order presented', async ({ page }) => {
+        const result = await page.evaluate(async () => {
+            const grid = (window as any).Grid.grids[0];
+            await grid.viewport.getColumn('sales').sorting.setOrder('asc');
+
+            const chart = grid.charting.createChart({
+                columns: ['region', 'sales'],
+                // Row ids default to the original row indexes
+                rows: [0, 2],
+                renderTo: 'chart'
+            });
+
+            return {
+                categories: chart.xAxis[0].categories,
+                data: chart.series[0].points.map((p: any) => p.y)
+            };
+        });
+
+        expect(result.categories).toEqual(['East', 'North']);
+        expect(result.data).toEqual([20, 30]);
+    });
+
+    test('Stacks columns and formats tooltips like the cells', async ({ page }) => {
+        const result = await page.evaluate(() => {
+            const chart = (window as any).Grid.grids[0].charting.createChart({
+                columns: ['region', 'sales', 'cost'],
+                type: 'stackedColumn',
+                renderTo: 'chart'
+            });
+
+            chart.series[0].points[0].onMouseOver();
+
+            return {
+                types: chart.series.map((s: any) => s.type),
+                stacking: chart.series[0].options.stacking,
+                tooltip: chart.tooltip.label.text.element.textContent
+            };
+        });
+
+        expect(result.types).toEqual(['column', 'column']);
+        expect(result.stacking).toBe('normal');
+        expect(result.tooltip).toContain('Sales: $30k');
     });
 
     test('Sorts time series by time', async ({ page }) => {

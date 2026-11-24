@@ -24,7 +24,10 @@
  * */
 
 import type Grid from '../../Core/Grid';
+import type DataTable from '../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 import type { AnyRecord } from '../../../Shared/Types';
+import type { RowId } from '../../Core/Data/DataProvider';
 import type { ChartColumn } from './ChartRecommender';
 import type {
     BeforeChartCreateEvent,
@@ -36,8 +39,13 @@ import type {
 import ChartPopup from './ChartPopup.js';
 import { buildChartOptions } from './ChartConfigBuilder.js';
 import { recommend } from './ChartRecommender.js';
-import { hasDataTableProvider } from '../../Core/Data/DataProvider.js';
-import { fireEvent, merge } from '../../../Shared/Utilities.js';
+import { LocalDataProvider } from '../../Core/Data/LocalDataProvider.js';
+import {
+    fireEvent,
+    isNumber,
+    isString,
+    merge
+} from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -55,6 +63,45 @@ import { fireEvent, merge } from '../../../Shared/Utilities.js';
 function warn(message: string): void {
     // eslint-disable-next-line no-console
     console.warn('Grid charting: ' + message);
+}
+
+
+/**
+ * Returns the indexes in the presentation table of the rows with the given
+ * ids, in presentation order. Row ids are resolved like
+ * `LocalDataProvider.getRowId`: the value in the `idColumn`, or the original
+ * row index.
+ *
+ * @param dataTable
+ * The presentation table.
+ *
+ * @param rowIds
+ * The ids of the rows.
+ *
+ * @param idColumn
+ * The id of the column holding the row ids, if any.
+ *
+ * @return
+ * The row indexes.
+ */
+function getRowIndexes(
+    dataTable: DataTable,
+    rowIds: Array<RowId>,
+    idColumn?: string
+): Array<number> {
+    const ids = new Set(rowIds);
+    const idValues = idColumn ? dataTable.getColumn(idColumn) : void 0;
+    const indexes: Array<number> = [];
+
+    for (let i = 0, iEnd = dataTable.getRowCount(); i < iEnd; ++i) {
+        const id = idValues ? idValues[i] : dataTable.getOriginalRowIndex(i);
+
+        if ((isString(id) || isNumber(id)) && ids.has(id)) {
+            indexes.push(i);
+        }
+    }
+
+    return indexes;
 }
 
 
@@ -79,7 +126,10 @@ class Charting {
      * The default charting options.
      */
     public static defaultOptions: ChartingOptions = {
-        types: ['line', 'area', 'column', 'bar', 'pie', 'scatter', 'bubble']
+        types: [
+            'line', 'area', 'column', 'stackedColumn', 'bar', 'pie',
+            'scatter', 'bubble'
+        ]
     };
 
     /**
@@ -156,18 +206,18 @@ class Charting {
      * The ids of the columns to chart. Defaults to every enabled column bound
      * to data.
      *
+     * @param rowIds
+     * The ids of the rows to chart. Defaults to every row after sorting and
+     * filtering.
+     *
      * @return
      * The recommended chart types.
      */
     public getRecommendations(
-        columnIds?: Array<string>
+        columnIds?: Array<string>,
+        rowIds?: Array<RowId>
     ): Array<ChartingChartType> {
-        const allowed = this.grid.options?.charting?.types ??
-            Charting.defaultOptions.types ?? [];
-
-        return recommend(this.getChartColumns(columnIds)).filter(
-            (type): boolean => allowed.includes(type)
-        );
+        return this.recommend(this.getChartColumns(columnIds, rowIds));
     }
 
     /**
@@ -195,9 +245,8 @@ class Charting {
             return;
         }
 
-        const columns = this.getChartColumns(options.columns);
-        const type = options.type ??
-            this.getRecommendations(options.columns)[0];
+        const columns = this.getChartColumns(options.columns, options.rows);
+        const type = options.type ?? this.recommend(columns)[0];
         const generated = type && buildChartOptions(columns, type);
 
         if (!type || !generated) {
@@ -259,30 +308,61 @@ class Charting {
     }
 
     /**
+     * Returns the chart types that fit the columns, limited to the types in
+     * `charting.types`.
+     *
+     * @param columns
+     * The columns prepared for charting.
+     *
+     * @return
+     * The recommended chart types.
+     */
+    private recommend(columns: Array<ChartColumn>): Array<ChartingChartType> {
+        const allowed = this.grid.options?.charting?.types ??
+            Charting.defaultOptions.types ?? [];
+
+        return recommend(columns).filter(
+            (type): boolean => allowed.includes(type)
+        );
+    }
+
+    /**
      * Collects the values of the columns as the Grid presents them, after
      * sorting and filtering.
      *
      * @param columnIds
      * The ids of the columns. Defaults to every enabled column bound to data.
      *
+     * @param rowIds
+     * The ids of the rows. Defaults to every row after sorting and filtering.
+     *
      * @return
      * The columns prepared for charting.
      */
-    private getChartColumns(columnIds?: Array<string>): Array<ChartColumn> {
+    private getChartColumns(
+        columnIds?: Array<string>,
+        rowIds?: Array<RowId>
+    ): Array<ChartColumn> {
         const { grid } = this;
         const { columnPolicy, dataProvider, viewport } = grid;
-        const dataTable = hasDataTableProvider(dataProvider) ?
+        const dataTable = dataProvider instanceof LocalDataProvider ?
             dataProvider.getDataTable(true) :
             void 0;
         const result: Array<ChartColumn> = [];
 
-        if (!dataTable) {
+        if (!dataTable || !(dataProvider instanceof LocalDataProvider)) {
             warn(
                 'Charts can only be created from a local ' +
                 'data provider.'
             );
             return result;
         }
+
+        const rowIndexes = rowIds && getRowIndexes(
+            dataTable,
+            rowIds,
+            dataProvider.options.idColumn
+        );
 
         for (const columnId of columnIds ?? grid.enabledColumns ?? []) {
             const sourceId = columnPolicy.getColumnSourceId(columnId);
@@ -297,7 +377,10 @@ class Charting {
                 id: columnId,
                 name: column.header?.headerContent?.textContent || columnId,
                 dataType: column.dataType,
-                values: Array.from(values)
+                format: column.options.cells?.format,
+                values: rowIndexes ?
+                    rowIndexes.map((i): DataTableCellType => values[i]) :
+                    Array.from(values)
             });
         }
 

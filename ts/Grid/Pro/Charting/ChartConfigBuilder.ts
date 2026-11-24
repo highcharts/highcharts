@@ -84,10 +84,50 @@ function toCategory(value: DataTableCellType, index: number): string {
 }
 
 /**
+ * Returns the Highcharts format of a point value, using the `cells.format` of
+ * the column it comes from, so that the tooltip shows the value as the Grid
+ * does.
+ *
+ * @param column
+ * The column the value comes from.
+ *
+ * @param key
+ * The point property holding the value, such as `y`.
+ *
+ * @return
+ * The format string.
+ */
+function valueFormat(column: ChartColumn, key: string): string {
+    return column.format ?
+        column.format.replace(/\{value(?=[:}])/g, '{point.' + key) :
+        '{point.' + key + '}';
+}
+
+/**
+ * Returns the `tooltip` option of a series charting a numeric column, or no
+ * option when the column has no format. Options are left out rather than set
+ * to `undefined`, which would replace the Highcharts defaults when merged.
+ *
+ * @param measure
+ * The numeric column.
+ *
+ * @return
+ * The series options to spread in.
+ */
+function seriesTooltip(measure: ChartColumn): AnyRecord {
+    return measure.format ? {
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>' + valueFormat(measure, 'y') + '</b><br/>'
+        }
+    } : {};
+}
+
+/**
  * Builds the series and axes of a cartesian chart.
  *
  * @param type
- * The chart type.
+ * The Highcharts series type.
  *
  * @param measures
  * The numeric columns.
@@ -99,7 +139,7 @@ function toCategory(value: DataTableCellType, index: number): string {
  * The `series` and `xAxis` options.
  */
 function buildCartesian(
-    type: ChartingChartType,
+    type: string,
     measures: Array<ChartColumn>,
     dimension?: ChartColumn
 ): AnyRecord {
@@ -113,6 +153,7 @@ function buildCartesian(
             series: measures.map((measure): AnyRecord => ({
                 type,
                 name: measure.name,
+                ...seriesTooltip(measure),
                 data: times
                     .map((time, i): Array<number | null> => [
                         time,
@@ -133,6 +174,7 @@ function buildCartesian(
         series: measures.map((measure): AnyRecord => ({
             type,
             name: measure.name,
+            ...seriesTooltip(measure),
             data: measure.values.map(
                 (value): number | null => toNumber(value)
             )
@@ -158,6 +200,11 @@ function buildXY(
     measures: Array<ChartColumn>
 ): AnyRecord {
     const [x, y, z] = measures;
+    const axes = type === 'bubble' ? [x, y, z] : [x, y];
+    const keys = ['x', 'y', 'z'];
+    const pointFormat = axes.map((column, i): string =>
+        column.name + ': <b>' + valueFormat(column, keys[i]) + '</b><br/>'
+    ).join('');
 
     return {
         xAxis: { title: { text: x.name } },
@@ -165,6 +212,7 @@ function buildXY(
         series: [{
             type,
             name: type === 'bubble' ? z.name : y.name,
+            tooltip: { pointFormat },
             data: x.values.map((value, i): Array<number | null> => {
                 const point = [toNumber(value), toNumber(y.values[i])];
 
@@ -199,6 +247,7 @@ function buildPie(
         series: [{
             type: 'pie',
             name: measure.name,
+            ...seriesTooltip(measure),
             data: measure.values.map((value, i): AnyRecord => ({
                 name: toCategory(dimension?.values[i], i),
                 y: toNumber(value)
@@ -224,6 +273,7 @@ export function buildChartOptions(
     type: ChartingChartType
 ): AnyRecord | undefined {
     const { dimension, measures } = getColumnRoles(columns);
+    const seriesType = type === 'stackedColumn' ? 'column' : type;
 
     if (!measures.length) {
         return;
@@ -239,14 +289,14 @@ export function buildChartOptions(
     ) {
         config = buildXY(type, measures);
     } else {
-        config = buildCartesian(type, measures, dimension);
+        config = buildCartesian(seriesType, measures, dimension);
     }
 
     const series: Array<AnyRecord> = config.series;
     const singleMeasure = type === 'pie' || series.length === 1;
 
-    return {
-        chart: { type },
+    const options: AnyRecord = {
+        chart: { type: seriesType },
         title: {
             text: measures.map((m): string => m.name).join(', ') +
                 (dimension && type !== 'pie' ? ' / ' + dimension.name : '')
@@ -255,6 +305,19 @@ export function buildChartOptions(
         yAxis: { title: { text: singleMeasure ? series[0].name : null } },
         ...config
     };
+
+    if (type === 'stackedColumn') {
+        options.plotOptions = { series: { stacking: 'normal' } };
+    }
+
+    if (dimension?.format && type !== 'pie') {
+        options.tooltip = {
+            headerFormat: '<span style="font-size: 0.8em">' +
+                valueFormat(dimension, 'key') + '</span><br/>'
+        };
+    }
+
+    return options;
 }
 
 
