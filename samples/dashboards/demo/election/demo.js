@@ -300,7 +300,7 @@ async function setupDashboard() {
                     labels: {
                         enabled: false
                     },
-                    title: false,
+                    title: null,
                     accessibility: {
                         description: 'Percent of votes'
                     }
