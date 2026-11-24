@@ -49,7 +49,7 @@ const externals = [];
  * @param  {...Array<string>} pathMembers
  * Path to resolve to.
  *
- * @returns
+ * @return {object}
  * UMD configuration.
  */
 function createUMDConfig(namespace, ...pathMembers) {
@@ -227,11 +227,12 @@ export async function makeExternals(
     const namespaceName = PPath.basename(nameInfo[1]);
 
     switch (externalsType) {
-        case 'module-import':
+        case 'module-import': {
             const externalModule = decorateImportPath(
                 PPath.relative(PPath.dirname(masterName), path)
             );
             return `${externalsType} ${externalModule}`;
+        }
         case 'umd':
             return createUMDConfig(namespace, namespaceName);
         default:
@@ -291,7 +292,7 @@ export async function resolveExternals(
             FSLib.path([process.cwd(), sourceFolder], true),
             FSLib.path([info.context, info.request], true)
         )
-        .replace(/\.[^\/]+$/u, '')
+        .replace(/\.[^\/]+$/u, '');
     const namespaceName = PPath.basename(path);
 
     if (
@@ -322,7 +323,7 @@ export async function resolveExternals(
             }
 
             let externalModule = (external.included[0] || externalsProduct);
-            let namespacePath = [
+            const namespacePath = [
                 ...external.namespacePath
                     .replace(/\{name\}/gsu, namespaceName)
                     .split('.')

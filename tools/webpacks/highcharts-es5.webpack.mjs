@@ -53,7 +53,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
     .getFilePaths(mastersFolder, true)
     .filter(masterFile => masterFile.endsWith('.js'))
     .map(masterFile => {
-        const masterPath = Path.relative(mastersFolder, masterFile)
+        const masterPath = Path.relative(mastersFolder, masterFile);
         const masterName = getMasterName(masterPath);
         const webpackConfig = {
             // path to the main file
@@ -74,8 +74,8 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
                     name: (
                         productMasters.includes(masterName) ?
                             {
-                                amd: `highcharts/highcharts`,
-                                commonjs: `highcharts`,
+                                amd: 'highcharts/highcharts',
+                                commonjs: 'highcharts',
                                 root: namespace
                             } :
                             {
@@ -103,7 +103,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
                 }),
                 new UMDExtensionPlugin({
                     productBundles: productMasters.map(pm => `${pm}.src.js`)
-                }),
+                })
                 // new BundleDeclarationsWebpackPlugin.BundleDeclarationsWebpackPlugin({
                 //     entry: {
                 //         filePath: `./${masterFile}`.replace(/\.js$/u, '.d.ts'),
@@ -135,7 +135,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
         if (!productMasters.includes(masterName)) {
             webpackConfig.externalsType = 'umd';
             webpackConfig.externals = [
-                (info) => resolveExternals(
+                info => resolveExternals(
                     info,
                     masterName,
                     sourceFolder,
@@ -146,8 +146,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
             ];
         }
         return webpackConfig;
-    })
-));
+    })));
 
 
 /* *

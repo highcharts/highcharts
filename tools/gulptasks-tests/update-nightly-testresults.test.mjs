@@ -74,8 +74,7 @@ async function writeSample(root, sampleName, files) {
     const samplePath = join(root, ...sampleName.split('/'));
     await mkdir(samplePath, { recursive: true });
     await Promise.all(Object.entries(files).map(([name, contents]) =>
-        writeFile(join(samplePath, name), contents)
-    ));
+        writeFile(join(samplePath, name), contents)));
 }
 
 test('creates nightly API samples from generated reference files', async () => {
@@ -356,12 +355,12 @@ test('fails when the selected nightly archive is no longer current', async () =>
             unzipImpl: async () => {
                 assert.fail('A missing archive should not be extracted');
             },
-            fetchImpl: async () => ++requests === 1 ?
+            fetchImpl: async () => (++requests === 1 ?
                 response(200, JSON.stringify([{
                     runId: '9007199254740994',
                     runAttempt: '2'
                 }])) :
-                response(404, 'Nightly artifact archive not found'),
+                response(404, 'Nightly artifact archive not found')),
             referenceRoot,
             sampleRoot
         }), error => (
@@ -469,7 +468,7 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
         assert.equal(requests.length, 3, 'Sample errors must prevent publication');
     } finally {
         await rm(root, { recursive: true, force: true });
-        if (previousFetch === undefined) {
+        if (previousFetch === void 0) {
             delete globalThis.fetch;
         } else {
             globalThis.fetch = previousFetch;
@@ -479,7 +478,7 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
         }
         Object.assign(commandArgv, previousArgv);
         for (const [key, value] of Object.entries(previousEnvironment)) {
-            if (value === undefined) {
+            if (value === void 0) {
                 delete process.env[key];
             } else {
                 process.env[key] = value;
@@ -560,20 +559,19 @@ test('nightly selects every eligible product sample and gates publication', () =
     const steps = visualSteps.filter(step => orderedNames.includes(step.name));
     assert.deepEqual(steps.map(step => step.name), orderedNames);
     for (const step of steps) {
-        assert.equal(step['continue-on-error'], undefined);
-        assert.equal(step.if, undefined, 'Each step requires prior success');
+        assert.equal(step['continue-on-error'], void 0);
+        assert.equal(step.if, void 0, 'Each step requires prior success');
     }
     assert.equal(steps[0].env.VISUAL_TEST_REFERENCE, '1');
-    assert.equal(job.env?.VISUAL_TEST_REFERENCE, undefined);
-    assert.equal(steps[3].env?.VISUAL_TEST_REFERENCE, undefined);
+    assert.equal(job.env?.VISUAL_TEST_REFERENCE, void 0);
+    assert.equal(steps[3].env?.VISUAL_TEST_REFERENCE, void 0);
 });
 
 test('nightly completion gate handles actual Playwright reporter outcomes', async () => {
     const root = await mkdtemp(join(tmpdir(), 'highcharts-nightly-completion-'));
     const id = 'highcharts/demo/basic-line';
     const gate = visualSteps.find(step =>
-        step.name === 'Verify nightly visual completion'
-    ).run;
+        step.name === 'Verify nightly visual completion').run;
     try {
         for (const scenario of ['success', 'sample-error', 'terminal-error']) {
             const reporter = new VisualReporter({ root, referenceMode: false });

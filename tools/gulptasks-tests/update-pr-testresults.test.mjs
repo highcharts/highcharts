@@ -78,26 +78,26 @@ async function runComment({
         try {
             previousComment = await readFile(commentPath);
         } catch {
-            previousComment = undefined;
+            previousComment = void 0;
         }
         try {
             previousVisualTestErrors = await readFile(visualTestErrorsPath);
         } catch {
-            previousVisualTestErrors = undefined;
+            previousVisualTestErrors = void 0;
         }
         try {
             previousReferenceFailures = await readFile(referenceFailuresPath);
         } catch {
-            previousReferenceFailures = undefined;
+            previousReferenceFailures = void 0;
         }
 
         await rm(commentPath, { force: true });
         await rm(visualTestErrorsPath, { force: true });
         await rm(referenceFailuresPath, { force: true });
-        if (referenceFailures !== undefined) {
+        if (referenceFailures !== void 0) {
             await writeFile(referenceFailuresPath, JSON.stringify(referenceFailures));
         }
-        if (existingComment !== undefined) {
+        if (existingComment !== void 0) {
             await writeFile(commentPath, existingComment);
         }
         await writeFile(resultsPath, JSON.stringify(testResults));
@@ -107,16 +107,16 @@ async function runComment({
 
         const values = {
             GITHUB_RUN_ATTEMPT: '1',
-            GITHUB_RUN_ID: undefined,
-            GITHUB_RUN_NUMBER: undefined,
-            GITHUB_SHA: undefined,
+            GITHUB_RUN_ID: void 0,
+            GITHUB_RUN_NUMBER: void 0,
+            GITHUB_SHA: void 0,
             VISUAL_REVIEW_API_KEY: 'test-api-key',
             VISUAL_REVIEW_API_URL: 'https://vrevs.test',
             VISUAL_REVIEW_PR_SHA: 'a'.repeat(40),
             ...environment
         };
         for (const key of environmentKeys) {
-            if (values[key] === undefined) {
+            if (values[key] === void 0) {
                 delete process.env[key];
             } else {
                 process.env[key] = values[key];
@@ -135,9 +135,9 @@ async function runComment({
             ...args
         });
 
-        globalThis.fetch = async (...args) => {
-            requests.push(args);
-            return fetchImplementation(...args, requests.length);
+        globalThis.fetch = async (...fetchArgs) => {
+            requests.push(fetchArgs);
+            return fetchImplementation(...fetchArgs, requests.length);
         };
         if (immediateTimers) {
             globalThis.setTimeout = callback => {
@@ -153,37 +153,37 @@ async function runComment({
             try {
                 error.commentAfterAttempt = await readFile(commentPath, 'utf8');
             } catch {
-                error.commentAfterAttempt = undefined;
+                error.commentAfterAttempt = void 0;
             }
             throw error;
         } finally {
             try {
                 comment = await readFile(commentPath, 'utf8');
             } catch {
-                comment = undefined;
+                comment = void 0;
             }
         }
         return { comment, requests, result };
     } finally {
         await rm(resultsDirectory, { recursive: true, force: true });
         await rm(commentPath, { force: true });
-        if (previousComment !== undefined) {
+        if (previousComment !== void 0) {
             await writeFile(commentPath, previousComment);
         }
         await rm(visualTestErrorsPath, { force: true });
-        if (previousVisualTestErrors !== undefined) {
+        if (previousVisualTestErrors !== void 0) {
             await writeFile(visualTestErrorsPath, previousVisualTestErrors);
         }
         await rm(referenceFailuresPath, { force: true });
-        if (previousReferenceFailures !== undefined) {
+        if (previousReferenceFailures !== void 0) {
             await writeFile(referenceFailuresPath, previousReferenceFailures);
         }
-        if (previousFetch === undefined) {
+        if (previousFetch === void 0) {
             delete globalThis.fetch;
         } else {
             globalThis.fetch = previousFetch;
         }
-        if (previousSetTimeout === undefined) {
+        if (previousSetTimeout === void 0) {
             delete globalThis.setTimeout;
         } else {
             globalThis.setTimeout = previousSetTimeout;
@@ -194,7 +194,7 @@ async function runComment({
         }
         Object.assign(commandArgv, previousArgv);
         for (const key of environmentKeys) {
-            if (previousEnvironment[key] === undefined) {
+            if (previousEnvironment[key] === void 0) {
                 delete process.env[key];
             } else {
                 process.env[key] = previousEnvironment[key];
@@ -226,13 +226,13 @@ for (const compared of [0, 1]) {
             }]
         });
         const { title, body } = JSON.parse(comment);
-        assert.match(title, compared ? /Partial comparison/ : /No comparable samples/);
-        assert.doesNotMatch(title, /No difference found/);
-        assert.match(body, new RegExp(`Compared \\*\\*${compared}\\*\\* samples`));
+        assert.match(title, compared ? /Partial comparison/u : /No comparable samples/u);
+        assert.doesNotMatch(title, /No difference found/u);
+        assert.match(body, new RegExp(`Compared \\*\\*${compared}\\*\\* samples`, 'u'));
         assert.equal([...body.matchAll(/Compared /gu)].length, 1);
-        assert.match(body, /\*\*1\*\* candidates rendered without a reference/);
-        assert.match(body, /stock\/financial\/interactive-chart/);
-        assert.match(body, /getRow is not a function/);
+        assert.match(body, /\*\*1\*\* candidates rendered without a reference/u);
+        assert.match(body, /stock\/financial\/interactive-chart/u);
+        assert.match(body, /getRow is not a function/u);
         assert.equal(requests.length, 2);
     });
 }
@@ -360,7 +360,7 @@ test('dryrun writes comments without credentials or API requests', async () => {
     for (const pixels of [0, 526]) {
         const { comment, requests } = await runComment({
             dryrun: true,
-            environment: { VISUAL_REVIEW_API_KEY: undefined },
+            environment: { VISUAL_REVIEW_API_KEY: void 0 },
             testResults: { 'highcharts/series-networkgraph/textpath-datalabels': pixels }
         });
         const payload = JSON.parse(comment);
@@ -410,20 +410,20 @@ test('does not write a success comment after execution errors', async () => {
         visualTestErrors: true
     });
     assert.equal(result, false);
-    assert.equal(comment, undefined);
+    assert.equal(comment, void 0);
     assert.equal(requests.length, 0);
 });
 
 const submissionFailures = [
     ['finalization', {
         fetchImplementation: (_, __, callNumber) =>
-            callNumber === 1 ? response() : response(400, 'finalization failed'),
+            (callNumber === 1 ? response() : response(400, 'finalization failed')),
         expectedRequests: 2,
         message: /returned 400/u
     }],
     ['authentication', {
         environment: {
-            VISUAL_REVIEW_API_KEY: undefined
+            VISUAL_REVIEW_API_KEY: void 0
         },
         expectedRequests: 0,
         message: /Missing VISUAL_REVIEW_API_KEY/u

@@ -19,7 +19,6 @@
 
 import * as FS from 'node:fs';
 import * as Path from 'node:path';
-import Webpack from 'webpack';
 import { updateFile } from '../../libs/fs.js';
 
 
@@ -54,12 +53,15 @@ export class ProductMetaPlugin {
 
 
     /**
+     * Creates the plugin with the given options.
+     *
      * @param {ProductMetaPluginOptions} [options]
+     * Plugin options.
      */
     constructor(options = {}) {
         options = this.options = {
             assetPrefix: '',
-            productDate: new Date().toISOString().substring(0 , 10),
+            productDate: new Date().toISOString().substring(0, 10),
             ...options
         };
 
@@ -120,15 +122,21 @@ export class ProductMetaPlugin {
 
 
     /**
-     * @param {Webpack.Compiler} compiler 
+     * Registers the output processing hook.
+     *
+     * @param {import('webpack').Compiler} compiler
+     * Webpack compiler.
      */
     apply(compiler) {
-        compiler.hooks.done.tap(HOOKS_NAME, (stats) => this.onDone(stats));
+        compiler.hooks.done.tap(HOOKS_NAME, stats => this.onDone(stats));
     }
 
 
     /**
-     * @param {Webpack.Stats} stats
+     * Updates the emitted bundle after compilation.
+     *
+     * @param {import('webpack').Stats} stats
+     * Compilation statistics.
      */
     onDone(stats) {
         const compilation = stats.compilation;
@@ -145,9 +153,9 @@ export class ProductMetaPlugin {
         // Use one file descriptor for reading and writing so replacing the
         // pathname between these steps cannot redirect writes to another file.
         updateFile(filepath, content => {
-            let productMatch = content.indexOf('@product.');
+            const productMatch = content.indexOf('@product.');
             // Use the last match - should be the one from ts/masters.
-            let headerMatch = [...content.matchAll(HEADER_PATTERN)].at(-1);
+            const headerMatch = [...content.matchAll(HEADER_PATTERN)].at(-1);
 
             if (
                 headerMatch?.index < 80 &&
