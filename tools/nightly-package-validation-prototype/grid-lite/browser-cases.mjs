@@ -57,5 +57,19 @@ export const browserCases = [
             await expect(fruitCells).toHaveText(['Pear', 'Apple', 'Peach']);
             await expect(quantityCells).toHaveText(['2', '7', '3']);
         }
+    },
+    {
+        id: 'Grid Lite React paginates data configured with JSX',
+        page: 'app/pagination.html',
+        modules: [],
+        prepare,
+        async check(page, expect) {
+            const grid = page.getByRole('main');
+            const cells = grid.getByRole('gridcell');
+            await expect(grid.getByRole('columnheader').getByText('Fruit', { exact: true })).toBeVisible();
+            await expect(cells).toHaveText(['Pear', 'Apple']);
+            await grid.getByRole('button', { name: 'Next page', exact: true }).click();
+            await expect(cells).toHaveText(['Peach']);
+        }
     }
 ];

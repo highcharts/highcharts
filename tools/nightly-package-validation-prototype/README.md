@@ -74,6 +74,8 @@ Each consumer installs the same pinned published `@highcharts/grid-lite-react`
 package and resolves its Grid Lite peer to that consumer's tarball. In Chromium,
 the vanilla Grid Lite page checks packaged styling and column sorting, and the
 React page checks the initial rows and how they change after a React state update.
+The separate JSX Data/Column/Pagination case checks that a `Fruit` header is
+rendered and that pagination moves from the first two fruits to the third.
 
 The staged and packed file inventories are retained with the tarball. Missing
 `main`, `module`, or `types` entries fail during consumer resolution.

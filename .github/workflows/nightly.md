@@ -52,8 +52,10 @@ diagnostic. The pilot runs alongside the existing Nightly jobs and skips
 publication to Visual Review. The Grid Lite job builds and packs Grid Lite
 using release metadata from a pinned
 `grid-lite-dist` commit. Both the candidate and stable consumers check vanilla
-Grid Lite and a React-driven data update using the same pinned
-`@highcharts/grid-lite-react` release. Open **Validate nightly Grid Lite npm
+Grid Lite, a React-driven data update using the same pinned
+`@highcharts/grid-lite-react` release, and a separate JSX
+Data/Column/Pagination case that renders a `Fruit` header and pages from two
+fruits to the third. Open **Validate nightly Grid Lite npm
 package** for the stable and candidate outcomes and the evidence link.
 
 ```sh
