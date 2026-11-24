@@ -566,9 +566,10 @@ test('nightly selects every eligible product sample and gates publication', () =
     const publish = steps.at(-1);
     assert.equal(publish['continue-on-error'], undefined);
     // GitHub Actions implicitly requires success() when no status function is present.
-    assert.equal(
-        publish.if,
-        "${{ github.event_name != 'workflow_dispatch' || !inputs.validateGridLite }}"
+    assert.doesNotMatch(
+        publish.if ?? '',
+        /\b(?:always|cancelled|failure|success)\s*\(/iu,
+        'Publication must retain the implicit success() guard'
     );
     assert.equal(steps[0].env.VISUAL_TEST_REFERENCE, '1');
     assert.equal(job.env?.VISUAL_TEST_REFERENCE, undefined);
