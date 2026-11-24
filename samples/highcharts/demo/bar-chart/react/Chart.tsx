@@ -15,7 +15,7 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function BarChart() {
     return (
-        <Chart containerProps={{ style: { height: '400px' } }}>
+        <Chart containerProps={{ id: 'container' }}>
             <Title>Historic World Population by Region</Title>
             <Subtitle>
                 Source:{' '}
@@ -41,7 +41,6 @@ export default function BarChart() {
                 Population (millions)
             </YAxis>
             <Tooltip
-                valueSuffix=" million"
                 headerFormat={`<div style="display: flex">
                 <div>
                     <svg width="10" height="30">
@@ -58,6 +57,7 @@ export default function BarChart() {
                 </span>
                 <b style="padding-left: 0.5em">{point.y}</b>`}
                 footerFormat="</div>"
+                valueSuffix=" million"
             />
             <Legend
                 layout="vertical"
@@ -65,7 +65,7 @@ export default function BarChart() {
                 verticalAlign="top"
                 x={-40}
                 y={80}
-                floating={true}
+                floating
                 borderColor="var(--highcharts-neutral-color-10, #e6e6e6)"
                 borderRadius={4}
                 borderWidth={1}
@@ -75,15 +75,17 @@ export default function BarChart() {
             <PlotOptions
                 bar={{
                     borderRadius: '50%',
-                    dataLabels: { enabled: true },
+                    dataLabels: {
+                        enabled: true
+                    },
                     groupPadding: 0.1
                 }}
             />
+            <Exporting />
+            <Accessibility />
             <BarSeries name="Year 1990" data={[632, 727, 3202, 721]} />
             <BarSeries name="Year 2000" data={[814, 841, 3714, 726]} />
             <BarSeries name="Year 2021" data={[1393, 1031, 4695, 745]} />
-            <Exporting />
-            <Accessibility />
         </Chart>
     );
 }

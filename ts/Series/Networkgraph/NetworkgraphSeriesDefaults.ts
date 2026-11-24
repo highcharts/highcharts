@@ -575,7 +575,7 @@ export default NetworkgraphSeriesDefaults;
 /**
  * The color of the auto generated node.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorType}
  * @product   highcharts
  * @apioption series.networkgraph.nodes.color
  */

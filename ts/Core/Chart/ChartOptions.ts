@@ -1157,6 +1157,20 @@ export interface ChartOptions {
 
     /**
      * Deprecated. Use
+     * [chart.zooming.key](#chart.zooming.key)
+     * instead.
+     *
+     * Set a key to hold when dragging to zoom the chart. This is useful to
+     * avoid zooming while moving points. Should be set different than
+     * [chart.panKey](#chart.panKey).
+     *
+     * @since      6.2.0
+     * @deprecated 10.2.1
+     */
+    zoomKey?: 'alt' | 'ctrl' | 'meta' | 'shift';
+
+    /**
+     * Deprecated. Use
      * [chart.zooming.type](#chart.zooming.type)
      * instead.
      *
@@ -1322,6 +1336,19 @@ export interface ChartSelectionContextObject {
 }
 
 export interface ChartZoomingOptions {
+    /**
+     * Set a key to hold when dragging to zoom the chart. This is useful to
+     * avoid zooming while moving points. Should be set different than
+     * [chart.panKey](#chart.panKey).
+     *
+     * **Note:** If both zooming and panning are enabled without keys,
+     * zooming will take precedence by default. To prioritize panning,
+     * either set zooming key or [chart.panKey](#chart.panKey).
+     *
+     * @since 10.2.1
+     */
+    key?: 'alt' | 'ctrl' | 'meta' | 'shift';
+
     /**
      * Equivalent to [type](#chart.zooming.type), but for multitouch
      * gestures only. By default, the `pinchType` is the same as the
