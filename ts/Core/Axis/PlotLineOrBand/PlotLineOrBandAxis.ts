@@ -23,6 +23,7 @@ import type { DeepPartial } from '../../../Shared/Types';
 import type PlotBandOptions from './PlotBandOptions';
 import type PlotLineOptions from './PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand';
+import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import {
@@ -37,6 +38,16 @@ import {
  *  Declarations
  *
  * */
+
+declare module '../AxisComposition' {
+    interface AxisComposition {
+        /**
+         * Clip rectangle keeping plot bands within the axis (#6257).
+         * @internal
+         */
+        plotBandClip?: SVGElement;
+    }
+}
 
 declare module '../AxisOptions' {
     interface AxisOptions {
@@ -332,9 +343,11 @@ namespace PlotLineOrBandAxis {
         options?: (PlotBandOptions|PlotLineOptions)
     ): SVGPath {
         options = options || this.options;
+        // Keep real coordinates so a gradient spans the full band. The band is
+        // clipped to the axis in `PlotLineOrBand.render` (#6257).
         const toPath = this.getPlotLinePath({
                 value: to,
-                force: true,
+                force: 'pass',
                 acrossPanes: options.acrossPanes
             }),
             result = [] as SVGPath,
@@ -346,25 +359,25 @@ namespace PlotLineOrBandAxis {
                 (from > this.max && to > this.max),
             path = this.getPlotLinePath({
                 value: from,
-                force: true,
+                force: 'pass',
                 acrossPanes: options.acrossPanes
             });
 
-        let i,
-            // #4964 check if chart is inverted or plot band is on yAxis
-            plus = 1,
-            isFlat: (boolean|undefined);
-
         if (path && toPath) {
 
-            // Flat paths don't need labels (#3836)
-            if (outside) {
-                isFlat = path.toString() === toPath.toString();
-                plus = 0;
+            // The band isn't fitted to the axis, so flag the ones that extend
+            // outside it for clipping (#6257)
+            if (isNumber(this.min) && isNumber(this.max)) {
+                result.isOverflowing = Math.min(from, to) < this.min ||
+                    Math.max(from, to) > this.max;
             }
 
+            // Flat paths don't need labels (#3836), neither do bands clipped
+            // away entirely (#6257)
+            result.isFlat = outside;
+
             // Go over each subpath - for panes in Highcharts Stock
-            for (i = 0; i < path.length; i += 2) {
+            for (let i = 0; i < path.length; i += 2) {
                 const pathStart = path[i],
                     pathEnd = path[i + 1],
                     toPathStart = toPath[i],
@@ -378,13 +391,14 @@ namespace PlotLineOrBandAxis {
                     (toPathStart[0] === 'M' || toPathStart[0] === 'L') &&
                     (toPathEnd[0] === 'M' || toPathEnd[0] === 'L')
                 ) {
-                    // Add 1 pixel when coordinates are the same
+                    // Add 1 pixel when coordinates are the same, also when
+                    // inverted or on the yAxis (#4964)
                     if (horiz && toPathStart[1] === pathStart[1]) {
-                        toPathStart[1] += plus;
-                        toPathEnd[1] += plus;
+                        toPathStart[1]++;
+                        toPathEnd[1]++;
                     } else if (!horiz && toPathStart[2] === pathStart[2]) {
-                        toPathStart[2] += plus;
-                        toPathEnd[2] += plus;
+                        toPathStart[2]++;
+                        toPathEnd[2]++;
                     }
 
                     result.push(
@@ -395,7 +409,6 @@ namespace PlotLineOrBandAxis {
                         ['Z']
                     );
                 }
-                result.isFlat = isFlat;
             }
 
         }
@@ -427,3 +440,73 @@ namespace PlotLineOrBandAxis {
  * */
 
 export default PlotLineOrBandAxis;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Add a plot band after render time.
+ *
+ * @sample highcharts/members/axis-addplotband/
+ *         Toggle the plot band from a button
+ *
+ * @function Highcharts.Axis#addPlotBand
+ *
+ * @param {Highcharts.AxisPlotBandsOptions} options
+ * A configuration object for the plot band, as defined in
+ * [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
+ *
+ * @return {Highcharts.PlotLineOrBand|undefined}
+ * The added plot band, or `undefined` if the options are not valid.
+ */
+
+/**
+ * Add a plot line after render time.
+ *
+ * @sample highcharts/members/axis-addplotline/
+ *         Toggle the plot line from a button
+ *
+ * @function Highcharts.Axis#addPlotLine
+ *
+ * @param {Highcharts.AxisPlotLinesOptions} options
+ * A configuration object for the plot line, as defined in
+ * [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
+ *
+ * @return {Highcharts.PlotLineOrBand|undefined}
+ * The added plot line, or `undefined` if the options are not valid.
+ */
+
+/**
+ * Remove a plot band by its id.
+ *
+ * @sample highcharts/members/axis-removeplotband/
+ *         Remove plot band by id
+ * @sample highcharts/members/axis-addplotband/
+ *         Toggle the plot band from a button
+ *
+ * @function Highcharts.Axis#removePlotBand
+ *
+ * @param {string} id
+ *        The plot band's `id` as given in the original configuration
+ *        object or in the `addPlotBand` option.
+ */
+
+/**
+ * Remove a plot line by its id.
+ *
+ * @sample highcharts/xaxis/plotlines-id/
+ *         Remove plot line by id
+ * @sample highcharts/members/axis-addplotline/
+ *         Toggle the plot line from a button
+ *
+ * @function Highcharts.Axis#removePlotLine
+ *
+ * @param {string} id
+ *        The plot line's `id` as given in the original configuration
+ *        object or in the `addPlotLine` option.
+ */
+
+(''); // Keeps doclets above in JS file

@@ -44,11 +44,11 @@ async function renderChart() {
 
     await connector.load();
 
-    // Extract data from table
-    const table = connector.getTable('RegionFixedIncome'),
-        data = table.getColumns(['Region', 'PercLongRescaled']);
+    // Get data table
+    const table = connector.getTable('RegionFixedIncome');
 
     Highcharts.chart('container', {
+        dataTable: table,
         chart: {
             type: 'column'
         },
@@ -62,7 +62,7 @@ async function renderChart() {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data.Region,
+            type: 'category',
             labels: {
                 format: '{translateRegionClassification value}'
             }
@@ -71,7 +71,8 @@ async function renderChart() {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data.PercLongRescaled,
+            type: 'category',
+            categories: table.getColumn('PercLongRescaled'),
             labels: {
                 format: '{value:.2f}%',
                 align: 'right',
@@ -111,7 +112,10 @@ async function renderChart() {
         series: [{
             name: 'Anfield Universal Fixed Income Fund',
             color: '#274FE0',
-            data: data.PercLongRescaled
+            dataMapping: {
+                name: 'Region',
+                y: 'PercLongRescaled'
+            }
         }],
         responsive: {
             rules: [{

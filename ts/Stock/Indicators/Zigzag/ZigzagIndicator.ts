@@ -27,8 +27,8 @@ import type {
 } from './ZigzagOptions';
 import type ZigzagPoint from './ZigzagPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -65,8 +65,8 @@ class ZigzagIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/zigzag
+     * @requires     indicators/indicators
+     * @requires     indicators/zigzag
      * @optionparent plotOptions.zigzag
      * @internal
      */
@@ -315,8 +315,8 @@ export default ZigzagIndicator;
  * @extends   series,plotOptions.zigzag
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/zigzag
+ * @requires  indicators/indicators
+ * @requires  indicators/zigzag
  * @apioption series.zigzag
  */
 

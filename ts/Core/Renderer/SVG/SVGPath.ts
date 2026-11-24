@@ -18,6 +18,7 @@
 
 export interface SVGPath extends globalThis.Array<SVGPath.Segment> {
     isFlat?: boolean;
+    isOverflowing?: boolean;
     xBounds?: Array<number>;
     yBounds?: Array<number>;
     xMap?: Array<number|null>;

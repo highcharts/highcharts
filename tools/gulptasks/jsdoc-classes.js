@@ -47,6 +47,7 @@ const SOURCE_GLOBS = [
     'Extensions/Annotations/Annotation.js',
     'Extensions/Annotations/AnnotationChart.js',
     'Extensions/Annotations/ControlPoint.js',
+    'Extensions/Annotations/MockPoint.js',
     'Extensions/Annotations/NavigationBindings.js',
     'Extensions/Autoload/Loader.js',
     'Extensions/Sonification/*.js',
@@ -55,6 +56,7 @@ const SOURCE_GLOBS = [
     'Extensions/Breadcrumbs/Breadcrumbs.js',
     'Extensions/Data.js',
     'Extensions/DataGrouping/DataGrouping.js',
+    'Extensions/DataGrouping/DataGroupingAxisComposition.js',
     'Extensions/DataGrouping/DataGroupingSeriesComposition.js',
     'Extensions/DataSorting/DataSortingComposition.js',
     'Extensions/DraggablePoints/DraggablePoints.js',
@@ -76,6 +78,8 @@ const SOURCE_GLOBS = [
     'Series/AreaRange/AreaRangePoint.js',
     'Series/AreaRange/AreaRangeSeries.js',
     'Series/Column/ColumnSeries.js',
+    'Series/DataModifyComposition.js',
+    'Series/Map/MapPoint.js',
     'Series/Networkgraph/NetworkgraphSeries.js',
     'Series/Organization/OrganizationSeries.js',
     'Series/PackedBubble/PackedBubbleSeries.js',
@@ -83,8 +87,10 @@ const SOURCE_GLOBS = [
     'Series/Pie/PiePoint.js',
     'Series/Sankey/SankeySeries.js',
     'Series/Timeline/TimelineSeries.js',
+    'Series/XRange/XRangePoint.js',
     'Series/GeoHeatmap/GeoHeatmapSeries.js',
     'Stock/Navigator/StandaloneNavigator.js',
+    'Shared/TimeBase.js',
     'Shared/Utilities.js'
 ].map(path => `code/es-modules/${path}`));
 

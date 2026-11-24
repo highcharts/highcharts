@@ -87,9 +87,7 @@ Grid.grid('container', {
                 }, {
                     validate: 'number',
                     notification: function ({ rawValue }) {
-                        return `New value <strong>${
-                            rawValue
-                        }</strong> should be number`;
+                        return `New value "${rawValue}" should be number`;
                     }
                 }]
             }

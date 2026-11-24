@@ -10,7 +10,8 @@ import type {
 } from '@playwright/test/reporter';
 import VisualReporter from '../../../tests/visual/visual-reporter.ts';
 import {
-    appendError, recordCandidateResult, writeReference
+    appendError, recordCandidateResult, writeReference,
+    writeReferenceFailures, writeUncomparedCandidate
 } from '../../../tests/visual/visual-results.ts';
 
 const ids = ['highcharts/demo/area-missing', 'highcharts/demo/line-labels'];
@@ -26,7 +27,7 @@ function withReporter(
             title,
             annotations: [],
             location: { file: join(root, 'tests/visual/visual.spec.ts') },
-            results: [{ status: 'passed' }]
+            results: [{ status: 'passed', errors: [] }]
         } as TestCase));
         const reporter = new VisualReporter({ root, referenceMode });
         reporter.onBegin({} as FullConfig, {
@@ -106,6 +107,63 @@ test('skipped sample fails even with a complete results file', () => {
     });
 });
 
+test('listed reference failure still requires candidate execution', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        recordCandidateResult(root, ids[0], 0);
+        writeReferenceFailures(root, [{ sample: ids[1], error: 'Reference failed.' }]);
+        cases[1].results[0].status = 'skipped';
+        deepStrictEqual(reporter.onEnd(passed), { status: 'failed' });
+        strictEqual(existsSync(join(root, 'test/visual-test-complete')), false);
+    });
+});
+
+test('rendered candidate without a reference completes without a pixel result', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        recordCandidateResult(root, ids[0], 0);
+        writeReferenceFailures(root, [{ sample: ids[1], error: 'Reference failed.' }]);
+        writeUncomparedCandidate(root, ids[1], '<svg>candidate</svg>');
+        strictEqual(reporter.onEnd(passed), undefined);
+        strictEqual(existsSync(join(root, 'test/visual-test-complete')), true);
+        deepStrictEqual(JSON.parse(readFileSync(
+            join(root, 'test/visual-test-results.json'), 'utf8'
+        )), { [ids[0]]: 0 });
+    });
+});
+
+test('passing candidate without its render artifact is incomplete', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        recordCandidateResult(root, ids[0], 0);
+        writeReferenceFailures(root, [{ sample: ids[1], error: 'Reference failed.' }]);
+        deepStrictEqual(reporter.onEnd(passed), { status: 'failed' });
+        strictEqual(existsSync(join(root, 'test/visual-test-complete')), false);
+    });
+});
+
+test('unlisted skipped sample remains invalid', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        recordCandidateResult(root, ids[0], 0);
+        cases[1].results[0].status = 'skipped';
+        deepStrictEqual(reporter.onEnd(passed), { status: 'failed' });
+    });
+});
+
+test('listed sample with a candidate error still fails', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        recordCandidateResult(root, ids[0], 0);
+        writeReferenceFailures(root, [{ sample: ids[1], error: 'Reference failed.' }]);
+        cases[1].results[0].status = 'failed';
+        cases[1].annotations.push({ type: 'visual-sample-error' });
+        deepStrictEqual(reporter.onEnd({ status: 'failed' } as FullResult), {
+            status: 'failed'
+        });
+    });
+});
+
 test('successful reference run requires fresh files and omits candidate completion', () => {
     withReporter((root, reporter, cases) => {
         reporter.onTestBegin(cases[0]);
@@ -117,6 +175,53 @@ test('successful reference run requires fresh files and omits candidate completi
         strictEqual(existsSync(join(root, 'test/visual-test-complete')), false);
     }, true);
 });
+
+for (const status of ['failed', 'timedOut'] as const) {
+    test(`reference run lists a classified ${status} sample`, () => {
+        withReporter((root, reporter, cases) => {
+            reporter.onTestBegin(cases[0]);
+            writeReference(root, ids[0], '<svg/>');
+            cases[1].results[0].status = status;
+            cases[1].annotations.push({ type: 'visual-sample-error' });
+            deepStrictEqual(reporter.onEnd({ status: 'failed' } as FullResult), {
+                status: 'failed'
+            });
+            deepStrictEqual(JSON.parse(readFileSync(
+                join(root, 'test/visual-reference-failures.json'), 'utf8'
+            )), [{ sample: ids[1], error: 'Reference render failed.' }]);
+        }, true);
+    });
+}
+
+for (const failure of [
+    'interrupted', 'timedout', 'missing result', 'skipped',
+    'unclassified error', 'worker crash', 'browser disconnect'
+]) {
+    test(`reference ${failure} cannot certify a listed sample failure`, () => {
+        withReporter((root, reporter, cases) => {
+            writeReferenceFailures(root, [{ sample: ids[0], error: 'Stale.' }]);
+            reporter.onTestBegin(cases[0]);
+            cases[0].results[0].status = 'failed';
+            cases[0].annotations.push({ type: 'visual-sample-error' });
+            if (failure === 'missing result') {
+                cases[1].results = [];
+            } else if (failure === 'skipped') {
+                cases[1].results[0].status = 'skipped';
+            } else if (failure === 'unclassified error') {
+                cases[1].results[0].status = 'failed';
+            } else if (failure === 'worker crash' || failure === 'browser disconnect') {
+                reporter.onError({ message: failure });
+            }
+            const status = failure === 'interrupted' || failure === 'timedout' ?
+                failure : 'failed';
+            deepStrictEqual(reporter.onEnd({ status } as FullResult), {
+                status: 'failed'
+            });
+            strictEqual(existsSync(join(root, 'test/visual-reference-failures.json')), false);
+            strictEqual(existsSync(join(root, 'test/visual-test-errors.log')), true);
+        }, true);
+    });
+}
 
 for (const status of ['failed', 'timedOut'] as const) {
     test(`completed run with a ${status} sample retains its error classification`, () => {
@@ -150,7 +255,9 @@ test('a run where every sample fails still completes without numeric results', (
             status: 'failed'
         });
         strictEqual(existsSync(join(root, 'test/visual-test-complete')), true);
-        strictEqual(existsSync(join(root, 'test/visual-test-results.json')), false);
+        deepStrictEqual(JSON.parse(readFileSync(
+            join(root, 'test/visual-test-results.json'), 'utf8'
+        )), {});
     });
 });
 

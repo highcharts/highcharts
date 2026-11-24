@@ -26,8 +26,8 @@ import type StochasticPoint from './StochasticPoint';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -65,8 +65,8 @@ class StochasticIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/stochastic
+     * @requires     indicators/indicators
+     * @requires     indicators/stochastic
      * @optionparent plotOptions.stochastic
      * @internal
      */
@@ -320,8 +320,8 @@ export default StochasticIndicator;
  * @excluding allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
  *            pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/stochastic
+ * @requires  indicators/indicators
+ * @requires  indicators/stochastic
  * @apioption series.stochastic
  */
 

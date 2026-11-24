@@ -25,6 +25,7 @@ import type Annotation from './Annotation';
 import type {
     AnnotationMockPointOptionsObject
 } from './AnnotationMockPointOptionsObject';
+import type { AnnotationPointType } from './AnnotationSeries';
 import type AST from '../../Core/Renderer/HTML/AST';
 import type ColorType from '../../Core/Color/ColorType';
 import type Controllable from './Controllables/Controllable';
@@ -149,7 +150,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * by options in a specific control point.
      *
      * @declare  Highcharts.AnnotationControlPointOptionsObject
-     * @requires modules/annotations
      */
     controlPointOptions?: ControlPointOptions;
 
@@ -177,8 +177,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
 
     /**
      * Events available in annotations.
-     *
-     * @requires modules/annotations
      */
     events?: AnnotationEventsOptions;
 
@@ -199,8 +197,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * Options for annotation's labels. Each label inherits options
      * from the labelOptions object. An option from the labelOptions
      * can be overwritten by config for a specific label.
-     *
-     * @requires modules/annotations
      */
     labelOptions?: AnnotationLabelOptionsOptions;
 
@@ -222,8 +218,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * Options for annotation's shapes. Each shape inherits options
      * from the shapeOptions object. An option from the shapeOptions
      * can be overwritten by config for a specific shape.
-     *
-     * @requires  modules/annotations
      */
     shapeOptions?: AnnotationShapeOptionsOptions;
 
@@ -255,7 +249,6 @@ export interface AnnotationOptions extends ControlTargetOptions {
      *
      * Additional options for an annotation with the type.
      *
-     * @requires  modules/annotations
      * @apioption annotations.typeOptions
      */
     typeOptions?: AnnotationTypeOptions;
@@ -534,6 +527,13 @@ export interface AnnotationLabelOptionsOptions {
 }
 
 export interface AnnotationLabelOptions extends AnnotationLabelOptionsOptions {
+
+
+    /**
+     * An id for later identification of the annotation label.
+     */
+    id?: string;
+
     /* *
     *
     *  Excluded properties. Not omitted for ancestor type matching.
@@ -575,6 +575,12 @@ export interface AnnotationLabelOptions extends AnnotationLabelOptionsOptions {
  *
  * Internally, this can also be a point or a mock point.
  *
+ * @typedef {
+ *          string|
+ *          Highcharts.AnnotationMockPointOptionsObject|
+ *          Highcharts.AnnotationMockPointFunction
+ *     } Highcharts.AnnotationMockPointOptions
+ *
  * @requires modules/annotations
  */
 export type AnnotationMockPointOptions = (
@@ -591,13 +597,14 @@ export type AnnotationMockPointOptions = (
  *
  * @return {
  *     Highcharts.AnnotationMockPointOptionsObject |
+ *     Highcharts.AnnotationMockPoint |
  *     Highcharts.Point
  * }
  *         Annotations shape point or it's options.
  */
 export interface AnnotationMockPointFunction {
     (controllable: Controllable):
-        AnnotationMockPointOptionsObject | Point;
+        AnnotationMockPointOptionsObject | AnnotationPointType;
 }
 
 export interface AnnotationShapeOptionsOptions {
@@ -759,10 +766,11 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
     controlPoints?: Array<ControlPointOptions>;
 
     /**
-     * Id of the marker which will be drawn at the final vertex of
-     * the path. Custom markers can be defined in defs property.
+     * Id of the marker which will be drawn at the final vertex of the path. The
+     * `arrow` and `reverse-arrow` markers are available by default; custom
+     * markers can be defined in the [defs](#defs) option.
      *
-     * @see [defs.markers](#defs.markers)
+     * @see [defs](#defs)
      *
      * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
@@ -770,12 +778,13 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
     markerEnd?: string;
 
     /**
-     * Id of the marker which will be drawn at the first vertex of
-     * the path. Custom markers can be defined in defs property.
+     * Id of the marker which will be drawn at the first vertex of the path. The
+     * `arrow` and `reverse-arrow` markers are available by default; custom
+     * markers can be defined in the [defs](#defs) option.
      *
-     * @see [defs.markers](#defs.markers)
+     * @see [defs](#defs)
      *
-     * @sample {highcharts} highcharts/annotations/custom-markers/
+     * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
      */
     markerStart?: string;
@@ -789,9 +798,7 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
      * @sample highcharts/annotations/mock-points/
      *         Attach annotation to a mock point with different ways
      *
-     * @type      {Highcharts.AnnotationMockPointOptions}
      * @extends   annotations.labels.point
-     * @requires  modules/annotations
      * @apioption annotations.shapes.point
      */
     point?: AnnotationMockPointOptions;
@@ -806,7 +813,6 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
      *
      * @see [annotations.shapes.point](#annotations.shapes.point)
      *
-     * @type      {Array<Highcharts.AnnotationMockPointOptions>}
      * @extends   annotations.labels.point
      * @apioption annotations.shapes.points
      */
@@ -844,7 +850,6 @@ export interface AnnotationTypeOptions {
      * point's id - or a new point with defined x, y properties
      * and optionally axes.
      *
-     * @type {string | Highcharts.AnnotationMockPointOptionsObject}
      * @apioption annotations.typeOptions.point
      */
     point?: (string | AnnotationMockPointOptionsObject);
@@ -855,7 +860,6 @@ export interface AnnotationTypeOptions {
      * point's id - or a new point with defined x, y properties
      * and optionally axes.
      *
-     * @type {Array<(string | Highcharts.AnnotationMockPointOptionsObject)>}
      * @apioption annotations.typeOptions.points
      */
     points?: Array<(string | AnnotationMockPointOptionsObject)>;

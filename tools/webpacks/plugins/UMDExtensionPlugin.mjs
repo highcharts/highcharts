@@ -17,7 +17,7 @@
  * */
 
 
-import * as FS from 'node:fs';
+import { updateFile } from '../../libs/fs.js';
 import * as Path from 'node:path';
 import Webpack from 'webpack';
 
@@ -32,6 +32,10 @@ import Webpack from 'webpack';
 const HOOKS_NAME = 'Highcharts.UMDExtensionPlugin';
 
 const UMD_REGEXP = /(\(function webpackUniversalModuleDefinition\(root, factory\) \{\s+)(.*?)(\s+\}\)\(this, (?:function)?\()/su;
+
+// Top-level `this` is undefined when the bundle is re-bundled as a strict
+// module (e.g. Next.js with `transpilePackages`), so fall back to an object.
+const UMD_ROOT = '(typeof window === \'undefined\' ? this || {} : window,';
 
 /* *
  *
@@ -71,7 +75,7 @@ function convertAMD(_, amdPrefix, amdRequires, amdSuffix) {
             requireToArgMap[requireKey] = factoryArg;
         }
 
-        factoryArgs.push(factoryArg + pathItems.map(pi => `[${pi}]`).join());
+        factoryArgs.push(factoryArg + pathItems.map(pi => `[${pi}]`).join(''));
     }
 
     return (
@@ -152,21 +156,15 @@ export class UMDExtensionPlugin {
 
         const filepath = Path.join(outputOptions.path, outputOptions.filename);
 
-        if (!FS.existsSync(filepath)) {
-            return;
-        }
+        updateFile(filepath, content => {
+            const isES5 = filepath.includes('/es5/');
 
-        const content = FS.readFileSync(filepath, 'utf8');
-        const isES5 = filepath.includes('/es5/');
+            const nodeNamespaceReplacement = '_' + content
+                .match(/root\["(.*?)"\]/su)[1]
+                .replace(/\\/gu, '\\\\')
+                .replace(/\$/gu, '\\$');
 
-        const nodeNamespaceReplacement = '_' + content
-            .match(/root\["(.*?)"\]/su)[1]
-            .replace(/\\/gu, '\\\\')
-            .replace(/\$/gu, '\\$');
-
-        FS.writeFileSync(
-            filepath,
-            content.replace(
+            return content.replace(
                 UMD_REGEXP,
                 (_, umdPrefix, umdBridge, umdSuffix) => (
                     productBundles.includes(filename) ? (
@@ -193,11 +191,7 @@ export class UMDExtensionPlugin {
                                     : 'define("$1", [], factory)'
                             ) +
                         umdSuffix
-                            .replace(
-                                '(this,',
-                                '(typeof window === \'undefined\' ?' +
-                                ' this : window,'
-                            )
+                            .replace('(this,', UMD_ROOT)
                     ) : (
                         umdPrefix +
                         umdBridge
@@ -210,16 +204,11 @@ export class UMDExtensionPlugin {
                                 `root["${nodeNamespaceReplacement}"]`
                             ) +
                         umdSuffix
-                            .replace(
-                                '(this,',
-                                '(typeof window === \'undefined\' ?' +
-                                ' this : window,'
-                            )
+                            .replace('(this,', UMD_ROOT)
                     )
                 )
-            ),
-            'utf8'
-        );
+            );
+        }, { optional: true });
 
     }
 

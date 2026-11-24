@@ -59,42 +59,6 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
     borderRadius: 3,
 
     /**
-     * When using automatic point colors pulled from the global
-     * [colors](colors) or series-specific
-     * [plotOptions.column.colors](series.colors) collections, this option
-     * determines whether the chart should receive one color per series or
-     * one color per point.
-     *
-     * In styled mode, the `colors` or `series.colors` arrays are not
-     * supported, and instead this option gives the points individual color
-     * class names on the form `highcharts-color-{n}`.
-     *
-     * @see [series colors](#plotOptions.column.colors)
-     *
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
-     *         False by default
-     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
-     *         True
-     *
-     * @type      {boolean}
-     * @default   false
-     * @since     2.0
-     * @product   highcharts highstock gantt
-     * @apioption plotOptions.column.colorByPoint
-     */
-
-    /**
-     * A series specific or series type specific color set to apply instead
-     * of the global [colors](#colors) when [colorByPoint](
-     * #plotOptions.column.colorByPoint) is true.
-     *
-     * @type      {Array<Highcharts.ColorType>}
-     * @since     3.0
-     * @product   highcharts highstock gantt
-     * @apioption plotOptions.column.colors
-     */
-
-    /**
      * When `true`, the columns will center in the category, ignoring null
      * or missing points. When `false`, space will be reserved for null or
      * missing points.

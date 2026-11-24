@@ -2,7 +2,8 @@ Highcharts.chart('container', {
     chart: {
         scrollablePlotArea: {
             minWidth: 460
-        }
+        },
+        spacingBottom: 22
     },
     title: {
         text: 'Tallest buildings'

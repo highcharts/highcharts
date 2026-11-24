@@ -18,7 +18,18 @@ Grid.grid('container', {
             },
             events: {
                 afterEdit: function () {
-                    changelog.innerHTML += `<strong>${this.column.id}</strong> for <strong>${this.row.data.product}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
+                    const line = document.createElement('div'),
+                        column = document.createElement('strong'),
+                        product = document.createElement('strong');
+
+                    column.textContent = this.column.id;
+                    product.textContent = this.row.data.product;
+                    line.append(
+                        column, ' for ', product,
+                        ' was updated to ' + this.value
+                    );
+
+                    changelog.appendChild(line);
                     changelog.scrollTop = changelog.scrollHeight;
                 }
             }

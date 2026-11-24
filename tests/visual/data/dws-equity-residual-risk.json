@@ -1,0 +1,101 @@
+{
+  "dailyDividendResidualRiskAndReturnSensitivity": [
+    {
+      "asOfDate": "2026-05-20",
+      "alpha1008Day": 0.000383,
+      "alpha1260Day": 0.000305,
+      "alpha2520Day": -0.000528,
+      "alpha252Day": 0.001029,
+      "alpha504Day": 0.000813,
+      "alpha756Day": 0.000546,
+      "beta1008Day": 0.937499,
+      "beta1260Day": 1.026826,
+      "beta2520Day": 1.05731,
+      "beta252Day": 0.60279,
+      "beta504Day": 0.814196,
+      "beta756Day": 0.900406,
+      "compareIndexId": "0P00012P94",
+      "rSquare1008Day": 10.90063,
+      "rSquare1260Day": 12.816037,
+      "rSquare2520Day": 18.498977,
+      "rSquare252Day": 2.63427,
+      "rSquare504Day": 6.585868,
+      "rSquare756Day": 8.353646
+    }
+  ],
+  "dailyNonDividendResidualRiskAndReturnSensitivity": [
+    {
+      "asOfDate": "2026-05-20",
+      "compareIndexId": "0P00012P92",
+      "nonDividendAlpha1008Day": 0.000418,
+      "nonDividendAlpha1260Day": 0.000377,
+      "nonDividendAlpha2520Day": -0.000495,
+      "nonDividendAlpha252Day": 0.001005,
+      "nonDividendAlpha504Day": 0.000828,
+      "nonDividendAlpha756Day": 0.000562,
+      "nonDividendBeta1008Day": 0.93418,
+      "nonDividendBeta1260Day": 1.024928,
+      "nonDividendBeta2520Day": 1.058109,
+      "nonDividendBeta252Day": 0.600962,
+      "nonDividendBeta504Day": 0.813517,
+      "nonDividendBeta756Day": 0.899339,
+      "nonDividendRSquare1008Day": 10.877985,
+      "nonDividendRSquare1260Day": 12.869845,
+      "nonDividendRSquare2520Day": 18.43025,
+      "nonDividendRSquare252Day": 2.61074,
+      "nonDividendRSquare504Day": 6.566596,
+      "nonDividendRSquare756Day": 8.327065
+    }
+  ],
+  "dividendResidualRiskAndReturnSensitivity": {
+    "asOfDate": "2026-04-30",
+    "alpha120Month": -0.013425,
+    "alpha12Month": 0.019784,
+    "alpha24Month": 0.010718,
+    "alpha36Month": 0.007474,
+    "alpha48Month": 0.003961,
+    "alpha60Month": 0.002527,
+    "beta120Month": 1.092846,
+    "beta12Month": -0.125371,
+    "beta24Month": 1.034482,
+    "beta36Month": 0.846143,
+    "beta48Month": 1.197183,
+    "beta60Month": 1.174067,
+    "compareIndexId": "0P00012P94",
+    "rSquare120Month": 20.313011,
+    "rSquare12Month": 0.116726,
+    "rSquare24Month": 8.957338,
+    "rSquare36Month": 6.842867,
+    "rSquare48Month": 18.819602,
+    "rSquare60Month": 17.93314
+  },
+  "nonDividendResidualRiskAndReturnSensitivity": {
+    "asOfDate": "2026-04-30",
+    "compareIndexId": "0P00012P92",
+    "nonDividendAlpha120Month": -0.012547,
+    "nonDividendAlpha12Month": 0.016991,
+    "nonDividendAlpha24Month": 0.011563,
+    "nonDividendAlpha36Month": 0.007705,
+    "nonDividendAlpha48Month": 0.005599,
+    "nonDividendAlpha60Month": 0.004559,
+    "nonDividendBeta120Month": 1.086531,
+    "nonDividendBeta12Month": -0.059686,
+    "nonDividendBeta24Month": 1.070351,
+    "nonDividendBeta36Month": 0.834436,
+    "nonDividendBeta48Month": 1.170725,
+    "nonDividendBeta60Month": 1.161833,
+    "nonDividendRSquare120Month": 20.552681,
+    "nonDividendRSquare12Month": 0.027662,
+    "nonDividendRSquare24Month": 10.003693,
+    "nonDividendRSquare36Month": 6.973384,
+    "nonDividendRSquare48Month": 19.100627,
+    "nonDividendRSquare60Month": 18.345274
+  },
+  "identifiers": {
+    "performanceId": "0P00006W6Q"
+  },
+  "metadata": {
+    "requestId": "40199fe9-4320-492f-94e2-829db4a33b08",
+    "time": "2026-05-20T13:27:35.6838754Z"
+  }
+}

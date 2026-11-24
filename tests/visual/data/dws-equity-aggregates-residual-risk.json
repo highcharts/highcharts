@@ -1,0 +1,47 @@
+{
+  "aggregationResidualRiskAndReturnSensitivity": [
+    {
+      "periodEndDate": "2026-04-30",
+      "alpha120MonthNumberOfEligibleCompanies": 2,
+      "alpha120MonthValue": 0.044688,
+      "alpha36MonthNumberOfEligibleCompanies": 2,
+      "alpha36MonthValue": 0.006393,
+      "alpha48MonthNumberOfEligibleCompanies": 2,
+      "alpha48MonthValue": 0.011152,
+      "alpha60MonthNumberOfEligibleCompanies": 2,
+      "alpha60MonthValue": 0.007701,
+      "beta120MonthNumberOfEligibleCompanies": 2,
+      "beta120MonthValue": 1.052344,
+      "beta36MonthNumberOfEligibleCompanies": 2,
+      "beta36MonthValue": 0.573666,
+      "beta48MonthNumberOfEligibleCompanies": 2,
+      "beta48MonthValue": 0.712417,
+      "beta60MonthNumberOfEligibleCompanies": 2,
+      "beta60MonthValue": 0.820602,
+      "nonDividendAlpha120MonthNumberOfEligibleCompanies": 2,
+      "nonDividendAlpha120MonthValue": 0.04575,
+      "nonDividendAlpha36MonthNumberOfEligibleCompanies": 2,
+      "nonDividendAlpha36MonthValue": 0.006251,
+      "nonDividendAlpha48MonthNumberOfEligibleCompanies": 2,
+      "nonDividendAlpha48MonthValue": 0.011277,
+      "nonDividendAlpha60MonthNumberOfEligibleCompanies": 2,
+      "nonDividendAlpha60MonthValue": 0.007995,
+      "nonDividendBeta120MonthNumberOfEligibleCompanies": 2,
+      "nonDividendBeta120MonthValue": 1.047917,
+      "nonDividendBeta36MonthNumberOfEligibleCompanies": 2,
+      "nonDividendBeta36MonthValue": 0.568615,
+      "nonDividendBeta48MonthNumberOfEligibleCompanies": 2,
+      "nonDividendBeta48MonthValue": 0.709174,
+      "nonDividendBeta60MonthNumberOfEligibleCompanies": 2,
+      "nonDividendBeta60MonthValue": 0.818143,
+      "numberOfCompanies": 2
+    }
+  ],
+  "identifiers": {
+    "performanceId": "0P00006W6Q"
+  },
+  "metadata": {
+    "requestId": "e3e45912-ff8f-45b0-933b-8c555a2f4e52",
+    "time": "2026-05-20T13:27:06.0427833Z"
+  }
+}

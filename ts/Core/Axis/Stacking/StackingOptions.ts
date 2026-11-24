@@ -298,7 +298,7 @@ export interface StackLabelOptions {
      * @product highcharts
      */
     style?: CSSObject & {
-        /** @default ${palette.neutralColor100} */
+        /** @default 'var(--highcharts-neutral-color-100)' */
         color?: CSSObject['color'];
 
         /** @default '0.7em' */

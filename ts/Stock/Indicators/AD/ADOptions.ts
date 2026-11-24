@@ -35,8 +35,8 @@ import type {
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/accumulation-distribution
+ * @requires     indicators/indicators
+ * @requires     indicators/accumulation-distribution
  * @interface Highcharts.ADOptions
  */
 export interface ADOptions extends SMAOptions {

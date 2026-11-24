@@ -24,12 +24,17 @@ import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
 import type WordcloudUtils from './WordcloudUtils';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: { prototype: { pointClass: ColumnPoint } }
-} = SeriesRegistry.seriesTypes;
+import ColumnSeries from '../Column/ColumnSeries.js';
 import WordcloudSeries from './WordcloudSeries';
 import { extend } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *

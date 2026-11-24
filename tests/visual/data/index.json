@@ -85,5 +85,313 @@
                 }
             ]
         }
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/securities/F00001GPCX?idType=MSID&responseViewFormat=json&viewid=MFsnapshot&outputType=json",
+        "filename": "security-details-f00001gpcx.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/securities/F00000ZY5F?idType=MSID&responseViewFormat=json&viewid=MFsnapshot&outputType=json",
+        "filename": "security-details-f00000zy5f.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/securities/F0GBR050DD?idType=MSID&responseViewFormat=json&viewid=MFsnapshot&outputType=json",
+        "filename": "security-details-f0gbr050dd.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/securities/US9229087104?idType=ISIN&responseViewFormat=json&viewid=MFsnapshot&outputType=json",
+        "filename": "security-details-us9229087104.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/securities/F0GBR052QA?idType=MSID&responseViewFormat=json&viewid=HSsnapshot&outputType=json",
+        "filename": "security-details-f0gbr052qa-hssnapshot.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/securities/F0GBR052QA?idType=MSID&responseViewFormat=json&viewid=MFsnapshot&outputType=json",
+        "filename": "security-details-f0gbr052qa-mfsnapshot.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/multi-securities/?ids=0P000151L5%7CEUCA000511&idType=MSID&responseViewFormat=json&viewIds=MFsnapshot&outputType=json",
+        "filename": "security-compare-country.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/multi-securities/?ids=F0GBR050DD%7CEUCA000527&idType=MSID&responseViewFormat=json&viewIds=MFsnapshot&outputType=json",
+        "filename": "security-compare-returns.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/multi-securities/?ids=F0GBR052QA%7CEUCA000550&idType=MSID&responseViewFormat=json&viewIds=MFsnapshot&outputType=json",
+        "filename": "security-compare-sector-region.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/direct-web-services/v1/investments/0P00006W6Q/equity-aggregates-residual-risk-and-return-sensitivity?languageId=ENG&outputType=json",
+        "filename": "dws-equity-aggregates-residual-risk.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/direct-web-services/v1/investments/0P00006W6Q/equity-residual-risk-and-return-sensitivity?languageId=ENG&outputType=json",
+        "filename": "dws-equity-residual-risk.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/direct-web-services/v1/investments/0P00006W6Q/equity-style-box?languageId=ENG&outputType=json",
+        "filename": "dws-equity-style-box.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/direct-web-services/v1/investments/0P0000XTUQ/country-and-regional-exposure-breakdown?languageId=ENG&outputType=json",
+        "filename": "dws-region-breakdown.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/direct-web-services/v1/investments/0P00000FIA/morningstar-equity-sectors-breakdown?languageId=ENG&outputType=json",
+        "filename": "dws-sector-breakdown.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/timeseries/price?id=0P0001F5J3&idType=MSID&currencyId=USD&startDate=2020-01-01&outputType=json",
+        "filename": "interactive-price.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/portfolioanalysis/v1/performance?langcult=en-US&outputType=json",
+        "filename": "calendar-year-return.json",
+        "method": "POST",
+        "postData": {
+            "view": {
+                "id": "All"
+            },
+            "config": {
+                "id": "QuickPortfolio"
+            },
+            "requestSettings": {
+                "outputCurrency": "USD",
+                "assetClassGroupConfigs": {
+                    "assetClassGroupConfig": [
+                        {
+                            "id": "ACG-USBROAD"
+                        }
+                    ]
+                }
+            },
+            "portfolios": [
+                {
+                    "name": "Portfolio",
+                    "totalValue": 10000,
+                    "currency": "USD",
+                    "holdings": [
+                        {
+                            "securityId": "FOUSA05H5F",
+                            "type": "FO",
+                            "weight": 50
+                        },
+                        {
+                            "securityId": "FOUSA04BCR",
+                            "type": "FO",
+                            "weight": 50
+                        }
+                    ],
+                    "benchmark": {
+                        "type": "Standard",
+                        "holdings": [
+                            {
+                                "securityId": "XIUSA04G92",
+                                "type": "XI",
+                                "weight": 100
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/portfolioanalysis/v1/hypo?langcult=en-US&outputType=json",
+        "filename": "growth-chart-hypo.json",
+        "method": "POST",
+        "postData": {
+            "view": {
+                "id": "Growth"
+            },
+            "requestSettings": {
+                "outputCurrency": "USD",
+                "outputReturnsFrequency": "Monthly",
+                "assetClassGroupConfigs": {
+                    "assetClassGroupConfig": [
+                        {
+                            "id": "ACG-USBROAD"
+                        }
+                    ]
+                },
+                "hypoCalculationSettings": {
+                    "hypoType": "Portfolio",
+                    "filingStatus": "NoTaxes",
+                    "taxableIncome": 50000,
+                    "payTaxes": "OutOfPocket",
+                    "federalIncomeTaxRate": 0,
+                    "capitalGainTaxRate": 0,
+                    "stateIncomeTaxRate": 0,
+                    "dividendTaxRate": 0,
+                    "illustrationTrailingTimePeriod": "Customized",
+                    "startDate": "2020-01-01",
+                    "endDate": "2025-01-31",
+                    "synchronizePortfolioStartDate": true,
+                    "investmentDetailReturnsFrequency": "Monthly",
+                    "liquidateOnEndDate": true,
+                    "subsequentInvestmentType": "Invest",
+                    "subsequentInvestmentAmount": 0,
+                    "subsequentInvestmentWithdrawalFrequency": "Monthly",
+                    "assetBasedAnnualFee": 0,
+                    "assetFeeFrequency": "Annually",
+                    "assetFeeType": "Amount",
+                    "payFees": "OutOfPocketBeginning",
+                    "payFeesUseCashFirst": true,
+                    "frontLoadType": "Standard",
+                    "customFeeType": "Amount",
+                    "salesFeeAmount": 0,
+                    "applySalesCharge": true,
+                    "applyFeeForRebalance": false,
+                    "entryExitFeeType": "CustomEntry",
+                    "rebalanceFrequency": "None",
+                    "rebalanceThreshold": 0,
+                    "reinvestDividends": true,
+                    "reinvestCapitalGains": true,
+                    "portfolioAmountFee": 1000
+                }
+            },
+            "portfolios": [
+                {
+                    "name": "TestPortfolio1",
+                    "totalValue": 10000,
+                    "currency": "USD",
+                    "holdings": [
+                        {
+                            "securityId": "F00000VCTT",
+                            "weight": 20
+                        },
+                        {
+                            "securityId": "0P00002NW8",
+                            "weight": 10
+                        },
+                        {
+                            "tradingSymbol": "AAPL",
+                            "weight": 15
+                        },
+                        {
+                            "isin": "US09251T1034",
+                            "weight": 35
+                        },
+                        {
+                            "cusip": "256219106",
+                            "weight": 20
+                        }
+                    ],
+                    "benchmark": {
+                        "type": "Standard",
+                        "holdings": [
+                            {
+                                "securityId": "XIUSA04G92",
+                                "type": "XI",
+                                "weight": 100
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/multi-securities/?ids=F00001GPCX%7CF00000YG2F&idType=MSID&responseViewFormat=json&viewIds=MFsnapshot&outputType=json",
+        "filename": "credit-quality.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/xray/json?portfolioDataPoints=UseMongoSecurities%2CRunInThread%2CPerformanceReturn%7CM1%7CM2%7CM3%7CM6%7CM12%7CM36%7CM60%2CStandardDeviation%7CM%7CM1%7CM2%7CM3%7CM6%7CM12%7CM36%7CM60&outputType=json",
+        "filename": "risk-return-us31635v7293.json",
+        "method": "POST",
+        "postData": "{\"benchmarkId\":\"XIUSA0010V\",\"currencyId\":\"EUR\",\"type\":2,\"holdings\":[{\"identifier\":\"US31635V7293\",\"identifierType\":\"ISIN\",\"holdingType\":2,\"securityType\":\"FO\",\"weight\":\"100\"}]}"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/xray/json?portfolioDataPoints=UseMongoSecurities%2CRunInThread%2CPerformanceReturn%7CM1%7CM2%7CM3%7CM6%7CM12%7CM36%7CM60%2CStandardDeviation%7CM%7CM1%7CM2%7CM3%7CM6%7CM12%7CM36%7CM60&outputType=json",
+        "filename": "risk-return-f00001667w.json",
+        "method": "POST",
+        "postData": "{\"benchmarkId\":\"XIUSA0010V\",\"currencyId\":\"EUR\",\"type\":2,\"holdings\":[{\"identifier\":\"F00001667W\",\"identifierType\":\"MSID\",\"holdingType\":2,\"securityType\":\"FO\",\"weight\":\"100\"}]}"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/xray/json?portfolioDataPoints=UseMongoSecurities%2CRunInThread%2CPerformanceReturn%7CM1%7CM2%7CM3%7CM6%7CM12%7CM36%7CM60%2CStandardDeviation%7CM%7CM1%7CM2%7CM3%7CM6%7CM12%7CM36%7CM60&outputType=json",
+        "filename": "risk-return-xiusa0010z.json",
+        "method": "POST",
+        "postData": "{\"benchmarkId\":\"XIUSA0010V\",\"currencyId\":\"EUR\",\"type\":2,\"holdings\":[{\"identifier\":\"XIUSA0010Z\",\"identifierType\":\"MSID\",\"holdingType\":2,\"securityType\":\"FO\",\"weight\":\"100\"}]}"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/portfolioanalysis/v1/xray?langcult=en-US&outputType=json",
+        "filename": "xray-us-trailing-returns.json",
+        "method": "POST",
+        "postData": {
+            "view": {
+                "id": "All"
+            },
+            "config": {
+                "id": "Default"
+            },
+            "requestSettings": {
+                "outputCurrency": "USD",
+                "outputReturnsFrequency": "MonthEnd",
+                "assetClassGroupConfigs": {
+                    "assetClassGroupConfig": [
+                        {
+                            "id": "ACG-USBROAD"
+                        }
+                    ]
+                }
+            },
+            "portfolios": [
+                {
+                    "name": "Portfolio",
+                    "totalValue": 10000,
+                    "currency": "USD",
+                    "holdings": [
+                        {
+                            "securityId": "F00000VCTT",
+                            "weight": 20
+                        },
+                        {
+                            "securityId": "0P00002NW8",
+                            "weight": 10
+                        },
+                        {
+                            "tradingSymbol": "AAPL",
+                            "weight": 15
+                        },
+                        {
+                            "isin": "US09251T1034",
+                            "weight": 35
+                        },
+                        {
+                            "cusip": "256219106",
+                            "weight": 20
+                        }
+                    ],
+                    "benchmark": {
+                        "type": "Standard",
+                        "holdings": [
+                            {
+                                "securityId": "XIUSA04G92",
+                                "type": "XI",
+                                "weight": 100
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
     }
 ]

@@ -42,8 +42,8 @@ import type {
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/price-channel
+ * @requires     indicators/indicators
+ * @requires     indicators/price-channel
  * @interface Highcharts.PCOptions
  */
 export interface PCOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {

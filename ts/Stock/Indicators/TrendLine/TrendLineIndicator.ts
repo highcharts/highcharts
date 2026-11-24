@@ -24,8 +24,8 @@ import type {
 } from './TrendLineOptions';
 import type TrendLinePoint from './TrendLinePoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -61,8 +61,8 @@ class TrendLineIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        7.1.3
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/trendline
+     * @requires     indicators/indicators
+     * @requires     indicators/trendline
      * @optionparent plotOptions.trendline
      * @internal
      */
@@ -217,8 +217,8 @@ export default TrendLineIndicator;
  * @extends   series,plotOptions.trendline
  * @since     7.1.3
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/trendline
+ * @requires  indicators/indicators
+ * @requires  indicators/trendline
  * @apioption series.trendline
  */
 

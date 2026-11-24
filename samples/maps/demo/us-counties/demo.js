@@ -17,8 +17,6 @@
         }
     });
 
-    document.getElementById('container').innerHTML = 'Rendering map...';
-
     // Create the map
     Highcharts.mapChart('container', {
         chart: {
@@ -101,8 +99,6 @@
                 valueSuffix: '%'
             },
             borderWidth: 0.5,
-
-            shadow: false,
             accessibility: {
                 enabled: false
             }
@@ -110,7 +106,6 @@
             type: 'mapline',
             name: 'State borders',
             color: 'white',
-            shadow: false,
             borderWidth: 2,
             accessibility: {
                 enabled: false

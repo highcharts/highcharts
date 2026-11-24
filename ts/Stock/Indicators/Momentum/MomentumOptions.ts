@@ -33,8 +33,8 @@ import type {
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/momentum
+ * @requires     indicators/indicators
+ * @requires     indicators/momentum
  * @interface Highcharts.MomentumOptions
  */
 export interface MomentumOptions extends SMAOptions {

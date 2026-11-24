@@ -12,7 +12,7 @@ consistent-return: 0 */
  * --before String Optional. The end date for the changelog, defaults to today.
  * --review        Create a review page with edit links and a list of all PRs
  *                 that are not used in the changelog.
- * --fromCache     Re-format pulls from cache, do not load new from GitHub.
+ * --fromCache     Re-format pulls from tmp/changelog-pulls.json in this checkout.
  * --product       The product to generate the changelog for (defaults to
  *                 Highcharts) for example --product Grid.
  */

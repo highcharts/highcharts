@@ -1342,7 +1342,9 @@ class Navigator {
             xAxisIndex = chart.xAxis.length,
             yAxisIndex = chart.yAxis.length,
             baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis ||
-                chart.xAxis[0] || { options: {} };
+                chart.xAxis[0] || { options: {} },
+            baseYaxis = baseSeries && baseSeries[0] && baseSeries[0].yAxis ||
+                chart.yAxis[0];
 
         chart.isDirtyBox = true;
 
@@ -1392,6 +1394,11 @@ class Navigator {
                         (chart.yAxis[0] && chart.yAxis[0].reversed) ??
                         false
                     ), // #14060
+                    uniqueNames: (
+                        navigatorOptions.yAxis?.uniqueNames ??
+                        baseYaxis?.userOptions.uniqueNames ??
+                        false
+                    ), // #24975
                     zoomEnabled: false
                 }, chart.inverted ? {
                     width: height
@@ -1830,7 +1837,8 @@ class Navigator {
                 mergedNavSeriesOptions.dataTable = userSeriesOptions.dataTable;
                 if (
                     mergedNavSeriesOptions.data ||
-                    mergedNavSeriesOptions.dataTable
+                    mergedNavSeriesOptions.dataTable ||
+                    (chart.dataTable.length && !baseSeries?.length)
                 ) {
                     navigator.hasNavigatorData = true;
                     navigatorSeries.push(

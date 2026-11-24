@@ -32,8 +32,8 @@ import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import ColorMapComposition from '../ColorMapComposition.js';
 import MU from '../../Maps/MapUtilities.js';
 const { boundsFromPath } = MU;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 import {
     extend,
     internalClearTimeout,
@@ -57,7 +57,6 @@ class MapPoint extends ScatterPoint {
     /**
      * Get the projected path based on the geometry. May also be called on
      * mapData options (not point instances), hence static.
-     * @private
      * @internal
      */
     public static getProjectedPath(
@@ -102,9 +101,6 @@ class MapPoint extends ScatterPoint {
     public insetIndex?: number;
 
     /** @internal */
-    public labelrank?: number;
-
-    /** @internal */
     public middleX?: number;
 
     /** @internal */
@@ -132,7 +128,7 @@ class MapPoint extends ScatterPoint {
 
     /**
      * Extend the Point object to split paths.
-     * @private
+     * @internal
      */
     public applyOptions(
         options: (MapPointOptions|PointShortOptions),
@@ -166,7 +162,6 @@ class MapPoint extends ScatterPoint {
 
     /**
      * Get the bounds in terms of projected units
-     * @private
      * @internal
      */
     public getProjectedBounds(
@@ -217,7 +212,7 @@ class MapPoint extends ScatterPoint {
 
     /**
      * Stop the fade-out
-     * @private
+     * @internal
      */
     public onMouseOver(
         e?: PointerEvent

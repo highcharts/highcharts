@@ -18,6 +18,10 @@ body {
     height: 400px;
 }
 
+#csv {
+    display: none;
+}
+
 .highcharts-figure,
 .highcharts-data-table table {
     min-width: 310px;

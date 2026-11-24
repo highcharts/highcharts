@@ -23,10 +23,8 @@ import type APOPoint from './APOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import EMAIndicator from '../EMA/EMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    ema: EMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -65,8 +63,8 @@ class APOIndicator extends EMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/apo
+     * @requires     indicators/indicators
+     * @requires     indicators/apo
      * @optionparent plotOptions.apo
      * @internal
      */
@@ -224,8 +222,8 @@ export default APOIndicator;
  * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/apo
+ * @requires  indicators/indicators
+ * @requires  indicators/apo
  * @apioption series.apo
  */
 

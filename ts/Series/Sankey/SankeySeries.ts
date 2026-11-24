@@ -35,12 +35,10 @@ import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
 import SankeyPoint from './SankeyPoint.js';
 import SankeySeriesDefaults from './SankeySeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SankeyColumnComposition from './SankeyColumnComposition.js';
-const {
-    column: ColumnSeries,
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
@@ -67,7 +65,6 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.sankey
  *
@@ -81,6 +78,7 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         ColumnSeries.defaultOptions,
         SankeySeriesDefaults
@@ -99,7 +97,7 @@ class SankeySeries extends ColumnSeries {
      * */
 
     /**
-     * @private
+     * @internal
      */
     protected static getDLOptions(
         params: {
@@ -157,6 +155,7 @@ class SankeySeries extends ColumnSeries {
      */
     public flowTop = 0;
 
+    /** @internal */
     public group!: SVGElement;
 
     /** @internal */
@@ -193,7 +192,7 @@ class SankeySeries extends ColumnSeries {
     /**
      * Create node columns by analyzing the nodes and the relations between
      * incoming and outgoing links.
-     * @private
+     * @internal
      */
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> {
         const columns: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> = [];
@@ -224,7 +223,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Order the nodes, starting with the root node(s). (#9818)
-     * @private
+     * @internal
      */
     public order(
         node: SankeyPoint,
@@ -258,7 +257,7 @@ class SankeySeries extends ColumnSeries {
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
-     * @private
+     * @internal
      */
     public generatePoints(): void {
         NodesComposition.generatePoints.apply(this, arguments as any);
@@ -285,7 +284,7 @@ class SankeySeries extends ColumnSeries {
     /**
      * Overridable function to get node padding, overridden in dependency
      * wheel series type.
-     * @private
+     * @internal
      */
     public getNodePadding(): number {
 
@@ -309,7 +308,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Define hasData function for non-cartesian series.
-     * @private
+     * @internal
      * @return {boolean}
      *         Returns true if the series has points at all.
      */
@@ -319,7 +318,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Return the presentational attributes.
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: SankeyPoint,
@@ -442,7 +441,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Run pre-translation by generating the nodeColumns.
-     * @private
+     * @internal
      */
     public translate(): void {
 
@@ -524,6 +523,11 @@ class SankeySeries extends ColumnSeries {
         for (const column of nodeColumns) {
             for (const node of column) {
                 series.translateNode(node, column);
+
+                // Rank node labels by the node size. The node's `y` is only
+                // a placeholder, so the generic value based rank would let
+                // the data order decide (#23585).
+                node.labelrank = node.options.labelrank ?? node.getSum();
             }
         }
 

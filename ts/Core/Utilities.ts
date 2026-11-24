@@ -438,7 +438,7 @@ export interface ErrorMessageEventObject {
  *//**
  * Font weight of the element text.
  * @name Highcharts.CSSObject#fontWeight
- * @type {string|undefined}
+ * @type {string|number|undefined}
  *//**
  * Height of the element.
  * @name Highcharts.CSSObject#height
@@ -500,7 +500,7 @@ export interface ErrorMessageEventObject {
  *//**
  * Width of the element.
  * @name Highcharts.CSSObject#width
- * @type {number|undefined}
+ * @type {number|string|undefined}
  */
 
 /**

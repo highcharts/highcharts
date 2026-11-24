@@ -33,10 +33,8 @@ import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import { perspective } from '../../Core/Math3D.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series
-} = SeriesRegistry;
 import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
 
 /* *

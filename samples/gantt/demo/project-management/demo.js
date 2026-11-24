@@ -9,8 +9,11 @@ const options = {
     },
 
     plotOptions: {
-        series: {
+        gantt: {
             borderRadius: '50%',
+            groupPadding: 0
+        },
+        series: {
             connectors: {
                 lineWidth: 1,
                 lineColor: 'var(--highcharts-neutral-color-60, #666)',
@@ -27,7 +30,6 @@ const options = {
                     xOffset: -5
                 }
             },
-            groupPadding: 0,
             dataLabels: [{
                 enabled: true,
                 align: 'left',
@@ -345,8 +347,8 @@ Highcharts.addEvent(Highcharts.Axis, 'foundExtremes', e => {
                     color: axis.options.custom.weekendBackground
                 };
 
-                if (!axis.plotBands.find(
-                    pb => pb.options.from === plotBand.from
+                if (!axis.options.plotBands?.some(
+                    pb => pb.from === plotBand.from
                 )) {
                     axis.addPlotBand(plotBand);
                 }

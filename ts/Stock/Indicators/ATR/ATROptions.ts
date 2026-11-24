@@ -35,8 +35,8 @@ import type {
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/atr
+ * @requires     indicators/indicators
+ * @requires     indicators/atr
  * @interface Highcharts.ATROptions
  */
 export interface ATROptions extends SMAOptions {

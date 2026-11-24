@@ -104,7 +104,7 @@ Highcharts.chart('container-daily', {
 You will find examples of how to use `EquityResidualRisk` converter in our
 demos.
 
-- **Highcharts Core + Morningstar Equity Residual Risk**
+- [Highcharts Core + Morningstar Equity Residual Risk](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-equity-residual-risk/)
 
 ## Morningstar API Reference
 

@@ -172,6 +172,10 @@ class HeaderCell extends Cell {
         const headerValue = column ?
             headerCellOptions.formatter?.call(column) : void 0;
 
+        // Only a format or a formatter is an opt-in to HTML, a column id
+        // coming from the data source is rendered as text.
+        let isCustomHeader = true;
+
         if (headerValue) {
             this.value = headerValue.toString();
         } else if (isString(headerCellOptions.format)) {
@@ -180,6 +184,7 @@ class HeaderCell extends Cell {
                 headerCellOptions.format;
         } else {
             this.value = column?.id || '';
+            isCustomHeader = false;
         }
 
         // Render content of th element
@@ -197,7 +202,11 @@ class HeaderCell extends Cell {
         }, container);
 
         // Render the header cell element content.
-        setHTMLContent(this.headerContent, this.value);
+        if (isCustomHeader) {
+            setHTMLContent(this.headerContent, this.value);
+        } else {
+            this.headerContent.innerText = this.value;
+        }
 
         this.htmlElement.setAttribute('scope', 'col');
 

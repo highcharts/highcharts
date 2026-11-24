@@ -37,8 +37,8 @@ import type {
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/apo
+ * @requires     indicators/indicators
+ * @requires     indicators/apo
  * @interface Highcharts.APOOptions
  */
 export interface APOOptions extends EMAOptions {

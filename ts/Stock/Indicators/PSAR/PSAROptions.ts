@@ -36,8 +36,8 @@ import type {
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/psar
+ * @requires     indicators/indicators
+ * @requires     indicators/psar
  * @interface Highcharts.PSAROptions
  */
 export interface PSAROptions extends SMAOptions {

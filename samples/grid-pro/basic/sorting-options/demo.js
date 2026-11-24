@@ -42,15 +42,13 @@ Grid.grid('container', {
     const currentSorting = dg.querying.sorting.currentSorting;
 
     dg.enabledColumns.forEach(columnId => {
-        let selected = '';
+        const option = document.createElement('option');
 
-        if (currentSorting.columnId === columnId) {
-            selected = 'selected';
-        }
+        option.value = columnId;
+        option.textContent = columnId;
+        option.selected = currentSorting.columnId === columnId;
 
-        columnSelectEl.innerHTML += `
-            <option value="${columnId}" ${selected}>${columnId}</option>
-        `;
+        columnSelectEl.appendChild(option);
     });
 
     if (currentSorting.order) {

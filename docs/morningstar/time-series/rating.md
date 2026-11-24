@@ -44,8 +44,7 @@ const ratingConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector
 
 ## Relevant demos
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve Rating time series. Specify type `Rating`.
+- [Highcharts Stock + Morningstar Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
 
 ## Morningstar API Reference
 

@@ -40,9 +40,9 @@ import type {
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/aroon
- * @requires     stock/indicators/aroon-oscillator
+ * @requires     indicators/indicators
+ * @requires     indicators/aroon
+ * @requires     indicators/aroon-oscillator
  * @interface Highcharts.AroonOscillatorOptions
  */
 export interface AroonOscillatorOptions

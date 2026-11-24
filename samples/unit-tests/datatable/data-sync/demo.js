@@ -1,4 +1,5 @@
 QUnit.test('Sync between data table and series', async assert => {
+    let redrawCount = 0;
     const chart = Highcharts.chart('container', {
         dataTable: [{
             columns: {
@@ -7,6 +8,13 @@ QUnit.test('Sync between data table and series', async assert => {
                 Revenue: [10, 11, 12, 13]
             }
         }],
+        chart: {
+            events: {
+                redraw: function () {
+                    redrawCount++;
+                }
+            }
+        },
         plotOptions: {
             series: {
                 dataMapping: {
@@ -36,6 +44,7 @@ QUnit.test('Sync between data table and series', async assert => {
     assert.strictEqual(dataTable.columns.Cost[0], 0);
 
     // Add a row to the DataTable and check if Series/Points are updated
+    redrawCount = 0;
     dataTable.setRow({
         Year: 2024,
         Cost: 4,
@@ -49,9 +58,15 @@ QUnit.test('Sync between data table and series', async assert => {
         'After adding a row to the DataTable, the new point should be ' +
         'reflected in the series'
     );
+    assert.strictEqual(
+        redrawCount,
+        1,
+        'After adding a row to the DataTable, the chart should redraw once'
+    );
 
     // Update an indexed row in the DataTable and check if Series/Points are
     // updated
+    redrawCount = 0;
     dataTable.setRow({
         Year: 2020,
         Cost: 5,
@@ -65,8 +80,14 @@ QUnit.test('Sync between data table and series', async assert => {
         'After updating a row in the DataTable, the corresponding point ' +
         'should be updated in the series'
     );
+    assert.strictEqual(
+        redrawCount,
+        1,
+        'After updating a row in the DataTable, the chart should redraw once'
+    );
 
     // Delete a row in the DataTable and check if Series/Points are updated
+    redrawCount = 0;
     dataTable.deleteRows(0);
 
     await delay(1);
@@ -77,7 +98,29 @@ QUnit.test('Sync between data table and series', async assert => {
         'should be removed from the series'
     );
 
+    assert.strictEqual(
+        redrawCount,
+        1,
+        'After deleting a row in the DataTable, the chart should redraw once'
+    );
+
+    dataTable.columns.Cost[1] = 6;
+    Highcharts.fireEvent(dataTable, 'afterSetCell', {
+        cellValue: 6,
+        columnId: 'Cost',
+        rowIndex: 1
+    });
+
+    await delay(1);
+    assert.strictEqual(
+        chart.series[0].points[1].y,
+        6,
+        'After setting a cell in the DataTable, the corresponding point ' +
+        'should be updated in the series'
+    );
+
     // Update a column in the DataTable and check if Series/Points are updated
+    redrawCount = 0;
     dataTable.setColumn('Cost', [10, 11, 12, 13]);
 
     await delay(1);
@@ -87,4 +130,88 @@ QUnit.test('Sync between data table and series', async assert => {
         'After updating a column in the DataTable, the corresponding points ' +
         'should be updated in the series'
     );
+    assert.strictEqual(
+        redrawCount,
+        1,
+        'After updating a column in the DataTable, the chart should redraw once'
+    );
+
+    // Set multiple columns
+    redrawCount = 0;
+    dataTable.setColumns({
+        Cost: [20, 21, 22, 23],
+        Revenue: [30, 31, 32, 33]
+    });
+    await delay(1);
+    // #25371, each series triggered its own chart redraw
+    assert.strictEqual(
+        redrawCount,
+        1,
+        'After setting multiple columns, the chart should redraw exactly once'
+    );
+
+    // #25283
+    const seriesTable = new Highcharts.DataTable({
+        columns: {
+            y: [5, 6, 7]
+        }
+    });
+    const seriesWithTable = chart.addSeries({
+        dataTable: seriesTable
+    });
+
+    seriesWithTable.points[1].update({ y: 99 });
+    seriesWithTable.addPoint([4, 8]);
+
+    assert.deepEqual(
+        Array.from(seriesWithTable.getColumn('y')),
+        [5, 99, 7, 8],
+        'Updating and adding points should work with a data table instance ' +
+        'on series level.'
+    );
+
+    assert.deepEqual(
+        Array.from(seriesTable.getColumn('y')),
+        [5, 6, 7],
+        'The series should not write back into the given data table.'
+    );
+
+    seriesTable.setColumn('y', [9, 8, 7]);
+
+    assert.deepEqual(
+        Array.from(seriesWithTable.getColumn('y')),
+        [9, 8, 7],
+        'Updating the given data table should update the series.'
+    );
+
+    // Series.update should not break the sync (#25441)
+    chart.series[0].update({ color: 'red' });
+    dataTable.setColumn('Cost', [20, 21, 22, 23]);
+
+    await delay(1);
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        20,
+        'After updating a column in the DataTable, the corresponding points ' +
+        'should be updated in the series even after Series.update'
+    );
+
+    dataTable.setColumns({
+        Year: [2020, 2021, 2022, 2023],
+        Cost: [0, 1, 2, 3],
+        Revenue: [10, 11, 12, 13]
+    });
+    dataTable.deleteRows(0);
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        3,
+        'After deleting a row in the DataTable, only one point ' +
+        'should be removed from the series'
+    );
+
+    dataTable.setColumn('Cost', [10, 1, 2]);
+    dataTable.setColumn('Revenue', [1, 10, 20]);
+
+    assert.ok('No errors should be thrown when updating columns subsequently');
 });

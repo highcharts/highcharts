@@ -45,15 +45,13 @@ async function renderChart() {
         });
 
     await connector.load();
-
-    const data = connector.getTable().getColumns(
-        ['Type_F0GBR052QA', 'N_F0GBR052QA', 'Type_EUCA000550', 'N_EUCA000550']
-    );
+    const dataTable = connector.getTable();
 
     Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
+        dataTable,
         title: {
             text: 'Region Breakdown Chart',
             margin: 30,
@@ -78,7 +76,7 @@ async function renderChart() {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data.Type_F0GBR052QA,
+            categories: dataTable.getColumn('Type_F0GBR052QA'),
             labels: {
                 format: '{translateGlobalRegion value}'
             }
@@ -87,7 +85,7 @@ async function renderChart() {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data.N_F0GBR052QA,
+            categories: dataTable.getColumn('N_F0GBR052QA'),
             labels: {
                 format: '{value:.2f}%',
                 align: 'right',
@@ -99,7 +97,7 @@ async function renderChart() {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data.N_EUCA000550,
+            categories: dataTable.getColumn('N_EUCA000550'),
             labels: {
                 format: '{value:.2f}%',
                 align: 'right',
@@ -124,11 +122,15 @@ async function renderChart() {
         series: [{
             name: 'Category',
             color: '#E1E1E6',
-            data: data.N_F0GBR052QA
+            dataMapping: {
+                y: 'N_F0GBR052QA'
+            }
         }, {
             name: 'BlackRock Income and Growth Ord',
             color: '#274FE0',
-            data: data.N_EUCA000550
+            dataMapping: {
+                y: 'N_EUCA000550'
+            }
         }],
         responsive: {
             rules: [{

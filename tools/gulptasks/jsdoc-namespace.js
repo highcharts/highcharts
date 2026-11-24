@@ -80,10 +80,14 @@ async function jsDocNamespace() {
             ))
     );
 
-    if (codeFiles.includes('code/highcharts.src.js')) {
-        codeFiles.unshift(
-            ...codeFiles.splice(codeFiles.indexOf('code/highcharts.src.js'), 1)
+    // Main master first to own core doclets. Normalize for Windows paths.
+    const mainMaster = path.normalize('code/highcharts.src.js'),
+        mainIndex = codeFiles.findIndex(
+            file => path.normalize(file) === mainMaster
         );
+
+    if (mainIndex !== -1) {
+        codeFiles.unshift(...codeFiles.splice(mainIndex, 1));
     }
 
     const gulpOptions = [codeFiles, { read: false }],

@@ -25,10 +25,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -93,8 +91,8 @@ class ABandsIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking,
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/acceleration-bands
+     * @requires     indicators/indicators
+     * @requires     indicators/acceleration-bands
      * @optionparent plotOptions.abands
      * @internal
      */
@@ -317,8 +315,8 @@ export default ABandsIndicator;
  *            joinBy, keys, navigatorOptions, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            stacking, showInNavigator,
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/acceleration-bands
+ * @requires  indicators/indicators
+ * @requires  indicators/acceleration-bands
  * @apioption series.abands
  */
 

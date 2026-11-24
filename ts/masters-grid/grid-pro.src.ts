@@ -5,8 +5,10 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use,
- * see www.highcharts.com/license
+ * Commercial use of this software is governed by
+ * the Highsoft Standard License Agreement, see www.highcharts.com/license.
+ * Non-commercial use is governed by the Highsoft EULA,
+ * see www.highcharts.com/license-eula
  */
 
 
@@ -30,7 +32,9 @@ import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
-import whcm from '../Accessibility/HighContrastMode.js';
+import {
+    isHighContrastModeActive
+} from '../Accessibility/HighContrastMode.js';
 import { merge } from '../Shared/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
@@ -39,7 +43,9 @@ import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableRow from '../Grid/Core/Table/Body/TableRow.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import CellContextMenuBuiltInActions
-    from '../Grid/Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
+    from '../Grid/Core/ContextMenu/ContextMenuCompat.js';
+import ContextMenu
+    from '../Grid/Core/ContextMenu/ContextMenuRegistry.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
@@ -92,9 +98,16 @@ import '../Grid/Pro/RowPinning/RowPinningComposition.js';
 import '../Grid/Pro/RowSelection/RowSelectionComposition.js';
 import '../Grid/Pro/GridEvents.js';
 import '../Grid/Pro/CellEditing/CellEditingComposition.js';
+import '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
 import '../Grid/Pro/Export/ExportingComposition.js';
+import '../Grid/Pro/License/LicenseValidationComposition.js';
+import '../Grid/Pro/Pagination/PaginationComposition.js';
+import '../Grid/Pro/SummaryColumns/SummaryColumnsComposition.js';
+import '../Grid/Pro/SummaryRows/SummaryRowsComposition.js';
 import '../Grid/Pro/TableEditing/TableEditingComposition.js';
+import '../Grid/Pro/TreeView/TreeViewComposition.js';
+import '../Grid/Pro/TreeView/TreeViewValidation.js';
 
 // Cell Renderers
 import '../Grid/Pro/CellRendering/CellRenderer.js';
@@ -123,6 +136,7 @@ import '../Grid/Pro/Data/RemoteDataProvider.js';
 const G = {
     AST,
     CellContextMenuBuiltInActions,
+    ContextMenu,
     CellContentPro,
     CellRenderer,
     CellRendererRegistry,
@@ -142,7 +156,7 @@ const G = {
     grid: _Grid.grid,
     grids: _Grid.grids,
     HeaderCell,
-    isHighContrastModeActive: whcm.isHighContrastModeActive,
+    isHighContrastModeActive,
     merge: merge,
     Pagination,
     Popup,
@@ -187,6 +201,7 @@ ResponsiveComposition.compose(G.Grid);
 export {
     AST,
     CellContextMenuBuiltInActions,
+    ContextMenu,
     CellContentPro,
     CellRenderer,
     CellRendererRegistry,
@@ -202,6 +217,7 @@ export {
     DataTable,
     _Grid as Grid,
     HeaderCell,
+    isHighContrastModeActive,
     _Options as Options,
     Pagination,
     Popup,
@@ -216,7 +232,6 @@ export const {
     defaultOptions,
     grid,
     grids,
-    isHighContrastModeActive,
     product,
     setOptions,
     version,

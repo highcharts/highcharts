@@ -47,8 +47,10 @@ export interface Funnel3DSeriesOptions extends ColumnSeriesOptions {
     animation?: ColumnSeriesOptions['animation'];
 
     /**
+     * The center of the series. By default, it is centered in the middle
+     * of the plot area, so it fills the plot area height.
+     *
      * @default ['50%', '50%']
-     * @internal
      */
     center?: Array<(number|string|null)>;
 

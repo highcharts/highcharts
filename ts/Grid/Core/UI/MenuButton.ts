@@ -1,0 +1,378 @@
+/* *
+ *
+ *  Grid Menu Button class
+ *
+ *  (c) 2020-2026 Highsoft AS
+ *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *
+ *  Authors:
+ *  - Dawid Draguła
+ *
+ * */
+
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Menu from './Menu';
+import type Button from './Button';
+import type Popup from './Popup';
+
+import { createGridIcon } from './SvgIcons.js';
+import Globals, { ClassNameKey } from '../Globals.js';
+import GridUtils from '../GridUtils.js';
+
+const { makeHTMLElement } = GridUtils;
+
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+export class MenuButton implements Button {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    /**
+     * The wrapper `<li>` element for the button.
+     */
+    public wrapper?: HTMLLIElement;
+
+    /**
+     * The context menu that the button belongs to.
+     */
+    public menu?: Menu;
+
+    public popup?: Popup;
+
+    /**
+     * Used to remove the event listeners when the button is destroyed.
+     */
+    protected eventListenerDestroyers: Function[] = [];
+
+    /**
+     * Whether the button is active.
+     */
+    protected isActive: boolean = false;
+
+    /**
+     * The options for the context menu button.
+     */
+    protected options: MenuButtonOptions;
+
+    /**
+     * The container for the icon element.
+     */
+    private iconWrapper?: HTMLElement;
+
+    /**
+     * The default icon for the context menu button.
+     */
+    private icon?: SVGElement;
+
+    /**
+     * The button element.
+     */
+    private buttonEl?: HTMLButtonElement;
+
+    /**
+     * The span element for the label.
+     */
+    private spanEl?: HTMLSpanElement;
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    constructor(options: MenuButtonOptions) {
+        this.options = options;
+    }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
+
+    /**
+     * Adds the button to the context menu.
+     *
+     * @param menu
+     * The context menu to add the button to.
+     */
+    public add(menu: Menu): this | undefined {
+        const cfg = this.options;
+        this.menu = menu;
+        menu.buttons.push(this);
+
+        const container = menu.ensureItemsContainer();
+        if (!container) {
+            return;
+        }
+
+        const liEl = this.wrapper = makeHTMLElement('li', cfg.classNameKey && {
+            className: Globals.getClassName(cfg.classNameKey)
+        }, container);
+
+        const buttonEl = this.buttonEl = makeHTMLElement('button', {
+            className: Globals.getClassName('menuItem')
+        }, liEl);
+
+        const iconEl = this.iconWrapper = makeHTMLElement('span', {
+            className: Globals.getClassName('menuItemIcon')
+        }, buttonEl);
+
+        this.spanEl = makeHTMLElement('span', {
+            className: Globals.getClassName('menuItemLabel'),
+            innerText: cfg.label || ''
+        }, buttonEl);
+
+        const chevronEl = makeHTMLElement('span', {
+            className: Globals.getClassName('menuItemIcon')
+        }, buttonEl);
+
+        iconEl.setAttribute('aria-hidden', 'true');
+        chevronEl.setAttribute('aria-hidden', 'true');
+        buttonEl.setAttribute('type', 'button');
+        buttonEl.setAttribute('tabindex', '-1');
+
+        if (cfg.disabled) {
+            buttonEl.setAttribute('disabled', '');
+        }
+
+        this.refreshState();
+
+        if (cfg.chevron) {
+            const grid = this.menu?.grid;
+            chevronEl.appendChild(createGridIcon(
+                'chevronRight',
+                grid?.options?.rendering?.icons
+            ));
+        }
+
+        if (cfg.icon) {
+            this.setIcon(cfg.icon);
+        }
+
+        this.addEventListeners();
+
+        return this;
+    }
+
+    public focus(options?: FocusOptions): void {
+        this.buttonEl?.focus(options);
+
+        const cm = this.menu;
+        if (cm) {
+            cm.focusCursor = cm.buttons.indexOf(this);
+        }
+    }
+
+    /**
+     * Triggers button click programmatically.
+     */
+    public click(): void {
+        this.buttonEl?.click();
+    }
+
+    public setLabel(label: string): void {
+        if (this.spanEl) {
+            this.spanEl.innerText = label;
+        }
+    }
+
+    /**
+     * Sets the icon for the button.
+     *
+     * @param icon
+     * The icon to set (built-in name or custom name from rendering.icons).
+     */
+    public setIcon(icon?: string): void {
+        this.icon?.remove();
+        if (!icon) {
+            return;
+        }
+
+        const grid = this.menu?.grid;
+        this.icon = createGridIcon(
+            icon,
+            grid?.options?.rendering?.icons
+        );
+        this.iconWrapper?.appendChild(this.icon);
+    }
+
+    public setActive(active: boolean): void {
+        this.isActive = active;
+        this.buttonEl?.classList.toggle('active', active);
+
+        const { activeIcon, icon } = this.options;
+        if (activeIcon) {
+            this.setIcon(active ? activeIcon : icon);
+        }
+    }
+
+    public setHighlighted(highlighted: boolean): void {
+        this.buttonEl?.classList.toggle('highlighted', highlighted);
+    }
+
+    /**
+     * Destroys the button.
+     */
+    public destroy(): void {
+        this.popup?.hide();
+        this.removeEventListeners();
+        this.wrapper?.remove();
+
+        // Unregister from the context menu
+        const cm = this.menu;
+        if (cm) {
+            const buttonIndex = cm.buttons.indexOf(this);
+            if (buttonIndex !== -1) {
+                cm.buttons.splice(buttonIndex, 1);
+            }
+            delete this.menu;
+        }
+    }
+
+    /**
+     * Initializes the state of the button.
+     */
+    protected refreshState(): void {
+        // Do nothing, to be overridden by subclasses
+    }
+
+    /**
+     * Handles the click event for the button.
+     *
+     * @param event
+     * The mouse event.
+     */
+    protected clickHandler(event: MouseEvent): void {
+        this.options.onClick?.(event, this);
+    }
+
+    /**
+     * Adds event listeners to the button.
+     */
+    protected addEventListeners(): void {
+        const clickListener = (event: MouseEvent): void => {
+            this.clickHandler(event);
+        };
+
+        this.buttonEl?.addEventListener('click', clickListener);
+        this.eventListenerDestroyers.push((): void => {
+            this.buttonEl?.removeEventListener('click', clickListener);
+        });
+
+        const { onHover } = this.options;
+        if (!onHover) {
+            return;
+        }
+
+        const hoverListener = (event: MouseEvent): void => {
+            onHover(event, this);
+        };
+
+        this.buttonEl?.addEventListener('mouseenter', hoverListener);
+        this.eventListenerDestroyers.push((): void => {
+            this.buttonEl?.removeEventListener('mouseenter', hoverListener);
+        });
+    }
+
+    /**
+     * Removes event listeners from the button.
+     */
+    private removeEventListeners(): void {
+        for (const destroyer of this.eventListenerDestroyers) {
+            destroyer();
+        }
+        this.eventListenerDestroyers.length = 0;
+    }
+}
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface MenuButtonOptions {
+    /**
+     * The label for the button.
+     */
+    label?: string;
+
+    /**
+     * The icon for the button (built-in name or custom from rendering.icons).
+     */
+    icon?: string;
+
+    /**
+     * A class name key applied to the `<li>` wrapper of the button.
+     */
+    classNameKey?: ClassNameKey;
+
+    /**
+     * The icon for the active state of the button.
+     */
+    activeIcon?: string;
+
+    /**
+     * The icon for the highlighted state of the button.
+     */
+    highlightedIcon?: string;
+
+    /**
+     * The tooltip string for the button.
+     */
+    tooltip?: string;
+
+    /**
+     * If the chevron icon should be rendered.
+     */
+    chevron?: boolean;
+
+    /**
+     * Whether the button is shown but cannot be used.
+     */
+    disabled?: boolean;
+
+    /**
+     * The click handler for the button.
+     */
+    onClick?: (event: MouseEvent, button: MenuButton) => void;
+
+    /**
+     * The handler for the pointer entering the button.
+     */
+    onHover?: (event: MouseEvent, button: MenuButton) => void;
+}
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MenuButton;

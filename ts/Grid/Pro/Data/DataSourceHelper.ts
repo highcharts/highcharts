@@ -231,13 +231,14 @@ export function buildUrl(
 
     // Populate context with template variables in form of getter functions
     // so that only the variables that are actually used in the URL are
-    // evaluated.
+    // evaluated. A variable is a value, not a URL fragment, so an `&` or a
+    // `#` a user typed into a filter must not add or cut query parameters.
     Object.keys(variables).forEach((key): void => {
         const value = variables[key];
 
         Object.defineProperty(context, key, {
             enumerable: true,
-            get: (): string => value(state)
+            get: (): string => encodeURIComponent(value(state))
         });
     });
 

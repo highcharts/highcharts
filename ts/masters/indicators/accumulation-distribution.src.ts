@@ -4,6 +4,7 @@
  * @module highcharts/indicators/accumulation-distribution
  * @requires highcharts
  * @requires highcharts/modules/stock
+ * @requires highcharts/indicators/indicators
  *
  * Indicator series type for Highcharts Stock
  *

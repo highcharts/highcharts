@@ -24,10 +24,8 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -62,7 +60,7 @@ class EMAIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
+     * @requires     indicators/indicators
      * @optionparent plotOptions.ema
      * @internal
      */
@@ -253,7 +251,7 @@ export default EMAIndicator;
  * @extends   series,plotOptions.ema
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
+ * @requires  indicators/indicators
  * @apioption series.ema
  */
 

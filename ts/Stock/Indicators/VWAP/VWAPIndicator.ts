@@ -30,8 +30,8 @@ import type {
 } from './VWAPOptions';
 import type VWAPPoint from './VWAPPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { isArray, merge } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -68,8 +68,8 @@ class VWAPIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/vwap
+     * @requires     indicators/indicators
+     * @requires     indicators/vwap
      * @optionparent plotOptions.vwap
      * @internal
      */
@@ -289,8 +289,8 @@ export default VWAPIndicator;
  * @extends   series,plotOptions.vwap
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/vwap
+ * @requires  indicators/indicators
+ * @requires  indicators/vwap
  * @apioption series.vwap
  */
 

@@ -39,8 +39,8 @@ import type {
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/dpo
+ * @requires     indicators/indicators
+ * @requires     indicators/dpo
  * @interface Highcharts.DPOOptions
  */
 export interface DPOOptions extends SMAOptions {

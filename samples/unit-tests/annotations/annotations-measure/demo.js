@@ -99,6 +99,52 @@ QUnit.test('General tests for measure annotation', function (assert) {
         'Shape color should be set according to global, type-specific options'
     );
 
+    chart.update({
+        yAxis: {
+            type: 'logarithmic'
+        }
+    });
+    chart.removeAnnotation(chart.annotations[0]);
+
+    const measure = chart.addAnnotation({
+            type: 'measure',
+            controlPointOptions: {
+                visible: true
+            },
+            typeOptions: {
+                selectType: 'x',
+                point: {
+                    x: 1
+                },
+                background: {
+                    width: '80px'
+                }
+            }
+        }),
+        yAxis = chart.yAxis[0],
+        handle = measure.controlPoints[0],
+        handleCenter = handle.graphic.attr('y') + (handle.options.height / 2),
+        pixelMid = (
+            yAxis.toPixels(measure.yAxisMin) +
+            yAxis.toPixels(measure.yAxisMax)
+        ) / 2,
+        arithmeticMid = yAxis.toPixels(
+            (measure.yAxisMin + measure.yAxisMax) / 2
+        );
+
+    assert.close(
+        handleCenter,
+        pixelMid,
+        0.5,
+        'Measure handle y should match the pixel midpoint of the y range, ' +
+        '#24851.'
+    );
+
+    assert.ok(
+        Math.abs(handleCenter - arithmeticMid) > 20,
+        'Measure handle y should not match the arithmetic mean of the y ' +
+        'values, #24851.'
+    );
 });
 
 

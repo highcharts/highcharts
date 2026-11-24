@@ -24,16 +24,17 @@ import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type { PositionObject } from '../../Core/Renderer/PositionObject';
 import type { ColorMapComposition } from '../ColorMapComposition.js';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import MapLineSeries from '../MapLine/MapLineSeries.js';
 import { LonLatArray } from '../../Maps/MapViewOptions';
-const {
-    mapline: {
-        prototype: {
-            pointClass: MapLinePoint
-        }
-    }
-} = SeriesRegistry.seriesTypes;
 import { isNumber, isString } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const MapLinePoint = MapLineSeries.prototype.pointClass;
 
 /* *
  *

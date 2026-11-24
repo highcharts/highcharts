@@ -20,7 +20,16 @@
 import * as PPath from 'node:path/posix';
 
 import FSLib from '../../libs/fs.js';
-import { debugLog } from '../utilities.mjs';
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+
+const SPDX_LINE = '// SPDX-License-Identifier: LicenseRef-Highcharts';
 
 
 /* *
@@ -39,10 +48,13 @@ import { debugLog } from '../utilities.mjs';
  * @param {Array<string>} masterImports
  * Master imports to add.
  *
+ * @param {import('webpack').LoaderContext<*>} context
+ * Webpack loader context for reporting warnings.
+ *
  * @return {string}
  * Decorated master content.
  */
-function decorateImports(content, masterImports) {
+function decorateImports(content, masterImports, context) {
     try {
         const importsMatches = content.matchAll(
             /(?:\n|\r\n)import.*?from.*?(['"])(.*?)\1.*?(?:\n|\r\n)/gsu
@@ -97,7 +109,7 @@ function decorateImports(content, masterImports) {
 
         }
     } catch (error) {
-        debugLog(error);
+        context.emitWarning(error);
         content = `/* ERROR: ${error} */\n${content}`;
     }
 
@@ -121,7 +133,7 @@ function decorateImports(content, masterImports) {
  * Extracted requirements.
  */
 function extractMasterImports(content, contentFolder, requirePrefix='') {
-    const masterDoclet = content.match(/^\/\*(.*?)\*\//su)?.[1] || '';
+    const masterDoclet = content.match(/\n\/\*(.*?)\*\//su)?.[1] || '';
     const requireMatches =
         masterDoclet.matchAll(/@requires?[ \t]+([\/\w\.-]+)/gsu);
 
@@ -216,11 +228,19 @@ function mastersLoader(content, map, meta) {
         // The product path as found on code.highcharts.com.
         const requirePrefix = options.requirePrefix
 
+        // The master doclet is expected after the license line.
+        if (!content.startsWith(SPDX_LINE)) {
+            callback(new Error(
+                `${context.resourcePath}: First line must be "${SPDX_LINE}".`
+            ));
+            return;
+        }
+
         const masterImports =
             extractMasterImports(content, contentFolder, requirePrefix);
 
         if (masterImports?.length) {
-            content = decorateImports(content, masterImports);
+            content = decorateImports(content, masterImports, context);
         }
 
         callback(null, content, map, meta);

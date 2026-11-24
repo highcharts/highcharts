@@ -1,18 +1,23 @@
 import type {
     FullConfig, FullResult, Reporter, Suite, TestCase, TestError, WorkerInfo
 } from '@playwright/test/reporter';
-import { appendFileSync, readFileSync } from 'node:fs';
+import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+    aggregateCandidateResults,
     appendError,
+    readReferenceFailures,
     resetVisualRun,
     validateVisualRun,
-    writeCandidateCompletion
+    writeCandidateCompletion,
+    writeReferenceFailures
 } from './visual-results.ts';
 
 export default class VisualReporter implements Reporter {
     private tests: TestCase[] = [];
     private started = false;
+    private runStart = 0;
+    private samplesStart = 0;
     private setupError?: unknown;
     private runError?: TestError;
     private root: string;
@@ -25,6 +30,7 @@ export default class VisualReporter implements Reporter {
     }
 
     onBegin(_config: FullConfig, suite: Suite): void {
+        this.runStart = Date.now();
         this.tests = suite.allTests().filter(test =>
             test.location.file.replace(/\\/g, '/')
                 .endsWith('/visual/visual.spec.ts')
@@ -34,6 +40,7 @@ export default class VisualReporter implements Reporter {
     onTestBegin(test: TestCase): void {
         if (!this.started && this.tests.includes(test)) {
             this.started = true;
+            this.samplesStart = Date.now();
             try {
                 resetVisualRun(
                     this.root,
@@ -69,18 +76,50 @@ export default class VisualReporter implements Reporter {
             const failedSamples = this.tests.filter(test =>
                 test.results.at(-1)?.status !== 'passed'
             );
+            const referenceFailures = this.referenceMode ? [] :
+                readReferenceFailures(this.root);
             if (
                 !['passed', 'failed'].includes(result.status) ||
-                failedSamples.some(test =>
-                    !['failed', 'timedOut'].includes(
-                        test.results.at(-1)?.status || ''
-                    ) || !test.annotations.some(annotation =>
-                        annotation.type === 'visual-sample-error'
-                    )
-                )
+                failedSamples.some(test => {
+                    const status = test.results.at(-1)?.status;
+                    return !['failed', 'timedOut'].includes(status || '') ||
+                        !test.annotations.some(annotation =>
+                            annotation.type === 'visual-sample-error'
+                        );
+                })
             ) {
                 throw new Error('Visual run did not finish every sample.');
             }
+            if (this.referenceMode) {
+                // This file certifies that only classified sample errors
+                // occurred, never an interrupted or incomplete reference run.
+                writeReferenceFailures(this.root, failedSamples.map(test => ({
+                    sample: test.title,
+                    error: test.results.at(-1)?.errors[0]?.message ||
+                        'Reference render failed.'
+                })));
+            }
+            if (!this.referenceMode) {
+                aggregateCandidateResults(this.root);
+            }
+            const sumTiming = (type: string): number => this.tests.reduce(
+                (sum, test) => sum + test.annotations
+                    .filter(a => a.type === type)
+                    .reduce((total, a) => total + Number(a.description), 0), 0
+            );
+            const timing = {
+                samples: ids.length,
+                beforeSamplesMs: this.samplesStart - this.runStart,
+                samplesWallMs: Date.now() - this.samplesStart,
+                sampleTotalMs: this.tests.reduce(
+                    (sum, test) => sum + (test.results.at(-1)?.duration || 0), 0
+                ),
+                captureTotalMs: sumTiming('visual-capture-ms'),
+                comparisonTotalMs: sumTiming('visual-comparison-ms')
+            };
+            writeFileSync(join(this.root, 'test/visual-test-timing.json'),
+                JSON.stringify(timing, null, 2));
+            console.log('Visual timing:', JSON.stringify(timing));
             if (failedSamples.length) {
                 // Sample errors are already logged by the spec. The run
                 // completed, but still fails and must not be published.
@@ -89,7 +128,11 @@ export default class VisualReporter implements Reporter {
                 }
                 return { status: 'failed' };
             }
-            validateVisualRun(this.root, ids, this.referenceMode);
+            validateVisualRun(
+                this.root,
+                ids,
+                this.referenceMode
+            );
 
             if (process.env.GITHUB_STEP_SUMMARY) {
                 const results = this.referenceMode ? {} : JSON.parse(
@@ -102,9 +145,15 @@ export default class VisualReporter implements Reporter {
                     '',
                     '| Sample | Numeric visual difference |',
                     '| --- | --- |',
-                    ...ids.map(id =>
-                        `| ${id} | ${this.referenceMode ? 'reference rendered' : results[id]} |`
-                    ),
+                    ...ids.map(id => {
+                        const outcome = this.referenceMode ?
+                            'reference rendered' :
+                            referenceFailures.some(failure =>
+                                failure.sample === id
+                            ) ?
+                                'candidate rendered; reference failed' : results[id];
+                        return `| ${id} | ${outcome} |`;
+                    }),
                     ''
                 ].join('\n'));
             }

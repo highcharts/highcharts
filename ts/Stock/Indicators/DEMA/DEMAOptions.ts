@@ -40,8 +40,8 @@ import type {
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/dema
+ * @requires     indicators/indicators
+ * @requires     indicators/dema
  * @interface Highcharts.DEMAOptions
  */
 export interface DEMAOptions extends EMAOptions {

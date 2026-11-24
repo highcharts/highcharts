@@ -16,7 +16,10 @@
  * */
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
-import type AxisOptions from '../AxisOptions';
+import type {
+    AxisOptions,
+    AxisTitleOptions
+} from '../AxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type GradientColor from '../../Color/GradientColor';
 import type LegendOptions from '../../Legend/LegendOptions';
@@ -198,6 +201,11 @@ export interface ColorAxisMarkerOptions {
 
 }
 
+export interface ColorAxisTitleOptions extends AxisTitleOptions {
+    /** @default 5 */
+    margin?: AxisTitleOptions['margin'];
+}
+
 /**
  * A color axis for series. Visually, the color
  * axis will appear as a gradient or as separate items inside the
@@ -246,6 +254,7 @@ export interface ColorAxisMarkerOptions {
 export interface ColorAxisOptions extends AxisOptions {
 
     // TODO alignTicks?: undefined;
+    /** @default true */
     allowDecimals?: undefined;
     alternateGridColor?: undefined;
     breaks?: undefined;
@@ -258,6 +267,7 @@ export interface ColorAxisOptions extends AxisOptions {
     maxZoom?: undefined;
     minRange?: undefined;
     minTickInterval?: undefined;
+    /** @default 0 */
     offset?: 0;
     opposite?: undefined;
     pane?: undefined;
@@ -349,6 +359,8 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
+     * @default 'var(--highcharts-highlight-color-100)'
+     *
      * @product highcharts highstock highmaps
      */
     maxColor?: ColorType;
@@ -368,6 +380,8 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
+     * @default 'var(--highcharts-highlight-color-10)'
+     *
      * @product highcharts highstock highmaps
      */
     minColor?: ColorType;
@@ -377,6 +391,8 @@ export interface ColorAxisOptions extends AxisOptions {
      *
      * @sample highcharts/coloraxis/hidden-coloraxis-with-3d-chart/
      *         Hidden color axis with 3d chart
+     *
+     * @default true
      *
      * @see [heatmap.showInLegend](#series.heatmap.showInLegend)
      *
@@ -412,7 +428,7 @@ export interface ColorAxisOptions extends AxisOptions {
      *
      * @product highcharts highstock highmaps
      */
-    title: AxisOptions['title'];
+    title: ColorAxisTitleOptions;
 
     /**
      * The type of interpolation to use for the color axis. Can be

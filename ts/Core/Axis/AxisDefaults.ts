@@ -125,6 +125,7 @@ namespace AxisDefaults {
          * @type      {Array<*>}
          * @since     4.1.0
          * @product   highcharts highstock gantt
+         * @requires  modules/broken-axis
          * @apioption xAxis.breaks
          */
 
@@ -472,6 +473,15 @@ namespace AxisDefaults {
          * @default   2
          * @since     4.1
          * @apioption xAxis.crosshair.zIndex
+         */
+
+        /**
+         * A reserved subspace to store options and values for customized
+         * functionality. Here you can add additional data for your own event
+         * callbacks and formatter callbacks.
+         *
+         * @type      {Highcharts.Dictionary<*>}
+         * @apioption xAxis.custom
          */
 
         /**
@@ -1191,12 +1201,13 @@ namespace AxisDefaults {
 
             /**
              * Rotation of the labels in degrees. When `undefined`, the
-             * `autoRotation` option takes precedence.
+             * `autoRotation` option takes precedence. On radial axes, labels
+             * can be rotated along the axis by setting the rotation to 'auto'.
              *
              * @sample {highcharts} highcharts/xaxis/labels-rotation/
              *         X axis labels rotated 90°
              *
-             * @type      {number}
+             * @type      {number|"auto"}
              * @default   0
              * @apioption xAxis.labels.rotation
              */
@@ -1788,6 +1799,16 @@ namespace AxisDefaults {
          */
 
         /**
+         * Enable or disable the scrollbar on the X axis.
+         *
+         * @see [scrollbar.enabled](#scrollbar.enabled)
+         *
+         * @default   false
+         * @product   highstock
+         * @apioption xAxis.scrollbar.enabled
+         */
+
+        /**
          * Whether to show the axis line and title when the axis has no data.
          *
          * @sample {highcharts} highcharts/yaxis/showempty/
@@ -2068,12 +2089,15 @@ namespace AxisDefaults {
          */
 
         /**
-         * The axis title, showing next to the axis line.
+         * The axis title, showing next to the axis line. Set to `null` to
+         * disable the title.
          *
          * @productdesc {highmaps}
          * In Highmaps, the axis is hidden by default, but adding an axis title
          * is still possible. X axis and Y axis titles will appear at the bottom
          * and left by default.
+         *
+         * @type {null|*}
          */
         title: {
 
@@ -2097,7 +2121,7 @@ namespace AxisDefaults {
             align: 'middle',
 
             /**
-             * Deprecated. Set the `text` to `undefined` to disable the title.
+             * Deprecated. Set the `text` to `null` to disable the title.
              *
              * @deprecated 3.0.0
              * @type      {boolean}
@@ -2925,14 +2949,14 @@ namespace AxisDefaults {
          */
 
         /**
-         * Enable the scrollbar on the Y axis.
+         * Enable or disable the scrollbar on the Y axis.
+         *
+         * @see [scrollbar.enabled](#scrollbar.enabled)
          *
          * @sample {highstock} stock/yaxis/scrollbar/
          *         Enabled on Y axis
          *
-         * @type      {boolean}
          * @default   false
-         * @since     4.2.6
          * @product   highstock
          * @apioption yAxis.scrollbar.enabled
          */
@@ -3078,13 +3102,13 @@ namespace AxisDefaults {
              * The actual text of the axis title. Horizontal texts can contain
              * HTML, but rotated texts are painted using vector techniques and
              * must be clean text. The Y axis title is disabled by setting the
-             * `text` option to `undefined`. The default value is overridden by
+             * `text` option to `null`. The default value is overridden by
              * the `lang.yAxisTitle` language option.
              *
              * @sample {highcharts} highcharts/xaxis/title-text/
              *         Custom HTML
              *
-             * @type    {string|undefined}
+             * @type    {string|null}
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt

@@ -75,8 +75,10 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
+        tilemap: {
+            tileShape: 'circle'
+        },
         series: {
-            tileShape: 'circle',
             dataLabels: {
                 enabled: true,
                 format: '{point.iso-a3}',

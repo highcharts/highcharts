@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts-autoload

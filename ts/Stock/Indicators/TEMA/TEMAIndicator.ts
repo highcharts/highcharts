@@ -24,8 +24,8 @@ import type {
 } from './TEMAOptions';
 import type TEMAPoint from './TEMAPoint';
 
+import EMAIndicator from '../EMA/EMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { ema: EMAIndicator } = SeriesRegistry.seriesTypes;
 import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -65,8 +65,8 @@ class TEMAIndicator extends EMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/tema
+     * @requires     indicators/indicators
+     * @requires     indicators/tema
      * @optionparent plotOptions.tema
      * @internal
      */
@@ -347,8 +347,8 @@ export default TEMAIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/tema
+ * @requires  indicators/indicators
+ * @requires  indicators/tema
  * @apioption series.tema
  */
 

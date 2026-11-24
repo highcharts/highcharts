@@ -638,6 +638,24 @@ function path(
 }
 
 /**
+ * Removes path elements that could result in a folder escape. Use this on any
+ * path coming from an HTTP request before joining it with a root folder.
+ *
+ * The URL parser resolves all dot segments, including percent-encoded ones,
+ * and clamps at the root, so the result always starts with a separator and
+ * can never escape the folder it gets joined with.
+ *
+ * @param {string} pathToSanitize
+ * Path to sanitize.
+ *
+ * @return {string}
+ * Sanitized path.
+ */
+function sanitizePath(pathToSanitize) {
+    return (new URL(pathToSanitize, 'http://localhost')).pathname;
+}
+
+/**
  * Set file content.
  *
  * @param {string} filePath
@@ -654,6 +672,58 @@ function setFile(filePath, data) {
 
     FS.writeFileSync(filePath, data, 'utf8');
 
+}
+
+/**
+ * Update UTF-8 content through one open file, preserving its identity.
+ *
+ * @param {string} filePath
+ * File to update.
+ * @param {Function} transform
+ * Return new content, or undefined to leave the file unchanged.
+ * @param {object} [options]
+ * Update options.
+ * @param {boolean} [options.optional=false]
+ * Skip files missing when opened.
+ */
+function updateFile(filePath, transform, { optional = false } = {}) {
+    let descriptor, writeError;
+    try {
+        descriptor = FS.openSync(filePath, 'r+');
+    } catch (error) {
+        if (optional && error.code === 'ENOENT') {
+            return;
+        }
+        if (!['EACCES', 'EPERM', 'EROFS'].includes(error.code)) {
+            throw error;
+        }
+        // Read-only outputs can still be intentionally left unchanged.
+        writeError = error;
+        descriptor = FS.openSync(filePath, 'r');
+    }
+    try {
+        const content = transform(FS.readFileSync(descriptor, 'utf8'));
+        if (typeof content === 'undefined') {
+            return;
+        }
+        if (writeError) {
+            throw writeError;
+        }
+        const bytes = Buffer.from(content, 'utf8');
+        let offset = 0;
+        while (offset < bytes.length) {
+            const written = FS.writeSync(
+                descriptor, bytes, offset, bytes.length - offset, offset
+            );
+            if (!written) {
+                throw new Error(`Could not finish writing ${filePath}`);
+            }
+            offset += written;
+        }
+        FS.ftruncateSync(descriptor, bytes.length);
+    } finally {
+        FS.closeSync(descriptor);
+    }
 }
 
 /* *
@@ -683,5 +753,7 @@ module.exports = {
     normalizePath,
     parentPath,
     path,
-    setFile
+    sanitizePath,
+    setFile,
+    updateFile
 };

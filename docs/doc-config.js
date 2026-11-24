@@ -6,13 +6,13 @@ module.exports = {
      * Refer to doc by relative path without extension, i.e.: 'maps/drilldown'
      */
     unlisted: [
-        'adr/0001-separate-visual-runner-from-comparison',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
         'maps/latlon'
     ],
     /* List of old paths that should be redirected */
     redirects: [
+        { from: 'grid/cell-context-menu', to: 'grid/context-menu' },
         { from: 'chart-and-series-types/networkgraph', to: 'chart-and-series-types/network-graph' },
         { from: 'chart-and-series-types/technical-indicator-series', to: 'stock/technical-indicator-series' },
         { from: 'advanced-chart-features/highcharts-typescript-beta', to: 'advanced-chart-features/highcharts-typescript-declarations' },
@@ -39,10 +39,10 @@ module.exports = {
         { from: 'datagrid/style-by-css', to: 'grid/theming/index' },
         { from: 'datagrid/accessibility', to: 'grid/accessibility' },
         { from: 'datagrid/datagrid-with-angular', to: 'grid/frameworks/angular' },
-        { from: 'datagrid/datagrid-with-react', to: 'grid/frameworks/react' },
+        { from: 'datagrid/datagrid-with-react', to: 'grid/frameworks/react/getting-started' },
         { from: 'datagrid/datagrid-with-vue', to: 'grid/frameworks/vue' },
         { from: 'grid/wrappers/grid-with-angular', to: 'grid/frameworks/angular' },
-        { from: 'grid/wrappers/grid-with-react', to: 'grid/frameworks/react' },
+        { from: 'grid/wrappers/grid-with-react', to: 'grid/frameworks/react/getting-started' },
         { from: 'grid/wrappers/grid-with-vue', to: 'grid/frameworks/vue' },
         { from: 'grid/cell-editing', to: 'grid/editing/index' },
         { from: 'grid/cell-renderers', to: 'grid/editing/renderers' },
@@ -54,7 +54,8 @@ module.exports = {
         { from: 'grid/conditional-theming', to: 'grid/theming/conditional' },
         { from: 'grid/theming-variables', to: 'grid/theming/grid-variables' },
         { from: 'grid/frameworks/grid-with-angular', to: 'grid/frameworks/angular' },
-        { from: 'grid/frameworks/grid-with-react', to: 'grid/frameworks/react' },
+        { from: 'grid/frameworks/grid-with-react', to: 'grid/frameworks/react/getting-started' },
+        { from: 'grid/frameworks/react', to: 'grid/frameworks/react/getting-started' },
         { from: 'grid/frameworks/grid-with-vue', to: 'grid/frameworks/vue' },
         { from: 'grid/frameworks/grid-with-nextjs', to: 'grid/frameworks/nextjs' },
         { from: 'grid/columns/configuration', to: 'grid/columns/index' },

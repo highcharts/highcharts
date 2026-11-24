@@ -39,11 +39,7 @@ async function renderChart() {
         });
 
     await connector.load();
-
-    // Extract data from table
-    const data = connector.getTable().getColumns(
-        ['Type_F00001GPCX', 'N_F00001GPCX', 'Type_F00000YG2F', 'N_F00000YG2F']
-    );
+    const dataTable = connector.getTable();
 
     Highcharts.chart('container', {
         chart: {
@@ -58,12 +54,13 @@ async function renderChart() {
             align: 'right',
             verticalAlign: 'top'
         },
+        dataTable,
         xAxis: [{
             grid: {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data.Type_F00001GPCX,
+            categories: dataTable.getColumn('Type_F00001GPCX'),
             labels: {
                 format: '{translateCreditQuality value}'
             }
@@ -72,7 +69,7 @@ async function renderChart() {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data.N_F00001GPCX,
+            categories: dataTable.getColumn('N_F00001GPCX'),
             labels: {
                 format: '{value:.2f}%',
                 align: 'right',
@@ -84,7 +81,7 @@ async function renderChart() {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data.N_F00000YG2F,
+            categories: dataTable.getColumn('N_F00000YG2F'),
             labels: {
                 format: '{value:.2f}%',
                 align: 'right',
@@ -119,11 +116,15 @@ async function renderChart() {
             name: 'Aviva Investors - ' +
                 'Emerging Markets Corporate Bond Fund I USD Acc',
             color: '#E1E1E6',
-            data: data.N_F00001GPCX
+            dataMapping: {
+                y: 'N_F00001GPCX'
+            }
         }, {
             name: 'Aviva Investors - Emerging Markets Bond Fund K USD Acc',
             color: '#274FE0',
-            data: data.N_F00000YG2F
+            dataMapping: {
+                y: 'N_F00000YG2F'
+            }
         }],
 
         responsive: {

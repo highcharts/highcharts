@@ -48,8 +48,8 @@ export interface IKHMarkerOptions extends PointMarkerOptions {
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/ichimoku-kinko-hyo
+ * @requires     indicators/indicators
+ * @requires     indicators/ichimoku-kinko-hyo
  * @interface Highcharts.IKHOptions
  */
 export interface IKHOptions extends SMAOptions {

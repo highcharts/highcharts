@@ -1,0 +1,40 @@
+{
+  "companyGrade": [
+    {
+      "asOfDate": "2021-02-26",
+      "growthGrade": "C",
+      "profitabilityGrade": "F"
+    }
+  ],
+  "financialHealthGrade": [
+    {
+      "asOfDate": "2026-05-20",
+      "distanceToDefault": 2.336445,
+      "probabilityOfDefault": 0.9734
+    }
+  ],
+  "stockStyle": [
+    {
+      "effectiveDate": "2026-04-30",
+      "growthScore": 61.871814,
+      "regionId": {
+        "value": "Australia/New Zealand",
+        "code": 6
+      },
+      "sizeScore": 129.534812,
+      "styleBox": {
+        "value": "Mid Core",
+        "code": 5
+      },
+      "styleScore": 179.688284,
+      "valueScore": 55.216785
+    }
+  ],
+  "identifiers": {
+    "performanceId": "0P00006W6Q"
+  },
+  "metadata": {
+    "requestId": "dd460dc6-b0db-4c3b-b386-c2bf5f6ac4d4",
+    "time": "2026-05-20T13:28:07.2571797Z"
+  }
+}

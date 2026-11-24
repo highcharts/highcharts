@@ -227,6 +227,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         One specific series
      * @sample {highcharts} highcharts/plotoptions/series-color-area/
      *         Area color
+     * @sample {highcharts} highcharts/plotoptions/column-color-gradient/
+     *         Columns with gradient fill
      * @sample {highcharts} highcharts/series/infographic/
      *         Pattern fill
      * @sample {highmaps} maps/demo/category-map/
@@ -235,6 +237,31 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @basic
      * @type      {Highcharts.ColorType}
      * @apioption plotOptions.series.color
+     */
+
+    /**
+     * When using automatic point colors pulled from the global
+     * [colors](colors) or series-specific
+     * [plotOptions.series.colors](series.colors) collections, this option
+     * determines whether the chart should receive one color per series or
+     * one color per point.
+     *
+     * In styled mode, the `colors` or `series.colors` arrays are not
+     * supported, and instead this option gives the points individual color
+     * class names on the form `highcharts-color-{n}`.
+     *
+     * @see [series colors](#plotOptions.series.colors)
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
+     *         False by default
+     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
+     *         True
+     *
+     * @type      {boolean}
+     * @default   false
+     * @since     2.0
+     * @product   highcharts highstock gantt
+     * @apioption plotOptions.series.colorByPoint
      */
 
     /**
@@ -250,6 +277,17 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type      {number}
      * @since     5.0.0
      * @apioption plotOptions.series.colorIndex
+     */
+
+    /**
+     * A series specific or series type specific color set to apply instead
+     * of the global [colors](#colors) when [colorByPoint](
+     * #plotOptions.series.colorByPoint) is true.
+     *
+     * @type      {Array<Highcharts.ColorType>}
+     * @since     3.0
+     * @product   highcharts highstock gantt
+     * @apioption plotOptions.series.colors
      */
 
     /**
@@ -421,12 +459,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use the chart-level
+     * [dataTable](#dataTable) with
+     * [dataMapping](#plotOptions.series.dataMapping) instead.
+     *
      * Options for a specific series-level data table or an array of data
      * tables. The `dataTable` option can be either a configuration object or an
-     * instance of the `DataTable` class. If a `DataTable` instance is passed,
-     * it will be used directly. If a configuration object or an array is
-     * passed, a new `DataTable` instance will be created based on the provided
-     * configuration.
+     * instance of the `DataTable` class. The series always creates its own
+     * `DataTable` for the resolved data, reading from the given configuration
+     * or table. Changes to a given table are reflected in the series, while
+     * the series never writes back into it.
      *
      * @type   {Highcharts.DataTable|Highcharts.DataTableOptionsObject|Array<Highcharts.DataTable|Highcharts.DataTableOptionsObject>}
      * @sample {highcharts} highcharts/datatable/series-datatable/
@@ -440,8 +482,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highmaps} maps/datatable/series-datatable
      *         Series-level data table
      *
-     * @since 13.0.0
-     * @apioption plotOptions.series.dataTable
+     * @since      13.0.0
+     * @deprecated next
+     * @apioption  plotOptions.series.dataTable
      */
 
     /**
@@ -556,9 +599,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @see [navigator.series](#navigator.series)
      *
-     * @type      {Highcharts.PlotSeriesOptions}
+     * @type      {Highcharts.NavigatorSeriesOptions}
      * @since     5.0.0
-     * @product   highstock
+     * @product   highstock gantt
      * @apioption plotOptions.series.navigatorOptions
      */
 
@@ -841,7 +884,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @type      {boolean}
      * @since     5.0.0
-     * @product   highstock
+     * @product   highstock gantt
      * @apioption plotOptions.series.showInNavigator
      */
 
@@ -2016,12 +2059,12 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
-         * Text rotation in degrees. Note that due to a more complex
-         * structure, backgrounds, borders and padding will be lost on a
-         * rotated data label.
+         * Text rotation in degrees.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
          *         Vertical labels
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-rotationmode-plugin
+         *         Perpendicular rotation in pie series via plugin
          *
          * @type      {number}
          * @default   0

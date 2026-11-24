@@ -24,10 +24,8 @@ import type {
 } from './RSIOptions';
 import type RSIPoint from './RSIPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -75,8 +73,8 @@ class RSIIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/rsi
+     * @requires     indicators/indicators
+     * @requires     indicators/rsi
      * @optionparent plotOptions.rsi
      * @internal
      */
@@ -257,8 +255,8 @@ export default RSIIndicator;
  * @extends   series,plotOptions.rsi
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/rsi
+ * @requires  indicators/indicators
+ * @requires  indicators/rsi
  * @apioption series.rsi
  */
 

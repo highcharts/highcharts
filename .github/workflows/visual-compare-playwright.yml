@@ -16,6 +16,9 @@ on:
       - 'tests/globals.d.ts'
       - 'tests/qunit/utils/browser-log-note-reporter.ts'
       - 'tests/setup-highcharts.mts'
+      - 'tests/setup-dashboards.mts'
+      - 'tests/setup-build-utils.mts'
+      - 'tests/setup-visual.mts'
       - 'tests/tsconfig.json'
       - 'tests/utils.ts'
       - 'tests/visual/**'
@@ -48,6 +51,8 @@ jobs:
     name: Playwright visual comparison
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      VISUAL_TEST_BATCHES: '2'
     steps:
       - name: Checkout candidate
         uses: actions/checkout@v6
@@ -77,6 +82,9 @@ jobs:
             tests/globals.d.ts \
             tests/qunit/utils/browser-log-note-reporter.ts \
             tests/setup-highcharts.mts \
+            tests/setup-dashboards.mts \
+            tests/setup-build-utils.mts \
+            tests/setup-visual.mts \
             tests/package.json \
             tests/package-lock.json \
             tests/tsconfig.json \
@@ -97,9 +105,6 @@ jobs:
           clean: true
           fetch-depth: 0
 
-      - name: Restore candidate visual harness
-        run: tar -xzf "$RUNNER_TEMP/visual-harness.tar.gz" -C "$GITHUB_WORKSPACE"
-
       - name: Use Node.js lts/*
         uses: actions/setup-node@v6
         with:
@@ -108,6 +113,21 @@ jobs:
           cache-dependency-path: |
             package-lock.json
             tests/package-lock.json
+
+      - name: Install reference toolchain
+        run: npm ci
+
+      # Build before overlaying any candidate files or dependencies.
+      - name: Build reference products
+        run: npx playwright test --project=setup-visual --pass-with-no-tests
+
+      - name: Preserve reference build
+        run: |
+          tar -czf "$RUNNER_TEMP/visual-reference-build.tar.gz" \
+            code tmp/json-sources.js
+
+      - name: Restore candidate visual harness
+        run: tar -xzf "$RUNNER_TEMP/visual-harness.tar.gz" -C "$GITHUB_WORKSPACE"
 
       - name: Install candidate toolchain for reference
         run: npm ci
@@ -125,6 +145,10 @@ jobs:
             tests/package.json \
             tests/package-lock.json \
             tools/docs-preview/package.json
+
+      # npm ci runs clean, so restore the build only after installation.
+      - name: Restore reference build
+        run: tar -xzf "$RUNNER_TEMP/visual-reference-build.tar.gz" -C "$GITHUB_WORKSPACE"
 
       - name: Select comparable visual samples
         env:
@@ -153,7 +177,9 @@ jobs:
         env:
           VISUAL_TEST_MANIFEST: ${{ runner.temp }}/visual-samples.json
           VISUAL_TEST_REFERENCE: '1'
-        run: npx playwright test tests/visual/visual.spec.ts --project=visual
+        # The products were built with the reference toolchain above. Running
+        # setup-visual here would rebuild them with candidate dependencies.
+        run: npx playwright test tests/visual/visual.spec.ts --project=visual --no-deps
 
       - name: Preserve reference visual evidence
         if: always()
@@ -170,7 +196,9 @@ jobs:
 
           for file in \
             test/visual-test-results.json \
-            test/visual-test-errors.log; do
+            test/visual-test-timing.json \
+            test/visual-test-errors.log \
+            test/visual-reference-failures.json; do
             if [ -f "$file" ]; then
               target="$RUNNER_TEMP/visual-reference/$file"
               mkdir -p "$(dirname "$target")"
@@ -198,6 +226,11 @@ jobs:
             mkdir -p samples
             cp -R "$RUNNER_TEMP/visual-reference/samples/." samples
           fi
+          if [ -f "$RUNNER_TEMP/visual-reference/test/visual-reference-failures.json" ]; then
+            mkdir -p test
+            cp "$RUNNER_TEMP/visual-reference/test/visual-reference-failures.json" \
+              test/visual-reference-failures.json
+          fi
 
       - name: Install candidate toolchain
         run: npm ci
@@ -216,11 +249,63 @@ jobs:
           CANDIDATE_OUTCOME: ${{ steps.candidate.outcome }}
         run: |
           failures=0
-
-          if [ "$REFERENCE_OUTCOME" != "success" ]; then
-            echo "::error::Reference step outcome: $REFERENCE_OUTCOME"
-            failures=1
-          fi
+          node <<'NODE' || failures=1
+          const fs = require('node:fs');
+          // The reference reporter writes this only after completion checks.
+          const failurePath = `${process.env.RUNNER_TEMP}/visual-reference/test/visual-reference-failures.json`;
+          const errorPath = `${process.env.RUNNER_TEMP}/visual-reference/test/visual-test-errors.log`;
+          const outcome = process.env.REFERENCE_OUTCOME;
+          let listed = [];
+          if (fs.existsSync(failurePath)) {
+            try {
+              listed = JSON.parse(fs.readFileSync(failurePath, 'utf8'));
+              if (!Array.isArray(listed) || listed.some(item =>
+                !item || typeof item.sample !== 'string' || !item.sample ||
+                typeof item.error !== 'string' || !item.error
+              )) throw new Error('expected an array of { sample, error } entries');
+            } catch (error) {
+              console.log(`::error::Invalid reference failures file: ${error.message}`);
+              process.exit(1);
+            }
+          }
+          const log = fs.existsSync(errorPath) ? fs.readFileSync(errorPath, 'utf8') : '';
+          const entries = [];
+          let entry = '';
+          for (const line of log.split(/\r?\n/)) {
+            if (!line) continue;
+            if (line.startsWith('Visual test failed for ')) {
+              if (entry) entries.push(entry);
+              entry = line;
+            } else {
+              entry = entry ? `${entry}\n${line}` : line;
+            }
+          }
+          if (entry) entries.push(entry);
+          const unlisted = entries.filter(line => {
+            const match = line.match(/^Visual test failed for (.+?): /);
+            return !match || !listed.some(item => item.sample === match[1]);
+          });
+          const missingLogEntries = listed.filter(item =>
+            !entries.some(line => line.startsWith(`Visual test failed for ${item.sample}: `))
+          );
+          if (unlisted.length) {
+            console.log(`::error::Reference run has unlisted or incomplete-run errors: ${unlisted.join('; ')}`);
+            process.exitCode = 1;
+          }
+          if (missingLogEntries.length) {
+            console.log(`::error::Listed reference failures are missing log entries: ${missingLogEntries.map(item => item.sample).join(', ')}`);
+            process.exitCode = 1;
+          }
+          if (outcome !== 'success' && !(outcome === 'failure' && listed.length > 0)) {
+            console.log(`::error::Reference step outcome ${outcome} is not explained by listed sample failures.`);
+            process.exitCode = 1;
+          }
+          if (outcome === 'success' && listed.length) {
+            console.log('::error::Reference run succeeded but reported sample failures.');
+            process.exitCode = 1;
+          }
+          for (const item of listed) console.log(`::warning::Reference sample not compared: ${item.sample}: ${item.error}`);
+          NODE
           if [ "$CANDIDATE_OUTCOME" != "success" ]; then
             echo "::error::Candidate step outcome: $CANDIDATE_OUTCOME"
             failures=1
@@ -258,12 +343,11 @@ jobs:
             const { title, body } = JSON.parse(readFileSync(
               'tmp/pr-visual-test-comment.json', 'utf8'
             ));
-            const results = JSON.parse(readFileSync('test/visual-test-results.json', 'utf8'));
             await createOrUpdateComment(
               github,
               context,
               title.replace('Visual test results', 'Playwright visual test results'),
-              `\nCovers **${Object.keys(results).length} samples**.\n\n${body}`
+              body
             );
 
       - name: Upload Playwright visual evidence
@@ -275,10 +359,13 @@ jobs:
           path: |
             ${{ runner.temp }}/visual-samples.json
             ${{ runner.temp }}/visual-reference
+            test/visual-reference-failures.json
             samples/**/reference.svg
             samples/**/candidate.svg
             samples/**/diff.gif
             test/visual-test-results.json
+            test/visual-test-results/
+            test/visual-test-timing.json
             test/visual-test-errors.log
             test/visual-test-complete
             tmp/pr-visual-test-comment.json

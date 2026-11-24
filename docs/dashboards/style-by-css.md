@@ -31,7 +31,7 @@ using a custom HTML layout.
 The CSS must be explicitly imported, as shown here:
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/grid-pro/css/grid-pro.css");
 ```
 
 The file `grid-pro.css` is needed only if the Grid component is used in the dashboard.

@@ -30,11 +30,9 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import { merge } from '../../../Shared/Utilities.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -68,8 +66,8 @@ class CMFIndicator extends SMAIndicator {
      * @since        6.0.0
      * @excluding    animationLimit
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cmf
+     * @requires     indicators/indicators
+     * @requires     indicators/cmf
      * @optionparent plotOptions.cmf
      * @internal
      */
@@ -367,8 +365,8 @@ export default CMFIndicator;
  * @extends   series,plotOptions.cmf
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/cmf
+ * @requires  indicators/indicators
+ * @requires  indicators/cmf
  * @apioption series.cmf
  */
 

@@ -30,16 +30,11 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import AreaRangePoint from './AreaRangePoint.js';
+import AreaSeries from '../Area/AreaSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import RangeDataLabel from '../RangeDataLabel.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    area: AreaSeries,
-    area: {
-        prototype: areaProto
-    }
-} = SeriesRegistry.seriesTypes;
 import {
     addEvent,
     defined,
@@ -365,7 +360,7 @@ class AreaRangeSeries extends AreaSeries {
 
         const highPoints = [],
             highAreaPoints: Array<AreaPoint> = [],
-            getGraphPath = areaProto.getGraphPath,
+            getGraphPath = AreaSeries.prototype.getGraphPath,
             options = this.options,
             polar = this.chart.polar,
             connectEnds = polar && options.connectEnds !== false,
@@ -486,9 +481,9 @@ class AreaRangeSeries extends AreaSeries {
             rangeOptions.forEach(RangeDataLabel.applyAlignToKeyValue);
             series.options.dataLabels = rangeOptions;
 
-            if (areaProto.drawDataLabels) {
+            if (AreaSeries.prototype.drawDataLabels) {
                 // #1209
-                areaProto.drawDataLabels.call(series);
+                AreaSeries.prototype.drawDataLabels.call(series);
             }
             series.options.dataLabels = dataLabelOptions;
 
@@ -561,7 +556,7 @@ class AreaRangeSeries extends AreaSeries {
         const originalSettings = series.modifyMarkerSettings();
 
         // Draw bottom points
-        areaProto.drawPoints.apply(series, arguments);
+        AreaSeries.prototype.drawPoints.apply(series, arguments);
 
         // Restore previous state
         series.restoreMarkerSettings(originalSettings);
@@ -611,7 +606,7 @@ class AreaRangeSeries extends AreaSeries {
         }
 
         // Draw top points
-        areaProto.drawPoints.apply(series, arguments);
+        AreaSeries.prototype.drawPoints.apply(series, arguments);
 
         // Reset top points preliminary modifications
         i = 0;
@@ -658,6 +653,15 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
         this.points.forEach((point): void => {
             const high = point.high,
                 plotY = point.plotY;
+
+            // Rank both labels of the point by how tall the range is.
+            // `pointValKey` is `low` for this series, so the generic value
+            // based rank would order the labels by their lower bound rather
+            // than by size. Set here rather than in `drawDataLabels` so that
+            // column ranges and their subtypes get it too (#23585).
+            point.labelrank = point.options.labelrank ?? Math.abs(
+                (high || 0) - (point.low || 0)
+            );
 
             if (point.isNull) {
                 point.plotY = void 0;

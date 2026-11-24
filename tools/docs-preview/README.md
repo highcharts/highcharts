@@ -1,41 +1,23 @@
-# Website
+# Documentation preview
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+This preview uses [Docusaurus](https://docusaurus.io/) and is an npm workspace.
+Run these commands from the repository root. Dependencies and overrides are
+managed by the root `package.json` and `package-lock.json`.
 
-### Installation
+Install dependencies:
 
-```
-$ yarn
-```
-
-### Local Development
-
-```
-$ yarn start
+```sh
+npm ci
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+Start the local development server:
 
-### Build
-
-```
-$ yarn build
+```sh
+npm run preview-docs
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+Build the static preview in `tools/docs-preview/build`:
 
-### Deployment
-
-Using SSH:
-
+```sh
+npm run build --workspace=docs-preview
 ```
-$ USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.

@@ -31,10 +31,8 @@ import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
 import OnSeriesComposition from '../OnSeriesComposition.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import WindbarbPoint from './WindbarbPoint.js';
 import WindbarbSeriesDefaults from './WindbarbSeriesDefaults.js';
 import { extend, merge } from '../../Shared/Utilities.js';
@@ -50,7 +48,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
  * be called anywhere (not necessarily in the translate function), but must
  * happen after the data grouping module is loaded and before the
  * wind barb series uses it.
- * @private
+ * @internal
  */
 function registerApproximation(): void {
     if (!ApproximationRegistry.windbarb) {
@@ -92,7 +90,6 @@ function registerApproximation(): void {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.windbarb
  *

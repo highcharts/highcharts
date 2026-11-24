@@ -14,7 +14,7 @@ Highcharts.chart('container', {
                 connectorWidth: 2,
                 connectorColor: 'blue',
                 style: {
-                    textOutline: 0
+                    textOutline: 'none'
                 }
             }
         }, {

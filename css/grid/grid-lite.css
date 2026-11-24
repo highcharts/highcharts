@@ -3,12 +3,14 @@
 /**
  * @license Highcharts Grid Lite v@product.version@
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * All use of this software is governed by
+ * the Highsoft EULA for Highcharts Grid Lite,
+ * see www.highcharts.com/license-grid-lite
  */
 
+@import url("./grid-element-reset.css");
 @import url("./grid-base-variables.css");
 @import url("./grid-popup-variables.css");
 @import url("./grid-menu-variables.css");
@@ -512,6 +514,18 @@
         opacity: 0.5;
         user-select: none;
     }
+}
+
+/* Rendered in the top layer, where nothing clips it. The user agent's
+   `[popover]` geometry has to be reset before the popup can be placed by
+   hand. */
+.hcg-container .hcg-popup[popover] {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: auto;
 }
 
 /* ----------------------------------------------------------

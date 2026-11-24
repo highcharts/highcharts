@@ -26,8 +26,8 @@ import type PCPoint from './PCPoint';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -66,8 +66,8 @@ class PCIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/price-channel
+     * @requires     indicators/indicators
+     * @requires     indicators/price-channel
      * @optionparent plotOptions.pc
      * @internal
      */
@@ -252,8 +252,8 @@ export default PCIndicator;
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/price-channel
+ * @requires     indicators/indicators
+ * @requires     indicators/price-channel
  * @apioption    series.pc
  */
 

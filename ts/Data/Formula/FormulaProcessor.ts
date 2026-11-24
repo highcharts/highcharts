@@ -376,7 +376,7 @@ function getRangeValues(
 
         for (
             let j = range.beginRow,
-                jEnd = range.endRow + 1;
+                jEnd = Math.min(range.endRow + 1, cells.length);
             j < jEnd;
             ++j
         ) {

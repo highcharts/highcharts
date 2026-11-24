@@ -54,6 +54,20 @@ test('discovery excludes Karma ignores and manual/skip metadata', () => {
     });
 });
 
+test('product path filters share discovery and exclusion rules', () => {
+    withSamples(root => {
+        deepStrictEqual(selectVisualSamples(root, {
+            filter: 'samples/highcharts/,samples/gantt/'
+        }).map(sample => sample.id), [
+            'gantt/demo/allowed',
+            'highcharts/demo/area-missing'
+        ]);
+        deepStrictEqual(selectVisualSamples(root, {
+            filter: 'samples/gantt/'
+        }).map(sample => sample.id), ['gantt/demo/allowed']);
+    });
+});
+
 test('manifest preserves exact selection and rejects ignored or missing IDs', () => {
     withSamples(root => {
         const manifest = join(root, 'samples.json');
