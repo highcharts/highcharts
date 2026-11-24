@@ -6,12 +6,53 @@ const gulp = require('gulp');
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+/**
+ * Creates the minified `.css` file from a `.src.css` file.
+ *
+ * @param {string} inputPath
+ * Path to the `.src.css` file.
+ *
+ * @return {Promise<void>}
+ * Promise to keep
+ */
+async function compileCSS(inputPath) {
+    const fs = require('fs'),
+        logLib = require('../libs/log'),
+        postcss = require('postcss');
+    // Native import, the tsx require hook breaks cssnano's ESM interop
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax, node/no-unpublished-import
+    const { default: cssnano } = await import('cssnano');
+    const outputPath = inputPath.replace('.src.css', '.css');
+    const { css } = await postcss([cssnano({
+        preset: ['default', {
+            discardComments: {
+                // Keep license banners, like `comments: 'some'` for JS
+                remove: comment => !/@license|SPDX-License/u.test(comment)
+            }
+        }]
+    })]).process(fs.readFileSync(inputPath, 'utf-8'), { from: inputPath });
+
+    fs.writeFileSync(outputPath, css);
+
+    logLib.success(
+        `Compiled ${inputPath} => ${outputPath}`,
+        `(${(fs.statSync(outputPath).size / 1024).toFixed(2)} kB)`
+    );
+}
+
+/* *
+ *
  *  Tasks
  *
  * */
 
 /**
- * Creates minified versions of `.src.js` bundles in `/code` folder.
+ * Creates minified versions of `.src.js` and `.src.css` bundles in `/code`
+ * folder.
  *
  * @param {Array<string>} [filePaths]
  * Optional list of files to compile.
@@ -60,6 +101,8 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
                 .getFilePaths(targetFolder, true)
                 .map(filePath => fsLib.path(filePath, true));
 
+    const cssPromises = [];
+
     let promiseChain1 = Promise.resolve(),
         promiseChain2 = Promise.resolve();
 
@@ -72,6 +115,11 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
         ++i
     ) {
         inputPath = filePaths[i];
+
+        if (inputPath.endsWith('.src.css')) {
+            cssPromises.push(compileCSS(inputPath));
+            continue;
+        }
 
         if (
             inputPath.includes(esModulesFolder) ||
@@ -138,7 +186,8 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     // not too many in parallel because of IO
     return Promise.all([
         promiseChain1,
-        promiseChain2
+        promiseChain2,
+        ...cssPromises
     ]);
 }
 

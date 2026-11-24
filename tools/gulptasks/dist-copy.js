@@ -126,7 +126,7 @@ const CODE_FILTER = {
     ),
     'grid-lite': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
-        ['grid', 'css', 'grid-pro.css'],
+        ['grid', 'css', 'grid-pro.'],
         ['grid', 'css', 'modules', 'grid-pro.css'],
         ['grid', 'es-modules', 'Grid', 'Pro'],
         ['grid', 'es-modules', 'masters', 'grid-pro.'],
@@ -137,8 +137,8 @@ const CODE_FILTER = {
     'grid-pro': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
         // Keep css/modules/grid-lite.css because raw grid-pro.css imports it.
-        ['grid', 'css', 'grid-lite.css'],
-        ['grid', 'css', 'grid.css'],
+        ['grid', 'css', 'grid-lite.'],
+        ['grid', 'css', 'grid.'],
         ['grid', 'css', 'modules', 'grid.css'],
         ['grid', 'es-modules', 'Grid', 'Lite'],
         ['grid', 'es-modules', 'masters', 'grid-lite.'],
@@ -286,6 +286,7 @@ function distCopy() {
             FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'grid']
                 .some(name => fileName.includes(`${name}.css`)));
 
+            // Last, so minified code/css overwrites raw css
             FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);
             LogLib.success('Created', directory);
 

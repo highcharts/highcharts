@@ -154,6 +154,26 @@ function replaceProductVersionInFiles(folder, buildPropertiesPath) {
     });
 }
 
+/**
+ * Copies each CSS file to `.src.css`, the source that `scripts-compile`
+ * minifies back into the `.css` file.
+ * @param  {string} folder
+ * Folder with the CSS files.
+ * @param  {boolean} [includeSubDirectories]
+ * Whether to include CSS files in subfolders.
+ */
+function writeSourceCSS(folder, includeSubDirectories) {
+    const fs = require('fs');
+    const { getFilePaths } = require('../libs/fs');
+
+    getFilePaths(folder, includeSubDirectories)
+        .filter(file => file.endsWith('.css') && !file.endsWith('.src.css'))
+        .forEach(file => fs.copyFileSync(
+            file,
+            file.replace(/\.css$/u, '.src.css')
+        ));
+}
+
 /* *
  *
  *  Tasks
@@ -169,35 +189,37 @@ function replaceProductVersionInFiles(folder, buildPropertiesPath) {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function scriptCSS(argv) {
+async function scriptCSS(argv) {
     const log = require('../libs/log');
+    const path = require('path');
 
-    return new Promise(resolve => {
-        if (argv.product === 'Dashboards') {
-            log.message('Generating css for Dashboards...');
-            copyCSS(dashboardsConfig);
-            replaceProductVersionInFiles(
-                require('path').join(dashboardsConfig.target, 'css'),
-                './dashboards/build-properties.json'
-            );
-            log.success('Copied dashboards CSS');
-        } else if (argv.product === 'Grid') {
-            log.message('Generating css for Grid...');
-            copyCSS(gridConfig);
-            bundleGridCSS();
-            replaceProductVersionInFiles(
-                require('path').join(TARGET_DIRECTORY, 'grid', 'css'),
-                './grid/build-properties.json'
-            );
-            log.success('Copied grid CSS');
-        } else {
-            log.message('Generating css for Highcharts...');
-            copyCSS(highchartsConfig);
-            log.success('Copied highcharts CSS');
-        }
+    if (argv.product === 'Dashboards') {
+        const folder = path.join(dashboardsConfig.target, 'css');
 
-        resolve();
-    });
+        log.message('Generating css for Dashboards...');
+        copyCSS(dashboardsConfig);
+        replaceProductVersionInFiles(
+            folder,
+            './dashboards/build-properties.json'
+        );
+        writeSourceCSS(folder);
+        log.success('Copied dashboards CSS');
+    } else if (argv.product === 'Grid') {
+        const folder = path.join(TARGET_DIRECTORY, 'grid', 'css');
+
+        log.message('Generating css for Grid...');
+        copyCSS(gridConfig);
+        await bundleGridCSS();
+        replaceProductVersionInFiles(folder, './grid/build-properties.json');
+        // Modules stay unminified, like es-modules
+        writeSourceCSS(folder);
+        log.success('Copied grid CSS');
+    } else {
+        log.message('Generating css for Highcharts...');
+        copyCSS(highchartsConfig);
+        writeSourceCSS(path.join(TARGET_DIRECTORY, 'css'), true);
+        log.success('Copied highcharts CSS');
+    }
 }
 
 scriptCSS.description = 'Creates CSS files for given product';
