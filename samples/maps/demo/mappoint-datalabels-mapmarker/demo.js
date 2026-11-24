@@ -351,7 +351,7 @@
         },
 
         title: {
-            text: 'Winter day temperatures in  Europe',
+            text: 'Winter day temperatures in Europe',
             align: 'right',
             floating: true,
             style: {
@@ -463,7 +463,7 @@
             },
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{xDescription}, {point.temp}°C.'
+                    valueDescriptionFormat: '{xDescription}, {point.y}°C.'
                 }
             }
         }]

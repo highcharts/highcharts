@@ -198,7 +198,7 @@
             }],
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{xDescription}, {point.temp}°C.'
+                    valueDescriptionFormat: '{xDescription}, {point.y}°C.'
                 }
             }
         }]
