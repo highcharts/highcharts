@@ -89,7 +89,7 @@ Highcharts.chart('container', {
             },
             {
                 id: 'Net Import',
-                color: '000000'
+                color: '#000000'
             },
             {
                 id: 'Residential',
@@ -125,10 +125,6 @@ Highcharts.chart('container', {
                 id: 'Energy Services',
                 color: '#F9E79F',
                 column: 3
-            },
-            {
-                id: 'Net Import',
-                color: '000000'
             },
             {
                 id: 'Solar',
