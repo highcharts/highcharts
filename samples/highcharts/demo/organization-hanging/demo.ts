@@ -42,7 +42,7 @@ Highcharts.chart('container', {
     accessibility: {
         point: {
             descriptionFormat: '{add index 1}. {toNode.id}' +
-                'comes from {fromNode.id}'
+                ' comes from {fromNode.id}'
         }
     },
 

@@ -25,7 +25,7 @@
         subtitle: {
             text: 'Ranges showing ± 2 standard deviations. Source: ' +
                 '<a href="https://www.who.int/tools/child-growth-standards/standards/length-height-for-age"' +
-                'target="_blank">WHO</a>.',
+                ' target="_blank">WHO</a>.',
             align: 'left'
         },
 
