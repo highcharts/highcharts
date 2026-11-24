@@ -145,6 +145,8 @@ Highcharts.setOptions({
 
 });
 Highcharts.clonedDefaultOptions = deepClone(Highcharts.defaultOptions);
+var originalTime = Highcharts.time;
+var originalTemplates = window.TestTemplate && { ...TestTemplate.templates };
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 Highcharts.radialDefaultOptionsRaw =
     JSON.stringify(Highcharts.RadialAxis.radialDefaultOptions);
@@ -274,11 +276,7 @@ function resetDefaultOptions(testName) {
             ) {
                 // Recurse
                 deleteAddedProperties(copy[key], original[key]);
-            } else if (
-                // functions are not saved in defaultOptionsRaw
-                typeof value !== 'function' &&
-                !(key in original)
-            ) {
+            } else if (!(key in original)) {
                 delete copy[key];
             }
         });
@@ -293,6 +291,10 @@ function resetDefaultOptions(testName) {
     delete Highcharts.defaultOptions.global.getTimezoneOffset;
     delete Highcharts.defaultOptions.time.getTimezoneOffset;
 
+    // Templating shares this Time instance. Restore its options in place so
+    // subsequent samples see the same instance through Highcharts.time.
+    Highcharts.time = originalTime;
+    originalTime.options = {};
     Highcharts.setOptions(Highcharts.merge(
         defaultOptionsClonedFromOriginal
     ));
@@ -300,13 +302,23 @@ function resetDefaultOptions(testName) {
     // Restore radial axis defaults
     Highcharts.RadialAxis.radialDefaultOptions =
         JSON.parse(Highcharts.radialDefaultOptionsRaw);
+}
 
-    // Create a new Time instance to avoid state leaks related to time and the
-    // legacy global options
-    Highcharts.time = new Highcharts.Time(Highcharts.merge(
-        Highcharts.defaultOptions.global,
-        Highcharts.defaultOptions.time
-    ));
+function resetQUnitSample() {
+    // Some samples cache template charts across QUnit tests in the same file.
+    Highcharts.charts.slice().forEach(function (chart) {
+        if (chart && chart.renderer) {
+            chart.destroy();
+        }
+    });
+    Highcharts.charts.length = 0;
+    if (originalTemplates) {
+        TestTemplate.templates = { ...originalTemplates };
+    }
+    Math.randomCursor = 0;
+    delete window.highchartsCSS;
+    Highcharts.Chart.prototype.callbacks = Highcharts.callbacksRaw.slice();
+    resetDefaultOptions();
 }
 
 
@@ -317,7 +329,7 @@ var wrappedFunctions = [];
 var origAddEvent = Highcharts.addEvent;
 var addedEvents = [];
 
-if (window.QUnit) {
+function installQUnitHooks() {
     // Fix the number localization in IE
     if (
         /msie/.test(navigator.userAgent) &&
@@ -590,6 +602,10 @@ if (window.QUnit) {
             }
         }
     });
+}
+
+if (window.QUnit) {
+    installQUnitHooks();
 }
 
 function replaceProtos() {

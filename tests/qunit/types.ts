@@ -89,5 +89,7 @@ declare global {
         __qunitBrowserLogs__?: string[];
         __qunitConsoleErrors__?: string[];
         QUnit: BrowserQUnit;
+        installQUnitHooks(): void;
+        resetQUnitSample(): void;
     }
 }

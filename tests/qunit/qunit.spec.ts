@@ -1,17 +1,77 @@
 /* eslint-disable playwright/no-conditional-in-test */
-import { test } from '~/fixtures.ts';
-import { getKarmaScripts, getSample, transpileTS } from '~/utils.ts';
+import type { BrowserContextOptions, Page } from '@playwright/test';
+import { setupRoutes, test as base } from '~/fixtures.ts';
+import { getSample, transpileTS } from '~/utils.ts';
 import { join, dirname } from 'node:path';
-import { pathToFileURL } from 'node:url';
-import { appendFile, readFile, writeFile } from 'node:fs/promises';
+import { appendFile, writeFile } from 'node:fs/promises';
 import { glob } from 'glob';
 
-import { qunitScript, qunitStyles } from '~/qunit/assets.ts';
-import { setupEnhancedQUnitCallbacks, captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
+import {
+    initializeFreshPage,
+    initializeWarmPage,
+    installWarmSampleHooks,
+    prepareWarmSample,
+    qunitViewport,
+    readQUnitSetupScripts,
+    readQUnitSource,
+    scopeWarmSample
+} from '~/qunit/page.ts';
+import { captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
 import { formatQUnitErrorDetails } from '~/qunit/utils/error-formatter.ts';
-import { setupConsoleCapture } from '~/qunit/utils/console-capture.ts';
 import { waitForQUnitWithTimeout, waitForScriptLoadWithTimeout, attemptTimeoutRecovery, type TimeoutError } from '~/qunit/utils/timeout-handler.ts';
 import { getOutputConfig, createVerbosePassedOutput } from '~/qunit/utils/output-config.ts';
+
+const useFreshPage = process.env.QUNIT_FRESH_PAGE === '1';
+
+const test = base.extend<{ qunitPage: Page }, {
+    setupScripts: string[];
+    qunitSource: string;
+    warmPage: Page;
+}>({
+    setupScripts: [async ({}, use) => {
+        await use(await readQUnitSetupScripts());
+    }, { scope: 'worker' }],
+    qunitSource: [async ({}, use) => {
+        await use(await readQUnitSource());
+    }, { scope: 'worker' }],
+    warmPage: [async ({ browser, setupScripts }, use, workerInfo) => {
+        const { contextOptions, ...projectUse } = workerInfo.project.use;
+        const options: BrowserContextOptions = {
+            ...contextOptions,
+            ...projectUse,
+            viewport: qunitViewport
+        };
+        const context = await browser.newContext(options);
+        try {
+            const page = await context.newPage();
+            await setupRoutes(page);
+            await initializeWarmPage(page, setupScripts);
+            await use(page);
+        } finally {
+            await context.close();
+        }
+    }, { scope: 'worker' }],
+    qunitPage: useFreshPage ?
+        async ({ page, setupScripts }, use) => {
+            await initializeFreshPage(page, setupScripts);
+            await use(page);
+        } :
+        async ({ warmPage, qunitSource }, use) => {
+            const cleanup = await prepareWarmSample(warmPage, qunitSource);
+            try {
+                await installWarmSampleHooks(warmPage);
+                await use(warmPage);
+            } finally {
+                try {
+                    if (!warmPage.isClosed()) {
+                        await cleanup.evaluate(reset => reset());
+                    }
+                } finally {
+                    await cleanup.dispose();
+                }
+            }
+        }
+});
 
 const QUNIT_CONSOLE_LOG_NOTE_MARKER = join(
     'tests',
@@ -127,88 +187,16 @@ async function markBrowserLogsNoteNeeded(): Promise<void> {
 test.describe('QUnit tests', () => {
     const pathEnv = process.env.QUNIT_TEST_PATH ?? 'unit-tests/*/*';
 
-    test.use({ viewport: { width: 800, height: 600 } });
+    test.use({ viewport: qunitViewport });
     test.describe.configure({
         timeout: 30_000,
     });
 
     let qunitConsoleLogPath = getQUnitConsoleLogPath(0);
-    let setupScripts: string[];
 
     test.beforeAll(async ({}, testInfo) => {
         qunitConsoleLogPath = getQUnitConsoleLogPath(testInfo.parallelIndex);
         await ensureQUnitConsoleLogFile(qunitConsoleLogPath);
-
-        const scripts = [
-            ...(await getKarmaScripts()),
-            join('test', 'call-analyzer.js'),
-            join('test', 'test-controller.js'),
-            join('test', 'test-utilities.js'),
-            join('tmp', 'json-sources.js'),
-            join('test', 'test-template.js'),
-            ...(await glob('test/templates/**/*.js')),
-            join('test', 'visual-comparator.js'),
-            join('test', 'karma-setup.js')
-        ];
-
-        setupScripts = await Promise.all(scripts.map(async path => {
-            const source = await readFile(path, 'utf8');
-            return `${source}\n//# sourceURL=${pathToFileURL(path).href}`;
-        }));
-    });
-
-    test.beforeEach(async ({ page }) => {
-        await setupConsoleCapture(page);
-
-        // Keep the chart layout independent of QUnit 3's body margin reset.
-        await page.setContent(`<body style="margin: 8px">
-        <div id="qunit"></div>
-        <div id="qunit-fixture"></div>
-        <div id="container" style="width: 600px"></div>
-        <div id="output"></div>
-        </body>`);
-
-        // An already loaded document would otherwise start before registration.
-        await page.evaluate(() => {
-            window.QUnit = {
-                config: { autostart: false }
-            } as typeof window.QUnit;
-        });
-
-        await page.addScriptTag({ path: qunitScript });
-        await page.addStyleTag({ path: qunitStyles });
-        await setupEnhancedQUnitCallbacks(page);
-
-        // Keep classic scripts separate and ordered while sending them together.
-        await page.evaluate(sources => {
-            for (const source of sources) {
-                const script = document.createElement('script');
-                script.text = source;
-                document.head.append(script);
-            }
-        }, setupScripts);
-
-        await page.evaluate(() => {
-            const qunit = window.QUnit;
-
-            qunit.on('testStart', () => {
-                if (window.Highcharts) {
-                    window.Highcharts.setOptions({
-                        chart: {
-                            events: {
-                                load: function () {
-                                    window.setHCStyles(this);
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-
-            qunit.on('testEnd', () => {
-                document.querySelector('#test-hc-styles')?.remove();
-            });
-        });
     });
 
     const unitTests = glob.sync(`samples/${pathEnv}/demo.{js,mjs,ts}`, {
@@ -222,7 +210,7 @@ test.describe('QUnit tests', () => {
     for (const qunitTest of unitTests){
         // QUnit runs assertions inside the browser.
         // eslint-disable-next-line playwright/expect-expect
-        test(qunitTest, async ({ page }) => {
+        test(qunitTest, async ({ qunitPage: page }) => {
             const testStartTime = Date.now();
             const sample = getSample(dirname(qunitTest));
 
@@ -236,21 +224,21 @@ test.describe('QUnit tests', () => {
                     'QUnit.test("", (assert) => { assert.ok(true)  })';
             }
 
+            const content = useFreshPage ? sample.script :
+                scopeWarmSample(sample.script);
             const scriptLoadStart = Date.now();
 
             try {
                 // Load script with timeout handling
-                const scriptPromise = page.addScriptTag({
-                    content: sample.script
-                });
+                const scriptPromise = page.addScriptTag({ content });
                 const script = await waitForScriptLoadWithTimeout(
                     page,
                     scriptPromise,
                     qunitTest,
                     10000 // 10 second timeout for script loading
                 );
-                await script.evaluate((s: HTMLScriptElement) => {
-                    s.id = 'test-script';
+                await script.evaluate((element: HTMLScriptElement) => {
+                    element.id = 'test-script';
                 });
                 const scriptLoadEnd = Date.now();
 

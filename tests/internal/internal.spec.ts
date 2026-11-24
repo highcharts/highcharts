@@ -2,6 +2,16 @@ import type {} from 'qunit';
 import { test, expect, createChart } from '~/fixtures.ts';
 import { getSample } from '~/utils.ts';
 import { qunitAssetUrl, qunitVersion } from '~/qunit/assets.ts';
+import {
+    initializeWarmPage,
+    installWarmSampleHooks,
+    prepareWarmSample,
+    readQUnitSetupScripts,
+    readQUnitSource,
+    scopeWarmSample
+} from '~/qunit/page.ts';
+import { captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
+import { waitForQUnitWithTimeout } from '~/qunit/utils/timeout-handler.ts';
 
 test.describe('getSample', () => {
     test('should get sample with Windows-style path', () => {
@@ -150,6 +160,66 @@ test('QUnit safely parses query parameter names', async ({ page }) => {
     expect(counts).toEqual({
         failed: 0, passed: 1, skipped: 0, todo: 0, total: 1
     });
+});
+
+test('QUnit samples run independently on a shared page', async ({ page }) => {
+    await initializeWarmPage(page, await readQUnitSetupScripts());
+    const qunitSource = await readQUnitSource();
+    const originalTime = await page.evaluateHandle(() => Highcharts.time);
+
+    async function runSample(name: string, source: string) {
+        const cleanup = await prepareWarmSample(page, qunitSource);
+        try {
+            await installWarmSampleHooks(page);
+            await page.addScriptTag({ content: scopeWarmSample(source) });
+            await page.evaluate(() => window.QUnit.start());
+            await waitForQUnitWithTimeout(page, name, 5000);
+            return await captureQUnitErrorDetails(page, name);
+        } finally {
+            await cleanup.evaluate(reset => reset());
+            await cleanup.dispose();
+        }
+    }
+
+    const first = await runSample('first sample', `
+        const label = 'first';
+        QUnit.test('first sample', assert => {
+            Highcharts.setOptions({ time: { timezone: 'America/New_York' } });
+            const timestamp = Date.UTC(2024, 0, 1);
+            assert.strictEqual(
+                Highcharts.format('{timestamp:%H:%M}', { timestamp }), '19:00'
+            );
+            assert.strictEqual(label, 'expected', 'deliberate failure');
+        });
+    `);
+    expect(first.qunitResults).toMatchObject({
+        status: 'failed', total: 1, failed: 1
+    });
+    expect(first.failedAssertions).toMatchObject([{
+        name: 'first sample',
+        message: 'deliberate failure',
+        actual: 'first',
+        expected: 'expected'
+    }]);
+
+    const second = await runSample('second sample', `
+        const label = 'second';
+        QUnit.test('second sample', assert => {
+            assert.strictEqual(label, 'second');
+        });
+        QUnit.test('time format is restored', assert => {
+            const timestamp = Date.UTC(2024, 0, 1);
+            assert.strictEqual(
+                Highcharts.format('{timestamp:%H:%M}', { timestamp }), '00:00'
+            );
+        });
+    `);
+    expect(second.qunitResults).toMatchObject({
+        status: 'passed', total: 2, passed: 2
+    });
+    expect(second.failedAssertions).toEqual([]);
+    expect(await originalTime.evaluate(time => time === Highcharts.time))
+        .toBe(true);
 });
 
 test.describe('Redirects for data', () => {

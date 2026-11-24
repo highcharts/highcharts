@@ -2,7 +2,7 @@
  * Browser console log capture utilities for QUnit tests
  */
 
-import type { Page } from '@playwright/test';
+import type { Page, Request } from '@playwright/test';
 
 export interface ConsoleLogEntry {
     level: 'log' | 'error' | 'warn' | 'info' | 'debug';
@@ -26,6 +26,8 @@ const ERROR_EVENT_LEVELS = new Set([
     'requestfailed',
     'crash'
 ]);
+
+const pageEvents = new WeakMap<Page, string[]>();
 
 function normalizeLevel(level: string): ConsoleLogEntry['level'] {
     const normalized = level.toLowerCase();
@@ -53,34 +55,21 @@ function normalizeLevel(level: string): ConsoleLogEntry['level'] {
  * Sets up comprehensive console log capture with filtering and formatting
  */
 export async function setupConsoleCapture(page: Page): Promise<void> {
+    const requestEvents = new WeakMap<Request, string[]>();
     const pushBrowserLogEntry = (
         level: string,
         message: string,
-        timestamp: number
+        timestamp: number,
+        events = pageEvents.get(page)
     ): void => {
-        const isError = normalizeLevel(level) === 'error';
-        void page.evaluate(
-            ({ entryLevel, entryMessage, entryTimestamp, entryIsError }) => {
-                window.__qunitBrowserLogs__ ??= [];
-                window.__qunitConsoleErrors__ ??= [];
-
-                const entry =
-                    `[${new Date(entryTimestamp).toISOString()}] ` +
-                    `[${entryLevel.toUpperCase()}] ${entryMessage}`;
-                window.__qunitBrowserLogs__.push(entry);
-
-                if (entryIsError) {
-                    window.__qunitConsoleErrors__.push(entry);
-                }
-            }, {
-                entryLevel: level,
-                entryMessage: message,
-                entryTimestamp: timestamp,
-                entryIsError: isError
-            }).catch(() => {
-            // Ignore race conditions during page/context teardown.
-        });
+        // Keep Playwright events at the sample boundary where they arrive.
+        // A queued page.evaluate could otherwise write into the next sample.
+        events?.push(
+            `[${new Date(timestamp).toISOString()}] ` +
+            `[${level.toUpperCase()}] ${message}`
+        );
     };
+    pageEvents.set(page, []);
 
     // Listen to console events from Playwright
     page.on('console', (msg) => {
@@ -103,10 +92,28 @@ export async function setupConsoleCapture(page: Page): Promise<void> {
         pushBrowserLogEntry('pageerror', message, Date.now());
     });
 
+    page.on('request', request => {
+        const events = pageEvents.get(page);
+        if (events) {
+            requestEvents.set(request, events);
+        }
+    });
+
+    page.on('requestfinished', request => {
+        requestEvents.delete(request);
+    });
+
     page.on('requestfailed', request => {
         const errorText = request.failure()?.errorText || 'Unknown failure';
         const message = `${request.method()} ${request.url()} - ${errorText}`;
-        pushBrowserLogEntry('requestfailed', message, Date.now());
+        const events = requestEvents.get(request);
+        requestEvents.delete(request);
+        pushBrowserLogEntry(
+            'requestfailed',
+            message,
+            Date.now(),
+            events
+        );
     });
 
     page.on('crash', () => {
@@ -227,16 +234,18 @@ export async function setupConsoleCapture(page: Page): Promise<void> {
 export async function getCapturedConsoleLogs(
     page: Page
 ): Promise<ConsoleCapture> {
-    const [browserLogs] = await Promise.all([
-        page.evaluate(() => window.__qunitBrowserLogs__ || [])
-    ]);
+    const browserLogs = await page.evaluate(() =>
+        window.__qunitBrowserLogs__ || []);
+    const events = [...browserLogs, ...(pageEvents.get(page) ?? [])];
+    // Both sources prefix each entry with a UTC ISO timestamp.
+    events.sort((a, b) => a.slice(0, 25).localeCompare(b.slice(0, 25)));
     
     // Parse and categorize logs
     const logs: ConsoleLogEntry[] = [];
     const errors: ConsoleLogEntry[] = [];
     const warnings: ConsoleLogEntry[] = [];
     
-    browserLogs.forEach(logEntry => {
+    events.forEach(logEntry => {
         const match = logEntry.match(/^\[(.*?)\] \[(.*?)\] ([\s\S]*)$/);
         if (match) {
             const [, timestamp, rawLevel] = match;
@@ -309,4 +318,5 @@ export async function clearConsoleLogs(page: Page): Promise<void> {
         window.__qunitBrowserLogs__ = [];
         window.__qunitConsoleErrors__ = [];
     });
+    pageEvents.set(page, []);
 }

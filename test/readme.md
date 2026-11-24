@@ -25,6 +25,14 @@ npm test
 For browser selection or individual test paths, use Playwright directly.
 `gulp test` rejects the former Karma browser, filtering and reporter options.
 
+Each Playwright worker loads Highcharts once and starts a new QUnit run for
+each sample. Samples on the same worker share a browser window. To investigate
+a failure that depends on sample order, run with a fresh page per sample:
+
+```bash
+QUNIT_FRESH_PAGE=1 npx playwright test --project=qunit --grep reversedstacks
+```
+
 ### Running Timezone Tests
 
 Timezone tests verify that Highcharts handles time conversions correctly across
@@ -112,8 +120,7 @@ limit the number of charts in the test suite.
 - Don't use global variables. ESLint should raise an error on this on
   pre-commit. If several of the tests in the same `demo.js` share a function or
   variables, wrap it all in an IIFE.
-- Playwright opens a fresh page for each sample. QUnit cases in the same
-  sample share a Highcharts instance. Restore changes made with
+- QUnit cases in the same sample share the chart defaults. Restore changes made with
   `Highcharts.setOptions()` before the next case runs.
 - In visual tests, `plotOptions` and `callbacks` are reset after each test. If
   other properties of Highcharts are mutated, a file `aftereach.js` can be added

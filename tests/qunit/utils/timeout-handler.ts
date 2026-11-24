@@ -4,6 +4,7 @@
 
 import type { Page } from '@playwright/test';
 import type { QUnitTestCounts } from '~/qunit/types.ts';
+import { getCapturedConsoleLogs } from '~/qunit/utils/console-capture.ts';
 
 export interface TimeoutContext {
     testPath: string;
@@ -164,10 +165,8 @@ export function createTimeoutHandler(context: TimeoutContext) {
         },
         
         async captureConsoleActivity(page: Page): Promise<string[]> {
-            return await page.evaluate(() => {
-                const logs = window.__qunitBrowserLogs__ || [];
-                return logs.slice(-10); // Last 10 log entries
-            });
+            const { logs } = await getCapturedConsoleLogs(page);
+            return logs.slice(-10).map(log => log.message);
         },
         
         formatDiagnostics(diagnostics: TimeoutDiagnostics): string {
