@@ -119,7 +119,7 @@ QUnit.test('Indentation', function (assert) {
 
     assert.strictEqual(
         childTickIconY,
-        0,
+        undefined,
         'Label icon should be shown after double clicking ' +
         'parent in drop-down. (#14904)'
     );

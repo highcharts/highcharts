@@ -78,7 +78,7 @@ QUnit.test('RangeSelector update', function (assert) {
 
     assert.strictEqual(
         chart.rangeSelector.group.attr('text-align'),
-        0,
+        undefined,
         'Range selector group should not have text-align attr set, #22698.'
     );
 

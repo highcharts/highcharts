@@ -1354,7 +1354,7 @@ class Legend {
         }
 
         if (legendWidth > 0 && legendHeight > 0) {
-            box[box.placed ? 'animate' : 'attr'](
+            box.animate(
                 box.crisp.call({}, { // #7260
                     x: 0,
                     y: 0,
@@ -1415,12 +1415,6 @@ class Legend {
 
         if (y !== alignTo.y) {
             alignTo = merge(alignTo, { y });
-        }
-
-        if (!chart.hasRendered) {
-            // Avoid animation when adjusting alignment for responsiveness and
-            // colorAxis label layout
-            this.group.placed = false;
         }
 
         this.group.align(merge(options, {

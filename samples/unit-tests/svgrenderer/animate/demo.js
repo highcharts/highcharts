@@ -936,6 +936,11 @@ QUnit.test('3D arc animation (#7097)', function (assert) {
             })
             .add();
 
+        arc.endSetter = function (value, key, elem) {
+            this[key] = value;
+            this._defaultSetter(value, key, elem);
+        };
+
         arc.animate(
             {
                 end: 5
@@ -944,11 +949,6 @@ QUnit.test('3D arc animation (#7097)', function (assert) {
                 duration: 200
             }
         );
-
-        arc.endSetter = function (value, key, elem) {
-            this[key] = value;
-            this._defaultSetter(value, key, elem);
-        };
 
         setTimeout(function () {
             arc.animate(

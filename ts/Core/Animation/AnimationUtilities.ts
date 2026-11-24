@@ -194,11 +194,9 @@ export function animate(
         }
 
         const fx = new Fx(el, opt, prop),
-            d = (params as SVGAttributes).d,
-            // Discrete value that doesn't animate, apply at once
-            applyImmediately = prop === 'dashstyle';
+            d = (params as SVGAttributes).d;
 
-        let start: number|string = 0,
+        let start: number|string|undefined = 0,
             end: number|string|undefined = void 0,
             unit = '';
 
@@ -213,8 +211,11 @@ export function animate(
 
         } else if ((el as SVGElement)?.attr) {
             start = (el as SVGElement).attr(prop);
-            if (applyImmediately) {
+
+            // Apply immediately
+            if (prop === 'dashstyle' || !defined(start)) {
                 (el as SVGElement).attr(prop, val);
+                return;
             }
 
         } else if (el) {
@@ -232,7 +233,7 @@ export function animate(
         }
 
         // Empty dashstyle animation crashes treemap on hover
-        if (defined(end) && !applyImmediately) {
+        if (defined(end)) {
             fx.run(start as any, end as any, unit);
         }
     });
