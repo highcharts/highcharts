@@ -3,6 +3,7 @@
  */
 
 import type { Page } from '@playwright/test';
+import type { QUnitTestCounts } from '~/qunit/types.ts';
 
 export interface TimeoutContext {
     testPath: string;
@@ -52,10 +53,11 @@ export function createTimeoutHandler(context: TimeoutContext) {
         ): Promise<T> {
             const timeout = customTimeout || context.timeout;
             
+            let timer: ReturnType<typeof setTimeout>;
             return Promise.race([
                 operation(),
                 new Promise<never>((_, reject) => {
-                    setTimeout(() => {
+                    timer = setTimeout(() => {
                         void handler.captureDiagnostics(page)
                             .then(diagnostics => {
                                 const phase = context.phase;
@@ -73,10 +75,10 @@ export function createTimeoutHandler(context: TimeoutContext) {
                                 error.context = context;
                                 error.diagnostics = diagnostics;
                                 reject(error);
-                            });
+                            }).catch(reject);
                     }, timeout);
                 })
-            ]);
+            ]).finally(() => clearTimeout(timer));
         },
         
         async captureDiagnostics(page: Page): Promise<TimeoutDiagnostics> {
@@ -215,8 +217,8 @@ export function createTimeoutHandler(context: TimeoutContext) {
 export async function waitForQUnitWithTimeout(
     page: Page, 
     testPath: string, 
-    timeout: number = 30000
-): Promise<unknown> {
+    timeout: number
+): Promise<QUnitTestCounts> {
     const context: TimeoutContext = {
         testPath,
         startTime: Date.now(),
@@ -227,39 +229,22 @@ export async function waitForQUnitWithTimeout(
     const handler = createTimeoutHandler(context);
     
     return handler.waitWithTimeout(page, async () => {
-        // Wait for QUnit to complete with periodic activity checks
-        return await page.waitForFunction(
-            () => {
-                // Update last activity timestamp
-                const results = window.__qunitResults__;
-                if (results) {
-                    return results;
-                }
-                
-                // Check if QUnit is still active
-                const qunit = window.QUnit;
-                if (qunit) {
-                    // QUnit is loaded and potentially running
-                    return null;
-                }
-                
-                // If QUnit isn't even loaded, that's a problem
-                throw new Error('QUnit not loaded');
-            },
-            { timeout: timeout }
+        const results = await page.waitForFunction(
+            () => window.__qunitResults__
         );
+        return results.jsonValue();
     });
 }
 
 /**
  * Waits for script loading with timeout handling
  */
-export async function waitForScriptLoadWithTimeout(
+export async function waitForScriptLoadWithTimeout<T>(
     page: Page,
-    scriptPromise: Promise<unknown>,
+    scriptPromise: Promise<T>,
     testPath: string,
     timeout: number = 10000
-): Promise<unknown> {
+): Promise<T> {
     const context: TimeoutContext = {
         testPath,
         startTime: Date.now(),
@@ -291,6 +276,7 @@ export async function attemptTimeoutRecovery(
             try {
                 await page.waitForFunction(
                     () => window.__qunitResults__,
+                    undefined,
                     { timeout: 5000 }
                 );
                 return { 

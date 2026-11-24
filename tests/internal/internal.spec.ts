@@ -1,5 +1,7 @@
+import type {} from 'qunit';
 import { test, expect, createChart } from '~/fixtures.ts';
 import { getSample } from '~/utils.ts';
+import { qunitAssetUrl, qunitVersion } from '~/qunit/assets.ts';
 
 test.describe('getSample', () => {
     test('should get sample with Windows-style path', () => {
@@ -71,11 +73,22 @@ test('Redirects are applied for code', async ({ page }) => {
     });
 });
 
-test('QUnit assets are served locally', async ({ page }) => {
+test('QUnit sample assets are served locally', async ({ page }) => {
+    const sample = getSample('samples/unit-tests/chart/alignthresholds');
+    const resources = sample.details?.resources?.filter(url =>
+        url.includes('code.jquery.com/qunit/')
+    );
+    expect(resources).toEqual([
+        `${qunitAssetUrl}.js`,
+        `${qunitAssetUrl}.css`
+    ]);
+
+    const [script, stylesUrl] = resources;
+    const scriptUrl = `${script}?cache=1`;
     const template = `<html>
     <head>
-        <script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>
-        <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">
+        <script src="${scriptUrl}"></script>
+        <link rel="stylesheet" href="${stylesUrl}">
     </head>
     <body></body>
     </html>`;
@@ -84,27 +97,27 @@ test('QUnit assets are served locally', async ({ page }) => {
 
     await expect.poll(() => test.info().annotations).toContainEqual({
         type: 'redirect',
-        description: 'https://code.jquery.com/qunit/qunit-2.4.0.js --> tests/qunit/vendor/qunit-2.4.0.js'
+        description: `${scriptUrl} --> node_modules/qunit/qunit/qunit.js`
     });
 
     await expect.poll(() => test.info().annotations).toContainEqual({
         type: 'redirect',
-        description: 'https://code.jquery.com/qunit/qunit-2.4.0.css --> tests/qunit/vendor/qunit-2.4.0.css'
+        description: `${stylesUrl} --> node_modules/qunit/qunit/qunit.css`
     });
 
     await expect.poll(() => page.evaluate(() => window.QUnit?.version))
-        .toBe('2.4.0');
+        .toBe(qunitVersion);
 });
 
-test('Legacy QUnit safely parses query parameter names', async ({ page }) => {
-    await page.route('**/legacy-qunit?*', route => route.fulfill({
+test('QUnit safely parses query parameter names', async ({ page }) => {
+    await page.route('**/qunit-parser?*', route => route.fulfill({
         contentType: 'text/html',
         body: `<html><head>
-            <script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
-            <script>QUnit.config.autostart = false;</script>
+            <script>window.QUnit = { config: { autostart: false } };</script>
+            <script src="${qunitAssetUrl}.js"></script>
             </head><body></body></html>`
     }));
-    await page.goto('/legacy-qunit?' +
+    await page.goto('/qunit-parser?' +
         '%5F%5Fproto%5F%5F=first&__proto__=second&constructor=literal&' +
         'toString=text&empty=&empty=second&repeat=one&repeat=two&' +
         'flag&greeting=hello+world%21');
@@ -116,7 +129,7 @@ test('Legacy QUnit safely parses query parameter names', async ({ page }) => {
         objectPrototypeKeys: Object.keys(Object.prototype)
     }));
     expect(result).toEqual({
-        version: '2.0.1',
+        version: qunitVersion,
         nullPrototype: true,
         entries: [
             ['__proto__', ['first', 'second']],
@@ -129,15 +142,14 @@ test('Legacy QUnit safely parses query parameter names', async ({ page }) => {
         ],
         objectPrototypeKeys: []
     });
-    const assertions = await page.evaluate(() => new Promise(resolve => {
-        QUnit.done(details => resolve({
-            failed: details.failed,
-            passed: details.passed
-        }));
+    const counts = await page.evaluate(() => new Promise(resolve => {
+        window.QUnit.on('runEnd', ({ testCounts }) => resolve(testCounts));
         QUnit.test('ordinary assertions still run', assert => assert.ok(true));
         QUnit.start();
     }));
-    expect(assertions).toEqual({ failed: 0, passed: 1 });
+    expect(counts).toEqual({
+        failed: 0, passed: 1, skipped: 0, todo: 0, total: 1
+    });
 });
 
 test.describe('Redirects for data', () => {

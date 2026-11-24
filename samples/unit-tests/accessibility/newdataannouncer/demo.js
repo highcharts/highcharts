@@ -1,4 +1,5 @@
 QUnit.test('Chart with newDataAnnouncer', function (assert) {
+    assert.timeout(5000);
     var done = assert.async();
     var chart = Highcharts.chart('container', {
             accessibility: {

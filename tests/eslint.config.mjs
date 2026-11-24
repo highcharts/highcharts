@@ -31,7 +31,6 @@ export default tseslint.config(
     {
        ignores: [
             'eslint.config.mjs',
-            'qunit/vendor/**',
             'tsconfig.json',
             'visual/visual-setup.js'
         ]

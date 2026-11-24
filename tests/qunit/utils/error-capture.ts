@@ -13,8 +13,6 @@ export async function captureQUnitErrorDetails(
     page: Page,
     testPath: string
 ): Promise<QUnitErrorDetails> {
-    const startTime = Date.now();
-
     // Capture QUnit-specific error information
     const [qunitResults, failedTests, failedAssertions] = await Promise.all([
         page.evaluate(() => window.__qunitResults__),
@@ -25,131 +23,84 @@ export async function captureQUnitErrorDetails(
     // Capture console/browser logs
     const consoleLogs = await getCapturedConsoleLogs(page);
 
-    const endTime = Date.now();
-
     return {
         testPath,
-        qunitResults: qunitResults || { failed: 0, passed: 0, total: 0 },
+        qunitResults: qunitResults ?? {
+            failed: 0, passed: 0, skipped: 0, todo: 0, total: 0,
+            status: 'failed', runtime: 0
+        },
         failedTests: failedTests || [],
         failedAssertions: failedAssertions || [],
         browserLogs: consoleLogs.logs.map(log => log.message),
         consoleErrors: consoleLogs.errors.map(error => error.message),
         timing: {
             scriptLoad: 0, // Will be set by the caller
-            testExecution: endTime - startTime,
-            total: endTime - startTime
+            testExecution: qunitResults?.runtime ?? 0,
+            total: 0
         }
     };
 }
 
 /**
- * Sets up enhanced error capture in the browser context
- * Note: Console capture is handled separately by console-capture.ts
- */
-export async function setupErrorCapture(page: Page): Promise<void> {
-    await page.evaluate(() => {
-        // Initialize error capture arrays
-        window.__qunitBrowserLogs__ = [];
-        window.__qunitConsoleErrors__ = [];
-    });
-}
-
-/**
- * Enhanced QUnit callback setup with better error capture
+ * Registers reporters before a sample loads so script errors are captured.
  */
 export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
     await page.evaluate(() => {
         const qunit = window.QUnit;
+        const failedTests: NonNullable<Window['__qunitFailedTests__']> = [];
+        const failedAssertions: NonNullable<
+            Window['__qunitFailedAssertions__']
+        > = [];
+        window.__qunitFailedTests__ = failedTests;
+        window.__qunitFailedAssertions__ = failedAssertions;
 
-        // Enhanced done callback
-        qunit.done(function (details) {
-            window.__qunitResults__ = {
-                failed: details.failed,
-                passed: details.passed,
-                total: details.total
-            };
+        qunit.on('runEnd', ({ status, testCounts, runtime }) => {
+            window.__qunitResults__ = { ...testCounts, status, runtime };
         });
 
-        // Enhanced testDone callback with better error capture
-        qunit.testDone(function (data) {
-            if (data.failed > 0) {
-                window.__qunitFailedTests__ ??= [];
-
-                // Create a summary of the failed test (without duplicating assertion details)
-                const testKey = `${data.module || 'Unknown'} > ${data.name}`;
-                
-                // Check if we already have this test recorded
-                const existingTest = window.__qunitFailedTests__.find(test => {
-                    const mod = test.module || 'Unknown';
-                    return `${mod} > ${test.name}` === testKey;
-                });
-                
-                if (!existingTest) {
-                    // Count the number of failed assertions for this test
-                    const failureCount = data.failed;
-                    const failures = [`${failureCount} assertion failure(s)`];
-
-                    // Try to extract stack trace from the first error
-                    let stack: string | undefined;
-                    if (data.errors && data.errors.length > 0) {
-                        const firstError = data.errors[0];
-                        if (firstError && typeof firstError === 'object' && 'stack' in firstError) {
-                            const errorObj = 
-                                firstError as Record<string, unknown>;
-                            if (errorObj.stack && typeof errorObj.stack === 'string') {
-                                stack = errorObj.stack;
-                            }
-                        }
-                    }
-
-                    window.__qunitFailedTests__.push({
-                        module: data.module,
-                        name: data.name,
-                        failures,
-                        runtime: data.runtime,
-                        stack
-                    });
-                }
+        qunit.on('testEnd', ({ fullName, status, errors, runtime }) => {
+            if (status !== 'failed') {
+                return;
             }
-        });
 
-        // Enhanced log callback with better assertion capture
-        qunit.log(function (details) {
-            if (!details.result) {
-                window.__qunitFailedAssertions__ ??= [];
+            const name = fullName.at(-1) ?? '';
+            const module = fullName.slice(0, -1).join(' > ');
+            failedTests.push({
+                module,
+                name,
+                failures: [`${errors.length} assertion failure(s)`],
+                runtime,
+                stack: errors[0]?.stack
+            });
 
-                // Try to extract stack trace
-                let stack: string | undefined;
-                if (details.source) {
-                    stack = details.source;
-                }
-
-                window.__qunitFailedAssertions__.push({
-                    result: details.result,
-                    actual: details.actual,
-                    expected: details.expected,
-                    message: details.message,
-                    source: details.source || '',
-                    module: details.module || '',
-                    name: details.name || '',
-                    runtime: details.runtime || 0,
+            // QUnit releases actual/expected after dispatching testEnd.
+            for (const { actual, expected, message, stack } of errors) {
+                failedAssertions.push({
+                    result: false,
+                    actual,
+                    expected,
+                    message: message ?? '',
+                    source: stack,
+                    module,
+                    name,
+                    runtime,
                     stack
                 });
             }
         });
-    });
-}
 
-/**
- * Clears all error capture data
- */
-export async function clearErrorCapture(page: Page): Promise<void> {
-    await page.evaluate(() => {
-        window.__qunitResults__ = null;
-        window.__qunitFailedTests__ = null;
-        window.__qunitFailedAssertions__ = null;
-        window.__qunitBrowserLogs__ = null;
-        window.__qunitConsoleErrors__ = null;
-        window.__qunitErrorDetails__ = null;
+        qunit.on('error', error => {
+            const message = typeof error === 'string' ? error :
+                error instanceof Error ? error.message : 'Unknown error';
+            failedAssertions.push({
+                result: false,
+                name: 'Uncaught error',
+                message,
+                actual: error instanceof Error ? undefined : error,
+                expected: undefined,
+                runtime: 0,
+                stack: error instanceof Error ? error.stack : undefined
+            });
+        });
     });
 }

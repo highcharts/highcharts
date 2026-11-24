@@ -61,6 +61,8 @@ export function formatQUnitErrorDetails(
    Total: ${errorDetails.qunitResults.total}
    Passed: ${errorDetails.qunitResults.passed}
    Failed: ${errorDetails.qunitResults.failed}
+   Skipped: ${errorDetails.qunitResults.skipped}
+   Todo: ${errorDetails.qunitResults.todo}
 
 ⏱️  Timing Information:
    Script Load: ${errorDetails.timing.scriptLoad}ms

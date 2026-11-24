@@ -542,7 +542,7 @@ The following URL patterns are automatically rewritten:
 | `**/**/mapdata/**` | `node_modules/@highcharts/map-collection/` | Map data files |
 | `**/{samples/data}/**` | `samples/data/` | Sample data files |
 | `https://demo-live-data.highcharts.com/**` | `samples/data/` | Demo live data |
-| `https://code.jquery.com/qunit/**` | `tests/qunit/vendor/` | QUnit assets |
+| `https://code.jquery.com/qunit/qunit-<installed-version>.{js,css}` | `node_modules/qunit/qunit/` | Pinned QUnit browser assets |
 | `https://fonts.googleapis.com/**` | Empty stylesheet | Google Fonts |
 | `**/font-awesome/**` | Empty stylesheet | Font Awesome |
 | `**/grid-lite.js`, `**/grid-pro.js` | `code/grid/` | Grid modules |
@@ -702,6 +702,10 @@ For visual runs, keep the configured reporter list. A command-line
 validates complete results and writes `test/visual-test-complete`.
 
 ### QUnit browser logs
+
+Playwright runs each sample in a fresh page using the pinned npm QUnit
+distribution. The browser worker loads the shared setup sources once and
+injects them into each page before registering and running the sample's tests.
 
 When QUnit tests fail, browser logs are written to per-worker files:
 

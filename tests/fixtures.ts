@@ -13,11 +13,13 @@ import type Highcharts from '~code/esm/highcharts.src';
 
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
+import { relative, sep } from 'node:path';
 import { join, extname } from 'node:path/posix';
 import { isDeepStrictEqual } from 'node:util';
 
 import { test as base } from '@playwright/test';
 import { getKarmaScripts, setTestingOptions } from './utils';
+import { qunitAssetUrl, qunitScript, qunitStyles } from './qunit/assets';
 
 const contentTypes: Record<string, string> = {
     '.js': 'application/javascript',
@@ -422,6 +424,11 @@ export async function replaceSampleData(route: Route) {
     throw new Error('Failed to find a matching dataset');
 }
 
+const qunitAssets = new Map([
+    [`${qunitAssetUrl}.js`, qunitScript],
+    [`${qunitAssetUrl}.css`, qunitStyles]
+]);
+
 export async function setupRoutes(page: Page){
     if (!process.env.NO_REWRITES) {
         const routes: RouteType[] = [
@@ -435,36 +442,24 @@ export async function setupRoutes(page: Page){
             },
             {
                 pattern: 'https://code.jquery.com/qunit/**',
-                handler: async (route) => {
+                handler: async (route: Route) => {
                     const url = new URL(route.request().url());
-                    const filename = url.pathname.split('/').pop();
-
-                    if (!filename) {
+                    const asset = url.origin + url.pathname;
+                    const path = qunitAssets.get(asset);
+                    if (!path) {
                         await route.abort();
-                        throw new Error('Invalid QUnit asset request');
+                        throw new Error(`Missing local QUnit asset for ${asset}`);
                     }
-
-                    const localPath = join(
-                        'tests', 'qunit', 'vendor', filename
-                    );
-
-                    try {
-                        await route.fulfill({
-                            path: localPath,
-                            contentType: contentTypes[extname(filename)] ??
-                                'application/octet-stream'
-                        });
-
-                        test.info().annotations.push({
-                            type: 'redirect',
-                            description: `${url} --> ${localPath}`
-                        });
-                    } catch {
-                        await route.abort();
-                        throw new Error(
-                            `Missing local QUnit asset for ${filename}`
-                        );
-                    }
+                    await route.fulfill({
+                        path,
+                        contentType: contentTypes[extname(url.pathname)]
+                    });
+                    const localPath = relative(process.cwd(), path)
+                        .split(sep).join('/');
+                    test.info().annotations.push({
+                        type: 'redirect',
+                        description: `${url.href} --> ${localPath}`
+                    });
                 }
             },
             {
