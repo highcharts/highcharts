@@ -77,7 +77,6 @@
             name: point[3],
             lat: point[1],
             lon: point[2],
-            colorKey: 'y',
             y: Number.isInteger(value) ? value : null,
             custom: {
                 label: Number.isInteger(value) ?
