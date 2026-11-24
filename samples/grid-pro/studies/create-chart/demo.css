@@ -1,0 +1,22 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family: sans-serif;
+    padding: 8px;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+#monthly,
+#regions {
+    height: 420px;
+}
+
+#chart {
+    height: 360px;
+}
