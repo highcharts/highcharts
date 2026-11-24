@@ -189,7 +189,7 @@
     );
 
     QUnit.test(
-        'Invalid dataRefreshRate falls back to a finite interval (#25572)',
+        'Invalid or huge dataRefreshRate polls with a valid delay (#25572)',
         function (assert) {
             const win = Highcharts.win,
                 sources = [{
@@ -208,8 +208,15 @@
                 }];
 
             sources.forEach(function (source) {
-                ['abc', Infinity].forEach(function (dataRefreshRate) {
-                    const clock = TestUtilities.lolexInstall(),
+                [
+                    ['abc', source.expectedDelay],
+                    [Infinity, source.expectedDelay],
+                    // 30 days, over the largest delay a timer can hold
+                    [2592000, 2147483647]
+                ].forEach(function (testCase) {
+                    const dataRefreshRate = testCase[0],
+                        expectedDelay = testCase[1],
+                        clock = TestUtilities.lolexInstall(),
                         fakeSetTimeout = win.setTimeout,
                         delays = [],
                         log = interceptRequests(60, function () {
@@ -241,14 +248,15 @@
                             label + ' should not schedule a nonfinite delay'
                         );
                         assert.ok(
-                            delays.indexOf(source.expectedDelay) !== -1,
+                            delays.indexOf(expectedDelay) !== -1,
                             label + ' should poll every ' +
-                            source.expectedDelay + ' ms'
+                            expectedDelay + ' ms'
                         );
 
-                        // Go up to just before the next poll is due
+                        // Go up to just before the next poll is due, at most
+                        // 10 s so a zero-delay poll loop can not hang the test
                         const requestCount = log.count;
-                        clock.tick(source.expectedDelay - 200);
+                        clock.tick(Math.min(expectedDelay - 200, 10000));
 
                         assert.strictEqual(
                             log.count,

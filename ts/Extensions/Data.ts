@@ -643,8 +643,9 @@ function hasURLOption(options: DataOptions): boolean {
 
 /**
  * Gets the polling interval in milliseconds from the `dataRefreshRate`
- * option. Missing, invalid or nonfinite rates fall back to two seconds
- * (#25572).
+ * option. Missing, invalid or nonfinite rates fall back to two seconds, and
+ * rates above the largest timer delay browsers support are capped to it, as
+ * longer delays fire immediately (#25572).
  *
  * @internal
  *
@@ -660,9 +661,13 @@ function hasURLOption(options: DataOptions): boolean {
 function getRefreshInterval(options: DataOptions, minimum: number): number {
     const refreshRate = Number(options.dataRefreshRate);
 
-    return Math.max(
-        (isNumber(refreshRate) && refreshRate || 2) * 1000,
-        minimum
+    return Math.min(
+        Math.max(
+            (isNumber(refreshRate) && refreshRate || 2) * 1000,
+            minimum
+        ),
+        // Largest delay a timer can hold, 2^31 - 1 ms (~24.8 days)
+        2147483647
     );
 }
 
