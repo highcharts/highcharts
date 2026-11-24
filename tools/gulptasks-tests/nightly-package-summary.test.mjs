@@ -20,7 +20,7 @@ const passedReport = {
 };
 
 function summarize({ build, validation, checks, evidence, results, setupStep = '', setupError = '',
-    gridPackage = '', missingCss = false }) {
+    gridPackage = '', missingCss = false, event = 'workflow_dispatch' }) {
     const dir = mkdtempSync(join(tmpdir(), 'nightly-package-summary-'));
     const report = join(dir, 'summary.md');
     try {
@@ -31,6 +31,7 @@ function summarize({ build, validation, checks, evidence, results, setupStep = '
                 BUILD: build,
                 CHECKS: checks,
                 EVIDENCE: evidence,
+                GITHUB_EVENT_NAME: event,
                 GITHUB_REPOSITORY: 'highcharts/highcharts',
                 GITHUB_RUN_ATTEMPT: '2',
                 GITHUB_RUN_ID: '12',
@@ -51,6 +52,17 @@ function summarize({ build, validation, checks, evidence, results, setupStep = '
         rmSync(dir, { recursive: true, force: true });
     }
 }
+
+test('labels a successful Grid Pro pull request check and reports both lanes', () => {
+    const [status, summary] = summarize({
+        event: 'pull_request', gridPackage: 'grid-pro', build: 'success', validation: 'success',
+        checks: 'passed', evidence: '1234', results: JSON.stringify(passedReport)
+    });
+    deepEqual(status, 0);
+    ok(summary.includes('PR Grid Pro npm package validation — passed'));
+    ok(summary.includes('Stable <code>passed</code> at <code>browser</code>'));
+    ok(summary.includes('Candidate <code>passed</code> at <code>browser</code>'));
+});
 
 test('shows an actionable setup failure before either lane starts', () => {
     const [status, summary] = summarize({

@@ -9,12 +9,17 @@ import { delimiter, dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
+import { minimatch } from 'minimatch';
 import { writeCandidateProvenance } from './fixtures/nightly-package-evidence.mjs';
 
 const require = createRequire(import.meta.url);
-const workflow = require('js-yaml').safeLoad(readFileSync(
-    new URL('../../.github/workflows/nightly.yml', import.meta.url), 'utf8'
+const loadWorkflow = name => require('js-yaml').safeLoad(readFileSync(
+    new URL(`../../.github/workflows/${name}.yml`, import.meta.url), 'utf8'
 ));
+const workflow = loadWorkflow('nightly');
+const gridWorkflow = loadWorkflow('grid-package-validation');
+const gridProWorkflow = loadWorkflow('grid-pro-package-check');
+const gridValidationWorkflow = './.github/workflows/grid-package-validation.yml';
 const build = workflow.jobs.nightly_dist;
 const publisher = workflow.jobs.nightly_dist_publish;
 const validation = workflow.jobs.nightly_package_validation;
@@ -201,17 +206,12 @@ describe('nightly advisory package validation', () => {
             strictEqual(job.environment, undefined);
             ok(!JSON.stringify(job).includes('secrets.'));
             ok(!publisher.needs.includes(`nightly_${key.replace('-', '_')}_validation`));
-            strictEqual(job.env.GRID_PACKAGE, key);
-            strictEqual(job.env.GRID_MISSING_CSS, `\${{ inputs.grid${label}MissingCss }}`);
-            ok(/^[a-f0-9]{40}$/u.test(job.env.GRID_METADATA_SHA));
-            const checkout = job.steps.find(item => item.id === 'metadata');
-            strictEqual(checkout.with.repository, 'highcharts/${{ env.GRID_PACKAGE }}-dist');
-            strictEqual(checkout.with.ref, '${{ env.GRID_METADATA_SHA }}');
-            strictEqual(checkout.with['persist-credentials'], false);
-            const artifact = job.steps.find(item => item.id === 'evidence').with.name;
-            strictEqual(artifact.replace('${{ env.GRID_PACKAGE }}', key),
-                `nightly-${key}-validation-\${{ github.run_attempt }}`);
-            ok(job.steps.find(item => item.id === 'validate').run.includes('--package "$GRID_PACKAGE"'));
+            strictEqual(job.uses, gridValidationWorkflow);
+            deepEqual(job.with, {
+                package: key,
+                'missing-css': `\${{ inputs.grid${label}MissingCss }}`
+            });
+            strictEqual(job['continue-on-error'], undefined);
         });
     }
 
@@ -661,6 +661,97 @@ process.exitCode = await runConsumer({ gridPackage: identity.gridPackage, replay
                 throws(() => runTool('verify', transferred, manifest), /Unexpected file type: link\.js/u);
             }
         });
+    });
+});
+
+describe('shared Grid package validation', () => {
+    it('uses the same read-only workflow for the PR check with the genuine Grid Pro candidate', () => {
+        deepEqual(Object.keys(gridProWorkflow.on), ['pull_request']);
+        deepEqual(gridProWorkflow.permissions, { contents: 'read' });
+        const job = gridProWorkflow.jobs.grid_pro_package;
+        strictEqual(job.uses, gridValidationWorkflow);
+        deepEqual(job.with, { package: 'grid-pro' });
+        strictEqual(job.secrets, undefined);
+        strictEqual(job.if, undefined);
+        strictEqual(job['continue-on-error'], undefined);
+        strictEqual(gridWorkflow.on.workflow_call.inputs['missing-css'].default, false);
+    });
+
+    it('selects PRs that can change the Grid package or its validation', () => {
+        const { paths } = gridProWorkflow.on.pull_request;
+        for (const [path, runs] of [
+            ['ts/Grid/Pro/CellEditing/CellEditingComposition.ts', true],
+            ['css/grid/grid-pro.css', true],
+            ['tools/code.js', true],
+            ['samples/demo-config.js', true],
+            ['samples/template-example.htm', true],
+            ['tools/nightly-package-validation-prototype/grid-pro/app/grid-pro.ts', true],
+            ['tools/nightly-package-validation-prototype/grid-lite/app/grid-lite.ts', false],
+            ['.github/workflows/grid-package-validation.yml', true],
+            ['.github/workflows/grid-pro-package-check.yml', true],
+            ['package-lock.json', true],
+            ['samples/highcharts/demo/unrelated-demo/demo.ts', false],
+            ['README.md', false]
+        ]) {
+            const selected = paths.some(pattern =>
+                minimatch(path, pattern, { dot: true, platform: 'linux' })
+            );
+            strictEqual(selected, runs, path);
+        }
+    });
+
+    it('checks out the event revision and pinned release metadata without retaining credentials', () => {
+        const job = gridWorkflow.jobs.validate;
+        deepEqual(gridWorkflow.permissions, { contents: 'read' });
+        strictEqual(job.environment, undefined);
+        ok(!JSON.stringify(gridWorkflow).includes('secrets.'));
+        const source = job.steps.find(item => item.id === 'source');
+        strictEqual(source.with.repository, undefined);
+        strictEqual(source.with.ref, '${{ github.sha }}');
+        strictEqual(source.with['persist-credentials'], false);
+        const metadata = job.steps.find(item => item.id === 'metadata');
+        strictEqual(metadata.with.repository, 'highcharts/${{ env.GRID_PACKAGE }}-dist');
+        strictEqual(metadata.with.ref, '${{ env.GRID_METADATA_SHA }}');
+        strictEqual(metadata.with['persist-credentials'], false);
+        const metadataSha = job.env.GRID_METADATA_SHA.slice(3, -2);
+        const pins = ['grid-lite', 'grid-pro'].map(pkg =>
+            runInNewContext(metadataSha, { inputs: { package: pkg } })
+        );
+        ok(pins.every(sha => /^[a-f0-9]{40}$/u.test(sha)));
+        strictEqual(new Set(pins).size, 2);
+    });
+
+    it('builds and validates the selected package and retains job evidence for either caller', () => {
+        const { env, steps } = gridWorkflow.jobs.validate;
+        strictEqual(env.GRID_PACKAGE, '${{ inputs.package }}');
+        strictEqual(env.GRID_MISSING_CSS, '${{ inputs.missing-css }}');
+        const step = id => steps.find(item => item.id === id);
+        strictEqual(step('toolchain').with['node-version'], '26.13.0');
+        strictEqual(step('toolchain').with['package-manager-cache'], false);
+        ok(step('build').run.endsWith('setup.sh grid-build'));
+        ok(step('pack').run.endsWith('setup.sh grid-pack'));
+        ok(step('chromium').run.endsWith('setup.sh chromium'));
+        strictEqual(step('validate').env.CONSUMER, '${{ steps.pack.outputs.consumer }}');
+        ok(step('validate').run.includes('.tarballSha256'));
+        ok(step('validate').run.includes('--prepared "$CONSUMER" "$digest" --package "$GRID_PACKAGE"'));
+        strictEqual(step('validate')['continue-on-error'], undefined);
+        const artifact = step('evidence').with.name;
+        const prefix = artifact.slice(3, artifact.indexOf('}}'));
+        for (const [event_name, expected] of [
+            ['pull_request', 'pr'],
+            ['schedule', 'nightly'],
+            ['workflow_dispatch', 'nightly']
+        ]) {
+            strictEqual(runInNewContext(prefix, { github: { event_name } }), expected);
+        }
+        ok(artifact.endsWith('-${{ env.GRID_PACKAGE }}-validation-${{ github.run_attempt }}'));
+        ok(step('evidence').with.path.includes('${{ runner.temp }}/package-validation/'));
+        const evidenceCondition = step('evidence').if.slice(3, -2);
+        for (const outcome of ['success', 'failure']) {
+            strictEqual(runInNewContext(evidenceCondition, {
+                cancelled: () => false, steps: { build: { outcome } }
+            }), true);
+        }
     });
 });
 

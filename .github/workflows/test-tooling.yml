@@ -19,6 +19,8 @@ on:
       - '.github/workflows/visual-compare-playwright.yml'
       - '.github/workflows/test-tooling.yml'
       - '.github/workflows/nightly.yml'
+      - '.github/workflows/grid-package-validation.yml'
+      - '.github/workflows/grid-pro-package-check.yml'
       - 'tests/internal/*'
   workflow_dispatch:
 

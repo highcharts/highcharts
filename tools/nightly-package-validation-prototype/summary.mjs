@@ -10,7 +10,7 @@ if (process.argv.includes('--help')) {
 
 const {
     BUILD, CHECKS, EVIDENCE, GRID_LITE, GRID_LITE_MISSING_CSS, GRID_MISSING_CSS, GRID_PACKAGE,
-    GITHUB_REPOSITORY, GITHUB_RUN_ATTEMPT,
+    GITHUB_EVENT_NAME, GITHUB_REPOSITORY, GITHUB_RUN_ATTEMPT,
     GITHUB_RUN_ID, GITHUB_SERVER_URL, GITHUB_STEP_SUMMARY, RESULTS,
     SETUP_ERROR, SETUP_STEP, VALIDATION
 } = process.env;
@@ -78,7 +78,9 @@ if (hasFailure) {
 
 const gridPackage = GRID_PACKAGE || (GRID_LITE === 'true' ? 'grid-lite' : '');
 const gridLabel = { 'grid-lite': 'Grid Lite', 'grid-pro': 'Grid Pro' }[gridPackage];
-const title = `Nightly ${gridLabel ? `${gridLabel} ` : ''}npm package validation`;
+const title = [
+    GITHUB_EVENT_NAME === 'pull_request' ? 'PR' : 'Nightly', gridLabel, 'npm package validation'
+].filter(Boolean).join(' ');
 const evidenceLabel = staleReport ? `Validation evidence from run ${results.runId}, attempt ${results.attempt}` :
     'Validation evidence';
 const evidenceRun = staleReport ? results.runId : GITHUB_RUN_ID;

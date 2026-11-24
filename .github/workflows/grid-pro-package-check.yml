@@ -1,0 +1,66 @@
+name: Grid Pro package check
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/grid-package-validation.yml'
+      - '.github/workflows/grid-pro-package-check.yml'
+      - '.eslintrc'
+      - '.eslintignore'
+      - '.npmrc'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'gulpfile.ts'
+      - 'tsconfig.json'
+      - 'ts/tsconfig.json'
+      - 'ts/Accessibility/**'
+      - 'ts/Core/**'
+      - 'ts/Data/**'
+      - 'ts/Grid/**'
+      - 'ts/Shared/**'
+      - 'ts/masters-grid/**'
+      - 'ts/masters/modules/accessibility.src.ts'
+      - 'css/grid/**'
+      - 'samples/demo-config.js'
+      - 'samples/template-example.htm'
+      - 'samples/grid-lite/demo/**'
+      - 'samples/grid-pro/demo/**'
+      - 'test/typescript-dts/tsconfig.json'
+      - 'test/typescript-dts/grid/**'
+      - 'tools/api-docs/grid-*.ts'
+      - 'tools/code.js'
+      - 'tools/gulptasks/dist.js'
+      - 'tools/gulptasks/dist-clean.js'
+      - 'tools/gulptasks/dist-copy.js'
+      - 'tools/gulptasks/dist-examples.js'
+      - 'tools/gulptasks/dist-productsjs.js'
+      - 'tools/gulptasks/grid/**'
+      - 'tools/gulptasks/lib/demoIndex.js'
+      - 'tools/gulptasks/lib/release-package.js'
+      - 'tools/gulptasks/lib/release-version.js'
+      - 'tools/gulptasks/lib/string.js'
+      - 'tools/gulptasks/lint-dts.js'
+      - 'tools/gulptasks/lint-ts.js'
+      - 'tools/gulptasks/scripts*.js'
+      - 'tools/gulptasks/utils.js'
+      - 'tools/libs/**'
+      - 'tools/webpacks/externals.*'
+      - 'tools/webpacks/grid*.webpack.mjs'
+      - 'tools/webpacks/plugins/**'
+      - 'tools/nightly-package-validation-prototype/*.mjs'
+      - 'tools/nightly-package-validation-prototype/setup.sh'
+      - 'tools/nightly-package-validation-prototype/grid-pro/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  grid_pro_package:
+    name: Grid Pro
+    uses: ./.github/workflows/grid-package-validation.yml
+    with:
+      package: grid-pro

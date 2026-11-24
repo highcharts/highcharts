@@ -72,6 +72,14 @@ enabling scheduled Grid Lite validation. See the
 
 ## Grid Pro pilot
 
+The [Grid Pro package check](grid-pro-package-check.yml) runs automatically on
+pull requests that change its fixture, shared validation code, or covered Grid
+source and packaging paths. It builds the PR merge revision and packs Grid Pro
+with the same release metadata and consumer fixture as Nightly. In the job
+summary, compare the stable and candidate results. Both must reach Chromium,
+where the fixture edits a quantity and reads the new number from the source
+DataTable. The evidence artifact contains the tarball, locks, and diagnostics.
+
 Dispatch **Nightly** on the branch under test with `validateGridPro: true`
 for the genuine candidate or `gridProMissingCss: true` for a synthetic
 candidate with the stylesheet removed. Either input starts Grid Pro validation
