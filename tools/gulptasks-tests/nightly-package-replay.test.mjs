@@ -6,7 +6,7 @@ import { delimiter, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import {
-    copyFixture, hash, lanes, readJSON, recordReplay, verifyReplay,
+    copyFixture, deriveLaneManifest, hash, lanes, readJSON, recordReplay, verifyReplay,
     verifyReplaySource, writeJSON
 } from '../nightly-package-validation-prototype/replay-evidence.mjs';
 import { recordCandidateEvidence } from '../nightly-package-validation-prototype/package-evidence.mjs';
@@ -65,6 +65,37 @@ function writeEvidence(root, gridPackage, identity, buildAttempt) {
     recordReplay(root, identity ?? { sourceSha });
     return fixture;
 }
+
+test('derives lane manifests without mutating the reviewed fixture', () => {
+    const packageName = '@highcharts/grid-lite';
+    const fixtureManifest = {
+        name: 'consumer-fixture',
+        version: '1.0.0',
+        dependencies: {
+            [packageName]: '^1.0.0',
+            react: '^18.0.0'
+        },
+        devDependencies: { vite: '^5.0.0' },
+        scripts: { build: 'vite build' }
+    };
+    const original = structuredClone(fixtureManifest);
+
+    for (const lane of lanes) {
+        const manifest = deriveLaneManifest(fixtureManifest, packageName, lane);
+
+        assert.deepEqual(manifest, {
+            ...original,
+            dependencies: {
+                ...original.dependencies,
+                [packageName]: `file:${lane}.tgz`
+            }
+        });
+        assert.notStrictEqual(manifest, fixtureManifest);
+        assert.notStrictEqual(manifest.dependencies, fixtureManifest.dependencies);
+    }
+
+    assert.deepEqual(fixtureManifest, original);
+});
 
 test('records portable evidence paths and rejects a different original runner', t => {
     const root = temporaryDirectory(t);

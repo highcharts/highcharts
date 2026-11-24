@@ -36,6 +36,18 @@ export function copyFixture(source, destination, gridPackage) {
     }
 }
 
+export function deriveLaneManifest(fixtureManifest, packageName, lane) {
+    assert(Object.hasOwn(fixtureManifest.dependencies, packageName),
+        `Reviewed fixture must depend on ${packageName}`);
+    return {
+        ...fixtureManifest,
+        dependencies: {
+            ...fixtureManifest.dependencies,
+            [packageName]: `file:${lane}.tgz`
+        }
+    };
+}
+
 export function retainedEvidenceRoot(extracted, gridPackage) {
     const prefix = `${gridPackage ?? 'highcharts'}-package-prototype-`;
     const roots = readdirSync(extracted, { withFileTypes: true }).filter(
@@ -168,10 +180,10 @@ export function verifyReplaySource(root, fixture, identity) {
     const retained = Object.fromEntries(Object.entries(manifest.files).filter(([name]) => name.startsWith('fixture/'))
         .map(([name, digest]) => [name.slice('fixture/'.length), digest]));
     assert.deepEqual(retained, reviewed, 'Retained fixture differs from the reviewed revision');
-    const pkg = readJSON(join(fixture, 'package.json'));
+    const fixtureManifest = readJSON(join(fixture, 'package.json'));
     for (const lane of lanes) {
-        pkg.dependencies[packageName] = `file:${lane}.tgz`;
-        assert.deepEqual(readJSON(join(root, lane, 'package.json')), pkg,
+        const expected = deriveLaneManifest(fixtureManifest, packageName, lane);
+        assert.deepEqual(readJSON(join(root, lane, 'package.json')), expected,
             `Retained ${lane} manifest differs from the reviewed fixture`);
     }
     return { manifest, inputs };

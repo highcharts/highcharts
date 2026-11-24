@@ -15,7 +15,7 @@ import {
     verifyInstalledCandidate, writeJSON
 } from './package-evidence.mjs';
 import {
-    copyFixture, fixtureFiles, recordReplay
+    copyFixture, deriveLaneManifest, fixtureFiles, recordReplay
 } from './replay-evidence.mjs';
 
 class NpmPeerConflictError extends Error {}
@@ -127,9 +127,7 @@ export async function runConsumer({ tarball, expectedDigest, gridPackage, replay
             copyFileSync(join(replay.root, label, 'package.json'), manifest);
             copyFileSync(join(replay.root, label, 'package-lock.json'), lock);
         } else {
-            const pkg = readJSON(manifest);
-            pkg.dependencies[packageName] = `file:${filename}`;
-            writeJSON(manifest, pkg);
+            writeJSON(manifest, deriveLaneManifest(readJSON(manifest), packageName, label));
             copyFileSync(referenceLock, lock);
             run(['install', '--package-lock-only', ...installOptions], cwd, 'lock.log');
         }
