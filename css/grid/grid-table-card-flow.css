@@ -1,0 +1,52 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
+/**
+ * @license Highcharts Grid Pro v@product.version@
+ *
+ * Experimental wrapping cards. Each body row is one grid item.
+ * (c) 2009-2026 Highsoft AS
+ *
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
+ */
+
+.hcg-container .hcg-table.hcg-layout-flow {
+    --hcg-flow-card-min: 220px;
+    --hcg-flow-gap: 16px;
+
+    overflow: visible;
+}
+
+.hcg-container .hcg-table.hcg-layout-flow > thead {
+    display: none;
+}
+
+.hcg-container .hcg-table.hcg-layout-flow > tbody {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--hcg-flow-card-min), 1fr));
+    gap: var(--hcg-flow-gap);
+    align-content: start;
+}
+
+.hcg-container .hcg-table.hcg-layout-flow.hcg-scrollable-content > tbody > tr {
+    display: flex;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    overflow: visible;
+}
+
+.hcg-themed .hcg-table.hcg-layout-flow > tbody > tr > .hcg-cell {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    box-sizing: border-box;
+    padding: 0;
+    overflow: visible;
+    white-space: normal;
+    background: transparent;
+    border: none;
+    vertical-align: top;
+}

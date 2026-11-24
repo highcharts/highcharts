@@ -1,0 +1,90 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.layout-cards {
+    box-sizing: border-box;
+    max-width: 960px;
+    margin: 32px auto;
+    padding: 20px 20px 8px;
+    background: #f4f5f7;
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #1f2430;
+}
+
+.layout-cards h2 {
+    margin: 0 0 12px;
+    font-size: 20px;
+}
+
+#container {
+    height: 420px;
+}
+
+#container .hcg-table {
+    --hcg-layout-row-height: 104px;
+    --hcg-card-gap: 16px;
+    background: transparent;
+}
+
+#container thead th,
+#container .hcg-header-cell-content {
+    border: none;
+    background: transparent;
+    padding: 10px 8px 8px;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: left;
+    color: #1f2430;
+}
+
+#container .task {
+    box-sizing: border-box;
+    height: 100%;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 12px;
+    text-align: left;
+}
+
+#container .hcg-header-cell-content {
+    text-align: left;
+}
+
+#container .task h3,
+#container .task p {
+    margin: 0;
+}
+
+#container .task h3 {
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+#container .task p {
+    color: #3f4754;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+#container .task.todo {
+    background: #fde2ea;
+}
+
+#container .task.progress {
+    background: #e4eefe;
+}
+
+#container .task.review {
+    background: #fff3d6;
+}
+
+#container .task.done {
+    background: #e5f6e4;
+}
+
+.highcharts-description {
+    margin: 12px 0 4px;
+    color: #667085;
+    font-size: 13px;
+}

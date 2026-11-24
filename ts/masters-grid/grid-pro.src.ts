@@ -58,6 +58,8 @@ import TableEditingComposition from '../Grid/Pro/TableEditing/TableEditingCompos
 import TreeViewComposition from '../Grid/Pro/TreeView/TreeViewComposition.js';
 import SummaryRowsComposition from '../Grid/Pro/SummaryRows/SummaryRowsComposition.js';
 import SummaryColumnsComposition from '../Grid/Pro/SummaryColumns/SummaryColumnsComposition.js';
+import TableLayoutComposition from '../Grid/Pro/TableLayout/TableLayoutComposition.js';
+import CardFlowComposition from '../Grid/Pro/TableLayout/CardFlowComposition.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
@@ -175,6 +177,8 @@ TableEditingComposition.compose(G.Grid);
 TreeViewComposition.compose(G.Grid, G.Table, G.TableCell, G.HeaderCell);
 SummaryRowsComposition.compose(G.Grid, G.Table, G.TableCell);
 SummaryColumnsComposition.compose(G.Grid, G.Column, G.TableCell);
+TableLayoutComposition.compose(G.Grid, G.Table, G.TableCell);
+CardFlowComposition.compose(G.Grid, G.Table);
 ResponsiveComposition.compose(G.Grid);
 
 

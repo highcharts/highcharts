@@ -1,0 +1,7 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+#matrix,
+#cards {
+    height: 280px;
+    margin: 12px;
+}
