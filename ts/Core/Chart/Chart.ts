@@ -2880,7 +2880,7 @@ class Chart {
          * @name Highcharts.Chart#inverted
          * @type {boolean|undefined}
          */
-        chart.propsFromSeries.forEach(function (key: string): void {
+        chart.propsFromSeries.forEach(function (key): void {
 
             // The default series type's class
             klass = seriesTypes[
@@ -2890,7 +2890,7 @@ class Chart {
             // Get the value from available chart-wide properties
             value =
                 // It is set in the options:
-                (optionsChart as any)[key] ||
+                optionsChart[key] ||
                 // The default series class:
                 (klass && (klass.prototype as any)[key]);
             // Requires it
@@ -4566,7 +4566,7 @@ interface Chart extends ChartBase {
     /** @internal */
     collectionsWithUpdate: Array<string>;
     /** @internal */
-    propsFromSeries: Array<string>;
+    propsFromSeries: Array<keyof ChartOptions>;
     /** @internal */
     propsRequireDirtyBox: Array<string>;
     /** @internal */
