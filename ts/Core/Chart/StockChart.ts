@@ -953,10 +953,28 @@ namespace StockChart {
      *
      * @return {Highcharts.StockChart}
      *         The chart object.
+     *//**
+     * Factory function for creating new stock charts that returns a promise.
+     *
+     * @function Highcharts.stockChart
+     *
+     * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+     *        The DOM element to render to, or its id.
+     *
+     * @param {Highcharts.Options} options
+     *        The chart options structure as described in the
+     *        [options reference](https://api.highcharts.com/highstock).
+     *
+     * @param {true} callback
+     *        Set to `true` to return a promise that resolves when the chart
+     *        has loaded and all external images are loaded.
+     *
+     * @return {Promise<Highcharts.StockChart>}
+     *         A promise that resolves with the chart object.
      */
     export function stockChart(
         a: (string|HTMLDOMElement|Options),
-        b?: (Chart.CallbackFunction|Options),
+        b?: (Chart.CallbackFunction|true|Options),
         c?: Chart.CallbackFunction|true
     ): StockChart|Promise<StockChart> {
         const chart = new StockChart(a as any, b as any, c);
