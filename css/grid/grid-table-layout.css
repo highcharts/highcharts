@@ -1,0 +1,30 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
+/**
+ * @license Highcharts Grid Pro v@product.version@
+ *
+ * (c) 2009-2026 Highsoft AS
+ *
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
+ */
+
+.hcg-table.hcg-layout-matrix {
+    --hcg-layout-row-height: 96px;
+    --hcg-layout-cell-padding: 8px;
+}
+
+.hcg-table.hcg-layout-matrix > tbody > tr,
+.hcg-table.hcg-layout-matrix > tbody > tr > .hcg-cell {
+    overflow: visible;
+}
+
+.hcg-table.hcg-layout-matrix > tbody > tr {
+    height: var(--hcg-layout-row-height);
+}
+
+.hcg-themed .hcg-table.hcg-layout-matrix > tbody > tr > .hcg-cell {
+    height: var(--hcg-layout-row-height);
+    box-sizing: border-box;
+    padding: var(--hcg-layout-cell-padding);
+}

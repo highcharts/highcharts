@@ -62,6 +62,7 @@ export const rawClassNames = {
     rowsContentNowrap: 'rows-content-nowrap',
     virtualization: 'virtualization',
     columnVirtualization: 'column-virtualization',
+    layoutMatrix: 'layout-matrix',
     scrollableContent: 'scrollable-content',
     headerCell: 'header-cell',
     headerCellContainer: 'header-cell-container',
