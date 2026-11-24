@@ -153,9 +153,3 @@
     width: calc(100% - 8px);
     border-radius: 4px;
 }
-
-.highcharts-description {
-    margin: 12px 0 4px;
-    color: color-mix(in srgb, var(--hcg-color) 60%, transparent);
-    font-size: 13px;
-}

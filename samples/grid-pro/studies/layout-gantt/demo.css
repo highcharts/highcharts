@@ -2,15 +2,15 @@
 
 .layout-gantt {
     box-sizing: border-box;
-    max-width: 100%;
+    max-width: 1320px;
     margin: 24px auto;
     padding: 16px 16px 8px;
     overflow: auto;
-    background: #fff;
-    border: 1px solid #e6e6e6;
+    background: var(--hcg-popup-background);
+    border: 1px solid var(--hcg-popup-border-color);
     border-radius: 12px;
     font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
-    color: #1f2430;
+    color: var(--hcg-color);
 }
 
 .layout-gantt h2 {
@@ -20,17 +20,7 @@
 
 #container {
     position: relative;
-    width: 100%;
     height: 640px;
-}
-
-#container .hcg-visually-hidden {
-    opacity: 0;
-}
-
-#container .hcg-table {
-    border-spacing: 0;
-    min-width: 1280px;
 }
 
 #container .hcg-table.hcg-layout-matrix > tbody > tr,
@@ -44,37 +34,28 @@
         var(--hcg-horizontal-padding, var(--hcg-padding, 15px));
 }
 
-#container .hcg-table > tbody > tr {
-    overflow: visible;
-}
-
 #container .hcg-table thead th {
-    border-right: 1px solid #e6e6e6;
-    border-bottom: 1px solid #e6e6e6;
     text-align: center;
-    font-size: 11px;
+    font-size: 0.975em;
     font-weight: 600;
-    color: #667085;
 }
 
-#container .gantt-dow {
+#container .hcg-table thead th.gantt-dow {
+    padding: 8px 0;
+}
+
+#container .gantt-dow .hcg-header-cell-content {
     font-size: 10px;
     font-weight: 500;
+    text-align: center;
 }
 
 #container .hcg-table tbody > tr > .hcg-cell {
     vertical-align: middle;
-    border-right: 1px solid #e6e6e6;
-    border-bottom: 1px solid #e6e6e6;
 }
 
-#container .hcg-table tbody > tr > .hcg-cell:first-child {
-    border-left: 1px solid #e6e6e6;
-}
-
-#container .hcg-table thead tr:first-child > th:first-child,
-#container .hcg-table tbody > tr:first-child > .hcg-cell {
-    border-top: 1px solid #e6e6e6;
+#container .gantt-start {
+    white-space: normal;
 }
 
 #container .hcg-table tbody > tr > .hcg-cell.gantt-day {
@@ -84,7 +65,20 @@
 }
 
 #container .gantt-weekend {
-    background: #f7f8fa;
+    background: color-mix(in srgb, var(--hcg-color) 6%, var(--hcg-background));
+}
+
+#container .hcg-tbody-sticky > tr > .hcg-cell {
+    background-color: var(--hcg-background);
+}
+
+#container .hcg-tbody-sticky > tr > .hcg-cell.gantt-weekend {
+    background-color:
+        color-mix(
+            in srgb,
+            var(--hcg-color) 6%,
+            var(--hcg-background)
+        );
 }
 
 #container .gantt-day:has(.gantt-bar.is-start, .gantt-bar.is-mid) {
@@ -138,10 +132,4 @@
 .gantt-bar.is-single {
     width: calc(100% - 6px);
     border-radius: 3px;
-}
-
-.highcharts-description {
-    margin: 12px 0 4px;
-    color: #667085;
-    font-size: 13px;
 }
