@@ -31,9 +31,10 @@ node tools/nightly-package-validation-prototype/run.mjs <candidate.tgz> <expecte
 
 The runner resolves npm's stable control once and installs both tarballs with
 `npm ci` in separate temporary applications. Each application checks package
-resolution, declarations, and a Vite production build. Playwright checks Core
-annotations, a React-driven series update, and the Stock navigator in Chromium.
-Maps and Gantt coverage is limited to entry files and TypeScript imports.
+resolution, declarations, and a Vite production build. In Chromium, Playwright
+checks Core annotations, a React-driven series update, the Stock navigator and
+a simple moving average, Maps data joins, Gantt task dependencies, and CSV
+output from the exporting and export-data modules.
 
 The runner prints the local evidence directory. After both packages are staged,
 their archives are in `candidate/candidate.tgz` and `control/control.tgz`.
