@@ -596,12 +596,8 @@ function onSeriesAfterRender(
 
     if (
         this.isDirtyData &&
-        dragHandles &&
-        !this.chart.series.some((series): boolean =>
-            series.points?.some((point): boolean =>
-                point.id === dragHandles.point
-            )
-        )
+        dragHandles?.point &&
+        !this.points.find((p): boolean => p.id === dragHandles.point)
     ) {
         this.chart.hideDragHandles();
     }
