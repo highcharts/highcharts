@@ -38,6 +38,19 @@ import { getColumnRoles } from './ChartRecommender.js';
  * */
 
 /**
+ * Returns the Highcharts series type that draws a chart type.
+ *
+ * @param type
+ * The chart type.
+ *
+ * @return
+ * The Highcharts series type.
+ */
+export function getSeriesType(type: ChartingChartType): string {
+    return type === 'stackedColumn' ? 'column' : type;
+}
+
+/**
  * Converts a cell value to a chartable number.
  *
  * @param value
@@ -273,7 +286,7 @@ export function buildChartOptions(
     type: ChartingChartType
 ): AnyRecord | undefined {
     const { dimension, measures } = getColumnRoles(columns);
-    const seriesType = type === 'stackedColumn' ? 'column' : type;
+    const seriesType = getSeriesType(type);
 
     if (!measures.length) {
         return;
@@ -328,5 +341,6 @@ export function buildChartOptions(
  * */
 
 export default {
-    buildChartOptions
+    buildChartOptions,
+    getSeriesType
 } as const;

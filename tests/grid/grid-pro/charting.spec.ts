@@ -18,6 +18,10 @@ test.describe('Creating charts from Grid data', () => {
                     ['region', 'sales', 'cost']
                 ),
                 numbers: charting.getRecommendations(['sales', 'cost']),
+                // Bubble needs highcharts-more.js, which the page skips
+                threeNumbers: charting.getRecommendations(
+                    ['sales', 'cost', 'units']
+                ),
                 text: charting.getRecommendations(['region'])
             };
         });
@@ -30,6 +34,8 @@ test.describe('Creating charts from Grid data', () => {
             ['column', 'stackedColumn', 'bar', 'line', 'area']
         );
         expect(recommendations.numbers[0]).toBe('scatter');
+        expect(recommendations.threeNumbers).not.toContain('bubble');
+        expect(recommendations.threeNumbers[0]).toBe('scatter');
         expect(recommendations.text).toEqual([]);
     });
 
@@ -129,6 +135,12 @@ test.describe('Creating charts from Grid data', () => {
         const popup = page.locator('.hcg-chart-popup');
         await expect(popup.locator('.highcharts-series.highcharts-pie-series')).toBeVisible();
 
+        // A Grid reflow keeps the popup open
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0].charting.popup.reflow();
+        });
+        await expect(popup).toHaveCount(1);
+
         await page.keyboard.press('Escape');
         await expect(popup).toHaveCount(0);
 
@@ -136,6 +148,46 @@ test.describe('Creating charts from Grid data', () => {
             () => (window as any).Highcharts.charts.filter(Boolean).length
         );
         expect(charts).toBe(0);
+    });
+
+    test('Names series after headers that are not rendered', async ({ page }) => {
+        const result = await page.evaluate(async () => {
+            const columns: Record<string, number[]> = {};
+            for (let i = 0; i < 40; ++i) {
+                columns['c' + i] = [i, i + 1];
+            }
+
+            const container = document.createElement('div');
+            container.style.width = '300px';
+            document.body.appendChild(container);
+
+            const grid = await (window as any).Grid.grid(container, {
+                data: { columns },
+                columnDefaults: { width: 80 },
+                columns: [{
+                    id: 'c39',
+                    header: { format: '<b>Last</b> column' }
+                }],
+                rendering: {
+                    columns: { virtualization: true }
+                }
+            }, true);
+
+            const chart = grid.charting.createChart({
+                columns: ['c39'],
+                renderTo: 'chart'
+            });
+
+            return {
+                rendered: !!container.querySelector(
+                    'th[data-column-id="c39"]'
+                ),
+                name: chart.series[0].name
+            };
+        });
+
+        expect(result.rendered).toBe(false);
+        expect(result.name).toBe('Last column');
     });
 
     test('Lets beforeChartCreate change or cancel the chart', async ({ page }) => {

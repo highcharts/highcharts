@@ -98,16 +98,18 @@ class ChartPopup extends Popup {
 
     /**
      * Shows the popup and creates the chart in it.
+     *
+     * @param anchorElement
+     * The element to position the popup relative to.
      */
-    public override show(): void {
-        super.show();
+    public override show(anchorElement?: HTMLElement): void {
+        super.show(anchorElement);
 
         const { container, chartContainer } = this;
         if (!container || !chartContainer) {
             return;
         }
 
-        container.classList.add(Globals.classNamePrefix + 'chart-popup');
         this.chart = this.createChart(chartContainer);
 
         // Let Escape close the popup without clicking into it first.
@@ -132,6 +134,11 @@ class ChartPopup extends Popup {
      * The popup content element.
      */
     protected override renderContent(contentElement: HTMLElement): void {
+        // Added before the popup is positioned, so that it is measured with
+        // the chart size.
+        this.container?.classList.add(
+            Globals.classNamePrefix + 'chart-popup'
+        );
         this.chartContainer = makeHTMLElement('div', {
             className: Globals.classNamePrefix + 'chart-popup-chart'
         }, contentElement);

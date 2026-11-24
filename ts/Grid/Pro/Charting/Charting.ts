@@ -23,6 +23,7 @@
  *
  * */
 
+import type Column from '../../Core/Table/Column';
 import type Grid from '../../Core/Grid';
 import type DataTable from '../../../Data/DataTable';
 import type { CellType as DataTableCellType } from '../../../Data/DataTable';
@@ -37,9 +38,10 @@ import type {
 } from './ChartingOptions';
 
 import ChartPopup from './ChartPopup.js';
-import { buildChartOptions } from './ChartConfigBuilder.js';
+import { buildChartOptions, getSeriesType } from './ChartConfigBuilder.js';
 import { recommend } from './ChartRecommender.js';
 import { LocalDataProvider } from '../../Core/Data/LocalDataProvider.js';
+import { sanitizeText } from '../../Core/GridUtils.js';
 import {
     fireEvent,
     isNumber,
@@ -65,6 +67,25 @@ function warn(message: string): void {
     console.warn('Grid charting: ' + message);
 }
 
+
+/**
+ * Returns the display name of a column, resolved from its header options the
+ * way the header cell renders it, as plain text. Unlike the header element,
+ * it is there for columns that column virtualization has not rendered.
+ *
+ * @param column
+ * The column.
+ *
+ * @return
+ * The column name.
+ */
+function getColumnName(column: Column): string {
+    const header = column.options.header;
+    const value = header?.formatter?.call(column)?.toString() ||
+        (isString(header?.format) ? column.format(header.format) : '');
+
+    return (value && sanitizeText(value)) || column.id;
+}
 
 /**
  * Returns the indexes in the presentation table of the rows with the given
@@ -294,7 +315,8 @@ class Charting {
 
         this.popup?.hide();
         this.popup = new ChartPopup(grid, create);
-        this.popup.show();
+        // Anchored to the Grid, so that the popup follows it on reflow.
+        this.popup.show(grid.contentWrapper);
 
         return this.popup.chart;
     }
@@ -309,7 +331,8 @@ class Charting {
 
     /**
      * Returns the chart types that fit the columns, limited to the types in
-     * `charting.types`.
+     * `charting.types` and, once Highcharts is loaded, to the types its loaded
+     * modules can draw, such as `bubble`, which needs `highcharts-more.js`.
      *
      * @param columns
      * The columns prepared for charting.
@@ -321,9 +344,12 @@ class Charting {
         const allowed = this.grid.options?.charting?.types ??
             Charting.defaultOptions.types ?? [];
 
-        return recommend(columns).filter(
-            (type): boolean => allowed.includes(type)
-        );
+        const seriesTypes = Charting.H?.seriesTypes;
+
+        return recommend(columns).filter((type): boolean => (
+            allowed.includes(type) &&
+            (!seriesTypes || !!seriesTypes[getSeriesType(type)])
+        ));
     }
 
     /**
@@ -375,7 +401,7 @@ class Charting {
 
             result.push({
                 id: columnId,
-                name: column.header?.headerContent?.textContent || columnId,
+                name: getColumnName(column),
                 dataType: column.dataType,
                 format: column.options.cells?.format,
                 values: rowIndexes ?

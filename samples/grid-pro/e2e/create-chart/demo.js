@@ -7,7 +7,8 @@ Grid.grid('container', {
             ],
             region: ['North', 'South', 'East'],
             sales: [30, 10, 20],
-            cost: [12, 4, 8]
+            cost: [12, 4, 8],
+            units: [3, 1, 2]
         }
     },
     columns: [{
