@@ -20,10 +20,11 @@ Highcharts.chart('container', {
             'population of 5 to 20 million people. The southern US region ' +
             'from South Carolina in the Southeast to New Mexico in the ' +
             'Southwest contains the highest concentration of states with a ' +
-            'population of 1 to 5 million people. 6 states have a population ' +
-            'of less than 1 million people; these include Alaska, Delaware, ' +
-            'Wyoming, North Dakota, South Dakota and Vermont. The state with ' +
-            'the lowest population is Wyoming in the Northwest with 584,153 ' +
+            'population of 1 to 5 million people. 5 states and the District ' +
+            'of Columbia have a population of less than 1 million people; ' +
+            'these include Alaska, Wyoming, North Dakota, South Dakota, ' +
+            'Vermont and the District of Columbia. The state with ' +
+            'the lowest population is Wyoming in the Northwest with 584,057 ' +
             'people.',
         point: {
             valueDescriptionFormat: '{xDescription}, population {point.value}.'
@@ -250,7 +251,7 @@ Highcharts.chart('container', {
             region: 'Midwest',
             x: 2,
             y: 7,
-            value: 1037261
+            value: 10037261
         }, {
             'hc-a2': 'MN',
             name: 'Minnesota',
