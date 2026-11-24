@@ -28,12 +28,21 @@ function runnerDigests() {
     }));
 }
 
-export function copyFixture(source, destination, gridLite) {
+export function copyFixture(source, destination, gridPackage) {
     mkdirSync(destination);
     for (const file of fixtureFiles) {
-        const directory = gridLite && productFiles.includes(file) ? join(source, 'grid-lite') : source;
+        const directory = gridPackage && productFiles.includes(file) ? join(source, gridPackage) : source;
         cpSync(join(directory, file), join(destination, file), { recursive: true });
     }
+}
+
+export function retainedEvidenceRoot(extracted, gridPackage) {
+    const prefix = `${gridPackage ?? 'highcharts'}-package-prototype-`;
+    const roots = readdirSync(extracted, { withFileTypes: true }).filter(
+        entry => entry.isDirectory() && entry.name.startsWith(prefix)
+    );
+    assert.equal(roots.length, 1, 'Retained consumer results directory unavailable or ambiguous');
+    return join(extracted, roots[0].name);
 }
 
 function inventory(root, paths) {
@@ -153,7 +162,7 @@ export function verifyReplaySource(root, fixture, identity) {
         assert.equal(manifest.runId, identity.runId, 'Evidence run ID differs from requested run');
         assert.equal(manifest.attempt, identity.attempt, 'Evidence attempt differs from requested attempt');
     }
-    const packageName = identity.gridLite ? '@highcharts/grid-lite' : 'highcharts';
+    const packageName = identity.gridPackage ? `@highcharts/${identity.gridPackage}` : 'highcharts';
     assert.equal(inputs.packageName, packageName, 'Evidence package differs from requested package');
     const reviewed = inventory(fixture, fixtureInventory(fixture));
     const retained = Object.fromEntries(Object.entries(manifest.files).filter(([name]) => name.startsWith('fixture/'))

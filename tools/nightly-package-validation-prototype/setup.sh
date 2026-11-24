@@ -41,10 +41,12 @@ prepare() {
     printf 'consumer=%s\n' "$consumer" >> "$GITHUB_OUTPUT"
 }
 
-prepare_grid_lite() {
-    local -a args=("$GITHUB_SHA" "$PWD" "$GITHUB_WORKSPACE/grid-lite-dist"
-        "$GRID_LITE_METADATA_SHA" "$RUNNER_TEMP/grid-lite-staging")
-    if [[ "${GRID_LITE_MISSING_CSS:-false}" == true ]]; then
+prepare_grid() {
+    local grid_package=${GRID_PACKAGE:-grid-lite}
+    local staging="$RUNNER_TEMP/$grid_package-staging"
+    local -a args=("$GITHUB_SHA" "$PWD" "$GITHUB_WORKSPACE/$grid_package-dist"
+        "${GRID_METADATA_SHA:-${GRID_LITE_METADATA_SHA:-}}" "$staging" --package "$grid_package")
+    if [[ "${GRID_MISSING_CSS:-${GRID_LITE_MISSING_CSS:-false}}" == true ]]; then
         args+=(--missing-css)
     fi
     check_npm
@@ -52,10 +54,10 @@ prepare_grid_lite() {
         > "$evidence/staging.json"
     local tarball
     tarball=$(jq -er '.tarball' "$evidence/staging.json")
-    cp -- "$RUNNER_TEMP/grid-lite-staging/staging-manifest.json" "$evidence/"
-    stage_candidate "$tarball" grid-lite
+    cp -- "$staging/staging-manifest.json" "$evidence/"
+    stage_candidate "$tarball" "$grid_package"
     cp -- "$evidence/staging-manifest.json" "$consumer/candidate/"
-    node tools/nightly-package-validation-prototype/package-evidence.mjs "$consumer" @highcharts/grid-lite
+    node tools/nightly-package-validation-prototype/package-evidence.mjs "$consumer" "@highcharts/$grid_package"
     printf 'consumer=%s\n' "$consumer" >> "$GITHUB_OUTPUT"
 }
 
@@ -67,7 +69,7 @@ if [[ "${1:-}" == run ]]; then
             npm ci
             npx gulp dist --product Grid --skip-dist-compress
             ;;
-        grid-pack) prepare_grid_lite ;;
+        grid-pack) prepare_grid ;;
         chromium)
             cd "$evidence"
             npm exec --yes --package=@playwright/test@1.61.1 -- \

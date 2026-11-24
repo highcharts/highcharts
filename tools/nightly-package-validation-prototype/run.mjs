@@ -11,7 +11,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseArgs, stripVTControlCharacters } from 'node:util';
 import { readPackResult } from './npm-pack.mjs';
 import {
-    candidateFiles, hash, nightlyIdentity, readJSON, verifyCandidateEvidence,
+    candidateFiles, gridPackages, hash, nightlyIdentity, readJSON, verifyCandidateEvidence,
     verifyInstalledCandidate, writeJSON
 } from './package-evidence.mjs';
 import {
@@ -34,11 +34,11 @@ function npmPeerConflict(lines, packageName) {
     }
 }
 
-export async function runConsumer({ tarball, expectedDigest, gridLite, replay, prepared }) {
+export async function runConsumer({ tarball, expectedDigest, gridPackage, replay, prepared }) {
     const sourceFixture = fileURLToPath(new URL('.', import.meta.url));
-    const packageName = gridLite ? '@highcharts/grid-lite' : 'highcharts';
+    const packageName = gridPackage ? `@highcharts/${gridPackage}` : 'highcharts';
     const lockKey = `node_modules/${packageName}`;
-    const evidence = prepared ?? mkdtempSync(join(tmpdir(), gridLite ? 'grid-lite-package-prototype-' : 'highcharts-package-prototype-'));
+    const evidence = prepared ?? mkdtempSync(join(tmpdir(), `${gridPackage ?? 'highcharts'}-package-prototype-`));
     const fixture = join(evidence, 'fixture');
     const candidate = join(evidence, 'candidate', 'candidate.tgz');
     const control = join(evidence, 'control', 'control.tgz');
@@ -164,8 +164,8 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
         if (label === 'candidate' && candidateEvidence) {
             verifyInstalledCandidate(installed, candidateEvidence);
         }
-        if (gridLite) {
-            verifyGridLiteEntries(manifest, installed);
+        if (gridPackage) {
+            verifyGridEntries(manifest, installed);
         } else {
             verifyHighchartsEntries(manifest, installed);
         }
@@ -189,20 +189,22 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
         Object.assign(result, inspectBrowserResults(status, report));
     }
 
-    function verifyGridLiteEntries(manifest, installed) {
+    function verifyGridEntries(manifest, installed) {
         const require = createRequire(manifest);
         const pkg = readJSON(join(installed, 'package.json'));
         assert.equal(pkg.name, packageName);
         for (const field of ['main', 'module', 'types']) {
-            assert(typeof pkg[field] === 'string' && pkg[field], `Missing Grid Lite ${field} entry`);
+            assert(typeof pkg[field] === 'string' && pkg[field], `Missing ${packageName} ${field} entry`);
             const file = realpathSync(resolve(installed, pkg[field]));
             const path = relative(installed, file);
             assert(path && !path.startsWith(`..${sep}`) && path !== '..' && !isAbsolute(path) &&
-                statSync(file).isFile() && statSync(file).size > 0, `Invalid Grid Lite ${field} entry`);
+                statSync(file).isFile() && statSync(file).size > 0, `Invalid ${packageName} ${field} entry`);
         }
         assert.equal(require.resolve(packageName), resolve(installed, pkg.main));
-        const wrapperRequire = createRequire(require.resolve('@highcharts/grid-lite-react'));
-        assert.equal(wrapperRequire.resolve(packageName), resolve(installed, pkg.main));
+        if (gridPackage === 'grid-lite') {
+            const wrapperRequire = createRequire(require.resolve('@highcharts/grid-lite-react'));
+            assert.equal(wrapperRequire.resolve(packageName), resolve(installed, pkg.main));
+        }
     }
 
     function verifyHighchartsEntries(manifest, installed) {
@@ -299,7 +301,7 @@ export async function runConsumer({ tarball, expectedDigest, gridLite, replay, p
             }
             console.log(`Replaying recorded control ${packageName} ${inputs.control.version} and both retained locks`);
         }
-        copyFixture(replay ? replay.fixture : sourceFixture, fixture, gridLite && !replay);
+        copyFixture(replay ? replay.fixture : sourceFixture, fixture, replay ? undefined : gridPackage);
         ({ inspectBrowserResults } = await import(pathToFileURL(join(fixture, 'browser-results.mjs'))));
         preparing = 'control';
         results.control.stage = 'control input';
@@ -349,7 +351,7 @@ const isMain = import.meta.main ?? (
     realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))
 );
 if (isMain) {
-    const usage = 'Usage: node run.mjs <candidate.tgz> <expected-sha256> | --prepared <nightly-evidence-directory> <expected-sha256> | --replay <retained-input-directory> [--package grid-lite]';
+    const usage = 'Usage: node run.mjs <candidate.tgz> <expected-sha256> | --prepared <nightly-evidence-directory> <expected-sha256> | --replay <retained-input-directory> [--package grid-lite|grid-pro]';
     const args = process.argv.slice(2);
     const prepared = args[0] === '--prepared';
     const [tarball, expectedDigest, ...extra] = prepared ? args.slice(1) : args;
@@ -360,15 +362,15 @@ if (isMain) {
             const { values } = parseArgs({ args: extra, options: {
                 package: { type: 'string' }
             } });
-            const gridLite = values.package === 'grid-lite';
-            assert(values.package === undefined || gridLite, usage);
+            const gridPackage = values.package;
+            assert(gridPackage === undefined || gridPackages.includes(gridPackage), usage);
             if (!prepared && tarball === '--replay' && expectedDigest) {
                 const { runReplay } = await import('./replay-isolation.mjs');
-                process.exitCode = runReplay({ evidence: resolve(expectedDigest), gridLite });
+                process.exitCode = runReplay({ evidence: resolve(expectedDigest), gridPackage });
             } else {
                 assert(tarball && /^[a-f0-9]{64}$/u.test(expectedDigest), usage);
                 process.exitCode = await runConsumer({
-                    tarball, expectedDigest, gridLite, prepared: prepared ? resolve(tarball) : undefined
+                    tarball, expectedDigest, gridPackage, prepared: prepared ? resolve(tarball) : undefined
                 });
             }
         } catch (error) {

@@ -43,7 +43,7 @@ inventories, and Playwright reports and failure traces.
 
 The local tarball command checks the digest you supply. In Nightly, the runner
 also verifies which build produced the candidate. For Highcharts it checks the
-build manifest and npm pack inventory. For Grid Lite it checks the staging
+build manifest and npm pack inventory. For Grid Lite and Grid Pro it checks the staging
 manifest. After installation it compares the candidate's files and their
 contents with the recorded package inventory.
 
@@ -91,6 +91,23 @@ container described below:
 node "$prototype/run.mjs" --replay "$EVIDENCE" --package grid-lite
 ```
 
+## Validate Grid Pro locally
+
+Use the same Grid distribution build described above. Set `GRID_PRO_DIST`
+to a local `grid-pro-dist` checkout and `METADATA_SHA` to the full commit
+from the Grid Pro workflow job. Stage the Pro edition in a fresh output
+directory, then use the reported tarball path and SHA-256:
+
+```sh
+node "$prototype/stage-grid-lite.mjs" \
+  "$SOURCE_SHA" "$SOURCE_CHECKOUT" "$GRID_PRO_DIST" "$METADATA_SHA" "$OUTPUT" --package grid-pro
+node "$prototype/run.mjs" "$TARBALL" "$SHA256" --package grid-pro
+```
+
+The native Grid Pro fixture loads the packaged stylesheet, edits a numeric
+cell, and checks the committed value. To exercise the missing-stylesheet
+diagnostic, repeat staging with `--missing-css` in a fresh output directory.
+
 ## Add a product check
 
 Stock imports `highcharts/highstock` from [its consumer page](app/stock.ts).
@@ -129,9 +146,9 @@ run the command with the run ID from the Actions URL and the attempt number.
 node tools/nightly-package-validation-prototype/replay.mjs "$RUN_ID" "$ATTEMPT"
 ```
 
-For Grid Lite evidence from the same Nightly workflow, add `--package grid-lite`.
+For Grid evidence, add `--package grid-lite` or `--package grid-pro`.
 See the [Grid Lite pilot](../../.github/workflows/nightly.md#grid-lite-pilot)
-for the dispatch inputs.
+and [Grid Pro pilot](../../.github/workflows/nightly.md#grid-pro-pilot) for the dispatch inputs.
 
 Use authenticated `gh` with read access to `highcharts/highcharts` and a
 running Docker engine with Linux x64 support. Set

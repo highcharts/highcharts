@@ -70,6 +70,25 @@ passes. Replay the synthetic failure from a retained Actions attempt before
 enabling scheduled Grid Lite validation. See the
 [replay prerequisites](../../tools/nightly-package-validation-prototype/README.md#replay-a-nightly-attempt).
 
+## Grid Pro pilot
+
+Dispatch **Nightly** on the branch under test with `validateGridPro: true`
+for the genuine candidate or `gridProMissingCss: true` for a synthetic
+candidate with the stylesheet removed. Either input starts Grid Pro validation
+and skips publication to Visual Review and `highcharts-dist`. The job packs
+Grid Pro with pinned release metadata and tests numeric cell editing in isolated
+stable and candidate consumers. Open **Validate nightly Grid Pro npm package**
+for the results and evidence.
+
+```sh
+gh workflow run nightly.yml --ref "$REF" -f validateGridPro=true
+gh workflow run nightly.yml --ref "$REF" -f gridProMissingCss=true
+node tools/nightly-package-validation-prototype/replay.mjs "$RUN_ID" "$ATTEMPT" --package grid-pro
+```
+
+The missing-stylesheet pilot should pass on stable and fail at bundling on
+`@highcharts/grid-pro/css/grid-pro.css` for the candidate.
+
 ## Publication setup
 
 Before merging, configure the `nightly-dist` GitHub environment:

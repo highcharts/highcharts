@@ -24,7 +24,7 @@ function makeContainerReadable(path) {
     }
 }
 
-export function runReplay({ evidence, archive, gridLite, sourceSha, runId, attempt }) {
+export function runReplay({ evidence, archive, gridPackage, sourceSha, runId, attempt }) {
     const checkedOut = execFileSync('git', ['-C', directory, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
     assert(!sourceSha || sourceSha === checkedOut,
         `Check out reviewed source ${sourceSha} in a separate worktree before replay; current HEAD is ${checkedOut}.`);
@@ -42,8 +42,8 @@ export function runReplay({ evidence, archive, gridLite, sourceSha, runId, attem
         mkdirSync(input);
         mkdirSync(build);
         const fixture = join(input, 'fixture');
-        copyFixture(directory, fixture, gridLite);
-        writeJSON(join(input, 'identity.json'), { sourceSha: checkedOut, runId, attempt, gridLite });
+        copyFixture(directory, fixture, gridPackage);
+        writeJSON(join(input, 'identity.json'), { sourceSha: checkedOut, runId, attempt, gridPackage });
         for (const file of runnerFiles) {
             copyFileSync(join(directory, file), join(input, file));
         }

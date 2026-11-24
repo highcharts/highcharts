@@ -262,6 +262,24 @@ describe('Grid release and pilot staging', () => {
         const missingEntry = pilot('missing-entry');
         ok(!missingEntry.stagedFiles.some(([path]) => path === 'esm/grid.d.ts'));
         ok(!missingEntry.packedFiles.includes('esm/grid.d.ts'));
+
+        const proName = '@highcharts/grid-pro';
+        await writeFixtureFile(metadata, 'package.json', JSON.stringify({ name: proName, version: '3.2.0',
+            main: 'grid-pro.js' }));
+        git(metadata, 'commit', '-qm', 'Grid Pro metadata', '--', 'package.json');
+        revision = git(metadata, 'rev-parse', 'HEAD');
+        await writeFixtureFile(dist, 'grid-pro/code/grid-pro.js', 'module.exports = {};');
+        await writeFixtureFile(dist, 'grid-pro/code/css/grid-pro.css', css);
+        const pro = pilot('pro', '--package', 'grid-pro');
+        strictEqual(pro.package, proName);
+        strictEqual(pro.version, version);
+        strictEqual(pro.metadataRevision, revision);
+        ok(pro.packedFiles.includes('grid-pro.js'));
+        ok(pro.packedFiles.includes('css/grid-pro.css'));
+        ok(!pro.packedFiles.includes('css/grid-lite.css'));
+        const syntheticPro = pilot('pro-missing-css', '--package', 'grid-pro', '--missing-css');
+        strictEqual(syntheticPro.missingCssControl, true);
+        ok(!syntheticPro.packedFiles.includes('css/grid-pro.css'));
     });
 });
 

@@ -19,7 +19,8 @@ const passedReport = {
     candidate: passedLane
 };
 
-function summarize({ build, validation, checks, evidence, results, setupStep = '', setupError = '', gridLite = false }) {
+function summarize({ build, validation, checks, evidence, results, setupStep = '', setupError = '',
+    gridPackage = '', missingCss = false }) {
     const dir = mkdtempSync(join(tmpdir(), 'nightly-package-summary-'));
     const report = join(dir, 'summary.md');
     try {
@@ -35,8 +36,8 @@ function summarize({ build, validation, checks, evidence, results, setupStep = '
                 GITHUB_RUN_ID: '12',
                 GITHUB_SERVER_URL: 'https://github.com',
                 GITHUB_STEP_SUMMARY: report,
-                GRID_LITE: String(gridLite),
-                GRID_LITE_MISSING_CSS: String(gridLite),
+                GRID_PACKAGE: gridPackage,
+                GRID_MISSING_CSS: String(missingCss),
                 RESULTS: results,
                 SETUP_STEP: setupStep,
                 SETUP_ERROR: setupError,
@@ -65,22 +66,25 @@ test('shows an actionable setup failure before either lane starts', () => {
     ok(!summary.includes('retry details'));
 });
 
-test('labels the Grid Lite synthetic failure and names the missing import', () => {
-    const diagnostic = 'Could not resolve @highcharts/grid-lite/css/grid-lite.css';
-    const [status, summary] = summarize({
-        build: 'success', validation: 'failure', checks: 'failed', evidence: '1234', gridLite: true,
-        results: JSON.stringify({
-            control: { outcome: 'passed', stage: 'browser' },
-            candidate: { outcome: 'failed', stage: 'bundle', error: diagnostic }
-        })
+for (const [label, key] of [['Grid Lite', 'grid-lite'], ['Grid Pro', 'grid-pro']]) {
+    test(`labels the ${label} synthetic failure and names the missing import`, () => {
+        const diagnostic = `Could not resolve @highcharts/${key}/css/${key}.css`;
+        const [status, summary] = summarize({
+            build: 'success', validation: 'failure', checks: 'failed', evidence: '1234',
+            gridPackage: key, missingCss: true,
+            results: JSON.stringify({
+                control: { outcome: 'passed', stage: 'browser' },
+                candidate: { outcome: 'failed', stage: 'bundle', error: diagnostic }
+            })
+        });
+        deepEqual(status, 1);
+        ok(summary.includes(`Nightly ${label} npm package validation — failed`));
+        ok(summary.includes(`Synthetic candidate with \`css/${key}.css\` removed.`));
+        match(summary, /Stable <code>passed<\/code> at <code>browser<\/code>/u);
+        match(summary, /Candidate <code>failed<\/code> at <code>bundle<\/code>/u);
+        ok(summary.includes(`<pre>${diagnostic}</pre>`));
     });
-    deepEqual(status, 1);
-    ok(summary.includes('Nightly Grid Lite npm package validation — failed'));
-    ok(summary.includes('Synthetic candidate with `css/grid-lite.css` removed.'));
-    match(summary, /Stable <code>passed<\/code> at <code>browser<\/code>/u);
-    match(summary, /Candidate <code>failed<\/code> at <code>bundle<\/code>/u);
-    ok(summary.includes(`<pre>${diagnostic}</pre>`));
-});
+}
 
 test('shows the failed lane, stage, and first actionable compiler diagnostic', () => {
     const diagnostic = "app/stock.ts(1,21): error TS2307: Cannot find module 'highcharts/highstock'.";
@@ -147,9 +151,9 @@ test('preserves advisory verdicts when validation or evidence is incomplete', ()
     }
 });
 
-for (const [product, gridLite] of [['Highcharts', false], ['Grid Lite', true]]) {
+for (const [product, gridPackage] of [['Highcharts', ''], ['Grid Lite', 'grid-lite']]) {
     test(`${product} requires a complete passing report`, () => {
-        const input = { build: 'success', validation: 'success', checks: 'passed', evidence: '1234', gridLite };
+        const input = { build: 'success', validation: 'success', checks: 'passed', evidence: '1234', gridPackage };
         const [passedStatus, passedSummary] = summarize({ ...input, results: JSON.stringify(passedReport) });
         deepEqual(passedStatus, 0);
         ok(passedSummary.includes('validation — passed'));
@@ -181,7 +185,7 @@ for (const [product, gridLite] of [['Highcharts', false], ['Grid Lite', true]]) 
     });
 
     test(`${product} preserves a reported failure when other evidence is unavailable or inconsistent`, () => {
-        const input = { build: 'success', validation: 'failure', checks: '', evidence: '', gridLite };
+        const input = { build: 'success', validation: 'failure', checks: '', evidence: '', gridPackage };
         const failedLane = { outcome: 'failed', stage: 'browser', error: 'Consumer assertion failed' };
         for (const override of [
             { checks: 'failed', results: '{' },

@@ -4,13 +4,17 @@ import { defineConfig } from 'vite';
 import { browserCases } from './browser-cases.mjs';
 
 const { dependencies } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
-const gridLite = Object.hasOwn(dependencies, '@highcharts/grid-lite');
-const packageName = gridLite ? '@highcharts/grid-lite' : 'highcharts';
+const products = {
+    '@highcharts/grid-lite': 'Grid Lite',
+    '@highcharts/grid-pro': 'Grid Pro',
+    highcharts: 'Highcharts'
+};
+const packageName = Object.keys(products).find(name => Object.hasOwn(dependencies, name));
 const packageDirectory = join('node_modules', packageName);
-const product = gridLite ? 'Grid Lite' : 'Highcharts';
-const inventory = gridLite ? 'bundled-grid-lite.json' : 'bundled-highcharts.json';
+const product = products[packageName];
+const inventory = `bundled-${packageName.replace(/^@highcharts\//u, '')}.json`;
 const reactPlugin = '@vitejs/plugin-react';
-const frameworkPlugins = gridLite ? [] : [(await import(reactPlugin)).default()];
+const frameworkPlugins = packageName === 'highcharts' ? [(await import(reactPlugin)).default()] : [];
 
 export default defineConfig({
     plugins: [

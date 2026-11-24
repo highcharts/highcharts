@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { closeSync, mkdtempSync, openSync, readdirSync, rmSync } from 'node:fs';
+import { closeSync, mkdtempSync, openSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { hash } from './replay-evidence.mjs';
+import { gridPackages } from './package-evidence.mjs';
+import { hash, retainedEvidenceRoot } from './replay-evidence.mjs';
 import { runReplay } from './replay-isolation.mjs';
 
-const usage = 'Usage: node replay.mjs <run-id> <attempt> [--package grid-lite] [--artifact <extracted-artifact-directory>]';
+const usage = 'Usage: node replay.mjs <run-id> <attempt> [--package grid-lite|grid-pro] [--artifact <extracted-artifact-directory>]';
 if (process.argv[2] === '--help') {
     console.log(usage);
     process.exit(0);
@@ -51,25 +52,19 @@ try {
         }
     });
     const [runId, attempt] = positionals;
-    const gridLite = values.package === 'grid-lite';
+    const gridPackage = values.package;
     assert(positionals.length === 2 && /^[1-9]\d*$/u.test(runId) && /^[1-9]\d*$/u.test(attempt) &&
-        (values.package === undefined || gridLite) && values.artifact !== '', usage);
+        (gridPackage === undefined || gridPackages.includes(gridPackage)) && values.artifact !== '', usage);
     let input;
     if (values.artifact) {
-        const extracted = resolve(values.artifact);
-        const prefix = gridLite ? 'grid-lite-package-prototype-' : 'highcharts-package-prototype-';
-        const roots = readdirSync(extracted, { withFileTypes: true }).filter(
-            entry => entry.isDirectory() && entry.name.startsWith(prefix)
-        );
-        assert.equal(roots.length, 1, 'Retained consumer results directory unavailable or ambiguous');
-        input = { evidence: join(extracted, roots[0].name) };
+        input = { evidence: retainedEvidenceRoot(resolve(values.artifact), gridPackage) };
     } else {
         staging = mkdtempSync(join(tmpdir(), 'highcharts-nightly-replay-'));
-        const artifactName = gridLite ? `nightly-grid-lite-validation-${attempt}` : `nightly-package-validation-${attempt}`;
+        const artifactName = `nightly-${gridPackage ?? 'package'}-validation-${attempt}`;
         input = download(staging, runId, attempt, artifactName);
         assert(/^[0-9a-f]{40}$/u.test(input.sourceSha), 'GitHub run source SHA unavailable');
     }
-    process.exitCode = runReplay({ ...input, runId, attempt, gridLite });
+    process.exitCode = runReplay({ ...input, runId, attempt, gridPackage });
 } catch (error) {
     console.error(error.message);
     process.exitCode = 1;

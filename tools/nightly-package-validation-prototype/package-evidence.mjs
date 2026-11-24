@@ -12,6 +12,7 @@ const sha256Pattern = /^[a-f0-9]{64}$/u;
 const shaPattern = /^[a-f0-9]{40}$/u;
 const runNumber = /^[1-9]\d*$/u;
 const link = 'candidate/provenance.json';
+export const gridPackages = ['grid-lite', 'grid-pro'];
 
 export function sha256(bytes) {
     return createHash('sha256').update(bytes).digest('hex');
@@ -65,7 +66,7 @@ export function candidateFiles(packageName, provenance) {
         return [];
     }
     assert.equal(provenance, 'nightly', 'Unknown candidate provenance');
-    if (packageName === '@highcharts/grid-lite') {
+    if (gridPackages.some(gridPackage => packageName === `@highcharts/${gridPackage}`)) {
         return [link, 'candidate/staging-manifest.json'];
     }
     assert.equal(packageName, 'highcharts', 'Unexpected candidate package');
@@ -138,13 +139,14 @@ export function verifyCandidateEvidence(root, packageName, identity, expectedDig
         paths = pack.files?.map(file => file.path?.replace(/^\.\//u, ''));
         ({ files: staged, directorySha256: inventoryDigest } = build);
     } else {
-        assert.equal(build.package, packageName, 'Grid Lite staging package mismatch');
-        assert.equal(build.runId, identity.runId, 'Grid Lite staging run ID mismatch');
-        assert.equal(build.attempt, identity.attempt, 'Grid Lite staging attempt mismatch');
-        assert.equal(build.tarballSha256, digest, 'Grid Lite staging tarball digest mismatch');
+        const product = packageName === '@highcharts/grid-lite' ? 'Grid Lite' : 'Grid Pro';
+        assert.equal(build.package, packageName, `${product} staging package mismatch`);
+        assert.equal(build.runId, identity.runId, `${product} staging run ID mismatch`);
+        assert.equal(build.attempt, identity.attempt, `${product} staging attempt mismatch`);
+        assert.equal(build.tarballSha256, digest, `${product} staging tarball digest mismatch`);
         ({ version, integrity, packedFiles: paths, stagedFiles: staged, stagedInventorySha256: inventoryDigest } = build);
         assert.equal(staged?.find(([name]) => name === 'package.json')?.[1], build.packageManifestSha256,
-            'Grid Lite staged package manifest digest mismatch');
+            `${product} staged package manifest digest mismatch`);
     }
     assert.equal(`sha512-${hash(tarball, 'sha512', 'base64')}`, integrity, 'Candidate pack integrity mismatch');
     assert(typeof version === 'string' && version, 'Candidate pack version unavailable');
@@ -185,7 +187,7 @@ const isMain = import.meta.main ?? (
 );
 if (isMain) {
     const [root, packageName] = process.argv.slice(2);
-    const usage = 'Usage: node package-evidence.mjs <prepared-consumer-directory> <highcharts|@highcharts/grid-lite>';
+    const usage = 'Usage: node package-evidence.mjs <prepared-consumer-directory> <highcharts|@highcharts/grid-lite|@highcharts/grid-pro>';
     if (root === '--help') {
         process.stdout.write(usage + '\n');
     } else {

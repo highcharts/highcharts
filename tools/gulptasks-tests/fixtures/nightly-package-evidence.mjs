@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import {
-    hash, recordCandidateEvidence, sha256, writeJSON
+    candidateFiles, hash, recordCandidateEvidence, sha256, writeJSON
 } from '../../nightly-package-validation-prototype/package-evidence.mjs';
 
 export function writeCandidateProvenance(root, packageName, identity, contents, buildAttempt = identity.attempt) {
@@ -13,7 +13,7 @@ export function writeCandidateProvenance(root, packageName, identity, contents, 
     const integrity = `sha512-${hash(archive, 'sha512', 'base64')}`;
     const { sourceSha, runId, attempt } = identity;
     const { version } = JSON.parse(contents['package.json']);
-    if (packageName === '@highcharts/grid-lite') {
+    if (candidateFiles(packageName, 'nightly').includes('candidate/staging-manifest.json')) {
         writeJSON(join(candidate, 'staging-manifest.json'), {
             sourceSha,
             runId,

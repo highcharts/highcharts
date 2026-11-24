@@ -31,11 +31,11 @@ function recordInstall(dir, lane, provenanceSha256) {
     });
 }
 
-function writeEvidence(root, gridLite, identity, buildAttempt) {
+function writeEvidence(root, gridPackage, identity, buildAttempt) {
     const fixture = join(root, 'fixture');
-    const packageName = gridLite ? '@highcharts/grid-lite' : 'highcharts';
+    const packageName = gridPackage ? `@highcharts/${gridPackage}` : 'highcharts';
     mkdirSync(root, { recursive: true });
-    copyFixture(prototype, fixture, gridLite);
+    copyFixture(prototype, fixture, gridPackage);
     const pkg = readJSON(join(fixture, 'package.json'));
     for (const lane of lanes) {
         const dir = join(root, lane);
@@ -79,11 +79,11 @@ test('records portable evidence paths and rejects a different original runner', 
     assert.throws(() => verifyReplay(root), /Recorded runner differs: run\.mjs/u);
 });
 
-test('binds both products to the reviewed fixture and checks the source and attempt', t => {
-    for (const gridLite of [false, true]) {
+test('binds each product to the reviewed fixture and checks the source and attempt', t => {
+    for (const gridPackage of [undefined, 'grid-lite', 'grid-pro']) {
         const root = temporaryDirectory(t);
-        const identity = { ...nightly, gridLite };
-        const fixture = writeEvidence(root, gridLite, nightly, '1');
+        const identity = { ...nightly, gridPackage };
+        const fixture = writeEvidence(root, gridPackage, nightly, '1');
         assert.doesNotThrow(() => verifyReplaySource(root, fixture, identity));
         assert.throws(() => verifyReplaySource(root, fixture, { ...identity, sourceSha: 'bad' }),
             /Evidence source SHA differs/u);
@@ -91,23 +91,24 @@ test('binds both products to the reviewed fixture and checks the source and atte
             /Evidence run ID differs/u);
         assert.throws(() => verifyReplaySource(root, fixture, { ...identity, attempt: '1' }),
             /Evidence attempt differs/u);
-        assert.throws(() => verifyReplaySource(root, fixture, { ...identity, gridLite: !gridLite }),
+        const otherPackage = gridPackage === 'grid-lite' ? 'grid-pro' : 'grid-lite';
+        assert.throws(() => verifyReplaySource(root, fixture, { ...identity, gridPackage: otherPackage }),
             /Evidence package differs/u);
     }
 });
 
 test('rejects a Highcharts build from an attempt later than the recorded validation', t => {
     const root = temporaryDirectory(t);
-    const fixture = writeEvidence(root, false, nightly, '3');
+    const fixture = writeEvidence(root, undefined, nightly, '3');
     assert.throws(() => verifyReplaySource(root, fixture, nightly), /Build manifest attempt mismatch/u);
 });
 
 test('requires hosted provenance and validates the manifest linked to each candidate', t => {
-    for (const gridLite of [false, true]) {
+    for (const gridPackage of [undefined, 'grid-lite', 'grid-pro']) {
         const root = temporaryDirectory(t);
-        const fixture = writeEvidence(root, gridLite, nightly);
-        const identity = { ...nightly, gridLite };
-        const manifest = join(root, 'candidate', gridLite ? 'staging-manifest.json' : 'build-manifest.json');
+        const fixture = writeEvidence(root, gridPackage, nightly);
+        const identity = { ...nightly, gridPackage };
+        const manifest = join(root, 'candidate', gridPackage ? 'staging-manifest.json' : 'build-manifest.json');
         const original = readJSON(manifest);
         rmSync(manifest);
         assert.throws(() => verifyReplaySource(root, fixture, identity),
@@ -152,18 +153,22 @@ test('rejects retained npm scripts even if the install and replay hashes match',
         /Retained candidate manifest differs from the reviewed fixture/u);
 });
 
-test('stages only read-only inputs for sandbox execution through both replay entry points', {
-    skip: process.platform === 'win32'
-}, t => {
+for (const gridPackage of ['grid-lite', 'grid-pro']) {
+    test(`stages only read-only ${gridPackage} inputs through both replay entry points`, {
+        skip: process.platform === 'win32'
+    }, t => checkReplayEntryPoints(t, gridPackage));
+}
+
+function checkReplayEntryPoints(t, gridPackage) {
     const bin = temporaryDirectory(t);
     const extracted = temporaryDirectory(t);
-    const evidence = join(extracted, 'grid-lite-package-prototype-fixture');
-    writeEvidence(evidence, true, { ...nightly, runId: '12' });
+    const evidence = join(extracted, `${gridPackage}-package-prototype-fixture`);
+    writeEvidence(evidence, gridPackage, { ...nightly, runId: '12' });
     const callLog = join(bin, 'container.jsonl');
     const docker = join(bin, 'docker');
     writeFileSync(docker, `#!${process.execPath}
 const assert = require('node:assert/strict');
-const { appendFileSync, lstatSync, readdirSync, writeFileSync } = require('node:fs');
+const { appendFileSync, lstatSync, readFileSync, readdirSync, writeFileSync } = require('node:fs');
 const { dirname, join } = require('node:path');
 const args = process.argv.slice(2);
 function checkPermissions(path) {
@@ -181,6 +186,8 @@ appendFileSync(process.env.REPLAY_TEST_CALLS, JSON.stringify(args) + '\\n');
 if (args[0] === 'build') {
     const build = args.at(-1);
     assert.equal(lstatSync(dirname(build)).mode & 0o777, 0o700);
+    const pkg = JSON.parse(readFileSync(join(build, 'package.json')));
+    assert.ok(pkg.dependencies['@highcharts/${gridPackage}']);
     checkPermissions(build);
     writeFileSync(args[args.indexOf('--iidfile') + 1], 'sha256:' + 'a'.repeat(64));
 } else if (args[0] === 'run') {
@@ -188,6 +195,8 @@ if (args[0] === 'build') {
     const source = /^type=bind,source=(.*),target=\\/replay,readonly$/u.exec(mount)[1];
     assert.equal(lstatSync(dirname(source)).mode & 0o777, 0o700);
     assert.ok(readdirSync(source).includes(process.env.REPLAY_TEST_INPUT));
+    const identity = JSON.parse(readFileSync(join(source, 'identity.json')));
+    assert.equal(identity.gridPackage, '${gridPackage}');
     checkPermissions(source);
 }
 `, { mode: 0o755 });
@@ -204,9 +213,9 @@ switch (path) {
             id: 12, run_attempt: 2, path: '.github/workflows/nightly.yml', head_sha: '${sourceSha}'
         }));
         break;
-    case 'repos/highcharts/highcharts/actions/runs/12/artifacts?name=nightly-grid-lite-validation-2':
+    case 'repos/highcharts/highcharts/actions/runs/12/artifacts?name=nightly-${gridPackage}-validation-2':
         console.log(JSON.stringify({
-            artifacts: [{ id: 34, name: 'nightly-grid-lite-validation-2', digest: 'sha256:${hash(archive)}' }]
+            artifacts: [{ id: 34, name: 'nightly-${gridPackage}-validation-2', digest: 'sha256:${hash(archive)}' }]
         }));
         break;
     case 'repos/highcharts/highcharts/actions/artifacts/34/zip':
@@ -223,11 +232,11 @@ switch (path) {
             NIGHTLY_REPLAY_CONTAINER: 'docker', REPLAY_TEST_CALLS: callLog, REPLAY_TEST_INPUT: input },
         encoding: 'utf8'
     });
-    const direct = invoke('evidence', join(prototype, 'run.mjs'), '--replay', evidence, '--package', 'grid-lite');
+    const direct = invoke('evidence', join(prototype, 'run.mjs'), '--replay', evidence, '--package', gridPackage);
     assert.equal(direct.status, 0, direct.stderr);
-    const wrapper = invoke('evidence', join(prototype, 'replay.mjs'), '12', '2', '--artifact', extracted, '--package', 'grid-lite');
+    const wrapper = invoke('evidence', join(prototype, 'replay.mjs'), '12', '2', '--artifact', extracted, '--package', gridPackage);
     assert.equal(wrapper.status, 0, wrapper.stderr);
-    const download = invoke('validation.zip', join(prototype, 'replay.mjs'), '12', '2', '--package', 'grid-lite');
+    const download = invoke('validation.zip', join(prototype, 'replay.mjs'), '12', '2', '--package', gridPackage);
     assert.equal(download.status, 0, download.stderr);
     const records = readFileSync(callLog, 'utf8').trim().split('\n').map(line => JSON.parse(line));
     assert.deepEqual(records.map(args => args[0]), [
@@ -245,10 +254,10 @@ switch (path) {
     }
     rmSync(join(evidence, 'fixture', 'browser-results.mjs'));
     symlinkSync(join(prototype, 'browser-results.mjs'), join(evidence, 'fixture', 'browser-results.mjs'));
-    const symlink = invoke('evidence', join(prototype, 'run.mjs'), '--replay', evidence, '--package', 'grid-lite');
+    const symlink = invoke('evidence', join(prototype, 'run.mjs'), '--replay', evidence, '--package', gridPackage);
     assert.equal(symlink.status, 1);
     assert.match(symlink.stderr, /Unexpected replay file type/u);
-});
+}
 
 test('runs the CLI when invoked through a symlinked directory', t => {
     const shortcut = join(temporaryDirectory(t), 'prototype');

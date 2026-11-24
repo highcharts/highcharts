@@ -20,6 +20,9 @@ const publisher = workflow.jobs.nightly_dist_publish;
 const validation = workflow.jobs.nightly_package_validation;
 const summary = workflow.jobs.nightly_package_summary;
 const gridLiteValidation = workflow.jobs.nightly_grid_lite_validation;
+const gridProValidation = workflow.jobs.nightly_grid_pro_validation;
+const visualPublication = workflow.jobs.nightly_visual_diff.steps.find(item =>
+    item.name === 'Publish nightly visual results');
 const distributionTool = fileURLToPath(new URL(
     '../nightly-package-validation-prototype/distribution.mjs', import.meta.url
 ));
@@ -31,6 +34,12 @@ const nightly = { sourceSha: 'a'.repeat(40), runId: '123', attempt: '2' };
 const nightlyEnv = {
     GITHUB_SHA: nightly.sourceSha, GITHUB_RUN_ID: nightly.runId, GITHUB_RUN_ATTEMPT: nightly.attempt
 };
+function conditionAllows(item, event, inputs = {}, ref = 'refs/heads/master') {
+    return Boolean(runInNewContext(item.if.slice(3, -2), {
+        github: { event_name: event, ref }, inputs
+    }));
+}
+
 function step(name) {
     return publisher.steps.find(item => item.name === name);
 }
@@ -138,20 +147,13 @@ describe('nightly distribution credential boundary', () => {
     });
 
     it('publishes only master schedule or opted-in master dispatch runs', () => {
-        function allowed(ref, event, pushToDist) {
-            const expression = publisher.if
-                .slice(3, -2)
-                .replace(/github\.ref\b/gu, JSON.stringify(ref))
-                .replace(/github\.event_name\b/gu, JSON.stringify(event))
-                .replace(/inputs\.pushToDist\b/gu, String(pushToDist));
-            return Boolean(runInNewContext(expression));
-        }
         for (const ref of ['refs/heads/master', 'refs/heads/feature', 'refs/tags/master']) {
-            strictEqual(allowed(ref, 'schedule', false), ref === 'refs/heads/master');
-            strictEqual(allowed(ref, 'workflow_dispatch', true), ref === 'refs/heads/master');
-            strictEqual(allowed(ref, 'workflow_dispatch', false), false);
+            strictEqual(conditionAllows(publisher, 'schedule', {}, ref), ref === 'refs/heads/master');
+            strictEqual(conditionAllows(publisher, 'workflow_dispatch', { pushToDist: true }, ref),
+                ref === 'refs/heads/master');
+            strictEqual(conditionAllows(publisher, 'workflow_dispatch', { pushToDist: false }, ref), false);
         }
-        strictEqual(allowed('refs/heads/master', 'pull_request', false), false);
+        strictEqual(conditionAllows(publisher, 'pull_request'), false);
     });
 
     it('consumes the same-run artifact in an isolated environment job', () => {
@@ -183,16 +185,52 @@ describe('nightly distribution credential boundary', () => {
 });
 
 describe('nightly advisory package validation', () => {
-    it('runs the Grid Lite pilot only on explicit dispatch, independently of publishing', () => {
-        strictEqual(gridLiteValidation.if,
-            "${{ github.event_name == 'workflow_dispatch' && inputs.validateGridLite }}");
-        strictEqual(gridLiteValidation.needs, undefined);
-        strictEqual(gridLiteValidation.environment, undefined);
-        ok(!JSON.stringify(gridLiteValidation).includes('secrets.'));
-        ok(!publisher.needs.includes('nightly_grid_lite_validation'));
-        strictEqual(gridLiteValidation.steps.find(item => item.id === 'evidence').with.name,
-            'nightly-grid-lite-validation-${{ github.run_attempt }}');
-        ok(gridLiteValidation.steps.find(item => item.id === 'validate').run.includes('--package grid-lite'));
+    for (const [label, key, job] of [
+        ['Lite', 'grid-lite', gridLiteValidation],
+        ['Pro', 'grid-pro', gridProValidation]
+    ]) {
+        it(`runs the Grid ${label} pilot only on explicit dispatch, independently of publishing`, () => {
+            const inputs = workflow.on.workflow_dispatch.inputs;
+            strictEqual(inputs[`validateGrid${label}`].default, false);
+            strictEqual(inputs[`grid${label}MissingCss`].default, false);
+            const validationInputs = { [`validateGrid${label}`]: true };
+            strictEqual(conditionAllows(job, 'schedule'), false);
+            strictEqual(conditionAllows(job, 'workflow_dispatch'), false);
+            strictEqual(conditionAllows(job, 'workflow_dispatch', validationInputs), true);
+            strictEqual(job.needs, undefined);
+            strictEqual(job.environment, undefined);
+            ok(!JSON.stringify(job).includes('secrets.'));
+            ok(!publisher.needs.includes(`nightly_${key.replace('-', '_')}_validation`));
+            strictEqual(job.env.GRID_PACKAGE, key);
+            strictEqual(job.env.GRID_MISSING_CSS, `\${{ inputs.grid${label}MissingCss }}`);
+            ok(/^[a-f0-9]{40}$/u.test(job.env.GRID_METADATA_SHA));
+            const checkout = job.steps.find(item => item.id === 'metadata');
+            strictEqual(checkout.with.repository, 'highcharts/${{ env.GRID_PACKAGE }}-dist');
+            strictEqual(checkout.with.ref, '${{ env.GRID_METADATA_SHA }}');
+            strictEqual(checkout.with['persist-credentials'], false);
+            const artifact = job.steps.find(item => item.id === 'evidence').with.name;
+            strictEqual(artifact.replace('${{ env.GRID_PACKAGE }}', key),
+                `nightly-${key}-validation-\${{ github.run_attempt }}`);
+            ok(job.steps.find(item => item.id === 'validate').run.includes('--package "$GRID_PACKAGE"'));
+        });
+    }
+
+    it('skips Visual Review publication for Grid Lite validation dispatches', () => {
+        strictEqual(conditionAllows(visualPublication, 'schedule'), true);
+        strictEqual(conditionAllows(visualPublication, 'workflow_dispatch'), true);
+        strictEqual(conditionAllows(visualPublication, 'workflow_dispatch', { validateGridLite: true }), false);
+    });
+
+    it('starts Grid Pro validation and skips both publishers when either Pro input is true', () => {
+        for (const inputs of [
+            { pushToDist: true, validateGridPro: true, gridProMissingCss: false },
+            { pushToDist: true, validateGridPro: false, gridProMissingCss: true },
+            { pushToDist: true, validateGridPro: true, gridProMissingCss: true }
+        ]) {
+            strictEqual(conditionAllows(gridProValidation, 'workflow_dispatch', inputs), true);
+            strictEqual(conditionAllows(visualPublication, 'workflow_dispatch', inputs), false);
+            strictEqual(conditionAllows(publisher, 'workflow_dispatch', inputs), false);
+        }
     });
 
     it('uses the two build artifacts without access to publication credentials', () => {
@@ -262,6 +300,7 @@ describe('nightly advisory package validation', () => {
 
     const core = { name: 'highcharts', key: 'highcharts', args: [] };
     const grid = { name: '@highcharts/grid-lite', key: 'grid-lite', args: ['--package', 'grid-lite'], prepared: true };
+    const pro = { name: '@highcharts/grid-pro', key: 'grid-pro', args: ['--package', 'grid-pro'], prepared: true };
     const resolutionError = peer => [
         'npm error code ERESOLVE',
         'npm error ERESOLVE unable to resolve dependency tree',
@@ -323,7 +362,7 @@ describe('nightly advisory package validation', () => {
             verdict: 'failed',
             test: 'emits the known candidate failure when replay evidence cannot be written'
         },
-        ...[core, grid].flatMap(product => [
+        ...[core, grid, pro].flatMap(product => [
             {
                 ...product,
                 prepared: true,
@@ -372,7 +411,7 @@ describe('nightly advisory package validation', () => {
             const integrity = 'sha512-' + createHash('sha512').update(bytes).digest('base64');
             const npm = join(root, 'npm');
             await writeFile(tarball, bytes);
-            const entry = key === 'grid-lite' ? 'index.js' : 'highcharts.js';
+            const entry = key === 'highcharts' ? 'highcharts.js' : 'index.js';
             const contents = {
                 [entry]: 'module.exports = {}',
                 'package.json': JSON.stringify({
@@ -389,7 +428,7 @@ describe('nightly advisory package validation', () => {
             if (prepared) {
                 writeCandidateProvenance(directory, name, nightly, contents, '1');
                 const path = join(directory, 'candidate',
-                    key === 'grid-lite' ? 'staging-manifest.json' : 'build-manifest.json');
+                    key === 'highcharts' ? 'build-manifest.json' : 'staging-manifest.json');
                 if (breakManifest === 'missing') {
                     await rm(path);
                 } else if (breakManifest === 'wrong') {
@@ -556,10 +595,10 @@ import { copyFixture, verifyReplaySource } from ${JSON.stringify(join(prototype,
 import { runConsumer } from ${JSON.stringify(consumerRunner)};
 const root = ${JSON.stringify(directory)};
 const fixture = ${JSON.stringify(join(root, 'reviewed-fixture'))};
-const identity = ${JSON.stringify({ ...nightly, gridLite: key === 'grid-lite' })};
-copyFixture(${JSON.stringify(prototype)}, fixture, identity.gridLite);
+const identity = ${JSON.stringify({ ...nightly, gridPackage: key === 'highcharts' ? undefined : key })};
+copyFixture(${JSON.stringify(prototype)}, fixture, identity.gridPackage);
 const selected = verifyReplaySource(root, fixture, identity);
-process.exitCode = await runConsumer({ gridLite: identity.gridLite, replay: { root, fixture, ...selected } });
+process.exitCode = await runConsumer({ gridPackage: identity.gridPackage, replay: { root, fixture, ...selected } });
 `;
                 throws(() => execFileSync(process.execPath, ['--input-type=module', '-e', replayScript], {
                     ...options, env: { ...options.env, FIXTURE_REPLAY: 'true' }
