@@ -15,6 +15,7 @@ Highcharts.chart('container', {
     },
     xAxis: {
         type: 'category',
+        crosshair: true,
         accessibility: {
             rangeDescription: 'Range: 2022 to 2024.'
         },
@@ -47,7 +48,6 @@ Highcharts.chart('container', {
         min: 0
     },
     tooltip: {
-        crosshairs: true,
         shared: true,
         valueSuffix: 'm NOK'
     },

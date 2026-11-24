@@ -35,7 +35,8 @@
                 format: '{subtract (value:%y) 0} years'
             },
             minPadding: 0,
-            type: 'datetime'
+            type: 'datetime',
+            crosshair: true
         },
 
         yAxis: {
@@ -49,7 +50,6 @@
         },
 
         tooltip: {
-            crosshairs: true,
             headerFormat: `<table>
                 <caption>Age {subtract (point.x:%y) 0}
                     years{#if (lt (point.x:%y) 6)},
