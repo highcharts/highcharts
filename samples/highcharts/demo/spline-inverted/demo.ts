@@ -12,7 +12,6 @@ Highcharts.chart('container', {
     xAxis: {
         reversed: false,
         title: {
-            enabled: true,
             text: 'Altitude'
         },
         labels: {

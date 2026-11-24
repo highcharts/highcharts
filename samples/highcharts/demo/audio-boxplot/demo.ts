@@ -28,7 +28,7 @@ const chart = Highcharts.chart('container', {
         max: 100,
         tickInterval: 25,
         title: {
-            enabled: false
+            text: null
         },
         labels: {
             format: '{text}%'

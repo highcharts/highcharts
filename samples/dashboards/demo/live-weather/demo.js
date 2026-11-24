@@ -646,7 +646,7 @@ async function setupDashboard() {
                     },
                     yAxis: {
                         title: {
-                            enabled: false
+                            text: null
                         },
                         accessibility: {
                             description: activeParam.unit
