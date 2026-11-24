@@ -570,6 +570,46 @@ QUnit.test('General Navigator tests', function (assert) {
         navigator, #21584.`);
 });
 
+QUnit.test('Navigator follows base series data, #20298', function (assert) {
+    let chart = Highcharts.stockChart('container', {});
+
+    chart.addSeries({}, false);
+    chart.series[0].setData([1, 2, 3]);
+
+    assert.deepEqual(
+        Array.from(chart.navigator.series[0].getColumn('y')),
+        [1, 2, 3],
+        'Navigator should get the data set before the base series rendered'
+    );
+
+    const hourly = (y, length) => Array.from(
+        { length },
+        (_, i) => [Date.UTC(2024, 0, 1) + i * 36e5, y + i]
+    );
+
+    chart = Highcharts.stockChart('container', {
+        plotOptions: {
+            series: {
+                dataGrouping: { forced: true, units: [['day', [1]]] }
+            }
+        },
+        series: [{ data: hourly(1, 48) }, { data: hourly(100, 48) }]
+    });
+
+    const series = chart.series[0];
+
+    series.hide();
+    series.setData(hourly(500, 72));
+    series.show();
+
+    assert.strictEqual(
+        series.navigatorSeries.getColumn('y').length,
+        72,
+        'Navigator should get the data set while the grouped base series was ' +
+        'hidden'
+    );
+});
+
 QUnit.test('Reversed xAxis with navigator', function (assert) {
     var chart = new Highcharts.StockChart({
             chart: {
