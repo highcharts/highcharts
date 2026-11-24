@@ -20,7 +20,7 @@
             if (graphic && args) {
 
                 graphic
-                    // Set inital animation values
+                    // Set initial animation values
                     .attr({
                         start: startAngleRad,
                         end: startAngleRad,
