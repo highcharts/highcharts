@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Chart, Series, XAxis, Title, setHighcharts } from '@highcharts/react';
-import { Accessibility } from '@highcharts/react/options/Accessibility';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
 import { WordcloudSeries } from '@highcharts/react/series/Wordcloud';
 
 // Note: These imports are not necessary when using a build tool such as Vite

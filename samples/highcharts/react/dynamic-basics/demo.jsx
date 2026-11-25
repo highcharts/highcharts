@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Chart, Series, Subtitle, Title, YAxis, XAxis, Legend } from '@highcharts/react';
-import { Accessibility } from '@highcharts/react/options/Accessibility';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 const categories = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
