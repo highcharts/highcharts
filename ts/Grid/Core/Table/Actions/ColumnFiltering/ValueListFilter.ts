@@ -21,22 +21,23 @@
  *
  * */
 
-import type Button from '../../Core/UI/Button';
-import type ColumnFiltering from
-    '../../Core/Table/Actions/ColumnFiltering/ColumnFiltering';
-import type { FilteringRuleItem } from '../../Core/Options';
-import type { ValueListFilterLangOptions } from './ValueListFilterOptions';
+import type Button from '../../../UI/Button';
+import type ColumnFiltering from './ColumnFiltering';
+import type {
+    FilteringRuleItem,
+    ValueListFilterLangOptions
+} from '../../../Options';
 
-import Globals from '../../Core/Globals.js';
+import Globals from '../../../Globals.js';
 import ValueListPopup from './ValueListPopup.js';
-import { hasDataTableProvider } from '../../Core/Data/DataProvider.js';
+import { hasDataTableProvider } from '../../../Data/DataProvider.js';
 import {
     focusNextControl,
     formatText,
     joinClassNames,
     makeHTMLElement
-} from '../../Core/GridUtils.js';
-import { isArray } from '../../../Shared/Utilities.js';
+} from '../../../GridUtils.js';
+import { isArray } from '../../../../../Shared/Utilities.js';
 
 
 /* *

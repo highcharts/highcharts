@@ -22,6 +22,7 @@
 @import url("./grid-pagination-variables.css");
 @import url("./grid-table-variables.css");
 @import url("./grid-theme-default.css");
+@import url("./grid-value-list-filter.css");
 
 /* Grid container */
 .hcg-container {
