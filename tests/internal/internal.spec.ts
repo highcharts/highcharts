@@ -10,7 +10,7 @@ import {
 } from '~/qunit/assets.ts';
 import {
     initializeFreshPage,
-    readQUnitSetupScripts
+    writeQUnitSetupFile
 } from '~/qunit/page.ts';
 import { captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
 import { formatQUnitErrorDetails } from '~/qunit/utils/error-formatter.ts';
@@ -25,15 +25,16 @@ test.describe('getSample', () => {
 
 test('QUnit fails the sample when asynchronous setup throws or rejects', async ({
     page
-}) => {
-    await initializeFreshPage(page, [
-        ...await readQUnitSetupScripts(),
+}, testInfo) => {
+    const setupFile = testInfo.outputPath('setup.json');
+    await writeQUnitSetupFile(setupFile, [
         `
             setTimeout(() => { throw new Error('setup timer threw'); }, 0);
             Promise.reject(new Error('setup promise rejected'));
             //# sourceURL=async-qunit-setup.js
         `
     ]);
+    await initializeFreshPage(page, setupFile);
     await page.waitForFunction(() =>
         window.__qunitFailedAssertions__?.length === 2
     );
@@ -197,12 +198,13 @@ test('QUnit safely parses query parameter names', async ({ page }) => {
     });
 });
 
-test('QUnit samples run as independent classic scripts', async ({ context }) => {
-    const setupScripts = await readQUnitSetupScripts();
+test('QUnit samples run as independent classic scripts', async ({ context }, testInfo) => {
+    const setupFile = testInfo.outputPath('setup.json');
+    await writeQUnitSetupFile(setupFile);
     async function runSample(name: string, source: string) {
         const page = await context.newPage();
         try {
-            await initializeFreshPage(page, setupScripts);
+            await initializeFreshPage(page, setupFile);
             await page.addScriptTag({ content: source });
             await page.evaluate(() => window.QUnit.start());
             await waitForQUnitWithTimeout(page, name, 5000);

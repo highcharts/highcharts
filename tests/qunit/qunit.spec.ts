@@ -3,13 +3,14 @@ import type { Page } from '@playwright/test';
 import { test as base } from '~/fixtures.ts';
 import { getSample, transpileTS } from '~/utils.ts';
 import { join, dirname } from 'node:path';
-import { appendFile, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { appendFile, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { glob } from 'glob';
 
 import {
     initializeFreshPage,
     qunitViewport,
-    readQUnitSetupScripts
+    writeQUnitSetupFile
 } from '~/qunit/page.ts';
 import { getCapturedConsoleLogs } from '~/qunit/utils/console-capture.ts';
 import { captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
@@ -21,10 +22,17 @@ const scriptLoadTimeout = 10_000;
 const qunitTimeout = 30_000;
 
 const test = base.extend<Record<never, never>, {
-    setupScripts: string[];
+    setupFile: string;
 }>({
-    setupScripts: [async ({}, use) => {
-        await use(await readQUnitSetupScripts());
+    setupFile: [async ({}, use) => {
+        const directory = await mkdtemp(join(tmpdir(), 'highcharts-qunit-'));
+        try {
+            const path = join(directory, 'setup.json');
+            await writeQUnitSetupFile(path);
+            await use(path);
+        } finally {
+            await rm(directory, { recursive: true, force: true });
+        }
     }, { scope: 'worker' }]
 });
 
@@ -203,9 +211,9 @@ test.describe('QUnit tests', () => {
     for (const qunitTest of unitTests){
         // QUnit runs assertions inside the browser.
         // eslint-disable-next-line playwright/expect-expect
-        test(qunitTest, async ({ page, setupScripts }) => {
+        test(qunitTest, async ({ page, setupFile }) => {
             try {
-                await initializeFreshPage(page, setupScripts);
+                await initializeFreshPage(page, setupFile);
 
                 const testStartTime = Date.now();
                 const sample = getSample(dirname(qunitTest));
