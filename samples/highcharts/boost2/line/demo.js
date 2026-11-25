@@ -29,7 +29,6 @@ Highcharts.chart('container', {
         boostThreshold: 1,
         name: 'Measurement',
         lineWidth: 2,
-        marker: { radius: 2 },
         connectNulls: true,
         zones: [{
             value: -200,

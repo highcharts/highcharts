@@ -397,22 +397,31 @@ function compose(
                 return;
             }
 
-            const animation = series.chart.options.chart.animation ??
-                series.options.marker?.states?.[state || 'normal']?.animation;
+            const chartAnimation = series.chart.options.chart.animation,
+                // The core eases the shape and the paint on separate
+                // settings: the marker state carries one, the series
+                // state the other.
+                shape = chartAnimation ??
+                    series.options.marker?.states?.[state || 'normal']
+                        ?.animation,
+                paint = chartAnimation ??
+                    series.options.states?.[state || 'normal']?.animation;
 
             if (state) {
                 graphic.attr(series.markerAttribs(this));
-                graphic.animate(series.markerAttribs(this, state), animation);
+                graphic.attr(series.pointAttribs(this));
+                graphic.animate(series.markerAttribs(this, state), shape);
+                graphic.animate(series.pointAttribs(this, state), paint);
                 return;
             }
 
-            // Hidden by the call above, where SVG eases the marker of
-            // the point back to its plain size. The one drawn on the
-            // canvas is already there, so hiding it again at the end
-            // leaves nothing to see.
+            // Hidden by the call above, where SVG eases both back on the
+            // marker the point carries. The one on the canvas is already
+            // there, so hiding at the end leaves nothing to see.
             graphic.show();
+            graphic.animate(series.pointAttribs(this), paint);
             graphic.animate(series.markerAttribs(this), {
-                ...animObject(animation),
+                ...animObject(shape),
                 complete: (): void => {
                     graphic.hide();
                 }
