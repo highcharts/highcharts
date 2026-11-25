@@ -1,3 +1,5 @@
+@import url("https://code.highcharts.com/css/highcharts-palette.css");
+
 body {
     font-family:
         -apple-system,
@@ -15,10 +17,11 @@ body {
 }
 
 #result {
-    text-align: left;
+    text-align: right;
     color: gray;
     min-height: 2em;
     margin: 0.2em;
+    font-size: 0.8em;
 }
 
 #scrolling-container {
