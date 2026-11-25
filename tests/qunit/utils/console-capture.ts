@@ -2,7 +2,7 @@
  * Browser console log capture utilities for QUnit tests
  */
 
-import type { Page, Request } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 export interface ConsoleLogEntry {
     level: 'log' | 'error' | 'warn' | 'info' | 'debug';
@@ -55,21 +55,18 @@ function normalizeLevel(level: string): ConsoleLogEntry['level'] {
  * Sets up comprehensive console log capture with filtering and formatting
  */
 export async function setupConsoleCapture(page: Page): Promise<void> {
-    const requestEvents = new WeakMap<Request, string[]>();
+    const events: string[] = [];
+    pageEvents.set(page, events);
     const pushBrowserLogEntry = (
         level: string,
         message: string,
-        timestamp: number,
-        events = pageEvents.get(page)
+        timestamp: number
     ): void => {
-        // Keep Playwright events at the sample boundary where they arrive.
-        // A queued page.evaluate could otherwise write into the next sample.
-        events?.push(
+        events.push(
             `[${new Date(timestamp).toISOString()}] ` +
             `[${level.toUpperCase()}] ${message}`
         );
     };
-    pageEvents.set(page, []);
 
     // Listen to console events from Playwright
     page.on('console', (msg) => {
@@ -92,28 +89,10 @@ export async function setupConsoleCapture(page: Page): Promise<void> {
         pushBrowserLogEntry('pageerror', message, Date.now());
     });
 
-    page.on('request', request => {
-        const events = pageEvents.get(page);
-        if (events) {
-            requestEvents.set(request, events);
-        }
-    });
-
-    page.on('requestfinished', request => {
-        requestEvents.delete(request);
-    });
-
     page.on('requestfailed', request => {
         const errorText = request.failure()?.errorText || 'Unknown failure';
         const message = `${request.method()} ${request.url()} - ${errorText}`;
-        const events = requestEvents.get(request);
-        requestEvents.delete(request);
-        pushBrowserLogEntry(
-            'requestfailed',
-            message,
-            Date.now(),
-            events
-        );
+        pushBrowserLogEntry('requestfailed', message, Date.now());
     });
 
     page.on('crash', () => {
@@ -308,15 +287,4 @@ export function formatConsoleLogs(capture: ConsoleCapture): string {
     }
     
     return sections.join('\n\n');
-}
-
-/**
- * Clears captured console logs
- */
-export async function clearConsoleLogs(page: Page): Promise<void> {
-    await page.evaluate(() => {
-        window.__qunitBrowserLogs__ = [];
-        window.__qunitConsoleErrors__ = [];
-    });
-    pageEvents.set(page, []);
 }

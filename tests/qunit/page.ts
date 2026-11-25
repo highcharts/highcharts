@@ -1,10 +1,10 @@
-import type { JSHandle, Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { glob } from 'glob';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { qunitScript, qunitStyles } from '~/qunit/assets.ts';
-import { clearConsoleLogs, setupConsoleCapture } from '~/qunit/utils/console-capture.ts';
+import { setupConsoleCapture } from '~/qunit/utils/console-capture.ts';
 import { setupEnhancedQUnitCallbacks } from '~/qunit/utils/error-capture.ts';
 import { getKarmaScripts } from '~/utils.ts';
 import type { setOptions } from '~ts/Core/Defaults.ts';
@@ -102,106 +102,13 @@ export async function initializeFreshPage(
     await initializePage(page);
     await page.evaluate(() => {
         window.QUnit = {
-            config: { autostart: false }
+            // Use the Playwright sample timeout unless a case sets its own.
+            config: { autostart: false, testTimeout: 0 }
         } as typeof window.QUnit;
     });
     await page.addScriptTag({ path: qunitScript });
     await page.addStyleTag({ path: qunitStyles });
     await setupEnhancedQUnitCallbacks(page);
     await installSetupScripts(page, setupScripts);
-    await installStyledModeHooks(page);
-}
-
-export async function initializeWarmPage(
-    page: Page,
-    setupScripts: string[]
-): Promise<void> {
-    await initializePage(page);
-    await page.addStyleTag({ path: qunitStyles });
-    await installSetupScripts(page, setupScripts);
-}
-
-export async function readQUnitSource(): Promise<string> {
-    const source = await readFile(qunitScript, 'utf8');
-    return `${source}\n//# sourceURL=${pathToFileURL(qunitScript).href}`;
-}
-
-export function scopeWarmSample(source: string): string {
-    // Keep directives and source line numbers intact in assertion stacks.
-    return `(function () {${source}\n}).call(window);`;
-}
-
-export async function prepareWarmSample(
-    page: Page,
-    source: string
-): Promise<JSHandle<() => Promise<void>>> {
-    await clearConsoleLogs(page);
-
-    return page.evaluateHandle(({ source, body }) => {
-        document.body.innerHTML = `${body}<div id="demo-html"></div>`;
-        document.body.style.cssText = 'margin: 8px';
-        window.__qunitResults__ = undefined;
-        window.QUnit = {
-            config: { autostart: false, reporters: { perf: false } }
-        } as typeof window.QUnit;
-
-        const headNodes = new Set(document.head.childNodes);
-        const originalOnError = window.onerror;
-        const originalAddEventListener = Object.getOwnPropertyDescriptor(
-            window,
-            'addEventListener'
-        );
-        const addEventListener = window.addEventListener.bind(window) as
-            Window['addEventListener'];
-        const listeners: Parameters<Window['addEventListener']>[] = [];
-
-        // The browser distribution installs a global rejection listener.
-        // Remember QUnit's registrations so they leave with this instance.
-        window.addEventListener = (
-            ...args: Parameters<Window['addEventListener']>
-        ) => {
-            listeners.push(args);
-            addEventListener(...args);
-        };
-        const script = document.createElement('script');
-        script.text = source;
-        try {
-            document.head.append(script);
-        } finally {
-            script.remove();
-            if (originalAddEventListener) {
-                Object.defineProperty(
-                    window,
-                    'addEventListener',
-                    originalAddEventListener
-                );
-            } else {
-                Reflect.deleteProperty(window, 'addEventListener');
-            }
-        }
-
-        return async (): Promise<void> => {
-            try {
-                window.resetQUnitSample();
-                for (const node of Array.from(document.head.childNodes)) {
-                    if (!headNodes.has(node)) {
-                        node.remove();
-                    }
-                }
-                await window.checkQUnitLateErrors();
-            } finally {
-                for (const args of listeners) {
-                    window.removeEventListener(...args);
-                }
-                window.onerror = originalOnError;
-                Reflect.deleteProperty(window, 'QUnit');
-            }
-        };
-    }, { source, body: sampleBody });
-}
-
-export async function installWarmSampleHooks(page: Page): Promise<void> {
-    await setupEnhancedQUnitCallbacks(page);
-    await page.evaluate(() => window.installQUnitHooks());
     await installStyledModeHooks(page);
 }

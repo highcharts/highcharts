@@ -53,14 +53,15 @@ export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
         > = [];
         window.__qunitFailedTests__ = failedTests;
         window.__qunitFailedAssertions__ = failedAssertions;
-        const lateErrors: string[] = [];
-        window.checkQUnitLateErrors = async () => {
-            // Let the browser deliver unhandled rejections from teardown.
-            await new Promise(resolve => setTimeout(resolve, 0));
-            if (lateErrors.length) {
-                throw new Error('Uncaught after QUnit runEnd:\n' +
-                    lateErrors.join('\n'));
+        const nativeSetTimeout = setTimeout;
+        window.getFinalQUnitResults = async () => {
+            // Let the browser deliver errors queued at the end of the run.
+            await new Promise(resolve => nativeSetTimeout(resolve, 0));
+            const results = window.__qunitResults__;
+            if (!results) {
+                throw new Error('QUnit did not publish its results');
             }
+            return results;
         };
 
         qunit.on('runEnd', ({ status, testCounts, runtime }) => {
@@ -102,16 +103,17 @@ export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
             const message = typeof error === 'string' ? error :
                 error instanceof Error ? error.message : 'Unknown error';
             const stack = error instanceof Error ? error.stack : undefined;
-            if (window.__qunitResults__) {
-                // runEnd has published its counts, so Playwright must report
-                // this error when the sample fixture finishes.
-                // Firefox stacks contain locations only.
-                lateErrors.push(stack && !stack.includes(message) ?
-                    `${message}\n${stack}` : stack || message);
+            const results = window.__qunitResults__;
+            if (results) {
+                // The QUnit snapshot does not include errors after runEnd.
+                results.failed++;
+                results.total++;
+                results.status = 'failed';
             }
             failedAssertions.push({
                 result: false,
-                name: 'Uncaught error',
+                name: results ? 'Uncaught error after QUnit runEnd' :
+                    'Uncaught error',
                 message,
                 actual: error instanceof Error ? undefined : error,
                 expected: undefined,

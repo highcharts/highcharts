@@ -1,6 +1,6 @@
 /* eslint-disable playwright/no-conditional-in-test */
-import type { BrowserContextOptions, Page } from '@playwright/test';
-import { setupRoutes, test as base } from '~/fixtures.ts';
+import type { Page } from '@playwright/test';
+import { test as base } from '~/fixtures.ts';
 import { getSample, transpileTS } from '~/utils.ts';
 import { join, dirname } from 'node:path';
 import { appendFile, writeFile } from 'node:fs/promises';
@@ -8,75 +8,24 @@ import { glob } from 'glob';
 
 import {
     initializeFreshPage,
-    initializeWarmPage,
-    installWarmSampleHooks,
-    prepareWarmSample,
     qunitViewport,
-    readQUnitSetupScripts,
-    readQUnitSource,
-    scopeWarmSample
+    readQUnitSetupScripts
 } from '~/qunit/page.ts';
+import { getCapturedConsoleLogs } from '~/qunit/utils/console-capture.ts';
 import { captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
 import { formatQUnitErrorDetails } from '~/qunit/utils/error-formatter.ts';
 import { waitForQUnitWithTimeout, waitForScriptLoadWithTimeout, attemptTimeoutRecovery, type TimeoutError } from '~/qunit/utils/timeout-handler.ts';
 import { getOutputConfig, createVerbosePassedOutput } from '~/qunit/utils/output-config.ts';
 
-const useFreshPage = process.env.QUNIT_FRESH_PAGE === '1';
+const scriptLoadTimeout = 10_000;
+const qunitTimeout = 30_000;
 
-const test = base.extend<{ qunitPage: Page }, {
+const test = base.extend<Record<never, never>, {
     setupScripts: string[];
-    qunitSource: string;
-    warmPage: Page;
 }>({
     setupScripts: [async ({}, use) => {
         await use(await readQUnitSetupScripts());
-    }, { scope: 'worker' }],
-    qunitSource: [async ({}, use) => {
-        await use(await readQUnitSource());
-    }, { scope: 'worker' }],
-    warmPage: [async ({ browser, setupScripts }, use, workerInfo) => {
-        const { contextOptions, ...projectUse } = workerInfo.project.use;
-        const options: BrowserContextOptions = {
-            ...contextOptions,
-            ...projectUse,
-            viewport: qunitViewport
-        };
-        const context = await browser.newContext(options);
-        try {
-            const page = await context.newPage();
-            await setupRoutes(page);
-            await initializeWarmPage(page, setupScripts);
-            await use(page);
-        } finally {
-            await context.close();
-        }
-    }, { scope: 'worker' }],
-    qunitPage: useFreshPage ?
-        async ({ page, setupScripts }, use) => {
-            await initializeFreshPage(page, setupScripts);
-            try {
-                await use(page);
-            } finally {
-                if (!page.isClosed()) {
-                    await page.evaluate(() => window.checkQUnitLateErrors());
-                }
-            }
-        } :
-        async ({ warmPage, qunitSource }, use) => {
-            const cleanup = await prepareWarmSample(warmPage, qunitSource);
-            try {
-                await installWarmSampleHooks(warmPage);
-                await use(warmPage);
-            } finally {
-                try {
-                    if (!warmPage.isClosed()) {
-                        await cleanup.evaluate(reset => reset());
-                    }
-                } finally {
-                    await cleanup.dispose();
-                }
-            }
-        }
+    }, { scope: 'worker' }]
 });
 
 const QUNIT_CONSOLE_LOG_NOTE_MARKER = join(
@@ -190,12 +139,50 @@ async function markBrowserLogsNoteNeeded(): Promise<void> {
     }
 }
 
+async function writeQUnitFailureLogs(
+    page: Page,
+    testPath: string,
+    logFilePath: string
+): Promise<void> {
+    try {
+        const { logs } = await getCapturedConsoleLogs(page);
+        await appendBrowserLogsToFile(
+            testPath,
+            logs.map(log => log.message),
+            logFilePath
+        );
+        await markBrowserLogsNoteNeeded();
+    } catch (error) {
+        console.warn('Could not save QUnit browser logs', error);
+    }
+}
+
+async function recoverQUnitTimeout(
+    page: Page,
+    error: unknown
+): Promise<void> {
+    if (!error || typeof error !== 'object' || !('context' in error)) {
+        throw error;
+    }
+
+    const timeoutError = error as TimeoutError;
+    const recovery = await attemptTimeoutRecovery(page, timeoutError);
+    if (!recovery.results) {
+        throw createMessageOnlyError([
+            `⏰ Timeout Error in ${timeoutError.context.phase}`,
+            `Recovery: ${recovery.message}`,
+            timeoutError.message
+        ].join('\n'));
+    }
+}
+
 test.describe('QUnit tests', () => {
     const pathEnv = process.env.QUNIT_TEST_PATH ?? 'unit-tests/*/*';
 
     test.use({ viewport: qunitViewport });
     test.describe.configure({
-        timeout: 30_000,
+        // Allow script loading, timeout recovery, and failure diagnostics.
+        timeout: scriptLoadTimeout + qunitTimeout + 10_000,
     });
 
     let qunitConsoleLogPath = getQUnitConsoleLogPath(0);
@@ -216,145 +203,94 @@ test.describe('QUnit tests', () => {
     for (const qunitTest of unitTests){
         // QUnit runs assertions inside the browser.
         // eslint-disable-next-line playwright/expect-expect
-        test(qunitTest, async ({ qunitPage: page }) => {
-            const testStartTime = Date.now();
-            const sample = getSample(dirname(qunitTest));
-
-            if (sample.script && qunitTest.endsWith('.ts')) {
-                sample.script = transpileTS(sample.script);
-            }
-
-            const content = useFreshPage ? sample.script :
-                scopeWarmSample(sample.script);
-            const scriptLoadStart = Date.now();
-
+        test(qunitTest, async ({ page, setupScripts }) => {
             try {
-                // Load script with timeout handling
-                const scriptPromise = page.addScriptTag({ content });
-                const script = await waitForScriptLoadWithTimeout(
-                    page,
-                    scriptPromise,
-                    qunitTest,
-                    10000 // 10 second timeout for script loading
-                );
-                await script.evaluate((element: HTMLScriptElement) => {
-                    element.id = 'test-script';
-                });
-                const scriptLoadEnd = Date.now();
+                await initializeFreshPage(page, setupScripts);
 
-                const isQUnitSample = sample.details?.resources?.some(
-                    resource => resource.includes('qunit')
-                );
-                await page.evaluate(isQUnitSample => {
-                    // Chart-only demos exercise setup without registering cases.
-                    if (!isQUnitSample) {
-                        window.QUnit.config.failOnZeroTests = false;
-                    }
-                    window.QUnit.start();
-                }, isQUnitSample);
+                const testStartTime = Date.now();
+                const sample = getSample(dirname(qunitTest));
+                if (sample.script && qunitTest.endsWith('.ts')) {
+                    sample.script = transpileTS(sample.script);
+                }
 
-                const results = await waitForQUnitWithTimeout(
-                    page,
-                    qunitTest,
-                    20000
+                const scriptLoadStart = Date.now();
+                let scriptLoadTime = 0;
+                let recovered = false;
+
+                try {
+                    const script = await waitForScriptLoadWithTimeout(
+                        page,
+                        // Playwright requires nonempty content, even for demos
+                        // with an empty script.
+                        page.addScriptTag({ content: sample.script || ' ' }),
+                        qunitTest,
+                        scriptLoadTimeout
+                    );
+                    await script.evaluate((element: HTMLScriptElement) => {
+                        element.id = 'test-script';
+                    });
+                    scriptLoadTime = Date.now() - scriptLoadStart;
+
+                    const isQUnitSample = sample.details?.resources?.some(
+                        resource => resource.includes('qunit')
+                    );
+                    await page.evaluate(isQUnitSample => {
+                        // Chart-only demos exercise setup without registering cases.
+                        if (!isQUnitSample) {
+                            window.QUnit.config.failOnZeroTests = false;
+                        }
+                        window.QUnit.start();
+                    }, isQUnitSample);
+
+                    await waitForQUnitWithTimeout(
+                        page,
+                        qunitTest,
+                        qunitTimeout
+                    );
+                } catch (error) {
+                    await recoverQUnitTimeout(page, error);
+                    recovered = true;
+                }
+
+                const results = await page.evaluate(() =>
+                    window.getFinalQUnitResults()
                 );
 
+                const outputConfig = getOutputConfig();
                 if (results.status === 'failed') {
-                    // Capture comprehensive error details
                     const errorDetails = await captureQUnitErrorDetails(
                         page,
                         qunitTest
                     );
-                    await appendBrowserLogsToFile(
-                        qunitTest,
-                        errorDetails.browserLogs,
-                        qunitConsoleLogPath
-                    );
-                    const scriptLoadTime = scriptLoadEnd - scriptLoadStart;
                     errorDetails.timing.scriptLoad = scriptLoadTime;
                     errorDetails.timing.total = Date.now() - testStartTime;
 
-                    // Create formatted error output
-                    const outputConfig = getOutputConfig();
                     const detailedError = formatQUnitErrorDetails(
-                        errorDetails, 
+                        errorDetails,
                         {
                             verbose: outputConfig.verbose,
                             logFilePath: qunitConsoleLogPath,
                             includeLogFileNote: false
                         }
                     );
-
-                    // Fail the Playwright test with the detailed error message
-                    // Don't use expect() to avoid duplicated output
                     throw createMessageOnlyError(detailedError);
-                } else {
-                    // Log success output only in verbose mode
-                    const outputConfig = getOutputConfig();
-                    if (outputConfig.verbose) {
-                        const testExecutionTime = Date.now() - testStartTime;
-                        const verboseOutput = createVerbosePassedOutput(
-                            qunitTest,
-                            results,
-                            testExecutionTime
-                        );
-                        console.log(verboseOutput);
-                    }
-                    // Non-verbose mode: no output for passing tests
                 }
 
-            } catch (error) {
-                // Handle timeout errors with enhanced diagnostics
-                if (error && typeof error === 'object' && 'context' in error) {
-                    const timeoutError = error as TimeoutError;
-
-                    // Attempt recovery
-                    const recovery = await attemptTimeoutRecovery(
-                        page,
-                        timeoutError
+                if (outputConfig.verbose) {
+                    const verboseOutput = createVerbosePassedOutput(
+                        qunitTest,
+                        results,
+                        Date.now() - testStartTime
                     );
-
-                    let errorMessage = `⏰ Timeout Error in ${timeoutError.context.phase}:\n`;
-                    errorMessage += `Test: ${qunitTest}\n`;
-                    errorMessage += `Timeout: ${timeoutError.context.timeout}ms\n`;
-                    errorMessage += `Recovery: ${recovery.message}\n\n`;
-                    errorMessage += timeoutError.message;
-                    errorMessage = sanitizeFailureOutput(errorMessage);
-
-                    console.error(errorMessage);
-
-                    if (recovery.recovered) {
-                        // If recovery was successful, try to get results
-                        try {
-                            const results = await page.evaluate(() => {
-                                return window.__qunitResults__;
-                            });
-                            if (results && results.status !== 'failed') {
-                                const outputConfig = getOutputConfig();
-                                if (outputConfig.verbose) {
-                                    const timing = Date.now() - testStartTime;
-                                    const verboseOutput =
-                                        createVerbosePassedOutput(
-                                            qunitTest,
-                                            results,
-                                            timing
-                                        );
-                                    const recoveredMsg = `🔄 Recovered: ${verboseOutput}`;
-                                    console.log(recoveredMsg);
-                                }
-                                // Non-verbose mode: no output for recovered tests
-                                return;
-                            }
-                        } catch {
-                            // Recovery didn't work, fall through to error
-                        }
-                    }
-
-                    await markBrowserLogsNoteNeeded();
-                    throw createMessageOnlyError(errorMessage);
+                    console.log(recovered ?
+                        `🔄 Recovered: ${verboseOutput}` : verboseOutput);
                 }
-
-                await markBrowserLogsNoteNeeded();
+            } catch (error) {
+                await writeQUnitFailureLogs(
+                    page,
+                    qunitTest,
+                    qunitConsoleLogPath
+                );
                 throw error;
             }
         });

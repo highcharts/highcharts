@@ -75,7 +75,7 @@ interface BrowserQUnit {
     config: {
         autostart: boolean;
         failOnZeroTests?: boolean;
-        reporters?: { perf?: boolean };
+        testTimeout?: number;
     };
     version: string;
     start(): void;
@@ -93,8 +93,6 @@ declare global {
         __qunitBrowserLogs__?: string[];
         __qunitConsoleErrors__?: string[];
         QUnit: BrowserQUnit;
-        checkQUnitLateErrors(): Promise<void>;
-        installQUnitHooks(): void;
-        resetQUnitSample(): void;
+        getFinalQUnitResults(): Promise<QUnitTestCounts>;
     }
 }

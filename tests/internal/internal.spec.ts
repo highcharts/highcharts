@@ -1,16 +1,19 @@
 import type {} from 'qunit';
+import { relative, sep } from 'node:path';
 import { test, expect, createChart } from '~/fixtures.ts';
 import { getSample } from '~/utils.ts';
-import { qunitAssetUrl, qunitVersion } from '~/qunit/assets.ts';
 import {
-    initializeWarmPage,
-    installWarmSampleHooks,
-    prepareWarmSample,
-    readQUnitSetupScripts,
-    readQUnitSource,
-    scopeWarmSample
+    qunitAssetUrl,
+    qunitScript,
+    qunitStyles,
+    qunitVersion
+} from '~/qunit/assets.ts';
+import {
+    initializeFreshPage,
+    readQUnitSetupScripts
 } from '~/qunit/page.ts';
 import { captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
+import { formatQUnitErrorDetails } from '~/qunit/utils/error-formatter.ts';
 import { waitForQUnitWithTimeout } from '~/qunit/utils/timeout-handler.ts';
 
 test.describe('getSample', () => {
@@ -18,6 +21,34 @@ test.describe('getSample', () => {
         const sample = getSample('samples\\unit-tests\\chart\\alignthresholds');
         expect(sample.script).toContain('QUnit.test(\'alignThresholds');
     });
+});
+
+test('QUnit fails the sample when asynchronous setup throws or rejects', async ({
+    page
+}) => {
+    await initializeFreshPage(page, [
+        ...await readQUnitSetupScripts(),
+        `
+            setTimeout(() => { throw new Error('setup timer threw'); }, 0);
+            Promise.reject(new Error('setup promise rejected'));
+            //# sourceURL=async-qunit-setup.js
+        `
+    ]);
+    await page.waitForFunction(() =>
+        window.__qunitFailedAssertions__?.length === 2
+    );
+
+    await page.addScriptTag({
+        content: 'QUnit.test(\'passing case\', assert => assert.ok(true));'
+    });
+    await page.evaluate(() => window.QUnit.start());
+
+    const results = await waitForQUnitWithTimeout(page, 'async setup', 5000);
+    expect(results).toMatchObject({ status: 'failed', passed: 1, failed: 2 });
+
+    const details = await captureQUnitErrorDetails(page, 'async setup');
+    expect(details.failedAssertions.map(({ message }) => message).sort())
+        .toEqual(['setup promise rejected', 'setup timer threw']);
 });
 
 test('Chart creation', async ({ page }) => {
@@ -87,7 +118,7 @@ test('QUnit sample assets are served locally', async ({ page }) => {
     const sample = getSample('samples/unit-tests/chart/alignthresholds');
     const resources = sample.details?.resources?.filter(url =>
         url.includes('code.jquery.com/qunit/')
-    );
+    ) ?? [];
     expect(resources).toEqual([
         `${qunitAssetUrl}.js`,
         `${qunitAssetUrl}.css`
@@ -105,14 +136,18 @@ test('QUnit sample assets are served locally', async ({ page }) => {
 
     await page.setContent(template);
 
+    const localScript = relative(process.cwd(), qunitScript)
+        .split(sep).join('/');
+    const localStyles = relative(process.cwd(), qunitStyles)
+        .split(sep).join('/');
     await expect.poll(() => test.info().annotations).toContainEqual({
         type: 'redirect',
-        description: `${scriptUrl} --> node_modules/qunit/qunit/qunit.js`
+        description: `${scriptUrl} --> ${localScript}`
     });
 
     await expect.poll(() => test.info().annotations).toContainEqual({
         type: 'redirect',
-        description: `${stylesUrl} --> node_modules/qunit/qunit/qunit.css`
+        description: `${stylesUrl} --> ${localStyles}`
     });
 
     await expect.poll(() => page.evaluate(() => window.QUnit?.version))
@@ -162,28 +197,31 @@ test('QUnit safely parses query parameter names', async ({ page }) => {
     });
 });
 
-test('QUnit samples run independently on a shared page', async ({ page }) => {
-    await initializeWarmPage(page, await readQUnitSetupScripts());
-    const qunitSource = await readQUnitSource();
-    const originalTime = await page.evaluateHandle(() => Highcharts.time);
-
+test('QUnit samples run as independent classic scripts', async ({ context }) => {
+    const setupScripts = await readQUnitSetupScripts();
     async function runSample(name: string, source: string) {
-        const cleanup = await prepareWarmSample(page, qunitSource);
+        const page = await context.newPage();
         try {
-            await installWarmSampleHooks(page);
-            await page.addScriptTag({ content: scopeWarmSample(source) });
+            await initializeFreshPage(page, setupScripts);
+            await page.addScriptTag({ content: source });
             await page.evaluate(() => window.QUnit.start());
             await waitForQUnitWithTimeout(page, name, 5000);
+            await page.evaluate(() => window.getFinalQUnitResults());
             return await captureQUnitErrorDetails(page, name);
         } finally {
-            await cleanup.evaluate(reset => reset());
-            await cleanup.dispose();
+            await page.close();
         }
     }
 
     const first = await runSample('first sample', `
+        'use strict';
         const label = 'first';
+        var qunitSampleGlobal = label;
+        function qunitSampleFunction() { return label; }
         QUnit.test('first sample', assert => {
+            assert.strictEqual(window.qunitSampleGlobal, label);
+            assert.strictEqual(window.qunitSampleFunction(), label);
+            assert.notOk('label' in window);
             Highcharts.setOptions({ time: { timezone: 'America/New_York' } });
             const timestamp = Date.UTC(2024, 0, 1);
             assert.strictEqual(
@@ -202,19 +240,39 @@ test('QUnit samples run independently on a shared page', async ({ page }) => {
         actual: 'first',
         expected: 'expected'
     }]);
-    expect(first.failedAssertions[0].source).toContain('first-sample.js:9:');
+    expect(first.failedAssertions[0].source).toContain('first-sample.js:15:');
 
-    await expect(runSample('late error', `
-        QUnit.test('passes before the rejection', assert => assert.ok(true));
+    const late = await runSample('late errors with fake timers', `
+        QUnit.test('passes before the rejection', assert => {
+            // Leave the fake timer installed to simulate interrupted cleanup.
+            lolex.install({ toFake: ['setTimeout'] });
+            assert.ok(true);
+        });
         QUnit.on('runEnd', () => {
             Promise.reject(new Error('rejected after runEnd'));
+            const reason = { value: 42n };
+            reason.self = reason;
+            Promise.reject(reason);
         });
-    `)).rejects.toThrow('rejected after runEnd');
+    `);
+    expect(late.qunitResults).toMatchObject({
+        status: 'failed', total: 3, passed: 1, failed: 2
+    });
+    expect(late.failedAssertions.map(({ name }) => name)).toEqual([
+        'Uncaught error after QUnit runEnd',
+        'Uncaught error after QUnit runEnd'
+    ]);
+    const formatted = formatQUnitErrorDetails(late);
+    expect(formatted).toContain('rejected after runEnd');
+    expect(formatted).toContain('value: 42n');
+    expect(formatted).toContain('[Circular *1]');
 
     const second = await runSample('second sample', `
         const label = 'second';
         QUnit.test('second sample', assert => {
             assert.strictEqual(label, 'second');
+            assert.strictEqual(window.qunitSampleGlobal, undefined);
+            assert.strictEqual(window.qunitSampleFunction, undefined);
         });
         QUnit.test('time format is restored', assert => {
             const timestamp = Date.UTC(2024, 0, 1);
@@ -227,11 +285,6 @@ test('QUnit samples run independently on a shared page', async ({ page }) => {
         status: 'passed', total: 2, passed: 2
     });
     expect(second.failedAssertions).toEqual([]);
-    expect(await originalTime.evaluate(time => time === Highcharts.time))
-        .toBe(true);
-    expect(await page.evaluate(() =>
-        performance.getEntriesByName('QUnit Run', 'measure')
-    )).toHaveLength(0);
 });
 
 test.describe('Redirects for data', () => {

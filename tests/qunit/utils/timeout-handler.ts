@@ -227,12 +227,23 @@ export async function waitForQUnitWithTimeout(
     
     const handler = createTimeoutHandler(context);
     
-    return handler.waitWithTimeout(page, async () => {
-        const results = await page.waitForFunction(
-            () => window.__qunitResults__
-        );
-        return results.jsonValue();
-    });
+    return handler.waitWithTimeout(page, () => readQUnitResults(page));
+}
+
+async function readQUnitResults(
+    page: Page,
+    timeout?: number
+): Promise<QUnitTestCounts> {
+    const results = await page.waitForFunction(
+        () => window.__qunitResults__,
+        undefined,
+        { timeout }
+    );
+    try {
+        return await results.jsonValue();
+    } finally {
+        await results.dispose();
+    }
 }
 
 /**
@@ -262,25 +273,21 @@ export async function waitForScriptLoadWithTimeout<T>(
 export async function attemptTimeoutRecovery(
     page: Page,
     error: TimeoutError
-): Promise<{ recovered: boolean; message: string }> {
+): Promise<{ results?: QUnitTestCounts; message: string }> {
     try {
         const { context, diagnostics } = error;
         
-        // Strategy 1: Check if QUnit is just slow but still running
+        // QUnit may also have completed while diagnostics were collected.
         if (
-            diagnostics.qunitState.isRunning && 
+            context.phase === 'test-execution' &&
             diagnostics.domState.qunitContainer
         ) {
             // Give it a bit more time
             try {
-                await page.waitForFunction(
-                    () => window.__qunitResults__,
-                    undefined,
-                    { timeout: 5000 }
-                );
-                return { 
-                    recovered: true, 
-                    message: 'QUnit completed after extended wait' 
+                const results = await readQUnitResults(page, 5000);
+                return {
+                    results,
+                    message: 'QUnit completed after extended wait'
                 };
             } catch {
                 // Continue to other strategies
@@ -291,7 +298,6 @@ export async function attemptTimeoutRecovery(
         const isScriptLoad = context.phase === 'script-load';
         if (isScriptLoad && !diagnostics.domState.testScript) {
             return { 
-                recovered: false, 
                 message: 'Script loading failed - test script not found in DOM' 
             };
         }
@@ -299,7 +305,6 @@ export async function attemptTimeoutRecovery(
         // Strategy 3: Check for QUnit initialization issues
         if (!diagnostics.domState.qunitContainer) {
             return { 
-                recovered: false, 
                 message: 'QUnit container not found - QUnit may not be properly initialized' 
             };
         }
@@ -308,13 +313,11 @@ export async function attemptTimeoutRecovery(
         const isHighchartsTest = context.testPath.includes('highcharts');
         if (!diagnostics.domState.highchartsLoaded && isHighchartsTest) {
             return { 
-                recovered: false, 
                 message: 'Highcharts not loaded - required dependency missing' 
             };
         }
         
         return { 
-            recovered: false, 
             message: 'No recovery strategy applicable' 
         };
         
@@ -323,7 +326,6 @@ export async function attemptTimeoutRecovery(
             recoveryError.message : 
             String(recoveryError);
         return { 
-            recovered: false, 
             message: `Recovery attempt failed: ${errorMsg}` 
         };
     }
