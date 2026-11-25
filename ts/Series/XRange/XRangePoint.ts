@@ -47,13 +47,6 @@ const ColumnPoint = ColumnSeries.prototype.pointClass;
  *
  * */
 
-/** @internal */
-declare module '../../Core/Series/PointBase' {
-    interface PointBase {
-        tooltipDateKeys?: Array<string>;
-    }
-}
-
 interface BBoxObjectWithCenter extends BBoxObject {
     centerX?: number;
 }
@@ -118,11 +111,26 @@ class XRangePoint extends ColumnPoint {
     /** @internal */
     public dlBox?: BBoxObjectWithCenter;
 
+    /**
+     * The formatted ending x-value (typically date), for use in a tooltip
+     * formatter.
+     */
+    public keyEnd?: string|number;
+
     /* *
      *
      *  Functions
      *
      * */
+
+    /**
+     * Extend the parent function by setting an end key
+     * @internal
+     * */
+    public applyKey(): string|number|undefined {
+        this.keyEnd = super.applyKey(this.x2);
+        return super.applyKey(this.x);
+    }
 
     /**
      * @internal
@@ -211,15 +219,13 @@ interface XRangePoint {
     partialFill: XRangePointOptions['partialFill'];
     partShapeArgs?: XRangePointPartialFillOptions;
     shapeType: string;
-    tooltipDateKeys: Array<string>;
     x2?: number;
     yCategory?: string;
 
 }
 
 extend(XRangePoint.prototype, {
-    ttBelow: false,
-    tooltipDateKeys: ['x', 'x2']
+    ttBelow: false
 });
 
 /* *
@@ -241,6 +247,13 @@ export default XRangePoint;
  *  API Declarations
  *
  * */
+
+/**
+ * The formatted ending x-value (typically date), for use in a tooltip
+ * formatter.
+ *
+ * @name Highcharts.Point#keyEnd
+ */
 
 /**
  * The ending X value of the range point.

@@ -102,7 +102,7 @@ const XRangeSeriesDefaults: XRangeSeriesOptions = {
 
     tooltip: {
 
-        headerFormat: '<span style="font-size: 0.8em">{ucfirst point.x} - {point.x2}</span><br/>',
+        headerFormat: '<span style="font-size: 0.8em">{ucfirst point.key} - {point.keyEnd}</span><br/>',
 
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
     },
