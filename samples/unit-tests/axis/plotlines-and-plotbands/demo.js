@@ -1341,6 +1341,21 @@ QUnit.test(
             }),
             axis = chart.xAxis[0];
 
+        // Switch from the initial set directly to another one and back
+        axis.update({ plotBands: otherBands });
+        axis.update({ plotBands });
+        assert.deepEqual(
+            axis.plotBands.map(p => [p.options.from, p.options.to]),
+            [[1, 2], [3, 4]],
+            'Initial plot bands should be restored after switching sets'
+        );
+        assert.strictEqual(
+            snapshot(),
+            original,
+            'User options should not be mutated when switching from the ' +
+            'initial set'
+        );
+
         for (let i = 1; i <= 2; i++) {
             axis.update({ plotBands: [], plotLines: [] });
             assert.strictEqual(
