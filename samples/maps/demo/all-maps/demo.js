@@ -655,6 +655,12 @@ function moveActiveOption(step) {
         },
 
         drilldown: {
+            // Next to the zoom buttons, which are 28px wide with the padding
+            breadcrumbs: {
+                position: {
+                    x: 36
+                }
+            },
             activeDataLabelStyle: {
                 color: 'contrast',
                 fontWeight: 'normal',
@@ -729,6 +735,15 @@ function moveActiveOption(step) {
                     }
                 },
                 chartOptions: {
+                    // The zoom buttons move down, so the breadcrumbs can
+                    // start at the left edge
+                    drilldown: {
+                        breadcrumbs: {
+                            position: {
+                                x: 0
+                            }
+                        }
+                    },
                     mapNavigation: {
                         buttonOptions: {
                             verticalAlign: 'bottom'
