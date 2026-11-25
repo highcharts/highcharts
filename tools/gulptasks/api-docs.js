@@ -126,15 +126,15 @@ async function runApiDocs(args, dependencies = {}) {
 
     const source = (args.source || 'ts');
 
-    await ProcessLib.exec(
-        'node --import tsx tools/api-docs/api-classes.ts' +
-            ` --source "${source}"`
-    );
+    await ProcessLib.execFile(process.execPath, [
+        '--import', 'tsx', 'tools/api-docs/api-classes.ts', '--source',
+        String(source)
+    ]);
 
-    await ProcessLib.exec(
-        'node --import tsx tools/api-docs/api-options.ts' +
-            ` --source "${source}"`
-    );
+    await ProcessLib.execFile(process.execPath, [
+        '--import', 'tsx', 'tools/api-docs/api-options.ts', '--source',
+        String(source)
+    ]);
 
     await (dependencies.createApiDocumentation || createApiDocumentation)();
 

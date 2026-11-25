@@ -39,8 +39,7 @@ import type { DeepPartial } from '../../Shared/Types';
 
 import AST from '../Renderer/HTML/AST.js';
 import { animObject } from '../Animation/AnimationUtilities.js';
-import D from '../Defaults.js';
-const { defaultOptions } = D;
+import { defaultOptions } from '../Defaults.js';
 import F from '../Templating.js';
 const { format } = F;
 import {
@@ -237,12 +236,18 @@ class Point {
 
     /**
      * The point's name if it is defined, or its category in case of a category,
-     * otherwise the x value. Convenient for tooltip and data label formatting.
+     * otherwise the x value or datetime. Convenient for tooltip formatting,
+     * where it is used in the default header. The key is applied just in time
+     * for the tooltip formatting.
+     *
+     * For datetime axes the key is a localized time string, formatted according
+     * to the [tooltip.dateTimeLabelFormats](#tooltip.dateTimeLabelFormats)
+     * option or the [tooltip.xDateFormat](#tooltip.xDateFormat) if defined.
      *
      * @name Highcharts.Point#key
      * @type {number|string}
      */
-    public key: string|number;
+    public key?: string|number;
 
     /**
      * Decides which data label is kept when two of them overlap. The label
@@ -463,7 +468,13 @@ class Point {
      */
     /**
      * The point's name if it is defined, or its category in case of a category,
-     * otherwise the x value. Convenient for tooltip and data label formatting.
+     * otherwise the x value or datetime. Convenient for tooltip formatting,
+     * where it is used in the default header. The key is applied just in time
+     * for the tooltip formatting.
+     *
+     * For datetime axes the key is a localized time string, formatted according
+     * to the [tooltip.dateTimeLabelFormats](#tooltip.dateTimeLabelFormats)
+     * option or the [tooltip.xDateFormat](#tooltip.xDateFormat) if defined.
      *
      * @name Highcharts.Point#key
      * @type {number|string}
@@ -737,6 +748,11 @@ class Point {
              * @internal
              */
             const destroyPoint = (): void => {
+                const i = series.condemnedPoints?.indexOf(point) ?? -1;
+                if (i > -1) {
+                    series.condemnedPoints.splice(i, 1);
+                }
+
                 // Remove all events and elements
                 if (
                     point.graphic ||
@@ -766,8 +782,8 @@ class Point {
                 if (!hoverPoints.length) {
                     chart.hoverPoints = void 0;
                 }
-
             }
+
             if (point === chart.hoverPoint) {
                 point.onMouseOut();
             }
@@ -930,10 +946,8 @@ class Point {
      *         The zone item, or `undefined` if the series has no zones.
      */
     public getZone(): Series.ZoneObject|undefined {
-        const series = this.series,
-            zones = series.zones,
-            zoneAxis = series.zoneAxis || 'y';
-        let zone,
+        const { zoneAxis = 'y', zones } = this.series;
+        let zone: Series.ZoneObject|undefined,
             i = 0;
 
         zone = zones[i];
@@ -945,15 +959,11 @@ class Point {
         }
 
         // For resetting or reusing the point (#8100)
-        if (!this.nonZonedColor) {
-            this.nonZonedColor = this.color;
-        }
+        this.nonZonedColor ||= this.color;
 
-        if (zone?.color && !this.options.color) {
-            this.color = zone.color;
-        } else {
-            this.color = this.nonZonedColor;
-        }
+        this.color = zone?.color && !this.options.color ?
+            zone.color :
+            this.nonZonedColor;
 
         return zone;
     }
@@ -964,10 +974,10 @@ class Point {
      * @internal
      */
     public hasNewShapeType(): boolean|undefined {
-        const point = this;
-        const oldShapeType = point.graphic &&
-            (point.graphic.symbolName || point.graphic.element.nodeName);
-        return oldShapeType !== this.shapeType;
+        const { graphic } = this;
+        return (
+            graphic?.symbolName || graphic?.element.nodeName
+        ) !== this.shapeType;
     }
 
     /**
@@ -1220,6 +1230,33 @@ class Point {
         return object;
     }
 
+    /**
+     * Applies the `point.key` property, which is used in tooltip formatting. If
+     * the point has a name or category, it will be used as the key. If the
+     * point is on a datetime axis and has a numeric x value, it will be
+     * formatted accordingly.
+     * @internal
+     * */
+    public applyKey(
+        key: string|number|undefined = this.key
+    ): string|number|undefined {
+        const series = this.series,
+            tooltipOptions = series.tooltipOptions,
+            dateTime = series.xAxis?.dateTime;
+
+        if (dateTime && isNumber(key)) {
+            key = series.chart.time.dateFormat(
+                tooltipOptions.xDateFormat ||
+                dateTime.getXDateFormat(
+                    key,
+                    tooltipOptions.dateTimeLabelFormats
+                ),
+                key
+            );
+        }
+        return (this.key = key);
+    }
+
     /** @internal */
     public shouldDraw(): boolean {
         return !this.isNull;
@@ -1249,8 +1286,6 @@ class Point {
                 valuePrefix = '',
                 valueSuffix = ''
             } = tooltipOptions;
-
-        pointFormat = chart.tooltip?.keyReplace(pointFormat, this) || pointFormat;
 
         // Replace default point style with class name
         if (chart.styledMode) {

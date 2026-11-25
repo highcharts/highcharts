@@ -14,36 +14,37 @@ import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function ColumnBasicChart() {
     return (
-        <Chart containerProps={{ style: { height: '400px' } }}>
+        <Chart containerProps={{ id: 'container' }}>
             <Title align="left">
-                Corn vs wheat estimated production for 2023
+                Milano Cortina 2026 Winter Olympic medals, top six nations
             </Title>
             <Subtitle align="left">
                 Source:{' '}
                 <a
                     target="_blank"
-                    href="https://www.indexmundi.com/agriculture/?commodity=corn"
+                    href="https://www.olympics.com/en/olympic-games/milano-cortina-2026/medals"
                 >
-                    indexmundi
+                    www.olympics.com
                 </a>
             </Subtitle>
             <XAxis
                 categories={[
+                    'Norway',
                     'USA',
-                    'China',
-                    'Brazil',
-                    'EU',
-                    'Argentina',
-                    'India'
+                    'Netherlands',
+                    'Italy',
+                    'Germany',
+                    'France'
                 ]}
-                crosshair={true}
-                accessibility={{ description: 'Countries' }}
+                crosshair
+                accessibility={{
+                    description: 'Countries'
+                }}
             />
-            <YAxis min={0}>1000 metric tons (MT)</YAxis>
+            <YAxis min={0}>Medals</YAxis>
             <Legend symbolRadius={3} />
             <Tooltip
-                shared={true}
-                valueSuffix=" GT"
+                shared
                 headerFormat="<table><caption>{point.key}</caption>"
                 pointFormat={`
                 <tr>
@@ -59,17 +60,17 @@ export default function ColumnBasicChart() {
                 `}
                 footerFormat="</table>"
             />
-            <PlotOptions column={{ pointPadding: 0.1, borderWidth: 0 }} />
-            <ColumnSeries
-                name="Corn"
-                data={[387749, 280000, 129000, 64300, 54000, 34300]}
-            />
-            <ColumnSeries
-                name="Wheat"
-                data={[45321, 140000, 10000, 140500, 19500, 113500]}
+            <PlotOptions
+                column={{
+                    pointPadding: 0.1,
+                    borderWidth: 0
+                }}
             />
             <Exporting />
             <Accessibility />
+            <ColumnSeries name="Gold medals" data={[18, 12, 10, 10, 8, 8]} />
+            <ColumnSeries name="Silver medals" data={[12, 12, 7, 6, 10, 9]} />
+            <ColumnSeries name="Bronze medals" data={[11, 9, 3, 14, 8, 6]} />
         </Chart>
     );
 }

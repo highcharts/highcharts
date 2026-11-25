@@ -138,7 +138,9 @@ module.exports = {
                     'grid/rows/data',
                     'grid/rows/tree-view',
                     'grid/rows/grouping',
+                    'grid/rows/summary-rows',
                     'grid/rows/pinning',
+                    'grid/rows/selection',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -149,7 +151,7 @@ module.exports = {
                     'grid/cells/index',
                     'grid/cells/styling-and-theming',
                     'grid/cells/formatting',
-                    'grid/cell-context-menu'
+                    'grid/context-menu'
                 ]
             },
             {

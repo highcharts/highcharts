@@ -36,7 +36,6 @@ import { extend, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.mapbubble
  *
@@ -260,6 +259,7 @@ class MapBubbleSeries extends BubbleSeries {
 
     public points!: Array<MapBubblePoint>;
 
+    /** @internal */
     public clearBounds = MapSeries.prototype.clearBounds;
 
     /** @internal */

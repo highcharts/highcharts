@@ -1140,6 +1140,22 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.key](#chart.zooming.key)
+     * instead.
+     *
+     * Set a key to hold when dragging to zoom the chart. This is useful to
+     * avoid zooming while moving points. Should be set different than
+     * [chart.panKey](#chart.panKey).
+     *
+     * @type       {string}
+     * @since      6.2.0
+     * @validvalue ["alt", "ctrl", "meta", "shift"]
+     * @deprecated 10.2.1
+     * @apioption  chart.zoomKey
+     */
+
+    /**
      * Chart zooming options.
      *
      * @sample     highcharts/plotoptions/sankey-node-color
@@ -1150,6 +1166,21 @@ const ChartDefaults: ChartOptions = {
      * @since 10.2.1
      */
     zooming: {
+        /**
+         * Set a key to hold when dragging to zoom the chart. This is useful to
+         * avoid zooming while moving points. Should be set different than
+         * [chart.panKey](#chart.panKey).
+         *
+         * **Note:** If both zooming and panning are enabled without keys,
+         * zooming will take precedence by default. To prioritize panning,
+         * either set zooming key or [chart.panKey](#chart.panKey).
+         *
+         * @type       {string}
+         * @default    {highcharts} undefined
+         * @validvalue ["alt", "ctrl", "meta", "shift"]
+         * @apioption  chart.zooming.key
+         */
+
         /**
          * Equivalent to [type](#chart.zooming.type), but for multitouch
          * gestures only. By default, the `pinchType` is the same as the

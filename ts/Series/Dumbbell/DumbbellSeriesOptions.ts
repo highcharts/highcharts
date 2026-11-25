@@ -82,6 +82,8 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * Pixel width of the line that connects the dumbbell point's
      * values.
      *
+     * @default 1
+     *
      * @since 8.0.0
      *
      * @product highcharts highstock
@@ -110,6 +112,8 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * Color of the start markers in a dumbbell graph. This option takes
      * priority over the series color. To avoid this, set `lowColor` to
      * `undefined`.
+     *
+     * @default 'var(--highcharts-neutral-color-80)'
      *
      * @since 8.0.0
      *
@@ -222,6 +226,8 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
     crisp?: boolean;
 
     /**
+     * @default false
+     *
      * @internal
      */
     stickyTracking?: boolean;
@@ -237,16 +243,22 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
     pointRange?: number;
 
     /**
+     * @default 0
+     *
      * @internal
      */
     lineWidth?: number;
 
     /**
+     * @default 'none'
+     *
      * @internal
      */
     fillColor?: ColorType;
 
     /**
+     * @default false
+     *
      * @internal
      */
     trackByArea?: boolean;

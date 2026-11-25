@@ -123,6 +123,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      * @sample highcharts/plotoptions/series-border-radius
      *         Column and pie with rounded border
      *
+     * @default 3
+     *
      * @since 11.0.0
      *
      * @type {number|string|Highcharts.BorderRadiusOptionsObject}
@@ -142,6 +144,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/pie-borderwidth/
      *         3px border
+     *
+     * @default 1
      *
      * @product highcharts highmaps
      */
@@ -167,6 +171,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
     center?: [(number|string|null), (number|string|null)];
 
     /**
+     * @default false
+     *
      * @product highcharts
      */
     clip?: boolean;
@@ -194,7 +200,11 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      */
     color?: ColorType;
 
-    /** @ignore-option */
+    /**
+     * @default true
+     *
+     * @ignore-option
+     */
     colorByPoint?: boolean;
 
     /**
@@ -317,6 +327,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *         Empty pie series
      *
      * @type {Highcharts.ColorType}
+     *
+     * @default undefined
      */
     fillColor?: ColorType;
 
@@ -330,6 +342,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/pie-ignorehiddenpoint/
      *         True, the hidden point is ignored
+     *
+     * @default true
      *
      * @since 2.3.0
      *
@@ -374,13 +388,25 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      */
     innerSize?: (number|string);
 
-    /** @ignore-option */
+    /**
+     * @default 'point'
+     *
+     * @ignore-option
+     */
     legendType?: ('point'|'series');
 
-    /** @ignore-option */
+    /**
+     * @default undefined
+     *
+     * @ignore-option
+     */
     lineWidth?: number;
 
-    /** @ignore-option */
+    /**
+     * @default null
+     *
+     * @ignore-option
+     */
     marker?: PointMarkerOptions;
 
     /**
@@ -407,6 +433,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
      *         One series in the legend, one hidden
      *
+     * @default false
+     *
      * @product highcharts highmaps
      */
     showInLegend?: boolean;
@@ -426,6 +454,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @type {number|string|null}
      *
+     * @default null
+     *
      * @product highcharts highmaps
      */
     size?: (number|string);
@@ -436,6 +466,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/pie-slicedoffset-20/
      *         20px offset
+     *
+     * @default 10
      *
      * @product highcharts highmaps
      */
@@ -479,6 +511,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      * series'  graph or markers. This also implies the tooltip. When
      * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
      * will be hidden when moving the mouse between series.
+     *
+     * @default false
      *
      * @product highcharts highmaps
      */

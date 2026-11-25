@@ -3,6 +3,11 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+#container {
+    height: 600px;
+    min-width: 310px;
+}
+
 .highcharts-tooltip {
     th {
         font-weight: normal;

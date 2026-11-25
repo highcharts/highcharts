@@ -1837,7 +1837,8 @@ class Navigator {
                 mergedNavSeriesOptions.dataTable = userSeriesOptions.dataTable;
                 if (
                     mergedNavSeriesOptions.data ||
-                    mergedNavSeriesOptions.dataTable
+                    mergedNavSeriesOptions.dataTable ||
+                    (chart.dataTable.length && !baseSeries?.length)
                 ) {
                     navigator.hasNavigatorData = true;
                     navigatorSeries.push(

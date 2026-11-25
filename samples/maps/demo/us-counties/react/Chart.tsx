@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapsChart } from '@highcharts/react/Maps';
 import {
     Title,
@@ -11,13 +11,12 @@ import { MapSeries } from '@highcharts/react/series/Map';
 import { MapLineSeries } from '@highcharts/react/series/MapLine';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-
+import type { CountyTopology, MapData } from './types';
 import { addStateAcronyms } from './utils';
-import type { MapPointData } from './types';
 
-const UsCountiesChart = React.memo(function UsCountiesChart() {
-    const [topology, setTopology] = useState<Highcharts.TopoJSON | null>(null);
-    const [data, setData] = useState<MapPointData | null>(null);
+export default function UsCountiesChart() {
+    const [mapData, setMapData] = useState<CountyTopology | null>(null);
+    const [data, setData] = useState<MapData | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -25,17 +24,16 @@ const UsCountiesChart = React.memo(function UsCountiesChart() {
         Promise.all([
             fetch(
                 'https://code.highcharts.com/mapdata/countries/us/us-all-all.topo.json'
-            ).then(
-                (response) => response.json() as Promise<Highcharts.TopoJSON>
-            ),
+            ).then((response) => response.json()),
             fetch(
                 'https://www.highcharts.com/samples/data/us-counties-unemployment.json'
-            ).then((response) => response.json() as Promise<MapPointData>)
+            ).then((response) => response.json())
         ])
-            .then(([fetchedTopology, fetchedData]) => {
+            .then(([topology, unemployment]: [CountyTopology, MapData]) => {
                 if (cancelled) return;
-                setTopology(addStateAcronyms(fetchedTopology));
-                setData(fetchedData);
+                addStateAcronyms(topology);
+                setMapData(topology);
+                setData(unemployment);
             })
             .catch((error) => console.error(error));
 
@@ -44,14 +42,14 @@ const UsCountiesChart = React.memo(function UsCountiesChart() {
         };
     }, []);
 
-    if (!topology || !data) return <>Downloading map...</>;
+    if (!mapData || !data) return <>Downloading map...</>;
 
     return (
         <MapsChart
             height="80%"
             options={{
                 chart: {
-                    map: topology
+                    map: mapData
                 },
                 mapNavigation: {
                     enabled: true
@@ -80,17 +78,10 @@ const UsCountiesChart = React.memo(function UsCountiesChart() {
                     }
                 }
             }}
-            containerProps={{
-                style: {
-                    maxWidth: '800px',
-                    minWidth: '360px',
-                    margin: '0 auto'
-                }
-            }}
+            containerProps={{ id: 'container' }}
         >
             <Title align="left">US Counties unemployment rates</Title>
             <Subtitle align="left">January 2018</Subtitle>
-            <Accessibility description="Demo showing a large dataset." />
             <Legend
                 layout="vertical"
                 align="right"
@@ -102,16 +93,22 @@ const UsCountiesChart = React.memo(function UsCountiesChart() {
                 borderRadius={8}
                 backgroundColor="var(--highcharts-background-color, white)"
                 padding={10}
-                shadow={{ width: 1, opacity: 0.03 }}
+                shadow={{
+                    width: 1,
+                    opacity: 0.03
+                }}
                 symbolRadius={6}
             />
             <PlotOptions
-                mapline={{ showInLegend: false, enableMouseTracking: false }}
+                mapline={{
+                    showInLegend: false,
+                    enableMouseTracking: false
+                }}
             />
             <Tooltip>
                 <div data-hc-option="headerFormat">
                     <b>{'{point.name}'}</b>
-                    <hr style={{ border: '0', borderTop: '1px solid #8884' }} />
+                    <hr style={{ border: 0, borderTop: '1px solid #8884' }} />
                 </div>
                 <div data-hc-option="pointFormat">
                     <span style={{ color: '{point.color}' }}>{'● '}</span>
@@ -126,15 +123,20 @@ const UsCountiesChart = React.memo(function UsCountiesChart() {
                     <b>{'{point.value}'}</b>
                 </div>
             </Tooltip>
+            <Accessibility description="Demo showing a large dataset." />
             <Exporting />
             <MapSeries
-                data={data}
                 name="Unemployment rate"
+                data={data}
                 options={{
                     joinBy: ['hc-key', 'code'],
-                    tooltip: { valueSuffix: '%' },
+                    tooltip: {
+                        valueSuffix: '%'
+                    },
                     borderWidth: 0.5,
-                    accessibility: { enabled: false }
+                    accessibility: {
+                        enabled: false
+                    }
                 }}
             />
             <MapLineSeries
@@ -142,11 +144,11 @@ const UsCountiesChart = React.memo(function UsCountiesChart() {
                 color="white"
                 options={{
                     borderWidth: 2,
-                    accessibility: { enabled: false }
+                    accessibility: {
+                        enabled: false
+                    }
                 }}
             />
         </MapsChart>
     );
-});
-
-export default UsCountiesChart;
+}

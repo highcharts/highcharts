@@ -1,7 +1,7 @@
 /* stylelint-disable max-line-length */
 
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 :root,
@@ -932,7 +932,7 @@ button.dot {
     text-align: left;
 }
 
-.highcharts-markers .highcharts-point {
+.highcharts-mappoint-series.highcharts-markers .highcharts-point {
     fill: var(--map-point-color);
     stroke: var(--background);
     stroke-width: 1px;
@@ -1206,61 +1206,97 @@ button.dot {
     stroke: #f44336;
 }
 
-.highcharts-pie-series .grid-zone-0,
-.highcharts-column-series .grid-zone-0 {
-    fill: #9998;
-}
-
-.highcharts-pie-series .grid-zone-1,
-.highcharts-column-series .grid-zone-1 {
-    fill: #4caf50;
-}
-
-.highcharts-pie-series .grid-zone-2,
-.highcharts-column-series .grid-zone-2 {
-    fill: #ebcb3b;
-}
-
-.highcharts-pie-series .grid-zone-3,
-.highcharts-column-series .grid-zone-3 {
-    fill: #f44336;
-}
-
 .highcharts-pie-series .highcharts-color-1 {
     fill: var(--highcharts-color-3);
-}
-
-.stopped {
-    background-color: #f4433680;
-}
-
-.hcg-container .hcg-table td[data-column-id="running"],
-.hcg-container .hcg-table th[data-column-id="running"],
-.hcg-container .hcg-table td[data-column-id="stopped"] {
-    max-width: 115px !important;
-    width: 115px !important;
-}
-
-.running {
-    background-color: #4caf5080;
 }
 
 .hcg-table tbody tr td {
     font-size: 11px;
 }
 
-.status {
-    border-radius: 10px;
-    padding: 4px 8px;
-    width: min-content;
-    text-transform: uppercase;
-    font-size: 1em;
-    color: #fff;
+/* Server grid (from the Grid Pro basic-sparklines demo) */
+
+/* Zone colors. Set here, because the shared highcharts.css overrides the
+colors set in the sparkline options. */
+#grid-container .highcharts-point.grid-zone-0 {
+    fill: #9998;
 }
 
-.hcg-container,
-.hcg-scrollable-content {
-    min-width: 600px;
+#grid-container .highcharts-point.grid-zone-1 {
+    fill: #4caf50;
+}
+
+#grid-container .highcharts-point.grid-zone-2 {
+    fill: #ebcb3b;
+}
+
+#grid-container .highcharts-point.grid-zone-3 {
+    fill: #f44336;
+}
+
+#grid-container .highcharts-point.grid-free {
+    fill: #9994;
+}
+
+#grid-container .status {
+    display: inline-block;
+    border-radius: 3px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 1px 5px;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    color: light-dark(#033427, #fff);
+    background: light-dark(#d1fae5, #047857);
+    border-color: light-dark(#a7f3d0, #059669);
+}
+
+#grid-container .status.offline {
+    color: light-dark(#570d0d, #fff);
+    background: light-dark(#fecaca, #991b1b);
+    border-color: light-dark(#fca5a5, #b91c1c);
+}
+
+#grid-container .server {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#grid-container .server .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#grid-container .server .text {
+    display: flex;
+    flex-direction: column;
+}
+
+#grid-container .server .region {
+    font-size: 0.8em;
+    color: light-dark(#767676, #8a8a8a);
+}
+
+#grid-container .theme-servers {
+    --hcsg-horizontal-padding: 10px;
+    --hcsg-vertical-padding: 6px;
+    --hcsg-header-vertical-padding: 6px;
+    --hcg-header-font-weight: bold;
+    --hcg-column-border-width: 0;
+    --hcg-row-even-background: light-dark(#f6f6f6, #272727);
+    --hcg-border-color: light-dark(#e8e8e8, #3b3b3b);
+    --hcg-header-background: light-dark(#fff, #272727);
+}
+
+#grid-container .theme-servers tr:has(td[data-value=""]) {
+    --hcg-cell-color: light-dark(#767676, #8a8a8a);
+}
+
+#grid-container .hcg-container,
+#grid-container .hcg-scrollable-content {
+    min-width: 0;
 }
 
 .hcg-table {
