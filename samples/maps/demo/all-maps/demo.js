@@ -17,7 +17,8 @@ Highcharts.setOptions({
 });
 
 // Get all HTML elements
-const mapSearch = document.getElementById('map-search'),
+const demoContainer = document.getElementById('demo-container'),
+    mapSearch = document.getElementById('map-search'),
     input = document.getElementById('map-search-input'),
     toggleButton = document.getElementById('map-search-toggle'),
     listbox = document.getElementById('map-listbox'),
@@ -729,9 +730,9 @@ function moveActiveOption(step) {
         responsive: {
             rules: [{
                 condition: {
-                    // The same breakpoint as in demo.css
+                    // The same breakpoint as the container query in demo.css
                     callback() {
-                        return window.matchMedia('(max-width: 768px)').matches;
+                        return demoContainer.clientWidth <= 768;
                     }
                 },
                 chartOptions: {

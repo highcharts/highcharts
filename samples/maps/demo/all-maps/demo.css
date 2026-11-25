@@ -62,9 +62,17 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+/* The layout follows the width of the demo, not of the window, as the demo
+   can be embedded in a narrower area */
+#demo-container {
+    container-type: inline-size;
+}
+
+/* The container doesn't collapse margins, so the 8px body margin adds to
+   these */
 #demo-wrapper {
     max-width: 890px;
-    margin: 36px auto;
+    margin: 28px auto;
     display: flex;
     gap: 30px;
 }
@@ -469,17 +477,34 @@ g:has(> .highcharts-map-navigation) {
     cursor: pointer;
 }
 
-@media (max-width: 768px) {
+/* Narrow: the map right below the map search, so that the picked map is in
+   view. The side box items become items of the wrapper. */
+@container (max-width: 768px) {
     #demo-wrapper {
         flex-direction: column;
+        gap: 13px;
+        margin: 8px auto;
+        padding: 0 8px;
+    }
+
+    #side-box {
+        display: contents;
+    }
+
+    #demo-title,
+    #demo-description,
+    #selector {
+        order: -1;
     }
 
     #container {
         height: 310px;
     }
+}
 
-    #side-box {
-        flex-basis: auto;
-        order: -1;
+/* Smaller text makes iOS zoom in on the page when the field gets focus */
+@media (pointer: coarse) {
+    #map-search-input {
+        font-size: 16px;
     }
 }
