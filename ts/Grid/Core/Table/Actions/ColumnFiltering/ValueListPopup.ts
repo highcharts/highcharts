@@ -23,7 +23,7 @@
 
 import type ValueListFilter from './ValueListFilter';
 
-import Popup from '../../Core/UI/Popup.js';
+import Popup from '../../../UI/Popup.js';
 
 
 /* *

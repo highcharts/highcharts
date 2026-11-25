@@ -35,10 +35,10 @@ import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
 import QueryingController from './QueryingController.js';
 import type { Condition } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
 import {
-    conditionMappers,
     operatorAliases
 } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
 import {
+    defined,
     fireEvent,
     isArray,
     isString
@@ -170,12 +170,26 @@ class FilteringController {
             return;
         }
 
-        const mapper = operator && conditionMappers[operator];
-        if (mapper) {
-            return mapper(columnId, value);
+        if (operator === 'oneOf') {
+            // One equality check per selected value, which the size of a
+            // value list keeps small. An empty list matches no row, as an
+            // `or` of nothing. A blank entry matches the empty cells.
+            if (!isArray(value)) {
+                return;
+            }
+
+            const conditions = value.map((item): FilterCondition => (
+                defined(item) && item !== '' ?
+                    { columnId, operator: '===', value: item } :
+                    { columnId, operator: 'empty', value: null }
+            ));
+
+            return conditions.length === 1 ?
+                conditions[0] :
+                { operator: 'or', conditions };
         }
 
-        // The built-in operators compare the cell with a single value.
+        // The other operators compare the cell with a single value.
         if (isArray(value)) {
             return;
         }

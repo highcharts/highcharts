@@ -100,7 +100,8 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
         lessThanOrEqualTo: 'Less than or equal to',
         all: 'All',
         'true': 'True',
-        'false': 'False'
+        'false': 'False',
+        oneOf: 'Is one of'
     },
     columnFilteringDateTimeOperators: {
         equals: 'On',
@@ -109,6 +110,12 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
         greaterThanOrEqualTo: 'On or after',
         lessThan: 'Before',
         lessThanOrEqualTo: 'On or before'
+    },
+    valueListFilter: {
+        all: 'All',
+        blanks: '(Blanks)',
+        selectAll: '(Select All)',
+        selected: '{count} selected'
     }
 };
 

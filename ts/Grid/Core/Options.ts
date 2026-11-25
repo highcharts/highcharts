@@ -45,8 +45,7 @@ import type {
 import type { IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
-    Condition as ColumnFilteringCondition,
-    OptInConditionRegistry
+    Condition as ColumnFilteringCondition
 } from './Table/Actions/ColumnFiltering/FilteringTypes';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 
@@ -977,6 +976,47 @@ export interface LangOptions extends LangOptionsCore {
      */
     pagination?: PaginationLangOptions;
 
+    /**
+     * Language options for the value list of the `oneOf` filtering
+     * operator.
+     */
+    valueListFilter?: ValueListFilterLangOptions;
+
+}
+
+/**
+ * Language options for the value list of the `oneOf` filtering operator.
+ */
+export interface ValueListFilterLangOptions {
+
+    /**
+     * Label of the button opening the list when no value is excluded.
+     *
+     * @default 'All'
+     */
+    all?: string;
+
+    /**
+     * Label of the entry matching the empty cells.
+     *
+     * @default '(Blanks)'
+     */
+    blanks?: string;
+
+    /**
+     * Label of the entry toggling every listed value.
+     *
+     * @default '(Select All)'
+     */
+    selectAll?: string;
+
+    /**
+     * Label of the button opening the list when some values are excluded.
+     * Placeholder: {count}.
+     *
+     * @default '{count} selected'
+     */
+    selected?: string;
 }
 
 
@@ -999,13 +1039,10 @@ export interface TimeOptions {
 export type FilteringRuleItem = string | number | boolean | null;
 
 /**
- * Value a filtering rule compares the column against: a single value, or
- * whatever the registered operators take, like a list of values.
+ * Value a filtering rule compares the column against: a single value, or the
+ * list of selected values for the `oneOf` operator.
  */
-export type FilteringRuleValue = (
-    FilteringRuleItem |
-    OptInConditionRegistry[keyof OptInConditionRegistry]
-);
+export type FilteringRuleValue = FilteringRuleItem | FilteringRuleItem[];
 
 /**
  * Active filtering rule for a column.
@@ -1017,9 +1054,9 @@ export interface FilteringRule {
     operator?: ColumnFilteringCondition;
 
     /**
-     * The value that is used with the operator to filter the column. An
-     * operator that matches a list of values takes an array of the selected
-     * ones.
+     * The value that is used with the operator to filter the column. The
+     * `oneOf` operator takes an array of the selected values, where `null`
+     * stands for the empty cells.
      */
     value?: FilteringRuleValue;
 }
@@ -1068,6 +1105,10 @@ export interface ColumnFilteringOptions {
      * If set, the UI will only display the provided operators that are valid
      * for the column's `dataType`. Invalid operators are ignored.
      *
+     * Listing `oneOf` replaces the other operators with a list of the column
+     * values, each with a checkbox. See
+     * {@link ColumnFilteringOptions.values}.
+     *
      * @example
      * ```js
      * columns: [{
@@ -1081,6 +1122,19 @@ export interface ColumnFilteringOptions {
      * ```
      */
     operators?: Array<ColumnFilteringCondition>;
+
+    /**
+     * The values listed by the `oneOf` operator, in their display order.
+     *
+     * The selected values are stored in `rule.value`. A `null` entry stands
+     * for the empty cells. Defaults to the unique values of the column data.
+     * With a remote data provider in Grid Pro, the column data is not loaded
+     * in full, so the list is empty unless this option is set.
+     *
+     * @sample grid-lite/options/filtering-value-list
+     *         Filtering by a value list
+     */
+    values?: FilteringRuleItem[];
 
     /**
      * The condition to use for filtering the column.
