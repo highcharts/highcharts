@@ -49,6 +49,7 @@ export default function ChartComponent() {
 | highcharts       | `object`                                                                                      | -                                                                                                                | Highcharts instance.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | chartConstructor | `string`                                                                                      | `chart`                                                                                                          | Chart constructor. Available values: `chart`, `stockChart`, `mapChart`, `ganttChart`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | renderToHTML     | `function`                                                                                    | Built-in renderer                                                                                                | Converts React elements to static HTML strings.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| callback         | `function`                                                                                    | -                                                                                                                | Called once with the chart instance when the chart has loaded. See [Load callback](#load-callback).                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | title            | `string`                                                                                      | `"Chart title"`                                                                                                  | Chart title text. To disable the title, set it to `undefined`. Maps to [title.text](https://api.highcharts.com/highcharts/title.text).                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | subtitle         | `string`                                                                                      | -                                                                                                                | Chart subtitle text. Maps to [subtitle.text](https://api.highcharts.com/highcharts/subtitle.text).                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | caption          | `string`                                                                                      | -                                                                                                                | Chart caption text. Maps to [caption.text](https://api.highcharts.com/highcharts/caption.text).                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -67,6 +68,40 @@ export default function ChartComponent() {
 | colors           | `Array<Highcharts.ColorString \| Highcharts.GradientColorObject \| Highcharts.PatternObject>` | `["#2caffe", "#544fc5", "#00e272", "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a", "#91e8e1"]` | Default series colors. When all colors are used, new colors are pulled from the start. In styled mode, `colors` is not used (use CSS classes or [chart.colorCount](https://api.highcharts.com/highcharts/chart.colorCount)). Maps to [colors](https://api.highcharts.com/highcharts/colors).                                                                                                                                                                                                                                                                            |
 
 > **Note:** These props cover only selected chart options. Configure all other options through the `options` prop.
+
+## Load callback
+
+Use the `callback` prop to run code once the chart has loaded. It receives the chart instance, also available as `this`, and is not called again when the chart updates. The component `ref` is not set yet at that point, so use the `chart` argument instead.
+
+When the [Exporting](https://www.highcharts.com/docs/react/components/modules/exporting) module is used, the callback also runs for the copy of the chart created on export, where `chart.renderer.forExport` is `true`. Check it to skip side effects, such as updating state, for the exported copy:
+
+```tsx
+import { useState } from "react";
+import { Chart } from "@highcharts/react";
+import { Exporting } from "@highcharts/react/modules/Exporting";
+import { LineSeries } from "@highcharts/react/series/Line";
+
+export default function ChartComponent() {
+  const [pointCount, setPointCount] = useState(0);
+
+  return (
+    <>
+      <p>Points loaded: {pointCount}</p>
+      <Chart
+        callback={(chart) => {
+          if (chart.renderer.forExport) {
+            return;
+          }
+          setPointCount(chart.series[0].points.length);
+        }}
+      >
+        <Exporting />
+        <LineSeries data={[3, 4, 1, 5, 2]} />
+      </Chart>
+    </>
+  );
+}
+```
 
 ## Highcharts Stock
 
