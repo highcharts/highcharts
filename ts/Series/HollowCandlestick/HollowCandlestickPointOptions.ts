@@ -26,6 +26,13 @@ import type CandlestickPointOptions from '../Candlestick/CandlestickPointOptions
 
 export interface HollowCandlestickPointOptions extends CandlestickPointOptions {
 
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    lineColor?: undefined;
 }
 
 /* *

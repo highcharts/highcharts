@@ -17,7 +17,10 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
-import type HLCSeriesOptions from '../HLC/HLCSeriesOptions';
+import type {
+    HLCSeriesOptions,
+    HLCSeriesTooltipOptions
+} from '../HLC/HLCSeriesOptions';
 import type OHLCPointOptions from './OHLCPointOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -83,9 +86,9 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
      *    series options.
      *    ```js
      *    data: [
-     *        [0, 6, 5, 6, 7],
-     *        [1, 9, 4, 8, 2],
-     *        [2, 6, 3, 4, 10]
+     *        [0, 4, 7, 2, 6],
+     *        [1, 6, 8, 4, 5],
+     *        [2, 5, 9, 3, 8]
      *    ]
      *    ```
      *
@@ -100,17 +103,17 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
      *    data: [{
      *        x: 1,
      *        open: 3,
-     *        high: 4,
-     *        low: 5,
-     *        close: 2,
+     *        high: 9,
+     *        low: 2,
+     *        close: 7,
      *        name: "Point2",
      *        color: "#00FF00"
      *    }, {
      *        x: 1,
-     *        open: 4,
-     *        high: 3,
-     *        low: 6,
-     *        close: 7,
+     *        open: 7,
+     *        high: 8,
+     *        low: 4,
+     *        close: 5,
      *        name: "Point1",
      *        color: "#FF00FF"
      *    }]
@@ -156,6 +159,8 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
 
     states?: SeriesStatesOptions<OHLCSeriesOptions>;
 
+    tooltip?: OHLCSeriesTooltipOptions;
+
     /**
      * Line color for up points.
      *
@@ -165,6 +170,13 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
      */
     upColor?: ColorType;
 
+}
+
+export interface OHLCSeriesTooltipOptions extends HLCSeriesTooltipOptions {
+    /**
+     * @default '<span style="color:{point.color}">●</span> <b> {series.name}</b><br/>{series.chart.options.lang.stockOpen}: {point.open}<br/>{series.chart.options.lang.stockHigh}: {point.high}<br/>{series.chart.options.lang.stockLow}: {point.low}<br/>{series.chart.options.lang.stockClose}: {point.close}<br/>'
+     */
+    pointFormat?: HLCSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

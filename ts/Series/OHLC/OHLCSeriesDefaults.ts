@@ -62,26 +62,6 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
      */
     legendSymbol: 'ohlc',
 
-    /**
-     * Determines which one of  `open`, `high`, `low`, `close` values should
-     * be represented as `point.y`, which is later used to set dataLabel
-     * position and [compare](#plotOptions.series.compare).
-     *
-     * @declare    Highcharts.OptionsPointValKeyValue
-     * @default    close
-     * @validvalue ["open", "high", "low", "close"]
-     * @product    highstock
-     * @apioption  plotOptions.ohlc.pointValKey
-     */
-
-    /**
-     * Line color for up points.
-     *
-     * @type      {Highcharts.ColorType}
-     * @product   highstock
-     * @apioption plotOptions.ohlc.upColor
-     */
-
     tooltip: {
         pointFormat:
             '<span style="color:{point.color}">\u25CF</span> ' +
@@ -93,6 +73,26 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
     }
 
 };
+
+/**
+ * Determines which one of  `open`, `high`, `low`, `close` values should
+ * be represented as `point.y`, which is later used to set dataLabel
+ * position and [compare](#plotOptions.series.compare).
+ *
+ * @declare    Highcharts.OptionsPointValKeyValue
+ * @default    close
+ * @validvalue ["open", "high", "low", "close"]
+ * @product    highstock
+ * @apioption  plotOptions.ohlc.pointValKey
+ */
+
+/**
+ * Line color for up points.
+ *
+ * @type      {Highcharts.ColorType}
+ * @product   highstock
+ * @apioption plotOptions.ohlc.upColor
+ */
 
 /**
  * The parameter allows setting line series type and use OHLC indicators.
@@ -128,9 +128,9 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
  *    series options.
  *    ```js
  *    data: [
- *        [0, 6, 5, 6, 7],
- *        [1, 9, 4, 8, 2],
- *        [2, 6, 3, 4, 10]
+ *        [0, 4, 7, 2, 6],
+ *        [1, 6, 8, 4, 5],
+ *        [2, 5, 9, 3, 8]
  *    ]
  *    ```
  *
@@ -143,17 +143,17 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
  *    data: [{
  *        x: 1,
  *        open: 3,
- *        high: 4,
- *        low: 5,
- *        close: 2,
+ *        high: 9,
+ *        low: 2,
+ *        close: 7,
  *        name: "Point2",
  *        color: "#00FF00"
  *    }, {
  *        x: 1,
- *        open: 4,
- *        high: 3,
- *        low: 6,
- *        close: 7,
+ *        open: 7,
+ *        high: 8,
+ *        low: 4,
+ *        close: 5,
  *        name: "Point1",
  *        color: "#FF00FF"
  *    }]

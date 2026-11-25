@@ -107,9 +107,9 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      *    series options.
      *    ```js
      *    data: [
-     *        [0, 7, 2, 0, 4],
-     *        [1, 1, 4, 2, 8],
-     *        [2, 3, 3, 9, 3]
+     *        [0, 4, 7, 2, 6],
+     *        [1, 6, 8, 4, 5],
+     *        [2, 5, 9, 3, 8]
      *    ]
      *    ```
      *
@@ -124,18 +124,18 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      *    ```js
      *    data: [{
      *        x: 1,
-     *        open: 9,
-     *        high: 2,
-     *        low: 4,
-     *        close: 6,
+     *        open: 3,
+     *        high: 9,
+     *        low: 2,
+     *        close: 7,
      *        name: "Point2",
      *        color: "#00FF00"
      *    }, {
      *        x: 1,
-     *        open: 1,
-     *        high: 4,
-     *        low: 7,
-     *        close: 7,
+     *        open: 7,
+     *        high: 8,
+     *        low: 4,
+     *        close: 5,
      *        name: "Point1",
      *        color: "#FF00FF"
      *    }]
@@ -203,6 +203,8 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
     borderRadius?: undefined;
     borderWidth?: undefined;
     marker?: undefined;
+    stack?: undefined;
+    stacking?: undefined;
 
 }
 

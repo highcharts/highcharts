@@ -63,7 +63,7 @@ let AxisConstructor: typeof Axis;
  * */
 
 /**
- * Check the groupPixelWidth and apply the grouping if needed.
+ * Check the `groupPixelWidth` and apply the grouping if needed.
  * Fired only after processing the data.
  *
  * @internal
