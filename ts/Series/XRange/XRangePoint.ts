@@ -47,13 +47,6 @@ const ColumnPoint = ColumnSeries.prototype.pointClass;
  *
  * */
 
-/** @internal */
-declare module '../../Core/Series/PointBase' {
-    interface PointBase {
-        tooltipDateKeys?: Array<string>;
-    }
-}
-
 interface BBoxObjectWithCenter extends BBoxObject {
     centerX?: number;
 }
@@ -226,15 +219,13 @@ interface XRangePoint {
     partialFill: XRangePointOptions['partialFill'];
     partShapeArgs?: XRangePointPartialFillOptions;
     shapeType: string;
-    tooltipDateKeys: Array<string>;
     x2?: number;
     yCategory?: string;
 
 }
 
 extend(XRangePoint.prototype, {
-    ttBelow: false,
-    tooltipDateKeys: ['x', 'x2']
+    ttBelow: false
 });
 
 /* *

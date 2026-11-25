@@ -150,7 +150,7 @@ export interface XRangeSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
     clusterFormat?: ColumnSeriesTooltipOptions['clusterFormat'];
 
     /**
-     * @default '<span style="font-size: 0.8em">{ucfirst point.x} - {point.x2}</span><br/>'
+     * @default '<span style="font-size: 0.8em">{ucfirst point.key} - {point.keyEnd}</span><br/>'
      */
     headerFormat?: ColumnSeriesTooltipOptions['headerFormat'];
 
