@@ -23,6 +23,9 @@
 
 
 import type DataTable from './DataTable';
+import type { NullProto } from '../Shared/Types';
+
+import { objectEach } from '../Shared/Utilities.js';
 
 
 /* *
@@ -57,12 +60,23 @@ class DataCursor {
 
 
     public constructor(
-        stateMap: StateMap = Object.create(null)
+        stateMap: StateMap = {}
     ) {
         this.emittingRegister = [];
-        // Table IDs are used as keys, so keep the maps prototype-less.
+        // Table IDs and states are used as keys, so keep all maps
+        // prototype-less, also when a map is given, for example from JSON.
         this.listenerMap = Object.create(null);
-        this.stateMap = stateMap;
+        this.stateMap = Object.create(null);
+
+        // Copy own keys plainly. `extend` would skip `__proto__` and
+        // `constructor`, which are safe keys on prototype-less maps.
+        objectEach(stateMap, (states, tableId): void => {
+            const copy = this.stateMap[tableId] = Object.create(null);
+
+            objectEach(states, (cursors, state): void => {
+                copy[state] = cursors;
+            });
+        });
     }
 
 
@@ -82,13 +96,13 @@ class DataCursor {
     /**
      * Contains listeners of states on tables.
      */
-    public readonly listenerMap: ListenerMap;
+    public readonly listenerMap: NullProtoMap<Listener>;
 
 
     /**
      * Contains lasting states that are kept over multiple changes.
      */
-    public readonly stateMap: StateMap;
+    public readonly stateMap: NullProtoMap<Type>;
 
 
     /* *
@@ -131,7 +145,7 @@ class DataCursor {
     ): this {
         const listenerMap = this.listenerMap[tableId] = (
             this.listenerMap[tableId] ||
-            {}
+            Object.create(null)
         );
         const listeners = listenerMap[state] = (
             listenerMap[state] ||
@@ -216,7 +230,7 @@ class DataCursor {
 
         if (listeners) {
             const stateMap = this.stateMap[tableId] = (
-                this.stateMap[tableId] ?? {}
+                this.stateMap[tableId] ?? Object.create(null)
             );
 
             const cursors = stateMap[cursor.state] || [];
@@ -384,6 +398,13 @@ export interface Event {
 export type Listener = (this: DataCursor, e: Event) => void;
 
 export type ListenerMap = Record<TableId, Record<State, Array<Listener>>>;
+
+/**
+ * Prototype-less map of items by table ID and state.
+ */
+type NullProtoMap<T> = (
+    NullProto & Record<TableId, NullProto & Record<State, Array<T>>>
+);
 
 export type State = string;
 
