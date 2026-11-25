@@ -20,6 +20,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type Point from '../../Core/Series/Point';
+import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
@@ -219,7 +220,8 @@ function syncStrategy(series: Series): void {
  */
 function compose(
     SeriesClass: typeof Series,
-    seriesTypes: typeof SeriesRegistry.seriesTypes
+    seriesTypes: typeof SeriesRegistry.seriesTypes,
+    PointerClass: typeof Pointer
 ): void {
 
     if (!pushUnique(composed, 'Boost2')) {
@@ -445,7 +447,57 @@ function compose(
         return proceed.apply(this, [].slice.call(arguments, 1));
     });
 
-    // --- 10. getExtremes(): answered from the block index instead of a
+    // --- 10. getHoverData(): a shared tooltip gathers the other
+    //         series by scanning their points, which this path empties.
+    wrap(PointerClass.prototype, 'getHoverData', function (
+        this: Pointer,
+        proceed: Function,
+        existingHoverPoint: (Point|undefined),
+        existingHoverSeries: (Series|undefined),
+        series: Array<Series>,
+        isDirectTouch?: boolean,
+        shared?: boolean,
+        e?: PointerEvent
+    ): Pointer.HoverDataObject {
+        const data = proceed.call(
+                this, existingHoverPoint, existingHoverSeries, series,
+                isDirectTouch, shared, e
+            ),
+            hoverPoint = data.hoverPoint;
+
+        if (!shared || !hoverPoint || data.hoverSeries?.noSharedTooltip) {
+            return data;
+        }
+
+        const points = data.hoverPoints.slice();
+
+        for (const s of series) {
+            if (
+                !s.gpu ||
+                !s.visible ||
+                s.noSharedTooltip ||
+                s.options.enableMouseTracking === false ||
+                points.some((p: Point): boolean => p.series === s)
+            ) {
+                continue;
+            }
+
+            const point = s.gpu.pointAtX(hoverPoint.x);
+
+            if (point) {
+                points.push(point);
+            }
+        }
+
+        // The tooltip lists them in the order the chart holds them.
+        data.hoverPoints = points.sort((a: Point, b: Point): number =>
+            series.indexOf(a.series) - series.indexOf(b.series)
+        );
+
+        return data;
+    });
+
+    // --- 11. getExtremes(): answered from the block index instead of a
     //        scan of every row in view.
     wrap(seriesProto, 'getExtremes', function (
         this: Series,

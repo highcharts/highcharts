@@ -21,6 +21,6 @@ const G: AnyRecord = Highcharts;
 
 G.Boost2 = Boost2;
 
-Boost2.compose(G.Series, G.seriesTypes);
+Boost2.compose(G.Series, G.seriesTypes, G.Pointer);
 
 export default Highcharts;

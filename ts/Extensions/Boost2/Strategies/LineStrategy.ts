@@ -1629,22 +1629,56 @@ class LineStrategy {
     }
 
     /**
-     * Creates the `Point` for a single hit, with the `dist` and `distX`
-     * that `Pointer.findNearestKDPoint` ranks the series by. The core
-     * sets those in its k-d tree search, which this path replaces.
+     * The point for a row, reused across hits so the core keeps seeing
+     * one hover rather than a new object each time.
      *
      * @internal
      */
-    private materialize(index: number, e: PointerEvent): Point {
+    private keep(index: number): Point {
         if (this.hovered?.index === index) {
             // The axes may have moved under it since the last hit.
             this.place(this.hovered, index);
         } else {
             this.hovered = this.pointAt(index);
         }
+        return this.hovered;
+    }
 
+    /**
+     * The point at an exact x, which a shared tooltip collects from
+     * every series it covers. The column is sorted, so one search
+     * settles it.
+     *
+     * @internal
+     */
+    public pointAtX(x: number): (Point|undefined) {
+        const series = this.series,
+            xData = series.getColumn('x'),
+            at = rowsBefore(xData, x);
+
+        if (
+            xData[at] !== x ||
+            (
+                !series.options.nullInteraction &&
+                !isNumber(series.getColumn('y')[at])
+            )
+        ) {
+            return void 0;
+        }
+
+        return this.keep(at);
+    }
+
+    /**
+     * The point for a single hit, with the `dist` and `distX` that
+     * `Pointer.findNearestKDPoint` ranks the series by. The core sets
+     * those in its k-d tree search, which this path replaces.
+     *
+     * @internal
+     */
+    private materialize(index: number, e: PointerEvent): Point {
         const { xAxis, yAxis } = this.series,
-            point = this.hovered,
+            point = this.keep(index),
             dx = e.chartX - xAxis.pos - (point.plotX as number),
             dy = isNumber(point.plotY) ?
                 e.chartY - yAxis.pos - point.plotY :

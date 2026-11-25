@@ -6,15 +6,6 @@ a ribbon with miter and bevel joins, or as a one pixel hairline under
 `boostHairline`, with optional markers of any built-in symbol and data labels. Axes may
 be reversed and the chart inverted.
 
-## Defects
-
-- **The series is missing from a shared tooltip.** `getHoverData`
-  collects the other members with `find(s.points, ...)`, and this module
-  keeps `series.points` empty on purpose. Measured over 63 cursor
-  positions: an all-SVG chart shows `A+B` in 59, the same chart with one
-  series on the GPU shows only `B` in 60. Fix direction: a branch in
-  `getHoverData` that asks the strategy instead of scanning `points`.
-
 ## Options that silently render differently
 
 These are not rejected by `isSupported`, so a chart using them is drawn
