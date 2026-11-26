@@ -887,6 +887,7 @@ test.describe('Grid filtering debounce', () => {
         const errors: string[] = [];
         page.on('pageerror', (e: Error) => errors.push(e.message));
 
+        await page.clock.install();
         await createGrid(page, 10000);
         await typeFilterValue(page, inputProductFilter, 'ap');
 
@@ -906,6 +907,9 @@ test.describe('Grid filtering debounce', () => {
             return filtering.debounceTimer;
         });
         expect(pendingAfterDestroy).toBeUndefined();
+
+        // Run past the delay, so a pending filter would have fired.
+        await page.clock.runFor(10000);
         expect(await getCalls(page)).toBe(1);
         expect(errors).toEqual([]);
     });
