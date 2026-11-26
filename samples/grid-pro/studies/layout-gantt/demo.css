@@ -1,0 +1,135 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.layout-gantt {
+    box-sizing: border-box;
+    max-width: 1320px;
+    margin: 24px auto;
+    padding: 16px 16px 8px;
+    overflow: auto;
+    background: var(--hcg-popup-background);
+    border: 1px solid var(--hcg-popup-border-color);
+    border-radius: 12px;
+    font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--hcg-color);
+}
+
+.layout-gantt h2 {
+    margin: 0 0 12px;
+    font-size: 20px;
+}
+
+#container {
+    position: relative;
+    height: 640px;
+}
+
+#container .hcg-table.hcg-layout-matrix > tbody > tr,
+#container .hcg-table.hcg-layout-matrix > tbody > tr > .hcg-cell {
+    height: auto;
+}
+
+#container .hcg-table.hcg-layout-matrix > tbody > tr > .hcg-cell {
+    padding:
+        var(--hcg-vertical-padding, var(--hcg-padding, 15px))
+        var(--hcg-horizontal-padding, var(--hcg-padding, 15px));
+}
+
+#container .hcg-table thead th {
+    text-align: center;
+    font-size: 0.975em;
+    font-weight: 600;
+}
+
+#container .hcg-table thead th.gantt-dow {
+    padding: 8px 0;
+}
+
+#container .gantt-dow .hcg-header-cell-content {
+    font-size: 10px;
+    font-weight: 500;
+    text-align: center;
+}
+
+#container .hcg-table tbody > tr > .hcg-cell {
+    vertical-align: middle;
+}
+
+#container .gantt-start {
+    white-space: normal;
+}
+
+#container .hcg-table tbody > tr > .hcg-cell.gantt-day {
+    position: relative;
+    padding: 0;
+    overflow: visible;
+}
+
+#container .gantt-weekend {
+    background: color-mix(in srgb, var(--hcg-color) 6%, var(--hcg-background));
+}
+
+#container .hcg-tbody-sticky > tr > .hcg-cell {
+    background-color: var(--hcg-background);
+}
+
+#container .hcg-tbody-sticky > tr > .hcg-cell.gantt-weekend {
+    background-color:
+        color-mix(
+            in srgb,
+            var(--hcg-color) 6%,
+            var(--hcg-background)
+        );
+}
+
+#container .gantt-day:has(.gantt-bar.is-start, .gantt-bar.is-mid) {
+    z-index: 1;
+}
+
+.gantt-track {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 36px;
+}
+
+.gantt-bar {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    height: 14px;
+    background: #8ecf8a;
+}
+
+.gantt-bar.is-parent {
+    background: #7eb6ea;
+}
+
+.gantt-bar.is-start,
+.gantt-bar.is-mid {
+    width: calc(100% + 1px);
+}
+
+.gantt-bar.is-start,
+.gantt-bar.is-single {
+    margin-left: 3px;
+    border-radius: 3px 0 0 3px;
+}
+
+.gantt-bar.is-start {
+    width: calc(100% - 3px + 1px);
+}
+
+.gantt-bar.is-end,
+.gantt-bar.is-single {
+    margin-right: 3px;
+    border-radius: 0 3px 3px 0;
+}
+
+.gantt-bar.is-end {
+    width: calc(100% - 3px);
+}
+
+.gantt-bar.is-single {
+    width: calc(100% - 6px);
+    border-radius: 3px;
+}

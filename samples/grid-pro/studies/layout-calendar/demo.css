@@ -1,0 +1,155 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.layout-calendar {
+    box-sizing: border-box;
+    max-width: 880px;
+    margin: 32px auto;
+    padding: 20px 20px 8px;
+    background: var(--hcg-popup-background);
+    border: 1px solid var(--hcg-popup-border-color);
+    border-radius: 12px;
+    font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--hcg-color);
+}
+
+.calendar-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 6px;
+}
+
+.calendar-nav button {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--hcg-input-border-color);
+    border-radius: 8px;
+    background: var(--hcg-input-background);
+    color: inherit;
+    cursor: pointer;
+}
+
+.calendar-nav button:first-child,
+.calendar-nav button:last-child {
+    width: 32px;
+    padding: 0;
+    font-size: 18px;
+    line-height: 1;
+}
+
+#cal-label {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+#container .hcg-table {
+    --hcg-layout-row-height: 108px;
+    --hcg-layout-cell-padding: 0;
+}
+
+#container .cal-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 100px;
+    padding-top: 8px;
+}
+
+#container .hcg-table tbody > tr > .hcg-cell {
+    vertical-align: top;
+}
+
+#container .hcg-table thead th {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #667085;
+}
+
+#container .hcg-table tbody > tr > .hcg-cell:has(.cal-bar.is-start, .cal-bar.is-mid) {
+    z-index: 1;
+}
+
+#container .cal-day.is-outside .cal-num {
+    color: #b0b7c3;
+}
+
+#container .cal-num.is-today,
+#container .cal-day.is-outside .cal-num.is-today {
+    background: #2caffe;
+    color: #fff;
+}
+
+#container .cal-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+#container .cal-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    margin-top: 6px;
+}
+
+#container .cal-bar {
+    box-sizing: border-box;
+    height: 18px;
+    overflow: hidden;
+    padding: 0 6px;
+    text-align: left;
+    color: #08344d;
+    background: #b9e6fb;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    white-space: nowrap;
+}
+
+#container .cal-bar.is-start,
+#container .cal-bar.is-mid {
+    width: calc(100% + 1px);
+}
+
+#container .cal-bar.is-start,
+#container .cal-bar.is-single {
+    margin-left: 4px;
+    border-radius: 4px 0 0 4px;
+}
+
+#container .cal-bar.is-start {
+    width: calc(100% - 4px + 1px);
+}
+
+#container .cal-bar.is-end {
+    width: calc(100% - 4px);
+}
+
+#container .cal-bar.is-end,
+#container .cal-bar.is-single {
+    margin-right: 4px;
+    border-radius: 0 4px 4px 0;
+}
+
+#container .cal-bar.is-single {
+    width: calc(100% - 8px);
+    border-radius: 4px;
+}
