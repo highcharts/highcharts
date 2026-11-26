@@ -56,6 +56,20 @@ export interface ChartingOptions {
     chartOptions?: AnyRecord;
 
     /**
+     * Whether to offer charts in the context menus. Right-clicking a cell
+     * charts its column against the first non-numeric column, and
+     * right-clicking a column header charts that column. Both chart the
+     * selected rows if any, otherwise all rows. Requires Highcharts to be
+     * loaded.
+     *
+     * The `createChart` menu item can also be placed in
+     * `cells.contextMenu.items` like any other registered item.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+
+    /**
      * The chart types to offer, in order of preference. Types that do not fit
      * the selected data are left out.
      *
@@ -170,11 +184,32 @@ declare module '../../Core/Options' {
          */
         charting?: {
             /**
+             * The label of the column header menu item that charts the
+             * column.
+             *
+             * @default 'Chart this column'
+             */
+            chartColumn?: string;
+
+            /**
+             * The labels of the chart types in the context menus.
+             */
+            chartTypes?: Partial<Record<ChartingChartType, string>>;
+
+            /**
              * The accessible label of the button closing the chart popup.
              *
              * @default 'Close chart'
              */
             closeChart?: string;
+
+            /**
+             * The label of the cell context menu item that opens the chart
+             * types.
+             *
+             * @default 'Create chart'
+             */
+            createChart?: string;
         };
     }
 }
@@ -193,6 +228,12 @@ declare module '../GridEvents' {
          * Grid data.
          */
         afterChartCreate?: (this: Grid, e: AfterChartCreateEvent) => void;
+    }
+}
+
+declare module '../../Core/ContextMenu/ContextMenuOptions' {
+    interface MenuItemIdRegistry {
+        createChart: never;
     }
 }
 

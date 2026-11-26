@@ -24,6 +24,7 @@
  * */
 
 import type Column from '../../Core/Table/Column';
+import type HeaderCell from '../../Core/Table/Header/HeaderCell';
 import type Grid from '../../Core/Grid';
 import type DataTable from '../../../Data/DataTable';
 import type { CellType as DataTableCellType } from '../../../Data/DataTable';
@@ -147,6 +148,7 @@ class Charting {
      * The default charting options.
      */
     public static defaultOptions: ChartingOptions = {
+        enabled: false,
         types: [
             'line', 'area', 'column', 'stackedColumn', 'bar', 'pie',
             'scatter', 'bubble'
@@ -194,6 +196,14 @@ class Charting {
      * The popup showing the last chart created without `renderTo`.
      */
     public popup?: ChartPopup;
+
+    /**
+     * Callbacks detaching the context menus of the column headers, by header
+     * cell.
+     *
+     * @internal
+     */
+    public headerMenus: Map<HeaderCell, () => void> = new Map();
 
 
     /* *
@@ -322,9 +332,20 @@ class Charting {
     }
 
     /**
+     * Detaches the context menus of the column headers.
+     *
+     * @internal
+     */
+    public detachHeaderMenus(): void {
+        this.headerMenus.forEach((detach): void => detach());
+        this.headerMenus.clear();
+    }
+
+    /**
      * Destroys the charting controller and the chart popup.
      */
     public destroy(): void {
+        this.detachHeaderMenus();
         this.popup?.hide();
         delete this.popup;
     }

@@ -31,6 +31,9 @@ const monthlyGridPromise = Grid.grid('monthly', {
         id: 'visitors',
         header: { format: 'Visitors' }
     }],
+    charting: {
+        enabled: true
+    },
     events: {
         afterChartCreate: function (e) {
             console.log('Chart created', e.chartType, e.columns);
@@ -66,8 +69,16 @@ const regionGridPromise = Grid.grid('regions', {
         checkbox: { enabled: true }
     },
     charting: {
+        enabled: true,
         chartOptions: {
             credits: { enabled: false }
+        }
+    },
+    rendering: {
+        rows: {
+            // With a second feature in the cell menu, the chart types move
+            // to a "Create chart" submenu.
+            pinning: { enabled: true }
         }
     }
 }, true);

@@ -95,9 +95,11 @@ export interface MenuItemOptions<T extends MenuTarget = MenuTarget> {
     id?: MenuItemId;
 
     /**
-     * Items of the branch this item opens.
+     * Items of the branch this item opens. A callback builds them from the
+     * context each time the menu opens, for a branch whose entries depend on
+     * what the menu was opened on.
      */
-    items?: Array<MenuItemOptions<T> | MenuItemId>;
+    items?: MenuItemResolvable<Array<MenuItemOptions<T> | MenuItemId>, T>;
 
     /**
      * The label shown in the menu.

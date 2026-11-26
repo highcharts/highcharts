@@ -236,4 +236,66 @@ test.describe('Creating charts from Grid data', () => {
         expect(result.cancelled).toBe(true);
         expect(result.title).toBe('Custom');
     });
+
+    test('Creates charts from the cell and header context menus', async ({ page }) => {
+        const menus = page.locator('.hcg-popup:not(.hcg-chart-popup)');
+        const menuLabels = (): Promise<string[]> => menus.last()
+            .locator('.hcg-menu-item').allInnerTexts()
+            .then((labels): string[] => labels.map((l): string => l.trim()));
+        const getChart = (): Promise<any> => page.evaluate(() => {
+            const chart = (window as any).Grid.grids[0].charting.popup.chart;
+            return {
+                names: chart.series.map((s: any) => s.name),
+                types: chart.series.map((s: any) => s.type),
+                stacking: chart.series[0].options.stacking,
+                categories: chart.xAxis[0].categories,
+                points: chart.series[0].points.length
+            };
+        });
+
+        // A text cell charts every numeric column, for the selected rows,
+        // with the recommended types first. Charting is the only feature in
+        // the menu, so its types are shown in place.
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0].rowSelection.select([0, 2]);
+        });
+        await page.locator(
+            'tbody tr[data-row-index="0"] td[data-column-id="region"]'
+        ).click({ button: 'right' });
+
+        expect(await menuLabels()).toEqual([
+            'Column chart', 'Stacked column chart', 'Bar chart',
+            'Line chart', 'Area chart'
+        ]);
+        await menus.locator('.hcg-menu-item', {
+            hasText: 'Stacked column chart'
+        }).click();
+
+        let chart = await getChart();
+        expect(chart.names).toEqual(['Sales', 'cost', 'units']);
+        expect(chart.stacking).toBe('normal');
+        expect(chart.categories).toEqual(['North', 'East']);
+
+        // The header menu charts the column against the dimension, for all
+        // rows once the selection is cleared.
+        await page.keyboard.press('Escape');
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0].rowSelection.clear();
+        });
+        await page.locator('th[data-column-id="sales"]')
+            .click({ button: 'right' });
+        await menus.locator('.hcg-menu-item', {
+            hasText: 'Chart this column'
+        }).hover();
+        await expect(menus).toHaveCount(2);
+        expect((await menuLabels())[0]).toBe('Line chart');
+        await menus.last().locator('.hcg-menu-item', {
+            hasText: 'Line chart'
+        }).click();
+
+        chart = await getChart();
+        expect(chart.names).toEqual(['Sales']);
+        expect(chart.types).toEqual(['line']);
+        expect(chart.points).toBe(3);
+    });
 });

@@ -11,6 +11,13 @@ Grid.grid('container', {
             units: [3, 1, 2]
         }
     },
+    charting: {
+        enabled: true
+    },
+    rowSelection: {
+        enabled: true,
+        mode: 'multiple'
+    },
     columns: [{
         id: 'date',
         dataType: 'datetime'
