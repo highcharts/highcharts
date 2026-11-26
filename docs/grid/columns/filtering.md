@@ -349,6 +349,35 @@ columns: [{
 
 The filtering UI will not be rendered for disabled columns.
 
+## Single-column filtering
+
+By default, several columns can be filtered at once. Set
+`filtering.multiColumn` to `false` when filters must not be combined, for
+example when the data source can only filter on one column at a time, or when
+a filter selects a view that should replace the previous one.
+
+```js
+columnDefaults: {
+    filtering: {
+        enabled: true,
+        multiColumn: false
+    }
+}
+```
+
+Applying a filter then clears the filters on all other columns. Clearing a
+filter leaves the other columns unchanged.
+
+The option can also be set per column. A filter on a column with
+`multiColumn: false` clears every other filter. A filter on any other column
+clears only the filters on columns with `multiColumn: false`.
+
+The rule applies when a filter is applied in the UI or through
+`column.filtering.set()`. Rules set in the options with `filtering.rule` are
+applied as given.
+
+See also: [Single-column filtering](https://www.highcharts.com/samples/grid/options/filtering-multi-column).
+
 ## Programmatic filtering
 
 Filters can also be controlled programmatically through the API.
@@ -435,7 +464,8 @@ These events can be used for e.g. logging, analytics, and UI feedback.
 * Allowed UI operators can be restricted with `filtering.operators`
 * DateTime columns share operator keys with number columns; customize date UI
   labels with `lang.columnFilteringDateTimeOperators`
-* Multiple active filters are combined using AND logic
+* Multiple active filters are combined using AND logic, unless
+  `filtering.multiColumn` is `false`
 * UI can be inline or popup, and mixed per column
 * Filter behavior depends on column data type
 * Filters can be set initially or controlled programmatically
