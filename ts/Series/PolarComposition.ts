@@ -1545,6 +1545,9 @@ class PolarAdditions {
                 pointerProto = PointerClass.prototype,
                 seriesProto = SeriesClass.prototype;
 
+            chartProto.propsFromSeries.push('angular', 'polar');
+            chartProto.propsRequireUpdateSeries.push('chart.polar');
+
             addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
             addEvent(ChartClass, 'createAxes', onChartCreateAxes);
             addEvent(ChartClass, 'init', onChartAfterInit);

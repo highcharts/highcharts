@@ -187,4 +187,91 @@
             });
         }
     );
+
+    QUnit.test(
+        'Invalid or huge dataRefreshRate polls with a valid delay (#25572)',
+        function (assert) {
+            const win = Highcharts.win,
+                sources = [{
+                    name: 'csvURL',
+                    data: { csvURL: '/fake.csv' },
+                    body: 'x,y\n1,2',
+                    expectedDelay: 2000
+                }, {
+                    name: 'googleSpreadsheetKey',
+                    data: {
+                        googleSpreadsheetKey: 'fake-key',
+                        googleAPIKey: 'fake-api-key'
+                    },
+                    body: JSON.stringify({ values: [[1, 2, 3], [4, 5, 6]] }),
+                    expectedDelay: 4000
+                }];
+
+            sources.forEach(function (source) {
+                [
+                    ['abc', source.expectedDelay],
+                    [Infinity, source.expectedDelay],
+                    // 30 days, over the largest delay a timer can hold
+                    [2592000, 2147483647]
+                ].forEach(function (testCase) {
+                    const dataRefreshRate = testCase[0],
+                        expectedDelay = testCase[1],
+                        clock = TestUtilities.lolexInstall(),
+                        fakeSetTimeout = win.setTimeout,
+                        delays = [],
+                        log = interceptRequests(60, function () {
+                            return source.body;
+                        });
+
+                    // Record the delays that timers are scheduled with
+                    win.setTimeout = function () {
+                        delays.push(arguments[1]);
+                        return fakeSetTimeout.apply(this, arguments);
+                    };
+
+                    try {
+                        const chart = Highcharts.chart('container', {
+                            data: Highcharts.merge(source.data, {
+                                enablePolling: true,
+                                dataRefreshRate: dataRefreshRate
+                            })
+                        });
+
+                        // Let the first response arrive and schedule a poll
+                        clock.tick(100);
+
+                        const label = source.name + ' with dataRefreshRate ' +
+                            dataRefreshRate;
+
+                        assert.ok(
+                            delays.every(isFinite),
+                            label + ' should not schedule a nonfinite delay'
+                        );
+                        assert.ok(
+                            delays.indexOf(expectedDelay) !== -1,
+                            label + ' should poll every ' +
+                            expectedDelay + ' ms'
+                        );
+
+                        // Go up to just before the next poll is due, at most
+                        // 10 s so a zero-delay poll loop can not hang the test
+                        const requestCount = log.count;
+                        clock.tick(Math.min(expectedDelay - 200, 10000));
+
+                        assert.strictEqual(
+                            log.count,
+                            requestCount,
+                            label + ' should not poll before the interval'
+                        );
+
+                        chart.destroy();
+                    } finally {
+                        win.setTimeout = fakeSetTimeout;
+                        log.restore();
+                        TestUtilities.lolexUninstall(clock);
+                    }
+                });
+            });
+        }
+    );
 }());

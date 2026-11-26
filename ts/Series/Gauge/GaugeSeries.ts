@@ -61,6 +61,13 @@ declare module '../../Core/Chart/ChartBase' {
 }
 
 /** @internal */
+declare module '../../Core/Chart/ChartOptions' {
+    interface ChartOptions {
+        angular?: boolean;
+    }
+}
+
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         fixedBox?: boolean;

@@ -91,7 +91,8 @@ export interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
     data?: Array<(PointAndFigurePointOptions|PointShortOptions)>;
 
     /**
-     * Padding between each value groups, in x axis units.
+     * The padding on each side of a column, as a fraction of the distance
+     * between adjacent columns. A higher value makes the boxes narrower.
      *
      * @default 0.2
      *
@@ -119,7 +120,8 @@ export interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
     markerUp: PointMarkerOptions;
 
     /**
-     * Padding between each column or bar, in x axis units.
+     * The padding on each side of a box, as a fraction of the column width.
+     * A higher value makes the boxes narrower.
      *
      * @default 0.1
      *
@@ -139,6 +141,11 @@ export interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
      */
     reversalAmount: number;
 
+    /**
+     * @default 0
+     */
+    turboThreshold?: number;
+
     /* *
      *
      *  Excluded
@@ -150,9 +157,12 @@ export interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
     compare?: undefined;
     compareBase?: undefined;
     compareStart?: undefined;
+    cropThreshold?: undefined;
     cumulative?: undefined;
     cumulativeStart?: undefined;
     dragDrop?: undefined;
+    legendSymbolColor?: undefined;
+    shadow?: undefined;
 }
 
 
