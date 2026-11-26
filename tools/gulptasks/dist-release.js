@@ -312,9 +312,6 @@ function copyFiles() {
     const folders = [{
         from: 'code',
         to: pathToDistRepo
-    }, {
-        from: 'css',
-        to: join(pathToDistRepo, 'css')
     }];
 
     const files = {
