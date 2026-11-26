@@ -34,8 +34,15 @@ import type {
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
 import QueryingController from './QueryingController.js';
 import type { Condition } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
-import { operatorAliases } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
-import { fireEvent, isString } from '../../../Shared/Utilities.js';
+import {
+    conditionMappers,
+    operatorAliases
+} from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
+import {
+    fireEvent,
+    isArray,
+    isString
+} from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -160,6 +167,16 @@ class FilteringController {
                 (isStringValue && !stringifiedValue)
             ) && !nonValueConditions.includes(operator ?? '')
         ) {
+            return;
+        }
+
+        const mapper = operator && conditionMappers[operator];
+        if (mapper) {
+            return mapper(columnId, value);
+        }
+
+        // The built-in operators compare the cell with a single value.
+        if (isArray(value)) {
             return;
         }
 
@@ -401,7 +418,7 @@ class FilteringController {
         const condition = this.createColumnCondition(
             columnId,
             sourceColumnId,
-            options
+            { rule: { operator: options.condition, value: options.value } }
         );
 
         if (condition) {

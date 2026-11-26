@@ -1,0 +1,14 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+#hint {
+    padding: 0 12px;
+    font-family: sans-serif;
+}
+
+#container {
+    padding: 12px;
+
+    .hcg-container {
+        min-height: 340px;
+    }
+}

@@ -236,12 +236,18 @@ class Point {
 
     /**
      * The point's name if it is defined, or its category in case of a category,
-     * otherwise the x value. Convenient for tooltip and data label formatting.
+     * otherwise the x value or datetime. Convenient for tooltip formatting,
+     * where it is used in the default header. The key is applied just in time
+     * for the tooltip formatting.
+     *
+     * For datetime axes the key is a localized time string, formatted according
+     * to the [tooltip.dateTimeLabelFormats](#tooltip.dateTimeLabelFormats)
+     * option or the [tooltip.xDateFormat](#tooltip.xDateFormat) if defined.
      *
      * @name Highcharts.Point#key
      * @type {number|string}
      */
-    public key: string|number;
+    public key?: string|number;
 
     /**
      * Decides which data label is kept when two of them overlap. The label
@@ -462,7 +468,13 @@ class Point {
      */
     /**
      * The point's name if it is defined, or its category in case of a category,
-     * otherwise the x value. Convenient for tooltip and data label formatting.
+     * otherwise the x value or datetime. Convenient for tooltip formatting,
+     * where it is used in the default header. The key is applied just in time
+     * for the tooltip formatting.
+     *
+     * For datetime axes the key is a localized time string, formatted according
+     * to the [tooltip.dateTimeLabelFormats](#tooltip.dateTimeLabelFormats)
+     * option or the [tooltip.xDateFormat](#tooltip.xDateFormat) if defined.
      *
      * @name Highcharts.Point#key
      * @type {number|string}
@@ -1216,6 +1228,33 @@ class Point {
             return result[key];
         }, object);
         return object;
+    }
+
+    /**
+     * Applies the `point.key` property, which is used in tooltip formatting. If
+     * the point has a name or category, it will be used as the key. If the
+     * point is on a datetime axis and has a numeric x value, it will be
+     * formatted accordingly.
+     * @internal
+     * */
+    public applyKey(
+        key: string|number|undefined = this.key
+    ): string|number|undefined {
+        const series = this.series,
+            tooltipOptions = series.tooltipOptions,
+            dateTime = series.xAxis?.dateTime;
+
+        if (dateTime && isNumber(key)) {
+            key = series.chart.time.dateFormat(
+                tooltipOptions.xDateFormat ||
+                dateTime.getXDateFormat(
+                    key,
+                    tooltipOptions.dateTimeLabelFormats
+                ),
+                key
+            );
+        }
+        return (this.key = key);
     }
 
     /** @internal */

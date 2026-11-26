@@ -128,7 +128,6 @@ const exporting: ExportingOptions = {
      *
      * @type      {Highcharts.ExportingErrorCallbackFunction}
      * @since     5.0.0
-     * @requires  modules/exporting
      * @requires  modules/offline-exporting
      * @apioption exporting.error
      */
@@ -154,7 +153,6 @@ const exporting: ExportingOptions = {
      * @type      {boolean}
      * @default   true
      * @since     4.1.8
-     * @requires  modules/exporting
      * @requires  modules/offline-exporting
      * @apioption exporting.fallbackToExportServer
      */
@@ -239,7 +237,6 @@ const exporting: ExportingOptions = {
      * @type      {boolean}
      * @default   true
      * @since 12.3.0
-     * @requires  modules/exporting
      * @apioption exporting.local
      */
     local: true,
@@ -397,7 +394,6 @@ const exporting: ExportingOptions = {
      * options.
      *
      * @type     {Highcharts.Dictionary<*>}
-     * @requires modules/exporting
      */
     buttons: {
 
@@ -409,7 +405,6 @@ const exporting: ExportingOptions = {
          *
          * @declare  Highcharts.ExportingButtonsOptionsObject
          * @extends  navigation.buttonOptions
-         * @requires modules/exporting
          */
         contextButton: {
 
@@ -695,8 +690,6 @@ const navigation: NavigationOptions = {
      *
      * In styled mode, the buttons are styled with the
      * `.highcharts-contextbutton` and `.highcharts-button-symbol` classes.
-     *
-     * @requires modules/exporting
      */
     buttonOptions: {
 
@@ -877,8 +870,6 @@ const navigation: NavigationOptions = {
          *
          * @sample highcharts/navigation/buttonoptions-theme/
          *         Theming the buttons
-         *
-         * @requires modules/exporting
          *
          * @since 3.0
          */

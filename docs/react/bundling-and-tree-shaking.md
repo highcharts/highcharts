@@ -17,7 +17,8 @@ and esbuild can tree shake unused code.
 Import just the components you use in JSX:
 
 ```jsx
-import { Chart, LineSeries, Title } from "@highcharts/react";
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 ```
 
 If you use components for Highcharts modules (for example [Accessibility](https://www.highcharts.com/docs/react/components/modules/accessibility) or
@@ -31,8 +32,8 @@ import { Exporting } from "@highcharts/react/modules/Exporting";
 If you use modules without a dedicated Highcharts React component, import only those you need using the `/es-modules/masters` path to use ESM:
 
 ```tsx
-import "highcharts/es-modules/masters/modules/venn.src.js";
-import "highcharts/es-modules/masters/modules/draggable-points.src.js";
+import "highcharts/es-modules/masters/modules/annotations.src.js";
+import "highcharts/es-modules/masters/modules/pattern-fill.src.js";
 ```
 
 ## Keep Highcharts lean with core + modules

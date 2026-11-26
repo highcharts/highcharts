@@ -64,7 +64,7 @@ export default function CandlestickChart() {
                     }
                 }
             }}
-            containerProps={{ style: { height: '600px', minWidth: '310px' } }}
+            containerProps={{ id: 'container' }}
         >
             <Title align="left">AAPL Stock Price</Title>
             <Subtitle align="left">Generated from Google Finance API</Subtitle>

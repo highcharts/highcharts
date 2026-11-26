@@ -42,6 +42,39 @@ test.describe('samples/unit-tests/polar/polar-zoom equivalent', () => {
     });
 });
 
+test.describe('chart.polar without highcharts-more', () => {
+    test('Option is ignored', async ({ page }) => {
+        const handle = await createChart(page, {
+            chart: {
+                polar: true
+            },
+            tooltip: {
+                split: true
+            },
+            series: [{
+                data: [1, 3, 2]
+            }]
+        });
+
+        expect(
+            await handle.evaluate((chart): unknown => [
+                chart.polar,
+                chart.tooltip.split
+            ]),
+            'chart.polar should not be set and disable split tooltip'
+        ).toEqual([void 0, true]);
+
+        expect(
+            await handle.evaluate((chart): unknown => {
+                chart.update({ chart: { inverted: true } });
+                chart.update({ chart: { polar: true } });
+                return [chart.polar, chart.inverted];
+            }),
+            'chart.polar should be ignored on update, inverted parsed'
+        ).toEqual([void 0, true]);
+    });
+});
+
 test(
     'Loading highcharts-more after chart creation should not break redraw ' +
     '(#25546)',

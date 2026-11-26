@@ -1,5 +1,4 @@
-import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
-import { MapsChart } from '@highcharts/react/Maps';
+import { MapsChart, Highcharts } from '@highcharts/react/Maps';
 import {
     Title,
     Subtitle,
@@ -11,9 +10,10 @@ import { TiledWebMapSeries } from '@highcharts/react/series/TiledWebMap';
 import { MapPointSeries } from '@highcharts/react/series/MapPoint';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
+
 // Templating helper to trim some character from the end
-Highcharts.Templating.helpers['trim'] = (txt: unknown, len: unknown): string =>
-    String(txt).slice(0, -Number(len));
+Highcharts.Templating.helpers.trim = (txt: string, len: number) =>
+    txt.slice(0, -len);
 
 export default function TwmOsloAttractionsChart() {
     return (
@@ -42,15 +42,15 @@ export default function TwmOsloAttractionsChart() {
                     zoom: 13
                 }
             }}
-            containerProps={{
-                style: { height: '500px', minWidth: '310px', margin: '0 auto' }
-            }}
+            containerProps={{ id: 'container' }}
         >
             <Title>{''}</Title>
             <Subtitle>{''}</Subtitle>
             <Tooltip
                 headerFormat={
-                    '<table style="border-left:3px solid {series.color}; padding-left:5px;"><tr><td style="font-size: 0.9em;">{trim series.name 1}</td></tr>'
+                    '<table style="border-left:3px solid {series.color};' +
+                    ' padding-left:5px;"><tr><td style="font-size: 0.9em;">' +
+                    '{trim series.name 1}</td></tr>'
                 }
                 pointFormat='<tr><td style="font-size: 1.1em;">{point.name}</td></tr>'
                 footerFormat="</table>"
@@ -59,13 +59,15 @@ export default function TwmOsloAttractionsChart() {
                 align="left"
                 symbolWidth={24}
                 symbolHeight={24}
-                itemStyle={{ textOutline: '1 1 1px rgba(255,255,255)' }}
+                itemStyle={{
+                    textOutline: '1 1 1px rgba(255,255,255)'
+                }}
                 backgroundColor={`color-mix(
                     in srgb,
                     var(--highcharts-background-color, white),
                     transparent 15%
                 )`}
-                floating={true}
+                floating
                 borderRadius={12}
                 itemMarginBottom={10}
                 itemMarginTop={10}
@@ -83,7 +85,8 @@ export default function TwmOsloAttractionsChart() {
                     }
                 }}
             />
-
+            <Exporting />
+            <Accessibility />
             <TiledWebMapSeries
                 name="Basemap Tiles"
                 options={{
@@ -97,13 +100,6 @@ export default function TwmOsloAttractionsChart() {
             <MapPointSeries
                 name="Museums"
                 color="#414141"
-                options={{
-                    marker: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/museum.svg)',
-                        width: 24,
-                        height: 24
-                    }
-                }}
                 data={[
                     {
                         name: 'Fram Museum',
@@ -146,17 +142,17 @@ export default function TwmOsloAttractionsChart() {
                         lat: 59.9198
                     }
                 ]}
-            />
-            <MapPointSeries
-                name="Parks"
-                color="#00AC22"
                 options={{
                     marker: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tree.svg)',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/museum.svg)',
                         width: 24,
                         height: 24
                     }
                 }}
+            />
+            <MapPointSeries
+                name="Parks"
+                color="#00AC22"
                 data={[
                     {
                         name: 'The Vigeland Park',
@@ -174,17 +170,17 @@ export default function TwmOsloAttractionsChart() {
                         lat: 59.9174
                     }
                 ]}
-            />
-            <MapPointSeries
-                name="Great buildings"
-                color="#0D66DB"
                 options={{
                     marker: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/building.svg)',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tree.svg)',
                         width: 24,
                         height: 24
                     }
                 }}
+            />
+            <MapPointSeries
+                name="Great buildings"
+                color="#0D66DB"
                 data={[
                     {
                         name: 'The Norwegian National Opera & Ballet',
@@ -212,17 +208,17 @@ export default function TwmOsloAttractionsChart() {
                         lat: 59.90971
                     }
                 ]}
-            />
-            <MapPointSeries
-                name="Restaurants"
-                color="#CE0056"
                 options={{
                     marker: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/eat.svg)',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/building.svg)',
                         width: 24,
                         height: 24
                     }
                 }}
+            />
+            <MapPointSeries
+                name="Restaurants"
+                color="#CE0056"
                 data={[
                     {
                         name: 'Elias mat & sånt',
@@ -235,10 +231,14 @@ export default function TwmOsloAttractionsChart() {
                         lat: 59.91085
                     }
                 ]}
+                options={{
+                    marker: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/eat.svg)',
+                        width: 24,
+                        height: 24
+                    }
+                }}
             />
-
-            <Exporting />
-            <Accessibility />
         </MapsChart>
     );
 }

@@ -56,7 +56,6 @@ if (defaultOptions.annotations?.types) {
      * @sample highcharts/annotations-advanced/measure/
      *         Measure
      * @product highstock
-     * @requires modules/annotations-advanced
      * @optionparent annotations.types.measure
      */
     defaultOptions.annotations.types.measure = {

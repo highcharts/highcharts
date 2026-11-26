@@ -446,7 +446,7 @@ export default HollowCandlestickSeries;
  * @basic
  * @type      {Array<Array<(number|string),number,number,number>|Array<(number|string),number,number,number,number>|*>}
  * @extends   series.candlestick.data
- * @excluding y
+ * @excluding lineColor, y
  * @product   highstock
  * @apioption series.hollowcandlestick.data
  */

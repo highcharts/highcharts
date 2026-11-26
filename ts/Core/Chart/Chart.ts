@@ -2858,8 +2858,9 @@ class Chart {
 
     /**
      * Detect whether a certain chart property is needed based on inspecting its
-     * options and series. This mainly applies to the chart.inverted property,
-     * and in extensions to the chart.angular and chart.polar properties.
+     * options and series. The inspected properties are listed in
+     * `propsFromSeries`, which modules extend, for example highcharts-more
+     * with `angular` and `polar`.
      *
      * @internal
      * @function Highcharts.Chart#propFromSeries
@@ -2879,7 +2880,7 @@ class Chart {
          * @name Highcharts.Chart#inverted
          * @type {boolean|undefined}
          */
-        ['inverted', 'angular', 'polar'].forEach(function (key: string): void {
+        chart.propsFromSeries.forEach(function (key): void {
 
             // The default series type's class
             klass = seriesTypes[
@@ -2889,7 +2890,7 @@ class Chart {
             // Get the value from available chart-wide properties
             value =
                 // It is set in the options:
-                (optionsChart as any)[key] ||
+                optionsChart[key] ||
                 // The default series class:
                 (klass && (klass.prototype as any)[key]);
             // Requires it
@@ -3856,12 +3857,13 @@ class Chart {
             }
 
             if (
-                'inverted' in optionsChart ||
-                'polar' in optionsChart ||
-                'type' in optionsChart
+                'type' in optionsChart ||
+                chart.propsFromSeries.some(
+                    (key): boolean => key in optionsChart
+                )
             ) {
-                // Parse options.chart.inverted and options.chart.polar together
-                // with the available series.
+                // Parse options like chart.inverted together with the
+                // available series.
                 chart.propFromSeries();
                 updateAllAxes = true;
             }
@@ -4564,6 +4566,8 @@ interface Chart extends ChartBase {
     /** @internal */
     collectionsWithUpdate: Array<string>;
     /** @internal */
+    propsFromSeries: Array<keyof ChartOptions>;
+    /** @internal */
     propsRequireDirtyBox: Array<string>;
     /** @internal */
     propsRequireReflow: Array<string>;
@@ -4601,6 +4605,13 @@ extend(Chart.prototype, {
         'yAxis',
         'series'
     ],
+
+    /**
+     * Chart properties that are set from chart options or required by series
+     * types, see `propFromSeries`. Can be extended from plugins.
+     * @internal
+     */
+    propsFromSeries: ['inverted'],
 
     /**
      * These properties cause isDirtyBox to be set to true when updating. Can be
@@ -4646,7 +4657,6 @@ extend(Chart.prototype, {
      */
     propsRequireUpdateSeries: [
         'chart.inverted',
-        'chart.polar',
         'chart.ignoreHiddenSeries',
         'chart.type',
         'colors',
