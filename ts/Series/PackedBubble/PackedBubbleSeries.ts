@@ -430,7 +430,7 @@ class PackedBubbleSeries extends BubbleSeries {
                         seriesIndex: this.index
                     } as any
                 );
-                this.chart.allParentNodes.push(parentNode);
+                (chart.allParentNodes ??= []).push(parentNode);
             }
             if (this.parentNode) {
                 (parentNode as any).plotX = this.parentNode.plotX;
@@ -482,6 +482,13 @@ class PackedBubbleSeries extends BubbleSeries {
                 this.parentNode,
                 this.parentNodeLayout.nodes as Array<PackedBubblePoint>
             );
+            const { allParentNodes } = this.chart;
+            if (allParentNodes) {
+                this.parentNodeLayout.removeElementFromCollection(
+                    this.parentNode,
+                    allParentNodes
+                );
+            }
             if (this.parentNode.dataLabel) {
                 this.parentNode.dataLabel =
                     this.parentNode.dataLabel.destroy();

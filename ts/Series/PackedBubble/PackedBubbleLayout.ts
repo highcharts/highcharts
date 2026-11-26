@@ -40,7 +40,7 @@ import { addEvent, defined } from '../../Shared/Utilities.js';
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
-        allParentNodes: Array<PackedBubblePoint>;
+        allParentNodes?: Array<PackedBubblePoint>;
         getSelectedParentNodes(): Array<PackedBubblePoint>;
     }
 }
@@ -109,10 +109,6 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
             addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
 
             chartProto.getSelectedParentNodes = chartGetSelectedParentNodes;
-        }
-
-        if (!chartProto.allParentNodes) {
-            chartProto.allParentNodes = [];
         }
     }
 
