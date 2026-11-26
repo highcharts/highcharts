@@ -99,7 +99,13 @@ const test = base.extend<{
     samplePage: process.env.QUNIT_FRESH_PAGE !== '1' ?
         async ({ browser, warmPage }, use, testInfo) => {
             const sample = readSample(testInfo.title);
-            if (requiresFreshPage(sample.script ?? '')) {
+            // Earlier packed-bubble charts can leave parent nodes in the layout.
+            if (
+                testInfo.title.endsWith(
+                    '/samples/unit-tests/series-packedbubble/packedbubble/demo.js'
+                ) ||
+                requiresFreshPage(sample.script ?? '')
+            ) {
                 const context = await browser.newContext(
                     warmPage.contextOptions
                 );

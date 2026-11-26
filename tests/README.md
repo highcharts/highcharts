@@ -705,7 +705,9 @@ validates complete results and writes `test/visual-test-complete`.
 
 QUnit reuses Highcharts and a browser page within each worker. Each sample
 still runs as a classic script with its own QUnit instance. Samples with
-top-level declarations use fresh pages. Set `QUNIT_FRESH_PAGE=1` to isolate
+top-level declarations use fresh pages. The packed-bubble parent-drag test
+also uses a fresh page because earlier charts can leave parent nodes in the
+layout. Set `QUNIT_FRESH_PAGE=1` to isolate
 every sample when investigating browser or Highcharts state carried between
 samples.
 

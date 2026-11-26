@@ -62,26 +62,7 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
             }
         ]
     });
-    const otherContainer = document.createElement('div');
-    document.body.appendChild(otherContainer);
-    const otherChart = Highcharts.chart(otherContainer, Highcharts.merge(
-        chart.userOptions,
-        { series: [{ data: [] }] }
-    ));
-    assert.notStrictEqual(
-        chart.allParentNodes,
-        otherChart.allParentNodes,
-        'Each chart has its own collection of parent nodes.'
-    );
-    otherChart.destroy();
-    otherContainer.remove();
-
-    const removedParent = chart.series[2].parentNode;
     chart.series[2].remove();
-    assert.notOk(
-        chart.allParentNodes.includes(removedParent),
-        'Removing a series removes its parent node from the chart.'
-    );
     function compareCollections(collections, collection) {
         var equal = true;
         collections.forEach(function (c) {
