@@ -76,6 +76,10 @@ export interface Options extends ComponentOptions {
     /**
      * Generic options to adjust behavior and styling of the rendered data
      * grid.
+     *
+     * With Grid Pro, the
+     * [Grid Key](https://www.highcharts.com/docs/grid/grid-key) is set here
+     * as `gridKey`, not on the component itself.
      */
     gridOptions?: GridOptions;
 
