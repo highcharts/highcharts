@@ -86,6 +86,7 @@ These benefits are not obtained unless code reviews are done with at least a min
 ### Docs
 
 - Ensure docs are added if needed, both in tutorial docs and API ref. Build the docs and check.
+- For changed types or doclets in `ts/`, run `node tools/find-redundant-members.mjs <changed files>` to find inherited members that are redeclared without changes.
 - Check language and grammar, and ensure documentation is easy to follow for beginners.
 - Ensure docs contain enough demos and code examples.
 
