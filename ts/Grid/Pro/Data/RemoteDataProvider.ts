@@ -680,7 +680,7 @@ export class RemoteDataProvider extends DataProvider {
                     urlTemplate: dataSource.uniqueValuesUrlTemplate
                 }, { query: this.querying, offset: 0, limit: 0 }, columnId);
             } else {
-                return super.getUniqueValues(columnId);
+                return Promise.resolve([]);
             }
 
             values = values['catch']((err: unknown): DataTableCellType[] => {

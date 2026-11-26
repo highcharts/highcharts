@@ -149,24 +149,21 @@ export abstract class DataProvider {
     public abstract destroy(): void;
 
     /**
-     * Returns the number of items before pagination has been applied.
-     */
-    public async getPrePaginationRowCount(): Promise<number> {
-        return await this.getRowCount();
-    }
-
-    /**
      * Returns the unique values of a column in the whole data set, regardless
-     * of the query. Providers that can't list them return an empty array.
+     * of the query.
      *
      * @param columnId
      * The id of the column in the data source.
      */
-    public getUniqueValues(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public abstract getUniqueValues(
         columnId: string
-    ): Promise<DataTableCellType[]> {
-        return Promise.resolve([]);
+    ): Promise<DataTableCellType[]>;
+
+    /**
+     * Returns the number of items before pagination has been applied.
+     */
+    public async getPrePaginationRowCount(): Promise<number> {
+        return await this.getRowCount();
     }
 
     /**
