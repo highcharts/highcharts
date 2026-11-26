@@ -70,8 +70,7 @@ class SparklineContent extends CellContentPro {
         chart: {
             height: 40,
             margin: [5, 8, 5, 8],
-            backgroundColor: 'transparent',
-            skipClone: true
+            backgroundColor: 'transparent'
         },
         accessibility: {
             enabled: false
