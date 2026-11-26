@@ -4741,7 +4741,7 @@ namespace Chart {
          * @sample {highcharts} highcharts/caption/text/
          *         Custom caption
          */
-        text?: string;
+        text?: (null|string);
 
         /**
          * Whether to
@@ -5066,7 +5066,7 @@ namespace Chart {
          * @sample {highcharts|highstock} highcharts/subtitle/text-formatted/
          *         Formatted and linked text.
          */
-        text?: string;
+        text?: (null|string);
 
         /**
          * Whether to
@@ -5243,7 +5243,7 @@ namespace Chart {
          * @default {highcharts|highmaps} Chart title
          * @default {highstock} undefined
          */
-        text?: string;
+        text?: (null|string);
 
         /**
          * Whether to

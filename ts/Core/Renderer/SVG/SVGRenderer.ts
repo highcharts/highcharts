@@ -1817,7 +1817,7 @@ class SVGRenderer implements SVGRendererBase {
      * The text object.
      */
     public text(
-        str?: string,
+        str?: (null|string),
         x?: number,
         y?: number,
         useHTML?: boolean

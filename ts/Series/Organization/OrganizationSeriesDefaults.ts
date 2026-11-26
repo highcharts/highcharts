@@ -513,7 +513,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  * @sample highcharts/demo/organization-chart
  *         Org chart with job titles
  *
- * @type      {string}
+ * @type      {null|string}
  * @product   highcharts
  * @apioption series.organization.nodes.title
  */

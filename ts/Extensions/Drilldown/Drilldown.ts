@@ -225,13 +225,13 @@ declare module '../../Core/Series/PointOptions' {
          * @sample {highcharts} highcharts/drilldown/basic/
          *         Basic drilldown
          *
-         * @type      {string}
+         * @type      {null|string}
          * @since     3.0.8
          * @product   highcharts
          * @requires  modules/drilldown
          * @apioption series.line.data.drilldown
          */
-        drilldown?: string;
+        drilldown?: (null|string);
     }
 }
 

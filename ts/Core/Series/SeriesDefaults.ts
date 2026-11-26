@@ -1185,7 +1185,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @sample {highstock} stock/plotoptions/series-marker/
          *         Enabled markers
          *
-         * @type      {boolean}
+         * @type      {null|boolean}
          * @default   {highcharts} undefined
          * @default   {highstock} false
          * @apioption plotOptions.series.marker.enabled
@@ -1238,7 +1238,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         Inherit from series color (undefined)
          *
-         * @type {Highcharts.ColorType}
+         * @type {null|Highcharts.ColorType}
          */
         lineColor: 'var(--highcharts-background-color)',
 

@@ -412,7 +412,7 @@ export interface ChartOptions {
      *
      * @default 'var(--highcharts-background-color)'
      */
-    backgroundColor?: ColorType;
+    backgroundColor?: (null|ColorType);
 
     /**
      * The color of the outer chart border.
@@ -754,7 +754,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/
      *         Gradient
      */
-    plotBackgroundColor?: ColorType;
+    plotBackgroundColor?: (null|ColorType);
 
     /**
      * The URL for an image to use as the plot background. To set an image
@@ -771,7 +771,7 @@ export interface ChartOptions {
      * @sample {highstock} stock/chart/plotbackgroundimage/
      *         Skies
      */
-    plotBackgroundImage?: string;
+    plotBackgroundImage?: (null|string);
 
     /**
      * The color of the inner chart or plot area border.
@@ -817,7 +817,7 @@ export interface ChartOptions {
      *
      * @default 0
      */
-    plotBorderWidth?: number;
+    plotBorderWidth?: (null|number);
 
     /**
      * Whether to apply a drop shadow to the plot area. Requires that

@@ -115,7 +115,7 @@ export interface SVGAttributes {
     'sweep-flag'?: 0|1;
     tabindex?: number;
     tableValues?: string;
-    text?: string;
+    text?: (null|string);
     textAlign?: 'center'|'left'|'right';
     'text-align'?: 'center'|'left'|'right';
     'text-anchor'?: string;

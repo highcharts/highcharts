@@ -394,6 +394,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highstock} stock/chart/title-text/
          *         Custom title
          *
+         * @type    {null|string}
          * @default {highcharts|highmaps} Chart title
          * @default {highstock} undefined
          */
@@ -613,6 +614,8 @@ const defaultOptions: DefaultOptions = {
          *         Custom subtitle
          * @sample {highcharts|highstock} highcharts/subtitle/text-formatted/
          *         Formatted and linked text.
+         *
+         * @type {null|string}
          */
         text: ''
     },
@@ -1615,7 +1618,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/format/
          *         Format demo
          *
-         * @type      {string}
+         * @type      {null|string}
          * @apioption tooltip.headerFormat
          */
         headerFormat: '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>',
