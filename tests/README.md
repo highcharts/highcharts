@@ -710,7 +710,7 @@ to set a shorter limit for an individual case.
 
 Samples that declare QUnit in `demo.details` must register at least one case.
 Skipped cases count as registered cases. Chart-only demos can finish with
-zero cases and still fail if their scripts throw.
+zero cases. Errors in their scripts or chart destruction fail the sample.
 
 When QUnit tests fail, browser logs are written to per-worker files:
 

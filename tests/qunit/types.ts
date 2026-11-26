@@ -79,6 +79,7 @@ interface BrowserQUnit {
     };
     version: string;
     start(): void;
+    onUncaughtException(error: unknown): void;
     on<K extends keyof QUnitEventMap>(
         name: K,
         callback: (details: QUnitEventMap[K]) => void

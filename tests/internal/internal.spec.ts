@@ -1,6 +1,7 @@
 import type {} from 'qunit';
+import { rm } from 'node:fs/promises';
 import { relative, sep } from 'node:path';
-import { test, expect, createChart } from '~/fixtures.ts';
+import { test as base, expect, createChart } from '~/fixtures.ts';
 import { getSample } from '~/utils.ts';
 import {
     qunitAssetUrl,
@@ -16,6 +17,17 @@ import { captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
 import { formatQUnitErrorDetails } from '~/qunit/utils/error-formatter.ts';
 import { waitForQUnitWithTimeout } from '~/qunit/utils/timeout-handler.ts';
 
+const test = base.extend<{ qunitSetupFile: string }>({
+    qunitSetupFile: async ({}, use, testInfo) => {
+        const path = testInfo.outputPath('setup.json');
+        try {
+            await use(path);
+        } finally {
+            await rm(path, { force: true });
+        }
+    }
+});
+
 test.describe('getSample', () => {
     test('should get sample with Windows-style path', () => {
         const sample = getSample('samples\\unit-tests\\chart\\alignthresholds');
@@ -24,17 +36,17 @@ test.describe('getSample', () => {
 });
 
 test('QUnit fails the sample when asynchronous setup throws or rejects', async ({
+    qunitSetupFile,
     page
-}, testInfo) => {
-    const setupFile = testInfo.outputPath('setup.json');
-    await writeQUnitSetupFile(setupFile, [
+}) => {
+    await writeQUnitSetupFile(qunitSetupFile, [
         `
             setTimeout(() => { throw new Error('setup timer threw'); }, 0);
             Promise.reject(new Error('setup promise rejected'));
             //# sourceURL=async-qunit-setup.js
         `
     ]);
-    await initializeFreshPage(page, setupFile);
+    await initializeFreshPage(page, qunitSetupFile);
     await page.waitForFunction(() =>
         window.__qunitFailedAssertions__?.length === 2
     );
@@ -198,13 +210,15 @@ test('QUnit safely parses query parameter names', async ({ page }) => {
     });
 });
 
-test('QUnit samples run as independent classic scripts', async ({ context }, testInfo) => {
-    const setupFile = testInfo.outputPath('setup.json');
-    await writeQUnitSetupFile(setupFile);
+test('QUnit samples run as independent classic scripts', async ({
+    qunitSetupFile,
+    context
+}) => {
+    await writeQUnitSetupFile(qunitSetupFile);
     async function runSample(name: string, source: string) {
         const page = await context.newPage();
         try {
-            await initializeFreshPage(page, setupFile);
+            await initializeFreshPage(page, qunitSetupFile);
             await page.addScriptTag({ content: source });
             await page.evaluate(() => window.QUnit.start());
             await waitForQUnitWithTimeout(page, name, 5000);
@@ -268,6 +282,26 @@ test('QUnit samples run as independent classic scripts', async ({ context }, tes
     expect(formatted).toContain('rejected after runEnd');
     expect(formatted).toContain('value: 42n');
     expect(formatted).toContain('[Circular *1]');
+
+    const chartOnly = await runSample('chart-only destruction', `
+        QUnit.config.failOnZeroTests = false;
+        Highcharts.chart('container', {
+            chart: {
+                events: {
+                    destroy() {
+                        throw new Error('chart destruction failed');
+                    }
+                }
+            }
+        });
+    `);
+    expect(chartOnly.qunitResults).toMatchObject({
+        status: 'failed', total: 1, passed: 0, failed: 1
+    });
+    expect(chartOnly.failedAssertions).toMatchObject([{
+        name: 'Uncaught error after QUnit runEnd',
+        message: 'chart destruction failed'
+    }]);
 
     const second = await runSample('second sample', `
         const label = 'second';

@@ -66,6 +66,25 @@ export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
 
         qunit.on('runEnd', ({ status, testCounts, runtime }) => {
             window.__qunitResults__ = { ...testCounts, status, runtime };
+            // A chart-only sample does not run the Highcharts afterEach hook.
+            if (testCounts.total === 0) {
+                try {
+                    const { charts } = window.Highcharts as {
+                        charts: ({
+                            destroy?(): void;
+                            renderer?: object;
+                            template?: boolean;
+                        } | undefined)[];
+                    };
+                    for (const chart of charts.slice()) {
+                        if (chart?.renderer && !chart.template) {
+                            chart.destroy?.();
+                        }
+                    }
+                } catch (error) {
+                    qunit.onUncaughtException(error);
+                }
+            }
         });
 
         qunit.on('testEnd', ({ fullName, status, errors, runtime }) => {
