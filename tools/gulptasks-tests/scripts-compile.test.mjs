@@ -21,16 +21,19 @@ const source = `/* SPDX-License-Identifier: LicenseRef-Highcharts */
 }
 `;
 
-test('minifies .src.css into .css and keeps the license banner', async () => {
+test('minifies .css and keeps the full version as .src.css', async () => {
     const root = fs.mkdtempSync(join(tmpdir(), 'hc-compile-css-'));
-    const input = join(root, 'highcharts.src.css');
-    const output = join(root, 'highcharts.css');
-    fs.writeFileSync(input, source);
+    const bundle = join(root, 'css', 'highcharts.css');
+    const bundleSource = join(root, 'css', 'highcharts.src.css');
+    const module = join(root, 'css', 'modules', 'grid-lite.css');
+    fs.mkdirSync(join(root, 'css', 'modules'), { recursive: true });
+    fs.writeFileSync(bundle, source);
+    fs.writeFileSync(module, source);
     try {
-        await scriptsCompile([input]);
-        const css = fs.readFileSync(output, 'utf8');
+        await scriptsCompile([bundle, module]);
+        const css = fs.readFileSync(bundle, 'utf8');
 
-        assert.equal(fs.readFileSync(input, 'utf8'), source);
+        assert.equal(fs.readFileSync(bundleSource, 'utf8'), source);
         assert.ok(css.startsWith(
             '/* SPDX-License-Identifier: LicenseRef-Highcharts */'
         ));
@@ -40,9 +43,12 @@ test('minifies .src.css into .css and keeps the license banner', async () => {
             '.highcharts-container{color:#fff;&:hover{' +
             'color:light-dark(#000,#fff)}}'
         ));
+        assert.equal(fs.readFileSync(module, 'utf8'), source);
+        assert.ok(!fs.existsSync(module.replace('.css', '.src.css')));
 
-        await scriptsCompile([input]);
-        assert.equal(fs.readFileSync(output, 'utf8'), css);
+        await scriptsCompile([bundle, module]);
+        assert.equal(fs.readFileSync(bundleSource, 'utf8'), source);
+        assert.equal(fs.readFileSync(bundle, 'utf8'), css);
     } finally {
         fs.rmSync(root, { recursive: true, force: true });
     }

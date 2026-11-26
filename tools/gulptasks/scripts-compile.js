@@ -11,22 +11,28 @@ const gulp = require('gulp');
  * */
 
 /**
- * Creates the minified `.css` file from a `.src.css` file.
+ * Minifies a `.css` file and keeps the full version as `.src.css`. An existing
+ * `.src.css` is the source, so a second run gives the same result.
  *
- * @param {string} inputPath
- * Path to the `.src.css` file.
+ * @param {string} outputPath
+ * Path to the `.css` file.
  *
  * @return {Promise<void>}
  * Promise to keep
  */
-async function compileCSS(inputPath) {
+async function compileCSS(outputPath) {
     const fs = require('fs'),
         logLib = require('../libs/log'),
         postcss = require('postcss');
     // Native import, the tsx require hook breaks cssnano's ESM interop
     // eslint-disable-next-line node/no-unsupported-features/es-syntax, node/no-unpublished-import
     const { default: cssnano } = await import('cssnano');
-    const outputPath = inputPath.replace('.src.css', '.css');
+    const inputPath = outputPath.replace(/\.css$/u, '.src.css');
+
+    if (!fs.existsSync(inputPath)) {
+        fs.copyFileSync(outputPath, inputPath);
+    }
+
     const { css } = await postcss([cssnano({
         preset: ['default', {
             discardComments: {
@@ -51,8 +57,7 @@ async function compileCSS(inputPath) {
  * */
 
 /**
- * Creates minified versions of `.src.js` and `.src.css` bundles in `/code`
- * folder.
+ * Creates minified versions of `.src.js` and `.css` bundles in `/code` folder.
  *
  * @param {Array<string>} [filePaths]
  * Optional list of files to compile.
@@ -116,8 +121,14 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     ) {
         inputPath = filePaths[i];
 
-        if (inputPath.endsWith('.src.css')) {
-            cssPromises.push(compileCSS(inputPath));
+        if (inputPath.endsWith('.css')) {
+            // Modules stay unminified, like es-modules
+            if (
+                !inputPath.endsWith('.src.css') &&
+                !fsLib.path(inputPath, true).includes('/css/modules/')
+            ) {
+                cssPromises.push(compileCSS(inputPath));
+            }
             continue;
         }
 

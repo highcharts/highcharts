@@ -155,23 +155,18 @@ function replaceProductVersionInFiles(folder, buildPropertiesPath) {
 }
 
 /**
- * Copies each CSS file to `.src.css`, the source that `scripts-compile`
- * minifies back into the `.css` file.
+ * Removes `.src.css` files left by `scripts-compile`, as the fresh `.css` files
+ * are the source now.
  * @param  {string} folder
  * Folder with the CSS files.
- * @param  {boolean} [includeSubDirectories]
- * Whether to include CSS files in subfolders.
  */
-function writeSourceCSS(folder, includeSubDirectories) {
+function removeSourceCSS(folder) {
     const fs = require('fs');
     const { getFilePaths } = require('../libs/fs');
 
-    getFilePaths(folder, includeSubDirectories)
-        .filter(file => file.endsWith('.css') && !file.endsWith('.src.css'))
-        .forEach(file => fs.copyFileSync(
-            file,
-            file.replace(/\.css$/u, '.src.css')
-        ));
+    getFilePaths(folder, true)
+        .filter(file => file.endsWith('.src.css'))
+        .forEach(file => fs.unlinkSync(file));
 }
 
 /* *
@@ -202,7 +197,7 @@ async function scriptCSS(argv) {
             folder,
             './dashboards/build-properties.json'
         );
-        writeSourceCSS(folder);
+        removeSourceCSS(folder);
         log.success('Copied dashboards CSS');
     } else if (argv.product === 'Grid') {
         const folder = path.join(TARGET_DIRECTORY, 'grid', 'css');
@@ -211,13 +206,12 @@ async function scriptCSS(argv) {
         copyCSS(gridConfig);
         await bundleGridCSS();
         replaceProductVersionInFiles(folder, './grid/build-properties.json');
-        // Modules stay unminified, like es-modules
-        writeSourceCSS(folder);
+        removeSourceCSS(folder);
         log.success('Copied grid CSS');
     } else {
         log.message('Generating css for Highcharts...');
         copyCSS(highchartsConfig);
-        writeSourceCSS(path.join(TARGET_DIRECTORY, 'css'), true);
+        removeSourceCSS(path.join(TARGET_DIRECTORY, 'css'));
         log.success('Copied highcharts CSS');
     }
 }
