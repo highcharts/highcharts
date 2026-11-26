@@ -70,8 +70,6 @@ export interface AOOptions extends SMAOptions {
 
     threshold?: number;
 
-    groupPadding?: number;
-
     pointPadding?: number;
 
     states?: SeriesStatesOptions<AOOptions>;

@@ -1939,13 +1939,9 @@ interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series
     /** @internal */
     colorKey: string;
     /** @internal */
-    directTouch: boolean;
-    /** @internal */
     getExtremesFromAll: boolean;
     /** @internal */
     optionalAxis: string;
-    /** @internal */
-    parallelArrays: Array<string>;
     /** @internal */
     pointArrayMap: Array<string>;
     /** @internal */

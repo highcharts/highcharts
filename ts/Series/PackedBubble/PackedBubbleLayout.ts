@@ -371,12 +371,6 @@ namespace PackedBubbleLayout {
          */
         dragBetweenSeries?: boolean;
 
-        enableSimulation?: boolean;
-
-        friction?: number;
-
-        gravitationalConstant?: number;
-
         /**
          * Initial layout algorithm for positioning nodes. Can be one of
          * the built-in options ("circle", "random") or a function where
@@ -415,8 +409,6 @@ namespace PackedBubbleLayout {
          */
 
         marker?: PointMarkerOptions;
-
-        maxIterations?: number;
 
         /**
          * Max speed that node can get in one iteration. In terms of

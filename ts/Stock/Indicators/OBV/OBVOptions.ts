@@ -18,7 +18,6 @@ import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 
 /* *
  *
@@ -46,7 +45,6 @@ import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
  * @interface Highcharts.OBVOptions
  */
 export interface OBVOptions extends SMAOptions {
-    marker?: PointMarkerOptions;
     params?: OBVParamsOptions;
 }
 

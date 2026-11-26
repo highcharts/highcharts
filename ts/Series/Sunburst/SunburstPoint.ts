@@ -165,8 +165,6 @@ class SunburstPoint extends TreemapPoint {
 interface SunburstPoint {
     /** @internal */
     setState: typeof Point.prototype.setState;
-    /** @internal */
-    setVisible: typeof TreemapPoint.prototype.setVisible;
 }
 
 extend(SunburstPoint.prototype, {

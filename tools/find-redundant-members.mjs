@@ -227,27 +227,45 @@ function checkInterface(node, checker, args, report) {
 
         const name = member.name.getText();
         const ownSymbol = checker.getSymbolAtLocation(member.name);
-        let baseType, baseSymbol;
+        const inherited = baseTypes
+            .map(baseType => ({
+                baseSymbol: checker.getPropertyOfType(baseType, name),
+                baseType
+            }))
+            .filter(base => base.baseSymbol);
 
-        for (baseType of baseTypes) {
-            baseSymbol = checker.getPropertyOfType(baseType, name);
-            if (baseSymbol) {
-                break;
-            }
-        }
-
-        if (!ownSymbol || !baseSymbol) {
+        if (!ownSymbol || !inherited.length) {
             continue;
         }
 
-        const sameOptional = (
-            !!member.questionToken ===
-            !!(baseSymbol.flags & TS.SymbolFlags.Optional)
-        );
-        const sameType = isSameType(
+        const { baseSymbol, baseType } = inherited[0];
+
+        // With several bases, the redeclaration may resolve a conflict
+        // between them (TS2320), so all of them have to match.
+        const sameInAllBases = inherited.every(base => isSameType(
             checker.getTypeOfSymbol(ownSymbol),
-            checker.getTypeOfSymbol(baseSymbol)
-        );
+            checker.getTypeOfSymbol(base.baseSymbol)
+        ));
+
+        // An inherited `prop?: Own['prop']` would become circular.
+        const circular = inherited.some(base => (
+            base.baseSymbol.declarations || []
+        ).some(declaration => (
+            declaration.type &&
+            TS.isIndexedAccessTypeNode(declaration.type) &&
+            checker.getTypeFromTypeNode(declaration.type.objectType)
+                .getSymbol() === type.getSymbol()
+        )));
+
+        if (circular) {
+            continue;
+        }
+
+        const sameOptional = inherited.every(base => (
+            !!member.questionToken ===
+            !!(base.baseSymbol.flags & TS.SymbolFlags.Optional)
+        ));
+        const sameType = sameInAllBases;
         const own = getOwnDoclet(member);
         const base = getBaseDoclet(baseSymbol, checker);
         const baseTags = new Set(base.tags);

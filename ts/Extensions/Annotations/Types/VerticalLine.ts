@@ -221,7 +221,6 @@ class VerticalLine extends Annotation {
 
 /** @internal */
 interface VerticalLine {
-    defaultOptions: Annotation['defaultOptions'];
     options: VerticalLine.Options;
 }
 
@@ -261,9 +260,6 @@ namespace VerticalLine {
          * Label options.
          */
         label?: TypeLabelOptions;
-
-        /** @internal */
-        yOffset?: number;
     }
 
     export interface TypeConnectorOptions

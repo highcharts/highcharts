@@ -186,13 +186,6 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      */
     lineWidth?: number;
 
-    /**
-     * @default null
-     *
-     * @product highstock
-     */
-    threshold?: (number|null);
-
     /* *
      *
      *  Excluded
@@ -202,7 +195,6 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
     borderColor?: undefined;
     borderRadius?: undefined;
     borderWidth?: undefined;
-    marker?: undefined;
     stack?: undefined;
     stacking?: undefined;
 

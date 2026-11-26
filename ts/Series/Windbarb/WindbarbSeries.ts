@@ -351,8 +351,6 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     /** @internal */
     group: typeof ColumnSeries.prototype.group;
     /** @internal */
-    parallelArrays: Array<string>;
-    /** @internal */
     pointArrayMap: Array<string>;
     /** @internal */
     pointClass: typeof WindbarbPoint;

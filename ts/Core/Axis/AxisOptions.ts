@@ -2001,8 +2001,6 @@ export interface AxisSetExtremesEventCallback {
 
 export interface AxisSetExtremesEventObject extends Axis.ExtremesObject {
     DOMEvent?: any;
-    max: number;
-    min: number;
     move?: number;
     preventDefault: Function;
     rangeSelectorButton?: RangeSelectorButtonOptions;

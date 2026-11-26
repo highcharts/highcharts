@@ -67,20 +67,6 @@ declare module '../../Core/Legend/LegendItem' {
     }
 }
 
-/** @internal */
-declare module '../../Core/Series/PointBase' {
-    interface PointBase {
-        a11yProxyElement?: ProxyElement;
-    }
-}
-
-/** @internal */
-declare module '../../Core/Series/SeriesBase' {
-    interface SeriesBase {
-        a11yProxyElement?: ProxyElement;
-    }
-}
-
 
 /* *
  *

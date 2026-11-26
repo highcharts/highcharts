@@ -15,7 +15,6 @@
  *  Imports
  *
  * */
-import type ColorType from '../../Core/Color/ColorType';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type PolygonPointOptions from './PolygonPointOptions';
 import type {
@@ -23,7 +22,6 @@ import type {
     ScatterSeriesTooltipOptions
 } from '../Scatter/ScatterSeriesOptions';
 import type {
-    PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 
@@ -138,8 +136,6 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
      */
     data?: Array<(PolygonPointOptions|PointShortOptions)>;
 
-    fillColor?: ColorType;
-
     /** @default 1 */
     fillOpacity?: number;
 
@@ -148,12 +144,7 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
      */
     legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
-    marker?: PointMarkerOptions;
-
     states?: SeriesStatesOptions<PolygonSeriesOptions>;
-
-    /** @default false */
-    stickyTracking?: boolean;
 
     /** @default true */
     trackByArea?: boolean;

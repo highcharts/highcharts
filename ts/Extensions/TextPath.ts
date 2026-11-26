@@ -87,7 +87,6 @@ export interface DataLabelTextPathOptions {
 export interface TextPathAttributes extends SVGAttributes {
     startOffset: string;
     textAnchor: 'start'|'middle'|'end';
-    dy?: number;
 }
 
 /** @internal */

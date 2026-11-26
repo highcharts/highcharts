@@ -424,8 +424,6 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      */
     borderColor?: ColorString;
 
-    borderDashStyle?: DashStyleValue;
-
     /**
      * The border radius for each treemap item.
      *

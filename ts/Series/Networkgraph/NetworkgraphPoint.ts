@@ -415,23 +415,15 @@ interface NetworkgraphPoint extends NodesComposition.PointComposition {
     /** @internal */
     className: NodesComposition.PointComposition['className'];
     degree: number;
-    /** @internal */
-    formatPrefix: NodesComposition.PointComposition['formatPrefix'];
-    from: NodesComposition.PointComposition['from'];
     fromNode: NetworkgraphPoint;
-    isNode: NodesComposition.PointComposition['isNode'];
     linksFrom: Array<NetworkgraphPoint>;
     linksTo: Array<NetworkgraphPoint>;
     mass: NodesComposition.PointComposition['mass'];
     options: NetworkgraphPointOptions;
     radius: number;
     series: NetworkgraphSeries;
-    to: NodesComposition.PointComposition['to'];
     toNode: NetworkgraphPoint;
     getPointsCollection(): Array<NetworkgraphPoint>;
-    getSum: NodesComposition.PointComposition['getSum'];
-    hasShape: NodesComposition.PointComposition['hasShape'];
-    offset: NodesComposition.PointComposition['offset'];
     setNodeState: NodesComposition.PointComposition['setState'];
 }
 extend(NetworkgraphPoint.prototype, {

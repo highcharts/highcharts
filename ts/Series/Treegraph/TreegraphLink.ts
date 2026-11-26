@@ -66,26 +66,6 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
     // TODO: cursor
 
     /**
-     * Modifier of the shape of the curved link. Works best for values between 0
-     * and 1, where 0 is a straight line, and 1 is a shape close to the default
-     * one.
-     *
-     * @default 0.5
-     *
-     * @product highcharts
-     *
-     * @since 10.3.0
-     */
-    curveFactor?: number;
-
-    /**
-     * The line width of the links connecting nodes, in pixels.
-     *
-     * @default 1
-     */
-    lineWidth?: number;
-
-    /**
      * Radius for the rounded corners of the links between nodes. Works for
      * `orthogonal` link type.
      *
@@ -107,7 +87,6 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
 }
 
 export interface LinkPointOptions extends TreegraphPointOptions {
-    link?: TreegraphLinkOptions;
 }
 
 /* *

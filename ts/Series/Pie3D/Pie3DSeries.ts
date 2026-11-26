@@ -20,7 +20,6 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
 import type Series from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
@@ -32,24 +31,6 @@ const {
 import Pie3DPoint from './Pie3DPoint.js';
 import PieSeries from '../Pie/PieSeries.js';
 import { extend, pushUnique } from '../../Shared/Utilities.js';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @internal
- */
-declare module '../Pie/PieSeriesOptions' {
-    interface PieSeriesOptions {
-        depth?: number;
-        edgeColor?: ColorString;
-        edgeWidth?: number;
-    }
-}
 
 /* *
  *

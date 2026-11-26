@@ -37,7 +37,6 @@ export interface CSVConverterOptions extends DataConverterOptions {
     startColumn: number;
     endColumn: number;
     csv?: string;
-    decimalPoint?: string;
     itemDelimiter?: string;
     lineDelimiter: string;
     useLocalDecimalPoint?: boolean;

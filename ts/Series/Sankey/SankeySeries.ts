@@ -1310,15 +1310,9 @@ interface SankeySeries extends NodesComposition.SeriesComposition {
     /** @internal */
     createNode(id: string): SankeyPoint;
     /** @internal */
-    destroy: NodesComposition.SeriesComposition['destroy'];
-    /** @internal */
     forceDL: boolean;
     /** @internal */
     init(chart: Chart, options: SankeySeriesOptions): void;
-    /** @internal */
-    invertible: boolean;
-    /** @internal */
-    isCartesian: boolean;
     /** @internal */
     noSharedTooltip: boolean;
     /** @internal */

@@ -1253,8 +1253,6 @@ interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
     /** @internal */
     isBubble: BubbleSeriesType['isBubble'];
     /** @internal */
-    isCartesian: boolean;
-    /** @internal */
     maxPxSize: BubbleSeriesType['maxPxSize'];
     /** @internal */
     minPxSize: BubbleSeriesType['minPxSize'];
@@ -1273,15 +1271,9 @@ interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
     /** @internal */
     trackerGroups: Array<string>;
     /** @internal */
-    yData: BubbleSeriesType['yData'];
-    /** @internal */
     zData: BubbleSeriesType['zData'];
     /** @internal */
-    zoneAxis: BubbleSeriesType['zoneAxis'];
-    /** @internal */
     getPointsCollection(): Array<PackedBubblePoint>;
-    /** @internal */
-    indexateNodes: NetworkgraphSeries['indexateNodes'];
     /** @internal */
     markerAttribs: BubbleSeriesType['markerAttribs'];
     /** @internal */

@@ -37,10 +37,6 @@ export interface FlagsPointOptions extends ColumnPointOptions {
      */
     fillColor?: ColorType;
 
-    labelrank?: number;
-
-    selected?: boolean;
-
     /**
      * The shape of an individual flag.
      *

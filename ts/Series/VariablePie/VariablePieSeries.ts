@@ -392,7 +392,6 @@ class VariablePieSeries extends PieSeries {
  * */
 
 interface VariablePieSeries {
-    parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof VariablePiePoint;
 }

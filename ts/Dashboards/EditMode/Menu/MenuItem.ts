@@ -193,7 +193,6 @@ export interface ItemOptions {
 
 export interface ButtonOptions extends ItemOptions {
     type: 'button';
-    text?: string;
     events?: {
         update?: Function;
         click?: Function;

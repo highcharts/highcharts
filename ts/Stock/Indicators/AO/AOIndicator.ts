@@ -251,7 +251,6 @@ class AOIndicator extends SMAIndicator {
 
 interface AOIndicator {
     nameBase: string;
-    nameComponents: Array<string>|undefined;
     pointClass: typeof AOPoint;
     /** @internal */
     crispCol: typeof ColumnSeries.prototype.crispCol;

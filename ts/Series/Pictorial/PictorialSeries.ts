@@ -556,7 +556,6 @@ addEvent(Chart, 'afterDrillUp', function (): void {
 
 /** @internal */
 interface PictorialSeries {
-    parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof PictorialPoint;
 }

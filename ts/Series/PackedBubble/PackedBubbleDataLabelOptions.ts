@@ -34,7 +34,6 @@ export interface PackedBubbleDataLabelsFormatterCallbackFunction {
 }
 
 export interface PackedBubbleDataLabelOptions extends DataLabelOptions {
-    format?: string;
     formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
     parentNodeFormat?: string;
     parentNodeFormatter?: (

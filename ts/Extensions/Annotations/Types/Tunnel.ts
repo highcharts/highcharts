@@ -331,17 +331,6 @@ class Tunnel extends CrookedLine {
 
 /* *
  *
- *  Class Prototype
- *
- * */
-
-/** @internal */
-interface Tunnel {
-    defaultOptions: CrookedLine['defaultOptions'];
-}
-
-/* *
- *
  *  Class Namespace
  *
  * */

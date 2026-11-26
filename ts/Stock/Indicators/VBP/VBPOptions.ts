@@ -13,8 +13,6 @@
  *
  * */
 
-import type DataGroupingOptions from
-    '../../../Extensions/DataGrouping/DataGroupingOptions';
 import type DataLabelOptions from '../../../Core/Series/DataLabelOptions';
 import type {
     SMAOptions,
@@ -44,18 +42,13 @@ import type VBPIndicator from './VBPIndicator';
  * @interface Highcharts.VBPOptions
  */
 export interface VBPOptions extends SMAOptions {
-    animationLimit?: number;
-    crisp?: boolean;
-    dataGrouping?: DataGroupingOptions;
     dataLabels?: DataLabelOptions;
-    enableMouseTracking?: boolean;
     params?: VBPParamsOptions;
     pointPadding?: number;
     /**
      * The styles for bars when volume is divided into positive/negative.
      */
     volumeDivision?: VBPIndicator.VBPIndicatorStyleOptions;
-    zIndex?: number;
     /**
      * The styles for lines which determine price zones.
      */

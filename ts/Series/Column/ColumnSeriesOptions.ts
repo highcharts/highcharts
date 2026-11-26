@@ -19,7 +19,6 @@
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPointOptions from './ColumnPointOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type {
     SeriesOptions,
@@ -259,8 +258,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @product highcharts highstock
      */
     data?: Array<(ColumnPointOptions|PointShortOptions)>;
-
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
 
     /**
      * Whether to group non-stacked columns or to let them render

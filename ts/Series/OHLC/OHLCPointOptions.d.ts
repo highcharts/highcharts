@@ -28,13 +28,6 @@ import type HLCPointOptions from '../HLC/HLCPointOptions';
 export interface OHLCPointOptions extends HLCPointOptions {
 
     /**
-     * The closing value of each data point.
-     *
-     * @product highstock
-     */
-    close?: number
-
-    /**
      * The opening value of each data point.
      *
      * @product highstock

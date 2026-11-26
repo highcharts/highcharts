@@ -265,7 +265,6 @@ class BulletSeries extends ColumnSeries {
  * */
 
 interface BulletSeries {
-    parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof BulletPoint;
 }

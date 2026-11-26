@@ -21,7 +21,6 @@ import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type {
     ConnectorsOptions
 } from '../../Gantt/ConnectorsOptions';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type GanttPointOptions from './GanttPointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type {
@@ -91,8 +90,6 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
      * @product gantt
      */
     data?: Array<GanttPointOptions>;
-
-    dataLabels?: Partial<DataLabelOptions>;
 
     /** @default false */
     grouping?: boolean;

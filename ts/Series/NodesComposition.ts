@@ -34,13 +34,6 @@ import {
  * */
 
 /** @internal */
-declare module '../Core/Series/PointBase' {
-    interface PointBase {
-        name?: string;
-    }
-}
-
-/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
         nodes?: Array<NodesComposition.PointComposition>;
@@ -95,7 +88,6 @@ namespace NodesComposition {
 
     /** @internal */
     export interface PointCompositionOptions extends PointOptions {
-        id?: string;
         level?: number;
         mass?: number;
         outgoing?: boolean;

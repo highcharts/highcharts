@@ -677,8 +677,6 @@ export interface FlowMapSeries {
     /** @internal */
     pointClass: typeof FlowMapPoint;
     /** @internal */
-    pointArrayMap: Array<string>;
-    /** @internal */
     drawPoints: typeof ColumnSeries.prototype['drawPoints'];
 }
 

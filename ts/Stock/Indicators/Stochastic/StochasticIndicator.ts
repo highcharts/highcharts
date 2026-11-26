@@ -262,10 +262,8 @@ class StochasticIndicator extends SMAIndicator {
 
 /** @internal */
 interface StochasticIndicator extends MultipleLinesComposition.IndicatorComposition {
-    linesApiNames: Array<string>;
     nameBase: string;
     nameComponents: Array<string>;
-    parallelArrays: Array<string>;
     pointArrayMap: Array<keyof StochasticPoint>;
     pointClass: typeof StochasticPoint;
     pointValKey: string;

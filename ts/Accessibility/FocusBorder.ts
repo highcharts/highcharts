@@ -79,7 +79,6 @@ namespace FocusBorderComposition {
 
     /** @internal */
     export interface ChartComposition extends Accessibility.ChartComposition {
-        focusElement?: SVGElement;
         renderFocusBorder(): void;
         setFocusToElement(
             svgElement: SVGElement,
@@ -89,7 +88,6 @@ namespace FocusBorderComposition {
 
     /** @internal */
     export interface SVGElementComposition extends SVGElement {
-        focusBorder?: SVGElement;
         addFocusBorder(margin: number, attribs: SVGAttributes): void;
         removeFocusBorder(): void;
     }

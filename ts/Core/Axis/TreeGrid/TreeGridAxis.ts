@@ -111,8 +111,6 @@ declare module '../../Series/PointOptions' {
 
 /** @internal */
 interface AxisBreakObject extends AxisBreakOptions {
-    showPoints?: boolean;
-    maxOffset?: number;
 }
 
 /** @internal */

@@ -242,10 +242,8 @@ class PriceEnvelopesIndicator extends SMAIndicator {
 
 /** @internal */
 interface PriceEnvelopesIndicator extends MultipleLinesComposition.IndicatorComposition {
-    linesApiNames: Array<string>;
     nameComponents: Array<string>;
     nameBase: string;
-    parallelArrays: Array<string>;
     pointArrayMap: Array<keyof PriceEnvelopesPoint>;
     pointClass: typeof PriceEnvelopesPoint;
     pointValKey: string;

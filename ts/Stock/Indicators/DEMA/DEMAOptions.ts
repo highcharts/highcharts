@@ -45,7 +45,6 @@ import type {
  * @interface Highcharts.DEMAOptions
  */
 export interface DEMAOptions extends EMAOptions {
-    params?: EMAParamsOptions;
 }
 
 export interface DEMAParamsOptions extends EMAParamsOptions {

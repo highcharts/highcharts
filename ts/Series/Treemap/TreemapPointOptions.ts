@@ -38,8 +38,6 @@ export interface TreemapPointOptions extends ScatterPointOptions {
      */
     colorValue?: number;
 
-    name?: string;
-
     /**
      * Only for trees. Use this option to build a tree structure. The value
      * should be the id of the point which is the parent. If no points has a

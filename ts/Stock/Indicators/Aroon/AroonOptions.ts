@@ -16,7 +16,6 @@
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -52,8 +51,6 @@ export interface AroonOptions extends SMAOptions, MultipleLinesComposition.Indic
      */
     aroonDown?: Record<string, CSSObject>;
 
-    marker?: PointMarkerOptions;
-
     /**
      * Parameters used in calculation of aroon series points.
      */
@@ -61,8 +58,6 @@ export interface AroonOptions extends SMAOptions, MultipleLinesComposition.Indic
 }
 
 export interface AroonParamsOptions extends SMAParamsOptions {
-    period?: number;
-
     /* *
      *
      *  Excluded
