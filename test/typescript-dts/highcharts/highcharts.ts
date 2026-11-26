@@ -11,6 +11,7 @@ import "highcharts/modules/series-label";
 
 test_borderRadius();
 test_legend();
+test_nullOptions();
 test_selectEvent();
 test_seriesArea();
 test_seriesBar();
@@ -62,6 +63,55 @@ function test_legend() {
             }
         }
     });
+}
+
+/**
+ * Tests options that are unset at runtime when given `null`. #25696
+ */
+function test_nullOptions() {
+    const point: Highcharts.PointOptionsObject = {
+        y: 1,
+        color: null,
+        drilldown: null
+    };
+    const organization: Highcharts.SeriesOrganizationOptions = {
+        type: 'organization',
+        data: [{ from: 'A', to: 'B' }],
+        nodes: [{
+            id: 'A',
+            title: null
+        }]
+    };
+    const options: Highcharts.Options = {
+        chart: {
+            backgroundColor: null,
+            plotBackgroundColor: null,
+            plotBackgroundImage: null,
+            plotBorderWidth: null
+        },
+        title: {
+            text: null
+        },
+        subtitle: {
+            text: null
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    enabled: null,
+                    lineColor: null
+                }
+            }
+        },
+        tooltip: {
+            headerFormat: null
+        },
+        series: [{
+            type: 'line',
+            data: [point]
+        }, organization]
+    };
+    Highcharts.chart('container', options);
 }
 
 /**

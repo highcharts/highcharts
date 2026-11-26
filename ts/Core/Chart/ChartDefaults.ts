@@ -800,7 +800,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @type      {number}
+     * @type      {null|number}
      * @default   0
      * @apioption chart.plotBorderWidth
      */
@@ -1400,7 +1400,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/backgroundcolor-gradient/
      *         Gradient
      *
-     * @type {Highcharts.ColorType}
+     * @type {null|Highcharts.ColorType}
      */
     backgroundColor: 'var(--highcharts-background-color)',
 
@@ -1424,7 +1424,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/
      *         Gradient
      *
-     * @type      {Highcharts.ColorType}
+     * @type      {null|Highcharts.ColorType}
      * @apioption chart.plotBackgroundColor
      */
 
@@ -1443,7 +1443,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highstock} stock/chart/plotbackgroundimage/
      *         Skies
      *
-     * @type      {string}
+     * @type      {null|string}
      * @apioption chart.plotBackgroundImage
      */
 

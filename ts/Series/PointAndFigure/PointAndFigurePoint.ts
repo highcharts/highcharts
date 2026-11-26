@@ -64,7 +64,7 @@ class PointAndFigurePoint extends ScatterPoint {
         this.marker = this.options.marker =
             this.upTrend ? seriesOptions.markerUp : seriesOptions.marker;
 
-        this.color = this.options.marker.lineColor;
+        this.color = this.options.marker.lineColor ?? void 0;
     }
 
     /** @internal */

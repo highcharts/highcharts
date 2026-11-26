@@ -333,7 +333,7 @@ const DrilldownDefaults: DrilldownOptions = {
  * @sample {highcharts} highcharts/drilldown/basic/
  *         Basic drilldown
  *
- * @type      {string}
+ * @type      {null|string}
  * @since     3.0.8
  * @product   highcharts
  * @requires  modules/drilldown

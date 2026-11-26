@@ -231,7 +231,7 @@ export interface OrganizationSeriesNodeOptions
      *
      * @product highcharts
      */
-    title?: string;
+    title?: (null|string);
 }
 
 export interface OrganizationSeriesOptions extends SankeySeriesOptions {

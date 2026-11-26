@@ -333,7 +333,7 @@ export interface PointMarkerOptions {
      * @default {highcharts} undefined
      * @default {highstock} false
      */
-    enabled?: boolean;
+    enabled?: (null|boolean);
 
     /**
      * The threshold for how dense the point markers should be before
@@ -387,7 +387,7 @@ export interface PointMarkerOptions {
      *
      * @default 'var(--highcharts-background-color)'
      */
-    lineColor?: ColorType;
+    lineColor?: (null|ColorType);
 
     /**
      * The width of the point marker's outline.
@@ -488,7 +488,7 @@ export interface PointOptions {
      * @sample {highcharts} highcharts/point/color/
      * Mark the highest point
      */
-    color?: ColorType;
+    color?: (null|ColorType);
 
     /**
      * A specific color index to use for the point, so its graphic

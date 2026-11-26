@@ -85,7 +85,7 @@ export interface NetworkgraphPointOptions
     /**
      * The color of the auto generated node.
      */
-    color?: ColorType;
+    color?: (null|ColorType);
 
     /**
      * The color index of the auto generated node, especially for use in styled
