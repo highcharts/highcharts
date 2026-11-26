@@ -48,7 +48,9 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
 
     tooltip: {
 
-        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '{series.name}: ' +
+            '[<b>{point.key}</b>, <b>{point.y}</b>, <b>{point.z}</b>]<br/>'
 
     }
 

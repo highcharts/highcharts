@@ -68,7 +68,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
         headerFormat:
             '<span style="font-size: 0.8em">{series.name}</span><br/>',
 
-        pointFormat: null as any,
+        pointFormat: void 0,
 
         pointFormatter: function (this): string {
             const point = this as GanttPoint,

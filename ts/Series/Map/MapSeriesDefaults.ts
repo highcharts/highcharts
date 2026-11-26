@@ -126,7 +126,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
     tooltip: {
         followPointer: true,
-        pointFormat: '{point.name}: {point.value}<br/>'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b><br/>'
     },
 
     /**

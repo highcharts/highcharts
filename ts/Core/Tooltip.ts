@@ -1848,11 +1848,11 @@ class Tooltip {
     }
 
     /**
-     * Format the footer/header of the tooltip
-     * #3397: abstraction to enable formatting of footer and header
+     * Replace point.key in a format string with date format if the x axis is
+     * datetime.
      *
      * @internal
-     * @function Highcharts.Tooltip#headerFooterFormatter
+     * @function Highcharts.Tooltip#keyReplace
      */
     public headerFooterFormatter(
         point: Point,
