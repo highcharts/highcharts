@@ -42,7 +42,6 @@ export interface AxisResizeControlledAxisOptions {
      *
      * @type     {Array<number|string>}
      * @default  []
-     * @requires modules/drag-panes
      */
     next?: Array<number|string>;
 
@@ -57,7 +56,6 @@ export interface AxisResizeControlledAxisOptions {
      *
      * @type     {Array<number|string>}
      * @default  []
-     * @requires modules/drag-panes
      */
     prev?: Array<number|string>;
 }
@@ -66,8 +64,6 @@ export interface AxisResizeOptions {
     /**
      * Contains two arrays of axes that are controlled by control line
      * of the axis.
-     *
-     * @requires modules/drag-panes
      */
     controlledAxis?: AxisResizeControlledAxisOptions;
 
@@ -75,8 +71,6 @@ export interface AxisResizeOptions {
      * Cursor style for the control line.
      *
      * In styled mode use class `highcharts-axis-resizer` instead.
-     *
-     * @requires modules/drag-panes
      */
     cursor?: CursorValue;
 
@@ -85,8 +79,6 @@ export interface AxisResizeOptions {
      *
      * @sample {highstock} stock/demo/candlestick-and-volume
      *         Enabled resizer
-     *
-     * @requires modules/drag-panes
      */
     enabled?: boolean;
 
@@ -99,7 +91,6 @@ export interface AxisResizeOptions {
      *         Styled resizer
      *
      * @type     {Highcharts.ColorString}
-     * @requires modules/drag-panes
      */
     lineColor?: ColorType;
 
@@ -112,8 +103,6 @@ export interface AxisResizeOptions {
      *
      * @sample {highstock} stock/yaxis/styled-resizer
      *         Styled resizer
-     *
-     * @requires modules/drag-panes
      */
     lineDashStyle?: DashStyleValue;
 
@@ -124,8 +113,6 @@ export interface AxisResizeOptions {
      *
      * @sample {highstock} stock/yaxis/styled-resizer
      *         Styled resizer
-     *
-     * @requires modules/drag-panes
      */
     lineWidth?: number;
 
@@ -134,8 +121,6 @@ export interface AxisResizeOptions {
      *
      * @sample {highstock} stock/yaxis/styled-resizer
      *         Styled resizer
-     *
-     * @requires modules/drag-panes
      */
     x?: number;
 
@@ -144,8 +129,6 @@ export interface AxisResizeOptions {
      *
      * @sample {highstock} stock/yaxis/styled-resizer
      *         Styled resizer
-     *
-     * @requires modules/drag-panes
      */
     y?: number;
 }

@@ -276,7 +276,11 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     nullInteraction?: undefined;
     onPoint?: undefined;
     startFromThreshold?: undefined;
-    /** @internal */
+    /**
+     * @default null
+     *
+     * @internal
+     */
     threshold?: ColumnSeriesOptions['threshold'];
     trackByArea?: undefined;
     zoomEnabled?: undefined;

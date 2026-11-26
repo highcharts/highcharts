@@ -64,7 +64,7 @@ import {
 
 /**
  * Max x2 should be considered in xAxis extremes
- * @private
+ * @internal
  */
 function onAxisAfterGetSeriesExtremes(
     this: Axis
@@ -107,7 +107,6 @@ function onAxisAfterGetSeriesExtremes(
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.xrange
  *
@@ -166,7 +165,7 @@ class XRangeSeries extends ColumnSeries {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public init(): void {
         super.init.apply(this, arguments);
@@ -176,7 +175,6 @@ class XRangeSeries extends ColumnSeries {
     /**
      * Borrow the column series metrics, but with swapped axes. This gives
      * free access to features like groupPadding, grouping, pointWidth etc.
-     * @private
      * @internal
      */
     public getColumnMetrics(): ColumnMetricsObject {
@@ -200,7 +198,7 @@ class XRangeSeries extends ColumnSeries {
     /**
      * Override cropData to show a point where x or x2 is outside visible range,
      * but one of them is inside.
-     * @private
+     * @internal
      */
     public cropData(
         table: DataTableCore,
@@ -230,7 +228,7 @@ class XRangeSeries extends ColumnSeries {
      * Finds the index of an existing point that matches the given point
      * options.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.XRangePointOptions} options
      *        The options of the point.
@@ -287,7 +285,7 @@ class XRangeSeries extends ColumnSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public translatePoint(point: XRangePoint): void {
         const xAxis = this.xAxis,
@@ -487,7 +485,7 @@ class XRangeSeries extends ColumnSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public translate(): void {
         super.translate.apply(this, arguments);
@@ -503,7 +501,7 @@ class XRangeSeries extends ColumnSeries {
      * This override turns point.graphic into a group containing the
      * original graphic and an overlay displaying the partial fill.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Point} point
      *        An instance of Point in the series.
@@ -632,7 +630,7 @@ class XRangeSeries extends ColumnSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const verb = this.getAnimationVerb();
@@ -647,7 +645,7 @@ class XRangeSeries extends ColumnSeries {
      * Returns "animate", or "attr" if the number of points is above the
      * animation limit.
      *
-     * @private
+     * @internal
      */
     public getAnimationVerb(): ('animate'|'attr') {
         return (
@@ -658,7 +656,7 @@ class XRangeSeries extends ColumnSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public isPointInside(
         point: (XRangePoint|Record<string, number>)

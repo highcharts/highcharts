@@ -375,6 +375,45 @@ describe('FilterModifier', () => {
                 'Selects adults in US or CA.'
             );
         });
+
+        it('should filter with in operator', async () => {
+            const table = new DataTable({
+                columns: { x: [1, '1', 2, null, 3] }
+            });
+            const condition = {
+                operator: 'in' as const,
+                columnId: 'x',
+                value: [1, null, 4]
+            };
+
+            await new FilterModifier({ condition }).modify(table);
+
+            deepStrictEqual(
+                table.getModified().getColumns(),
+                { x: [1, null] },
+                'Operator in keeps strictly equal values, including null.'
+            );
+
+            await new FilterModifier({
+                condition: { operator: 'not', condition }
+            }).modify(table);
+
+            deepStrictEqual(
+                table.getModified().getColumns(),
+                { x: ['1', 2, 3] },
+                'Negated operator in keeps the remaining values.'
+            );
+
+            await new FilterModifier({
+                condition: { ...condition, value: [] }
+            }).modify(table);
+
+            deepStrictEqual(
+                table.getModified().getColumns(),
+                { x: [] },
+                'Operator in with no values matches no rows.'
+            );
+        });
     });
 
     describe('index mappings', () => {

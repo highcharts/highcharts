@@ -25,6 +25,14 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  * */
 
 export interface PointAndFigurePointOptions extends ScatterPointOptions {
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dragDrop?: undefined;
 }
 
 /* *

@@ -5,7 +5,8 @@ authors:
 js_wrap: b
 alt_text: >-
   Highcharts vertical basic column chart JavaScript example graph compares
-  yearly approximate production of wheat and corn.
+  the gold, silver and bronze medals won by the top six nations at the
+  Milano Cortina 2026 Winter Olympics.
 tags:
   - Highcharts overview
   - Highcharts demo

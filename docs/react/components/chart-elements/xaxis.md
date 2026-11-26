@@ -1,8 +1,8 @@
 ---
 description: >-
   Configure x-axis options with the XAxis component, including plot bands,
-  pass axis API settings as props, and supply axis title text as child content
-  within a chart.
+  pass axis API settings as props, supply axis title text as child content, and
+  add several x-axes to a chart.
 ---
 
 # XAxis
@@ -26,3 +26,21 @@ export default function XAxisChart() {
 ```
 
 The `XAxis` component accepts all [x-axis API options](https://api.highcharts.com/highcharts/xAxis) as props. The [axis title text](https://api.highcharts.com/highcharts/xAxis.title.text) can be passed as `children`.
+
+A chart can have several x-axes, one `XAxis` component per axis. The first `XAxis` has index `0`, the second index `1`, and so on, and a series selects an axis by that index:
+
+```tsx
+import { Chart, XAxis } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
+
+export default function MultipleXAxesChart() {
+  return (
+    <Chart>
+      <XAxis />
+      <XAxis opposite={true} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[1, 2, 5, 3, 4]} options={{ xAxis: 1 }} />
+    </Chart>
+  );
+}
+```

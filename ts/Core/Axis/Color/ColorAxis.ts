@@ -934,9 +934,20 @@ class ColorAxis extends Axis implements ColorAxisBase {
                                 }
                             }
                             chart.legend.colorizeItem(this as any, vis);
+
+                            const redraw = vis && this.isDirtyPoints;
                             affectedSeries.forEach((series): void => {
                                 fireEvent(series, 'afterDataClassLegendClick');
+
+                                // Points hidden in a data class have no
+                                // graphic or data label yet (#25083)
+                                if (redraw) {
+                                    series.isDirty = true;
+                                }
                             });
+                            if (redraw) {
+                                chart.redraw(false);
+                            }
                         }
                     },
                     dataClass
@@ -1018,6 +1029,7 @@ namespace ColorAxis {
         visible: boolean;
         setState: Point['setState'];
         isDataClass: true;
+        isDirtyPoints?: boolean;
         setVisible: Function;
     }
 
@@ -1041,6 +1053,24 @@ export default ColorAxis;
  * Color axis types
  *
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
+ */
+
+// Hide the `Axis` methods that don't apply to the color axis. A same-named
+// ignored doclet stops JSDoc from inheriting them through `@augments`.
+
+/**
+ * @function Highcharts.ColorAxis#setCompare
+ * @ignore
+ */
+
+/**
+ * @function Highcharts.ColorAxis#setCumulative
+ * @ignore
+ */
+
+/**
+ * @function Highcharts.ColorAxis#setDataGrouping
+ * @ignore
  */
 
 ''; // Detach doclet above

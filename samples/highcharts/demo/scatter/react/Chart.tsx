@@ -76,9 +76,7 @@ export default function ScatterChart() {
                     }
                 }
             }}
-            containerProps={{
-                style: { maxWidth: '800px', height: '500px', margin: 'auto' }
-            }}
+            containerProps={{ id: 'container' }}
         >
             <Accessibility />
             <Exporting />

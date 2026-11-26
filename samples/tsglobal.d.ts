@@ -53,9 +53,6 @@ declare global {
             pane: Array<Pane>
         }
 
-        interface Data {
-            columns: Array<Array<string|number>>;
-        }
         interface Point {
             colorValue?: number;
             dataLabels: Array<Highcharts.SVGElement>;

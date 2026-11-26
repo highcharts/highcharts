@@ -73,7 +73,7 @@ export type GanttDependencyOptions = (
  *
  * @product gantt
  *
- * @requires highcharts-gantt
+ * @requires modules/gantt
  */
 export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
@@ -94,6 +94,7 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
     dataLabels?: Partial<DataLabelOptions>;
 
+    /** @default false */
     grouping?: boolean;
 
     /**

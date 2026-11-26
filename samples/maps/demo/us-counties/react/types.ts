@@ -1,3 +1,16 @@
-import type { MapSeries } from '@highcharts/react/series/Map';
+import type { MapSeriesProps } from '@highcharts/react/series/Map';
 
-export type MapPointData = NonNullable<Parameters<typeof MapSeries>[0]['data']>;
+export type CountyTopology = {
+    objects: {
+        default: {
+            geometries: Array<{
+                properties: {
+                    'name': string;
+                    'hc-key'?: string;
+                };
+            }>;
+        };
+    };
+};
+
+export type MapData = NonNullable<MapSeriesProps['data']>;
