@@ -110,7 +110,7 @@ interface BoostPointMockup {
     plotX: number;
     plotY: number;
     i: number;
-    /// dataIndex?: number;
+    dataIndex?: number;
     percentage: number;
 }
 
@@ -118,13 +118,9 @@ interface BoostPointMockup {
 interface BoostSeriesAdditions extends BoostTargetAdditions {
     altered?: Array<BoostAlteredObject>;
     getPoint(boostPoint: (BoostPointMockup|Point)): BoostPointComposition;
-    // Skipped for v13. We need to consider whether extended data should be
-    // supported in boosted series, because it adds complexity and slows down
-    // the performance. The idea of the Boost module is to support only a faster
-    // subset of functionality. If we decide to support it, the
-    // scatterProcessData function needs to loop over all columns in the data
-    // table and copy values over to processed data.
-    // pointDataIndices?: Array<number>;
+    // Maps processed (cropped) scatter data indices to the indices in the
+    // full series data, so that points keep their series index (#23169).
+    pointDataIndices?: Array<number>;
 }
 
 /** @internal */
@@ -664,6 +660,20 @@ function eachAsync(
 }
 
 /**
+ * Create the boost object of a series if it doesn't exist yet.
+ *
+ * @internal
+ */
+function ensureBoost(
+    series: Series
+): BoostSeriesAdditions {
+    return series.boost = series.boost || {
+        // Faster than a series bind:
+        getPoint: ((bp): BoostPointComposition => getPoint(series, bp))
+    };
+}
+
+/**
  * Enter boost mode and apply boost-specific properties.
  *
  * @internal
@@ -672,10 +682,7 @@ function eachAsync(
 function enterBoost(
     series: Series
 ): void {
-    series.boost = series.boost || {
-        // Faster than a series bind:
-        getPoint: ((bp): BoostPointComposition => getPoint(series, bp))
-    };
+    ensureBoost(series);
 
     const alteredByBoost: Array<BoostAlteredObject> = series.boost.altered = [];
 
@@ -942,9 +949,11 @@ function getPoint(
             seriesOptions.yData ||
             false
         ),
+        // Index in the processed (possibly cropped) data columns
         pointIndex = boostPoint.i,
-        /// dataIndex = boostPoint.dataIndex ?? pointIndex,
-        pointColor = (data?.[pointIndex] as { color?: string } | undefined)
+        // Index in the full series data
+        dataIndex = boostPoint.dataIndex ?? pointIndex,
+        pointColor = (data?.[dataIndex] as { color?: string } | undefined)
             ?.color,
         point = new PointClass(
             series as BoostSeriesComposition,
@@ -952,7 +961,7 @@ function getPoint(
                 [xData[pointIndex], yData[pointIndex]] :
                 (
                     isArray(data) ? data : []
-                )[pointIndex],
+                )[dataIndex],
             xData ? xData[pointIndex] : void 0
         ) as BoostPointComposition;
 
@@ -961,7 +970,6 @@ function getPoint(
         seriesOptions?.keys?.length
     ) {
         const keys = seriesOptions.keys;
-        /// pointData = data?.[dataIndex];
 
         // Don't reassign X and Y properties as they're already handled
         // above
@@ -971,7 +979,7 @@ function getPoint(
             keysIndex--
         ) {
             (point as any)[keys[keysIndex]] =
-                (data as any)[pointIndex][keysIndex];
+                (data as any)[dataIndex][keysIndex];
         }
     }
 
@@ -984,7 +992,7 @@ function getPoint(
     point.distX = boostPoint.distX;
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
-    /// point.index = dataIndex;
+    point.index = dataIndex;
     point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
     if (pointColor) {
@@ -1038,9 +1046,9 @@ function scatterProcessData(
         yCropMax = yAxis.userMax ?? (isNumber(yAxis.options.max) ?
             yAxis.options.max : Number.MAX_VALUE);
 
-    /// if (series.boost) {
-    //     delete series.boost.pointDataIndices;
-    // }
+    if (series.boost) {
+        delete series.boost.pointDataIndices;
+    }
 
     // Skip processing in non-boost zoom
     if (
@@ -1141,9 +1149,11 @@ function scatterProcessData(
         x: processedXData,
         y: processedYData
     });
-    /// if (series.boost && cropped) {
-    //     series.boost.pointDataIndices = processedDataIndices;
-    // }
+    // Store the mapping before the series enters boost mode, which happens
+    // only after processData on the first pass (#23169).
+    if (cropped) {
+        ensureBoost(series).pointDataIndices = processedDataIndices;
+    }
 
     return true;
 }
@@ -1180,9 +1190,9 @@ function seriesRenderCanvas(this: Series): void {
         isStacked = !!options.stacking,
         cropStart = this.cropStart || 0,
         requireSorting = this.requireSorting,
-        /// pointDataIndices = !requireSorting ?
-        //     seriesBoost?.pointDataIndices :
-        //     void 0,
+        pointDataIndices = !requireSorting ?
+            seriesBoost?.pointDataIndices :
+            void 0,
         useRaw = !xData,
         compareX = options.findNearestPointBy === 'x',
         xDataFull = (
@@ -1299,7 +1309,7 @@ function seriesRenderCanvas(this: Series): void {
             i: number,
             percentage: number
         ): void => {
-            const /// dataIndex = pointDataIndices?.[i] ?? (cropStart + i),
+            const dataIndex = pointDataIndices?.[i] ?? (cropStart + i),
                 x = xDataFull ? xDataFull[cropStart + i] : false,
                 pushPoint = (plotX: number): void => {
                     if (chart.inverted) {
@@ -1314,7 +1324,7 @@ function seriesRenderCanvas(this: Series): void {
                         plotX: plotX,
                         plotY: plotY,
                         i: cropStart + i,
-                        /// dataIndex: dataIndex,
+                        dataIndex: dataIndex,
                         percentage: percentage
                     });
                 };
@@ -1754,7 +1764,9 @@ function wrapSeriesSearchPoint(
 ): (Point|undefined) {
     const result = proceed.apply(this, [].slice.call(arguments, 1));
 
-    if (this.boost && result) {
+    // Boost objects can exist on non-boosted series (see scatterProcessData),
+    // whose search results are already regular points.
+    if (this.boost && this.boosted && result) {
         return this.boost.getPoint(result);
     }
 
