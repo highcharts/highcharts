@@ -1,0 +1,6 @@
+---
+ resources:
+   - https://code.jquery.com/qunit/qunit-3.0.0.js
+   - https://code.jquery.com/qunit/qunit-3.0.0.css
+ js_wrap: b
+...
