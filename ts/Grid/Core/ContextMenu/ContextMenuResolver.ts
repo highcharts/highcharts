@@ -225,7 +225,11 @@ function resolveItem(
             (
                 resolveValue(referenced.visible, context) === false ?
                     void 0 :
-                    resolveItems(referenced.items, context, seen)
+                    resolveItems(
+                        resolveValue(referenced.items, context) || [],
+                        context,
+                        seen
+                    )
             ) :
             resolveItem(referenced, context, seen);
 
@@ -245,7 +249,11 @@ function resolveItem(
     };
 
     if (options.items) {
-        const children = resolveItems(options.items, context, seen);
+        const children = resolveItems(
+            resolveValue(options.items, context) || [],
+            context,
+            seen
+        );
 
         // A branch nobody can reach is not worth a line in the menu.
         if (!children.length) {

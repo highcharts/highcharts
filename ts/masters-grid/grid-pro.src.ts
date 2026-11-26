@@ -53,6 +53,8 @@ import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
+import Charting from '../Grid/Pro/Charting/Charting.js';
+import ChartingComposition from '../Grid/Pro/Charting/ChartingComposition.js';
 import ExportingComposition from '../Grid/Pro/Export/ExportingComposition.js';
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
@@ -138,6 +140,7 @@ const G = {
     CellContentPro,
     CellRenderer,
     CellRendererRegistry,
+    Charting,
     classNamePrefix: Globals.classNamePrefix,
     Column,
     ColumnResizing,
@@ -172,6 +175,7 @@ GridEvents.compose(G.Grid, G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
 CreditsProComposition.compose(G.Grid);
 ExportingComposition.compose(G.Grid);
+ChartingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
@@ -201,6 +205,7 @@ export {
     CellContentPro,
     CellRenderer,
     CellRendererRegistry,
+    Charting,
     Column,
     ColumnResizing,
     DataConnector,
@@ -243,6 +248,7 @@ export const {
 const wnd = G.win as { Highcharts?: unknown };
 if (wnd.Highcharts) {
     G.CellRendererRegistry.types.sparkline.useHighcharts(wnd.Highcharts);
+    G.Charting.useHighcharts(wnd.Highcharts);
 }
 
 

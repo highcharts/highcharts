@@ -1,0 +1,7 @@
+---
+ name: Highcharts Grid Pro Create charts from Grid data
+ authors:
+   - Markus Barstad
+ js_wrap: b
+ requiresManualTesting: true
+...
