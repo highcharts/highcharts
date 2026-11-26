@@ -716,6 +716,9 @@ individual case.
 Samples that declare QUnit in `demo.details` must register at least one case.
 Skipped cases count as registered cases. Chart-only demos can finish with
 zero cases. Errors in their scripts or chart destruction fail the sample.
+If an uncaught error or rejection arrives between shared samples, the next
+sample still runs. At worker teardown, Playwright reports the error with
+the preceding shared sample's path and fails the run.
 
 When QUnit tests fail, browser logs are written to per-worker files:
 

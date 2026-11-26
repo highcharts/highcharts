@@ -367,6 +367,8 @@ test('QUnit shared page resets samples and reports teardown errors', async ({
                     window.warmSampleProperty = true;
                 }, 25);
                 Highcharts.setOptions({ time: { timezone: 'America/New_York' } });
+                Highcharts.animate(undefined, undefined, { duration: 10000 });
+                assert.strictEqual(Highcharts.Fx.timers.length, 1);
                 lolex.install({ toFake: ['setTimeout', 'clearTimeout'] });
                 assert.true(window.warmSampleProperty);
             });
@@ -379,10 +381,20 @@ test('QUnit shared page resets samples and reports teardown errors', async ({
             timers.clearTimeout === window.clearTimeout
         )).toBe(true);
 
+        await page.evaluate(() => new Promise<void>(resolve => {
+            window.addEventListener('unhandledrejection', () => resolve(), {
+                once: true
+            });
+            void Promise.reject(new Error('idle rejection'));
+        }));
         const second = await runSample('observes fresh sample state', `
             QUnit.test('observes fresh sample state', async assert => {
+                assert.timeout(1000);
                 window.dispatchEvent(new Event('warmSampleEvent'));
                 await new Promise(resolve => setTimeout(resolve, 60));
+                await new Promise(resolve => Highcharts.animate(
+                    undefined, undefined, { duration: 25, complete: resolve }
+                ));
                 assert.strictEqual(window.warmSampleProperty, undefined);
                 const timestamp = Date.UTC(2024, 0, 1);
                 assert.strictEqual(
@@ -390,6 +402,7 @@ test('QUnit shared page resets samples and reports teardown errors', async ({
                 );
             });
         `);
+        expect(second.failedAssertions).toEqual([]);
         expect(second.qunitResults).toMatchObject({
             status: 'passed', passed: 1, failed: 0
         });
@@ -413,15 +426,11 @@ test('QUnit shared page resets samples and reports teardown errors', async ({
         expect(chartOnly.failedAssertions.map(({ message }) => message).sort())
             .toEqual(['chart destruction failed', 'rejected during destroy']);
 
-        await page.evaluate(() => {
-            queueMicrotask(() => {
-                void Promise.reject(new Error('idle rejection'));
-            });
-        });
-        await expect(page.evaluate(() => window.__qunitWarmState.finish()))
-            .rejects.toThrow(
-                'After shared sample chart-only destruction: idle rejection'
-            );
+        const idleMessage = 'After shared sample changes state: idle rejection';
+        const finishError = await page.evaluate(() =>
+            window.__qunitWarmState.finish()
+        ).then(() => '', (error: Error) => error.message);
+        expect(finishError.split(idleMessage)).toHaveLength(2);
         await expect(page.evaluate(() => window.__qunitWarmState.finish()))
             .resolves.toBeUndefined();
     } finally {

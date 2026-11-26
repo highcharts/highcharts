@@ -210,8 +210,13 @@ export async function prepareWarmSample(
 ): Promise<JSHandle<WarmSample>> {
     clearConsoleCapture(page);
     return page.evaluateHandle(({ qunitSource, body, samplePath }) => {
-        window.__qunitWarmState.checkErrors();
-        window.__qunitWarmState.sample = samplePath;
+        const state = window.__qunitWarmState;
+        if (state.sample === undefined) {
+            // Setup failures invalidate the page. Later idle errors belong
+            // to the worker and must not stop the next sample from running.
+            state.checkErrors();
+        }
+        state.sample = samplePath;
         document.body.innerHTML = `${body}<div id="demo-html"></div>`;
         document.body.style.cssText = 'margin: 8px';
         window.__qunitResults__ = undefined;
@@ -274,6 +279,7 @@ export async function prepareWarmSample(
             Window['clearTimeout'];
         const cancelFrame = window.cancelAnimationFrame.bind(window) as
             Window['cancelAnimationFrame'];
+        const { timers } = window.Highcharts as { timers: unknown[] };
 
         return {
             trackTimers(): void {
@@ -333,6 +339,8 @@ export async function prepareWarmSample(
                 for (const id of animationIDs) {
                     cancelFrame(id);
                 }
+                // Highcharts requests a frame when its first animation is queued.
+                timers.length = 0;
                 for (const restore of restoreTimers) {
                     restore();
                 }
