@@ -27,7 +27,7 @@ Highcharts.chart('container', {
     }, {
         type: 'line',
         name: 'Oranges',
-        ata: [1, 2, 6, 7]
+        data: [1, 2, 6, 7]
     }, {
         type: 'line',
         name: 'Chilis',

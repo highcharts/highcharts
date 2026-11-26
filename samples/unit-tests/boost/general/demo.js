@@ -1337,3 +1337,60 @@ QUnit.skip(
         );
     }
 );
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Legend symbol follows boosted markers (#24307)',
+    function (assert) {
+        const getData = () => Array.from(
+                { length: 200 },
+                (value, i) => i % 50
+            ),
+            chart = Highcharts.chart('container', {
+                chart: {
+                    width: 600,
+                    animation: false
+                },
+                series: [{
+                    boostThreshold: 1,
+                    data: getData()
+                }, {
+                    boostThreshold: 1,
+                    visible: false,
+                    data: getData()
+                }, {
+                    boostThreshold: 1,
+                    visible: false,
+                    data: [[0, 1], [50, 2], [100, 3], [150, 4], [199, 5]]
+                }]
+            }),
+            dense = chart.series[1],
+            sparse = chart.series[2],
+            symbolOpacity = series => series.legendItem.symbol.element
+                .getAttribute('opacity');
+
+        assert.strictEqual(
+            symbolOpacity(chart.series[0]),
+            '0',
+            'Markers auto disabled in boost should be hidden in the legend'
+        );
+
+        assert.ok(
+            dense.boosted && sparse.boosted,
+            'Series hidden from the start should still be boosted'
+        );
+
+        assert.strictEqual(
+            symbolOpacity(dense),
+            '0',
+            'A series hidden from the start should not keep a legend ' +
+            'marker that the plot would not draw'
+        );
+
+        assert.strictEqual(
+            symbolOpacity(sparse),
+            '1',
+            'A hidden boosted series should keep the marker it would show ' +
+            'once visible'
+        );
+    }
+);

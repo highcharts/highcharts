@@ -493,6 +493,9 @@ class Series {
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
 
     /** @internal */
+    public hasMarkers?: boolean;
+
+    /** @internal */
     public hasProcessedDataTable?: boolean;
 
     /** @internal */
@@ -1088,6 +1091,46 @@ class Series {
             oldMarker.height !== marker.height || // #16274
             oldMarker.width !== marker.width // #16274
         );
+    }
+
+    /**
+     * Whether markers are enabled for the series as a whole, from
+     * `marker.enabled` or, when that is undefined, from the point density.
+     * Only meaningful after `translate` has run.
+     *
+     * @internal
+     * @function Highcharts.Series#hasEnabledMarkers
+     */
+    public hasEnabledMarkers(): boolean {
+        const markerOptions = this.options.marker || {},
+            xAxis = this.xAxis;
+
+        return markerOptions.enabled ??
+            (!xAxis || xAxis.isRadial ? true : null) ??
+            // Use larger or equal as radius is null in bubbles (#6321)
+            ((this.closestPointRangePx ?? -Infinity) >= (
+                (markerOptions.enabledThreshold ?? 2) *
+                (markerOptions.radius || 0)
+            ));
+    }
+
+    /**
+     * Mirror the plot area markers in the legend symbol (#24307). The
+     * `hasMarkers` flag reports what was drawn; a series that has never
+     * been drawn falls back to the series options.
+     *
+     * @internal
+     * @function Highcharts.Series#syncLegendSymbol
+     */
+    public syncLegendSymbol(): void {
+        const symbol = this.legendItem?.symbol;
+
+        if (symbol?.hasClass('highcharts-marker')) {
+            symbol[symbol.placed ? 'animate' : 'attr']({
+                opacity: (this.hasMarkers ?? this.hasEnabledMarkers()) ? 1 : 0
+            });
+            symbol.placed = true;
+        }
     }
 
     /**
@@ -3164,14 +3207,7 @@ class Series {
             seriesMarkerOptions = options.marker || {},
             nullInteraction = options.nullInteraction,
             markerGroup = series[series.specialGroup || 'markerGroup'],
-            xAxis = series.xAxis,
-            globallyEnabled = seriesMarkerOptions.enabled ??
-                (!xAxis || xAxis.isRadial ? true : null) ??
-                // Use larger or equal as radius is null in bubbles (#6321)
-                ((series.closestPointRangePx ?? -Infinity) >= (
-                    (seriesMarkerOptions.enabledThreshold ?? 2) *
-                    (seriesMarkerOptions as any).radius
-                ));
+            globallyEnabled = series.hasEnabledMarkers();
         let i,
             point,
             graphic,
@@ -3179,6 +3215,9 @@ class Series {
             pointMarkerOptions,
             hasPointMarker,
             markerAttribs;
+
+        // Reported to the legend symbol, so it reflects what is drawn (#24307)
+        let hasMarkers = false;
 
         if (
             seriesMarkerOptions.enabled !== false ||
@@ -3203,6 +3242,8 @@ class Series {
 
                 // Only draw the point if y is defined
                 if (shouldDrawMarker) {
+                    hasMarkers = true;
+
                     // Shortcuts
                     const symbol =
                         pointMarkerOptions.symbol ??
@@ -3279,6 +3320,8 @@ class Series {
                 }
             }
         }
+
+        series.hasMarkers = hasMarkers;
     }
 
     /**
@@ -3963,6 +4006,9 @@ class Series {
         if (series.visible) {
             series.drawPoints();
         }
+
+        // Outside the `visible` check, a hidden series still has a legend item
+        series.syncLegendSymbol();
 
         // Draw the data labels
         series.drawDataLabels?.();
