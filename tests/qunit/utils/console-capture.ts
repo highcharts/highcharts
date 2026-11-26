@@ -2,7 +2,7 @@
  * Browser console log capture utilities for QUnit tests
  */
 
-import type { Page } from '@playwright/test';
+import type { Page, Request } from '@playwright/test';
 
 export interface ConsoleLogEntry {
     level: 'log' | 'error' | 'warn' | 'info' | 'debug';
@@ -28,6 +28,10 @@ const ERROR_EVENT_LEVELS = new Set([
 ]);
 
 const pageEvents = new WeakMap<Page, string[]>();
+
+export function clearConsoleCapture(page: Page): void {
+    pageEvents.set(page, []);
+}
 
 function normalizeLevel(level: string): ConsoleLogEntry['level'] {
     const normalized = level.toLowerCase();
@@ -55,14 +59,15 @@ function normalizeLevel(level: string): ConsoleLogEntry['level'] {
  * Sets up comprehensive console log capture with filtering and formatting
  */
 export async function setupConsoleCapture(page: Page): Promise<void> {
-    const events: string[] = [];
-    pageEvents.set(page, events);
+    const requestEvents = new WeakMap<Request, string[]>();
+    clearConsoleCapture(page);
     const pushBrowserLogEntry = (
         level: string,
         message: string,
-        timestamp: number
+        timestamp: number,
+        events = pageEvents.get(page)
     ): void => {
-        events.push(
+        events?.push(
             `[${new Date(timestamp).toISOString()}] ` +
             `[${level.toUpperCase()}] ${message}`
         );
@@ -89,10 +94,21 @@ export async function setupConsoleCapture(page: Page): Promise<void> {
         pushBrowserLogEntry('pageerror', message, Date.now());
     });
 
+    page.on('request', request => {
+        const events = pageEvents.get(page);
+        if (events) {
+            requestEvents.set(request, events);
+        }
+    });
+    page.on('requestfinished', request => requestEvents.delete(request));
     page.on('requestfailed', request => {
         const errorText = request.failure()?.errorText || 'Unknown failure';
         const message = `${request.method()} ${request.url()} - ${errorText}`;
-        pushBrowserLogEntry('requestfailed', message, Date.now());
+        const events = requestEvents.get(request);
+        if (events) {
+            pushBrowserLogEntry('requestfailed', message, Date.now(), events);
+            requestEvents.delete(request);
+        }
     });
 
     page.on('crash', () => {

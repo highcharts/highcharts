@@ -227,12 +227,19 @@ export async function waitForQUnitWithTimeout(
     
     const handler = createTimeoutHandler(context);
     
-    return handler.waitWithTimeout(page, () => readQUnitResults(page));
+    return handler.waitWithTimeout(page, () => page.evaluate(() => {
+        if (window.__qunitResults__) {
+            return window.__qunitResults__;
+        }
+        return new Promise<QUnitTestCounts>(resolve => {
+            window.QUnit.on('runEnd', () => resolve(window.__qunitResults__));
+        });
+    }));
 }
 
 async function readQUnitResults(
     page: Page,
-    timeout?: number
+    timeout: number
 ): Promise<QUnitTestCounts> {
     const results = await page.waitForFunction(
         () => window.__qunitResults__,

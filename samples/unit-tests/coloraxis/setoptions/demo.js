@@ -2,13 +2,12 @@ QUnit.test(
     'yAxis theme settings affected color axis (#5569)',
     function (assert) {
         const yAxis = Highcharts.merge(Highcharts.defaultOptions.yAxis);
-        Highcharts.theme = {
+        Highcharts.setOptions({
             yAxis: {
                 alternateGridColor: '#ff0',
                 gridLineColor: 'red'
             }
-        };
-        Highcharts.setOptions(Highcharts.theme);
+        });
 
         var chart = Highcharts.chart('container', {
             chart: {

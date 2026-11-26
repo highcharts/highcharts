@@ -25,8 +25,10 @@ npm test
 For browser selection or individual test paths, use Playwright directly.
 `gulp test` rejects the former Karma browser, filtering and reporter options.
 
-Each sample runs as a classic script on its own browser page. QUnit cases
-within the same sample share a Highcharts instance.
+Each sample runs as a classic script with a new QUnit instance. Samples
+reuse a Highcharts instance within each worker by default. Samples with
+top-level declarations use a fresh page. Run with `QUNIT_FRESH_PAGE=1`
+to isolate every sample.
 
 ### Running Timezone Tests
 

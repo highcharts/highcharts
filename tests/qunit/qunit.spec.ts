@@ -1,14 +1,18 @@
 /* eslint-disable playwright/no-conditional-in-test */
-import type { Page } from '@playwright/test';
-import { test as base } from '~/fixtures.ts';
+import type { BrowserContextOptions, JSHandle, Page } from '@playwright/test';
+import { setupRoutes, test as base } from '~/fixtures.ts';
 import { getSample, transpileTS } from '~/utils.ts';
 import { join, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { appendFile, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { glob } from 'glob';
+import ts from 'typescript';
 
 import {
     initializeFreshPage,
+    initializeWarmPage,
+    installWarmSampleHooks,
+    prepareWarmSample,
     qunitViewport,
     writeQUnitSetupFile
 } from '~/qunit/page.ts';
@@ -21,8 +25,43 @@ import { getOutputConfig, createVerbosePassedOutput } from '~/qunit/utils/output
 const scriptLoadTimeout = 10_000;
 const qunitTimeout = 30_000;
 
-const test = base.extend<Record<never, never>, {
+function readSample(path: string): ReturnType<typeof getSample> {
+    const sample = getSample(dirname(path));
+    if (sample.script && path.endsWith('.ts')) {
+        sample.script = transpileTS(sample.script);
+    }
+    return sample;
+}
+
+function requiresFreshPage(source: string): boolean {
+    const file = ts.createSourceFile('sample.js', source, ts.ScriptTarget.Latest);
+    function declaresBinding(node: ts.Node): boolean | undefined {
+        if (ts.isVariableDeclarationList(node) ||
+            ts.isFunctionDeclaration(node) || ts.isClassDeclaration(node)) {
+            return true;
+        }
+        if (!ts.isFunctionLike(node)) {
+            return ts.forEachChild(node, declaresBinding);
+        }
+    }
+    // Global var and lexical bindings cannot be reset. Also check top-level
+    // blocks, which can contain function-scoped var declarations.
+    return !!declaresBinding(file);
+}
+
+const test = base.extend<{
+    samplePage: {
+        page: Page;
+        sample?: ReturnType<typeof getSample>;
+        warm?: Awaited<ReturnType<typeof prepareWarmSample>>;
+    };
+}, {
     setupFile: string;
+    warmPage: {
+        contextOptions: BrowserContextOptions;
+        page: Page;
+        source: JSHandle<{ source: string }>;
+    };
 }>({
     setupFile: [async ({}, use) => {
         const directory = await mkdtemp(join(tmpdir(), 'highcharts-qunit-'));
@@ -33,7 +72,62 @@ const test = base.extend<Record<never, never>, {
         } finally {
             await rm(directory, { recursive: true, force: true });
         }
-    }, { scope: 'worker' }]
+    }, { scope: 'worker' }],
+    warmPage: [async ({ browser, setupFile }, use, workerInfo) => {
+        const { contextOptions, ...projectUse } = workerInfo.project.use;
+        const options: BrowserContextOptions = {
+            ...contextOptions,
+            ...projectUse,
+            viewport: qunitViewport
+        };
+        const context = await browser.newContext(options);
+        try {
+            const page = await context.newPage();
+            await setupRoutes(page);
+            const source = await initializeWarmPage(page, setupFile);
+            try {
+                await use({ page, source, contextOptions: options });
+            } finally {
+                if (!page.isClosed()) {
+                    await page.evaluate(() => window.__qunitWarmState.finish());
+                }
+            }
+        } finally {
+            await context.close();
+        }
+    }, { scope: 'worker' }],
+    samplePage: process.env.QUNIT_FRESH_PAGE !== '1' ?
+        async ({ browser, warmPage }, use, testInfo) => {
+            const sample = readSample(testInfo.title);
+            if (requiresFreshPage(sample.script ?? '')) {
+                const context = await browser.newContext(
+                    warmPage.contextOptions
+                );
+                try {
+                    const page = await context.newPage();
+                    await setupRoutes(page);
+                    await use({ page, sample });
+                } finally {
+                    await context.close();
+                }
+                return;
+            }
+            const { page, source } = warmPage;
+            const warm = await prepareWarmSample(page, source, testInfo.title);
+            try {
+                await installWarmSampleHooks(page, warm);
+                await use({ page, sample, warm });
+            } finally {
+                try {
+                    await warm.evaluate(sample => sample.restore());
+                } finally {
+                    await warm.dispose();
+                }
+            }
+        } :
+        async ({ page }, use) => {
+            await use({ page });
+        }
 });
 
 const QUNIT_CONSOLE_LOG_NOTE_MARKER = join(
@@ -211,16 +305,15 @@ test.describe('QUnit tests', () => {
     for (const qunitTest of unitTests){
         // QUnit runs assertions inside the browser.
         // eslint-disable-next-line playwright/expect-expect
-        test(qunitTest, async ({ page, setupFile }) => {
+        test(qunitTest, async ({ samplePage, setupFile }) => {
+            const { page, warm } = samplePage;
             try {
-                await initializeFreshPage(page, setupFile);
-
-                const testStartTime = Date.now();
-                const sample = getSample(dirname(qunitTest));
-                if (sample.script && qunitTest.endsWith('.ts')) {
-                    sample.script = transpileTS(sample.script);
+                if (!warm) {
+                    await initializeFreshPage(page, setupFile);
                 }
 
+                const testStartTime = Date.now();
+                const sample = samplePage.sample ?? readSample(qunitTest);
                 const scriptLoadStart = Date.now();
                 let scriptLoadTime = 0;
                 let recovered = false;
@@ -260,6 +353,7 @@ test.describe('QUnit tests', () => {
                     recovered = true;
                 }
 
+                await warm?.evaluate(sample => sample.reset());
                 const results = await page.evaluate(() =>
                     window.getFinalQUnitResults()
                 );

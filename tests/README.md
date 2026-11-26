@@ -703,10 +703,15 @@ validates complete results and writes `test/visual-test-complete`.
 
 ### QUnit browser logs
 
-Each sample runs on its own page. QUnit starts capturing errors before the
-Highcharts setup scripts load. Playwright gives each QUnit run 30 seconds,
-with up to five more seconds to recover a result. Use `assert.timeout()`
-to set a shorter limit for an individual case.
+QUnit reuses Highcharts and a browser page within each worker. Each sample
+still runs as a classic script with its own QUnit instance. Samples with
+top-level declarations use fresh pages. Set `QUNIT_FRESH_PAGE=1` to isolate
+every sample when investigating browser or Highcharts state carried between
+samples.
+
+Playwright gives each QUnit run 30 seconds, with up to five more seconds to
+recover a result. Use `assert.timeout()` to set a shorter limit for an
+individual case.
 
 Samples that declare QUnit in `demo.details` must register at least one case.
 Skipped cases count as registered cases. Chart-only demos can finish with
@@ -747,6 +752,7 @@ npx playwright show-trace test-results/<test-folder>/trace.zip
 |----------|-------------|
 | `NO_REWRITES` | Skip route rewrites, test against live CDN |
 | `QUNIT_TEST_PATH` | Glob-enabled QUnit test path (e.g., `unit-tests/rangeselector/*`) |
+| `QUNIT_FRESH_PAGE` | Set to `1` to isolate every QUnit sample on a fresh page |
 | `QUNIT_VERBOSE` | Show detailed output for passing QUnit tests |
 | `VISUAL_TEST_PATH` | Filter visual tests by one or more path substrings |
 | `VISUAL_TEST_MANIFEST` | Select the exact visual sample IDs listed in a JSON manifest; mutually exclusive with `VISUAL_TEST_PATH` |

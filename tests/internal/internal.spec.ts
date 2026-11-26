@@ -11,6 +11,9 @@ import {
 } from '~/qunit/assets.ts';
 import {
     initializeFreshPage,
+    initializeWarmPage,
+    installWarmSampleHooks,
+    prepareWarmSample,
     writeQUnitSetupFile
 } from '~/qunit/page.ts';
 import { captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
@@ -321,6 +324,110 @@ test('QUnit samples run as independent classic scripts', async ({
         status: 'passed', total: 2, passed: 2
     });
     expect(second.failedAssertions).toEqual([]);
+});
+
+test('QUnit shared page resets samples and reports teardown errors', async ({
+    page,
+    qunitSetupFile
+}) => {
+    await writeQUnitSetupFile(qunitSetupFile);
+    const source = await initializeWarmPage(page, qunitSetupFile);
+    const nativeTimers = await page.evaluateHandle(() => ({
+        setTimeout: Reflect.get(window, 'setTimeout'),
+        clearTimeout: Reflect.get(window, 'clearTimeout')
+    }));
+
+    async function runSample(name: string, script: string) {
+        const warm = await prepareWarmSample(page, source, name);
+        try {
+            await installWarmSampleHooks(page, warm);
+            await page.addScriptTag({ content: script });
+            await page.evaluate(() => window.QUnit.start());
+            await waitForQUnitWithTimeout(page, name, 5000);
+            await warm.evaluate(sample => sample.reset());
+            await page.evaluate(() => window.getFinalQUnitResults());
+            return await captureQUnitErrorDetails(page, name);
+        } finally {
+            try {
+                await warm.evaluate(sample => sample.restore());
+            } finally {
+                await warm.dispose();
+            }
+        }
+    }
+
+    try {
+        const first = await runSample('changes state', `
+            QUnit.test('changes state', assert => {
+                window.warmSampleProperty = true;
+                window.addEventListener('warmSampleEvent', () => {
+                    window.warmSampleProperty = true;
+                });
+                setInterval(() => {
+                    window.warmSampleProperty = true;
+                }, 25);
+                Highcharts.setOptions({ time: { timezone: 'America/New_York' } });
+                lolex.install({ toFake: ['setTimeout', 'clearTimeout'] });
+                assert.true(window.warmSampleProperty);
+            });
+        `);
+        expect(first.qunitResults).toMatchObject({
+            status: 'passed', passed: 1, failed: 0
+        });
+        expect(await nativeTimers.evaluate(timers =>
+            timers.setTimeout === window.setTimeout &&
+            timers.clearTimeout === window.clearTimeout
+        )).toBe(true);
+
+        const second = await runSample('observes fresh sample state', `
+            QUnit.test('observes fresh sample state', async assert => {
+                window.dispatchEvent(new Event('warmSampleEvent'));
+                await new Promise(resolve => setTimeout(resolve, 60));
+                assert.strictEqual(window.warmSampleProperty, undefined);
+                const timestamp = Date.UTC(2024, 0, 1);
+                assert.strictEqual(
+                    Highcharts.format('{timestamp:%H:%M}', { timestamp }), '00:00'
+                );
+            });
+        `);
+        expect(second.qunitResults).toMatchObject({
+            status: 'passed', passed: 1, failed: 0
+        });
+
+        const chartOnly = await runSample('chart-only destruction', `
+            QUnit.config.failOnZeroTests = false;
+            Highcharts.chart('container', {
+                chart: {
+                    events: {
+                        destroy() {
+                            Promise.reject(new Error('rejected during destroy'));
+                            throw new Error('chart destruction failed');
+                        }
+                    }
+                }
+            });
+        `);
+        expect(chartOnly.qunitResults).toMatchObject({
+            status: 'failed', total: 2, failed: 2
+        });
+        expect(chartOnly.failedAssertions.map(({ message }) => message).sort())
+            .toEqual(['chart destruction failed', 'rejected during destroy']);
+
+        await page.evaluate(() => {
+            queueMicrotask(() => {
+                void Promise.reject(new Error('idle rejection'));
+            });
+        });
+        await expect(page.evaluate(() => window.__qunitWarmState.finish()))
+            .rejects.toThrow(
+                'After shared sample chart-only destruction: idle rejection'
+            );
+        await expect(page.evaluate(() => window.__qunitWarmState.finish()))
+            .resolves.toBeUndefined();
+    } finally {
+        await nativeTimers.dispose();
+        await source.dispose();
+    }
 });
 
 test.describe('Redirects for data', () => {

@@ -1,3 +1,17 @@
+QUnit.hooks.beforeEach(function () {
+    this.originalMap = Object.getOwnPropertyDescriptor(
+        Highcharts.maps, 'myMap'
+    );
+});
+
+QUnit.hooks.afterEach(function () {
+    if (this.originalMap) {
+        Object.defineProperty(Highcharts.maps, 'myMap', this.originalMap);
+    } else {
+        delete Highcharts.maps.myMap;
+    }
+});
+
 QUnit.test('Load map from TopoJSON', assert => {
 
     // eslint-disable-next-line
