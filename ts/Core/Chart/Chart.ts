@@ -1897,6 +1897,15 @@ class Chart {
      * @function Highcharts.Chart#getContainerBox
      */
     public getContainerBox(): { width: number, height: number } {
+
+        // No need for expensive calculations if width and height are explicitly
+        // set in options. Noticeable performance improvement for the sparkline
+        // demo.
+        const { width, height } = this.options.chart;
+        if (isNumber(width) && width && isNumber(height) && height) {
+            return { width, height };
+        }
+
         // Temporarily hide support divs from a11y and others, #21888
         const nonContainers = [].map.call(
                 this.renderTo.children,
