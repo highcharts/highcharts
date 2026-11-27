@@ -47,6 +47,7 @@ export async function captureQUnitErrorDetails(
 export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
     await page.evaluate(() => {
         const qunit = window.QUnit;
+        const warmState = window.__qunitWarmState;
         const failedTests: NonNullable<Window['__qunitFailedTests__']> = [];
         const failedAssertions: NonNullable<
             Window['__qunitFailedAssertions__']
@@ -60,6 +61,10 @@ export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
             const results = window.__qunitResults__;
             if (!results) {
                 throw new Error('QUnit did not publish its results');
+            }
+            if (warmState) {
+                // Transfer error reporting to the worker before returning.
+                warmState.resultsFinalized = true;
             }
             return results;
         };
@@ -119,6 +124,9 @@ export async function setupEnhancedQUnitCallbacks(page: Page): Promise<void> {
         });
 
         qunit.on('error', error => {
+            if (warmState?.resultsFinalized) {
+                return;
+            }
             const message = typeof error === 'string' ? error :
                 error instanceof Error ? error.message : 'Unknown error';
             const stack = error instanceof Error ? error.stack : undefined;

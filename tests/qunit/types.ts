@@ -96,6 +96,7 @@ declare global {
         __qunitConsoleErrors__?: string[];
         __qunitWarmState: {
             initialized: boolean;
+            resultsFinalized: boolean;
             sample?: string;
             checkErrors(): void;
             finish(): Promise<void>;
