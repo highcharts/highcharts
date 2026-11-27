@@ -803,10 +803,7 @@ class RowsVirtualizer {
      * the default height.
      */
     public adjustRowHeights(): void {
-        if (
-            this.strictRowHeights ||
-            !this.viewport.virtualRows
-        ) {
+        if (!this.viewport.virtualRows) {
             return;
         }
 
@@ -814,6 +811,15 @@ class RowsVirtualizer {
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
         if (rowsLn < 1 || !defaultH) {
+            return;
+        }
+
+        // Rows are positioned by index, so content that does not wrap but is
+        // still taller, like line breaks, must not change the row height.
+        if (this.strictRowHeights) {
+            for (let i = 0; i < rowsLn; ++i) {
+                rows[i].htmlElement.style.height = defaultH + 'px';
+            }
             return;
         }
 
