@@ -803,10 +803,7 @@ class RowsVirtualizer {
      * the default height.
      */
     public adjustRowHeights(): void {
-        if (
-            this.strictRowHeights ||
-            !this.viewport.virtualRows
-        ) {
+        if (!this.viewport.virtualRows) {
             return;
         }
 
