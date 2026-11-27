@@ -1631,8 +1631,11 @@ class RangeSelector {
                 if (inputPosition.align === 'left') {
                     translateX = plotLeft;
                 } else if (inputPosition.align === 'right') {
+                    // Keep clear of a legend reserved on the right side, as
+                    // it is part of marginRight, #24041.
                     translateX = -Math.max(
                         chart.axisOffset[1],
+                        (chart.marginRight ?? 0) - chart.spacing[1],
                         -xOffsetForExportButton
                     );
                 }
