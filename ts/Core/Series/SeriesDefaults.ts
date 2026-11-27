@@ -599,7 +599,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @see [navigator.series](#navigator.series)
      *
-     * @type      {Highcharts.NavigatorSeriesOptions}
+     * @type      {Highcharts.NavigatorSeriesOptions|Highcharts.SeriesOptionsType}
      * @since     5.0.0
      * @product   highstock gantt
      * @apioption plotOptions.series.navigatorOptions
