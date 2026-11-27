@@ -11,6 +11,7 @@ import * as Highcharts from 'highcharts/highmaps';
 test_series();
 test_shadow();
 test_simple();
+test_mapChartPromise();
 
 /**
  * Tests the documented `shadow` option on map and mapline series. #24856
@@ -176,4 +177,24 @@ function test_simple() {
             }]
         }]
     });
+}
+
+/**
+ * Tests that `Highcharts.mapChart` returns a promise when the callback
+ * argument is `true`. #25648
+ */
+function test_mapChartPromise() {
+    const options: Highcharts.Options = {};
+    const chart: Highcharts.MapChart =
+        Highcharts.mapChart('container', options);
+    const promise: Promise<Highcharts.MapChart> =
+        Highcharts.mapChart('container', options, true);
+    // @ts-expect-error The promise is not a chart.
+    const wrong: Highcharts.MapChart =
+        Highcharts.mapChart('container', options, true);
+    promise.then((resolved): void => {
+        resolved.redraw();
+    });
+    chart.redraw();
+    wrong.redraw();
 }

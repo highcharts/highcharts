@@ -10,6 +10,7 @@ import * as Highcharts from "highcharts";
 import "highcharts/modules/series-label";
 
 test_borderRadius();
+test_chartPromise();
 test_legend();
 test_selectEvent();
 test_seriesArea();
@@ -575,4 +576,23 @@ function test_yAxis() {
             }
         }
     })
+}
+
+/**
+ * Tests that `Highcharts.chart` returns a promise when the callback
+ * argument is `true`. #25648
+ */
+function test_chartPromise() {
+    const options: Highcharts.Options = {};
+    const chart: Highcharts.Chart = Highcharts.chart('container', options);
+    const promise: Promise<Highcharts.Chart> =
+        Highcharts.chart('container', options, true);
+    // @ts-expect-error The promise is not a chart.
+    const wrong: Highcharts.Chart =
+        Highcharts.chart('container', options, true);
+    promise.then((resolved): void => {
+        resolved.redraw();
+    });
+    chart.redraw();
+    wrong.redraw();
 }

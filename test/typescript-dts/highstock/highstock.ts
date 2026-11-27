@@ -9,6 +9,7 @@
 import * as Highcharts from 'highcharts/highstock';
 
 test_navigatorSeries();
+test_stockChartPromise();
 test_seriesLine();
 test_seriesCandleStick();
 test_theme();
@@ -140,4 +141,24 @@ function test_theme() {
             data: []
         }]
     });
+}
+
+/**
+ * Tests that `Highcharts.stockChart` returns a promise when the callback
+ * argument is `true`. #25648
+ */
+function test_stockChartPromise() {
+    const options: Highcharts.Options = {};
+    const chart: Highcharts.StockChart =
+        Highcharts.stockChart('container', options);
+    const promise: Promise<Highcharts.StockChart> =
+        Highcharts.stockChart('container', options, true);
+    // @ts-expect-error The promise is not a chart.
+    const wrong: Highcharts.StockChart =
+        Highcharts.stockChart('container', options, true);
+    promise.then((resolved): void => {
+        resolved.redraw();
+    });
+    chart.redraw();
+    wrong.redraw();
 }
