@@ -232,15 +232,33 @@ namespace GanttChart {
      * @param {Highcharts.Options} options
      *        The chart options structure.
      *
-     * @param {Highcharts.ChartCallbackFunction|true} [callback]
+     * @param {Highcharts.ChartCallbackFunction} [callback]
      *        Function to run when the chart has loaded and all external
      *        images are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
-     *        handler is equivalent. Set to `true` to return a promise that
-     *        resolves when the chart is ready.
+     *        handler is equivalent.
      *
      * @return {Highcharts.GanttChart}
      *         Returns the Chart object.
+     */
+    /**
+     * Factory function for GanttChart objects. Returns a promise that resolves
+     * when the chart is ready.
+     *
+     * @function Highcharts.ganttChart
+     *
+     * @param {string|Highcharts.HTMLDOMElement} renderTo
+     *        The DOM element to render to, or its id.
+     *
+     * @param {Highcharts.Options} options
+     *        The chart options structure.
+     *
+     * @param {true} callback
+     *        Set to `true` to return a promise that resolves when the chart
+     *        has loaded and all external images are loaded.
+     *
+     * @return {Promise<Highcharts.GanttChart>}
+     *         A promise of the chart object.
      */
     export function ganttChart(
         a: (string|HTMLDOMElement|Options),

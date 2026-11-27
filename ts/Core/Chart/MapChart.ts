@@ -281,6 +281,27 @@ namespace MapChart {
      * @return {Highcharts.MapChart}
      * The chart object.
      */
+    /**
+     * Factory function for MapChart objects. Returns a promise that resolves
+     * when the chart is ready.
+     *
+     * @requires modules/map
+     *
+     * @function Highcharts.mapChart
+     *
+     * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+     *        The DOM element to render to, or its id.
+     *
+     * @param {Highcharts.Options} options
+     *        The chart options structure.
+     *
+     * @param {true} callback
+     *        Set to `true` to return a promise that resolves when the chart
+     *        has loaded and all external images are loaded.
+     *
+     * @return {Promise<Highcharts.MapChart>}
+     *         A promise of the chart object.
+     */
     export function mapChart(
         a: string|HTMLDOMElement|Partial<Options>,
         b?: Chart.CallbackFunction|true|Partial<Options>,

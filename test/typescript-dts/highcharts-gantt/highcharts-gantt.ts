@@ -9,6 +9,7 @@
 import * as Highcharts from 'highcharts/highcharts-gantt';
 
 test_Gantt();
+test_ganttChart_promise();
 
 /**
  * Tests Highcharts.seriesTypes.gantt in a complex use case.
@@ -57,4 +58,27 @@ function test_Gantt() {
             }]
         }]
     });
+}
+
+/**
+ * Tests that `Highcharts.ganttChart()` returns a promise of the chart when
+ * the callback is `true`, and the chart otherwise. #25648
+ */
+function test_ganttChart_promise() {
+    const chart: Highcharts.GanttChart = Highcharts.ganttChart('container', {});
+    const withCallback: Highcharts.GanttChart = Highcharts.ganttChart(
+        'container',
+        {},
+        function (chart) {
+            chart.redraw();
+        }
+    );
+    const promise: Promise<Highcharts.GanttChart> = Highcharts.ganttChart(
+        'container',
+        {},
+        true
+    );
+    // @ts-expect-error: with `true`, the result is a promise, not a chart
+    const notChart: Highcharts.GanttChart = Highcharts.ganttChart('container', {}, true);
+    promise.then((resolved) => resolved.redraw());
 }
