@@ -13,7 +13,13 @@ const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
 const childProcess = require('child_process');
-const semver = require('semver');
+const {
+    releaseRepositoryMetadata,
+    stageCorePackage,
+    stageGridPackage,
+    updateReleaseJSON
+} = require('./lib/release-package');
+const { getReleaseVersion } = require('./lib/release-version');
 const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
 const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
 
@@ -25,18 +31,6 @@ const releaseRepos = {
     },
     Dashboards: 'dashboards-dist'
 };
-
-const releaseRepositoryMetadata = [
-    '^[.]git($|/)',
-    '^[.]github($|/)',
-    '^[.]gitignore$',
-    '^[.]npmignore$',
-    '^README[.]md$',
-    '^LICENSE[.]txt$',
-    '^SECURITY[.]md$',
-    '^package[.]json$',
-    '^bower[.]json$'
-];
 
 function getFilesForReleaseCleanup(folder) {
     return glob.sync('**/*', {
@@ -131,38 +125,6 @@ async function runGit(version, push, productName) {
 }
 
 /**
- * Select an exact product entry before changing any release repository.
- * @param {object} products Parsed product manifest.
- * @param {string} productName Product being released.
- * @return {string} Validated version shared by all product packages.
- */
-function getReleaseVersion(products, productName) {
-    const keys = {
-        Highcharts: ['Highcharts'],
-        Grid: ['Highcharts Grid Lite', 'Highcharts Grid Pro'],
-        Dashboards: ['Highcharts Dashboards']
-    };
-    if (!Object.hasOwn(keys, productName)) {
-        throw new Error('Unsupported release product: ' + productName);
-    }
-    const versions = keys[productName].map(key => {
-        const entry = products && Object.hasOwn(products, key) && products[key];
-        const version = entry && entry.nr;
-        const parsed = typeof version === 'string' && semver.parse(version);
-        const canonical = parsed && parsed.version +
-            (parsed.build.length ? '+' + parsed.build.join('.') : '');
-        if (!parsed || canonical !== version) {
-            throw new Error('Missing or invalid release version for ' + key);
-        }
-        return version;
-    });
-    if (versions.some(version => version !== versions[0])) {
-        throw new Error('Grid Lite and Pro release versions must match');
-    }
-    return versions[0];
-}
-
-/**
  * Publishes to npm if the --push is part of the argument.
  * @param {boolean} [push]
  * If true it will publish to npm. If false it will only do a dry-run.
@@ -231,53 +193,6 @@ async function removeFilesInFolder(folder, exceptions) {
 }
 
 /**
- * Synchronize release package metadata before versioning.
- * @param {Record<string, any>} json
- * JSON object to update.
- * @param {string} [productName] The product name.
- * @return {Record<string, any>}
- * Updated JSON object.
- */
-function updateReleaseJSON(json, productName) {
-    if (productName === 'Highcharts') {
-        // The UMD submodules in `modules/*.js` read the shared namespace from
-        // `window._Highcharts`, which only the UMD bundle assigns. Declaring an
-        // ESM entry point makes bundlers resolve the bare specifier to the pure
-        // ESM bundle, while subpath imports keep loading UMD, leaving the
-        // namespace unassigned (#25072). Until subpath resolution follows the
-        // same bundle, the release package must not advertise one.
-        delete json.module;
-
-        json.types = (
-            json.main ?
-                json.main.replace(/\.js$/u, '.d.ts') :
-                'highcharts.d.ts'
-        );
-
-        if (json.dependencies) {
-            delete json.dependencies.jspdf;
-            delete json.dependencies['svg2pdf.js'];
-        }
-
-        json.peerDependencies = Object.assign({}, json.peerDependencies, {
-            jspdf: '^4.1.0',
-            'svg2pdf.js': '^2.7.0'
-        });
-
-        json.peerDependenciesMeta = Object.assign(
-            {},
-            json.peerDependenciesMeta,
-            {
-                jspdf: { optional: true },
-                'svg2pdf.js': { optional: true }
-            }
-        );
-    }
-
-    return json;
-}
-
-/**
  * Add the current version to the Bower and package.json files
  * @param {string} version
  * To replace with
@@ -300,117 +215,6 @@ function updateJSONFiles(version, files, productName) {
     }
 
     log.message('Json files updated!');
-}
-
-/**
- * Copy the JavaScript files over
- */
-function copyFiles() {
-    const pathToDistRepo = join('..', releaseRepos.Highcharts);
-
-    const mapFromTo = {};
-    const folders = [{
-        from: 'code',
-        to: pathToDistRepo
-    }, {
-        from: 'css',
-        to: join(pathToDistRepo, 'css')
-    }];
-
-    const files = {
-        'SECURITY.md': join(pathToDistRepo, 'SECURITY.md')
-        // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
-        // 'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
-        // 'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
-        // 'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
-        // 'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
-    };
-
-    const filesToIgnore = [
-        '.DS_Store',
-        'package.json', // Is handled in `updateJSONFiles`
-        '.js.map'
-    ];
-
-    const pathsToIgnore = [
-        'dashboards',
-        'grid',
-        'es5'
-    ];
-
-    // Copy all the files in the code folder
-    folders.forEach(folder => {
-        const {
-            from,
-            to
-        } = folder;
-        getFilesInFolder(from, true)
-            .filter(path => (
-                (
-                    path.startsWith('es-modules/masters') ||
-                    !path.startsWith('es-modules') ||
-                    !path.endsWith('.d.ts')
-                ) &&
-                !pathsToIgnore.some(pattern => path.startsWith(pattern)) &&
-                !filesToIgnore.some(pattern => path.endsWith(pattern))
-            ))
-            .forEach(filename => {
-                mapFromTo[join(from, filename)] = join(to, filename);
-            });
-    });
-
-    // Add additional files to list.
-    Object.assign(mapFromTo, files);
-
-    // Copy all the files to release repository
-    Object.keys(mapFromTo).forEach(from => {
-        const to = mapFromTo[from];
-        // libFS.copyAllFiles(from, to);
-        fs.copySync(from, to);
-    });
-    log.message('Files copied successfully!');
-}
-
-/**
- * Copy the Grid JavaScript and CSS files over.
- */
-function copyGridFiles() {
-    const mapFromTo = {};
-    const folders = [
-        {
-            from: join('build', 'dist', 'grid-lite', 'code'),
-            to: join('..', releaseRepos.Grid.lite)
-        },
-        {
-            from: join('build', 'dist', 'grid-pro', 'code'),
-            to: join('..', releaseRepos.Grid.pro)
-        }
-    ];
-
-    const filesToIgnore = [
-        'package.json'
-    ];
-
-    // Copy all the files in the code folder
-    folders.forEach(folder => {
-        const {
-            from,
-            to
-        } = folder;
-        getFilesInFolder(from, true)
-            .filter(path => !filesToIgnore.some(pattern => path.endsWith(pattern)))
-            .forEach(filename => {
-                mapFromTo[join(from, filename)] = join(to, filename);
-            });
-    });
-
-    // Copy all the files to release repository
-    Object.keys(mapFromTo).forEach(from => {
-        const to = mapFromTo[from];
-        // libFS.copyAllFiles(from, to);
-        fs.copySync(from, to);
-    });
-    log.message('Files copied successfully!');
 }
 
 /**
@@ -606,11 +410,20 @@ async function release() {
     }
 
     if (productName === 'Highcharts') {
-        copyFiles();
-        updateJSONFiles(version, ['bower', 'package'], productName);
+        stageCorePackage({
+            sourceRoot: process.cwd(),
+            destination: join('..', releaseRepos.Highcharts),
+            version
+        });
+        log.message('Core release files copied and versioned successfully!');
     } else if (productName === 'Grid') {
-        copyGridFiles();
-        updateJSONFiles(version, ['package'], productName);
+        for (const [edition, repo] of Object.entries(releaseRepos.Grid)) {
+            stageGridPackage(
+                join('build', 'dist', 'grid-' + edition, 'code'),
+                join('..', repo),
+                version
+            );
+        }
     } else if (productName === 'Dashboards') {
         copyDashboardsFiles();
         updateJSONFiles(version, ['package'], productName);

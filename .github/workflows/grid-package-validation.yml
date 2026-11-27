@@ -1,0 +1,105 @@
+name: Grid npm package validation
+
+on:
+  workflow_call:
+    inputs:
+      package:
+        description: Grid edition to stage and validate
+        required: true
+        type: string
+      missing-css:
+        description: Use a synthetic candidate with the stylesheet removed
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate npm package
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: highcharts
+    env:
+      GRID_PACKAGE: ${{ inputs.package }}
+      GRID_LABEL: ${{ inputs.package == 'grid-pro' && 'Grid Pro' || 'Grid Lite' }}
+      GRID_METADATA_SHA: ${{ inputs.package == 'grid-pro' && 'ff9c2c64618242b7f8d3033f05901df3b9da33e5' || '6b2c4eb22f33178d99acd3bb857c7bbff5d62e30' }}
+      GRID_MISSING_CSS: ${{ inputs.missing-css }}
+    steps:
+      - uses: actions/checkout@v6
+        id: source
+        with:
+          path: highcharts
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - uses: actions/checkout@v6
+        id: metadata
+        with:
+          repository: highcharts/${{ env.GRID_PACKAGE }}-dist
+          path: ${{ env.GRID_PACKAGE }}-dist
+          ref: ${{ env.GRID_METADATA_SHA }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        id: toolchain
+        with:
+          node-version: '26.13.0'
+          package-manager-cache: false
+
+      - name: Build Grid distribution
+        id: build
+        run: bash tools/nightly-package-validation-prototype/setup.sh grid-build
+
+      - name: Stage and pack ${{ env.GRID_LABEL }}
+        id: pack
+        run: bash tools/nightly-package-validation-prototype/setup.sh grid-pack
+
+      - name: Install Chromium
+        id: chromium
+        run: bash tools/nightly-package-validation-prototype/setup.sh chromium
+
+      - name: Run isolated ${{ env.GRID_LABEL }} consumer checks
+        id: validate
+        env:
+          CONSUMER: ${{ steps.pack.outputs.consumer }}
+        run: |
+          evidence="$RUNNER_TEMP/package-validation"
+          digest=$(jq -er '.tarballSha256' "$evidence/staging-manifest.json")
+          node tools/nightly-package-validation-prototype/run.mjs \
+            --prepared "$CONSUMER" "$digest" --package "$GRID_PACKAGE"
+
+      - name: Upload ${{ env.GRID_LABEL }} validation evidence
+        id: evidence
+        if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.build.outcome == 'failure') }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ github.event_name == 'pull_request' && 'pr' || 'nightly' }}-${{ env.GRID_PACKAGE }}-validation-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/package-validation/
+            !${{ runner.temp }}/package-validation/**/node_modules/**
+            !${{ runner.temp }}/package-validation/**/npm-cache/**
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Summarize ${{ env.GRID_LABEL }} validation
+        if: ${{ !cancelled() }}
+        working-directory: ${{ runner.temp }}
+        env:
+          BUILD: ${{ steps.pack.outcome == 'success' && 'success' || steps.build.outcome == 'failure' && 'failure' || steps.pack.outcome }}
+          VALIDATION: ${{ job.status }}
+          CHECKS: ${{ steps.validate.outputs.verdict }}
+          RESULTS: ${{ steps.validate.outputs.results }}
+          SETUP_STEP: ${{ steps.metadata.outcome == 'failure' && format('Check out {0} release metadata', env.GRID_LABEL) || steps.toolchain.outcome == 'failure' && 'Set up Node.js' || steps.build.outcome == 'failure' && 'Build Grid distribution' || steps.pack.outcome == 'failure' && format('Stage and pack {0}', env.GRID_LABEL) || steps.chromium.outcome == 'failure' && 'Install Chromium' || '' }}
+          SETUP_ERROR: ${{ steps.build.outputs.diagnostic || steps.pack.outputs.diagnostic || steps.chromium.outputs.diagnostic }}
+          EVIDENCE: ${{ steps.evidence.outputs.artifact-id }}
+          SOURCE: ${{ steps.source.outcome }}
+        run: |
+          if [[ "$SOURCE" != success ]]; then
+            printf '## %s npm package validation — blocked\n\nSource checkout did not complete.\n' "$GRID_LABEL" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          node "$GITHUB_WORKSPACE/highcharts/tools/nightly-package-validation-prototype/summary.mjs"

@@ -10,6 +10,27 @@ on:
         required: false
         default: true
         type: boolean
+      validateDistribution:
+        description: 'Run the advisory npm package validation'
+        required: false
+        default: false
+        type: boolean
+      validateGridLite:
+        description: 'Run the advisory Grid Lite npm package validation'
+        default: false
+        type: boolean
+      gridLiteMissingCss:
+        description: 'Use a synthetic Grid Lite candidate with the stylesheet removed'
+        default: false
+        type: boolean
+      validateGridPro:
+        description: 'Run Grid Pro validation and skip Visual Review and highcharts-dist publication'
+        default: false
+        type: boolean
+      gridProMissingCss:
+        description: 'Run Grid Pro validation with the candidate stylesheet removed and skip Visual Review and highcharts-dist publication'
+        default: false
+        type: boolean
 
 permissions:
    contents: read # to fetch code (actions/checkout)
@@ -266,6 +287,7 @@ jobs:
           fi
 
       - name: Publish nightly visual results
+        if: ${{ github.event_name != 'workflow_dispatch' || (!inputs.validateGridLite && !inputs.validateGridPro && !inputs.gridProMissingCss) }}
         env:
           VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
         run: npx gulp update-nightly-testresults --tag "${HIGHCHARTS_VERSION}" --reference-root tmp/nightly-reference-samples
@@ -273,7 +295,9 @@ jobs:
 
   nightly_dist:
     runs-on: ubuntu-latest
-    needs: [nightly_unit_tests, nightly_cypress, nightly_playwright_all_browsers, nightly_visual_diff]
+    outputs:
+      distribution: ${{ steps.distribution.outputs.artifact-id }}
+      build_evidence: ${{ steps.build_evidence.outcome == 'success' && steps.build_evidence.outputs.artifact-id || '' }}
     steps:
       - name: Checkout highcharts
         uses: actions/checkout@v6
@@ -283,12 +307,12 @@ jobs:
           persist-credentials: false
 
       - name: Checkout highcharts-dist
+        id: metadata
         uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-dist
           path: highcharts-dist
           ref: 'master'
-          fetch-depth: 0
           persist-credentials: false
 
       - name: Use Node.js
@@ -305,24 +329,185 @@ jobs:
           npm run build -- --CI true
           npx gulp scripts-es5
           npx gulp dist-verify
-          npx gulp dist-release --force-yes
+
+      - name: Stage Core distribution
+        working-directory: ./highcharts
+        env:
+          METADATA_REVISION: ${{ steps.metadata.outputs.commit }}
+        run: |
+          node tools/nightly-package-validation-prototype/stage-core.mjs \
+            "$GITHUB_SHA" . ../highcharts-dist "$METADATA_REVISION" "$RUNNER_TEMP/staged-core"
+
+      - name: Validate assembled distribution tree
+        run: |
+          directory="$RUNNER_TEMP/staged-core"
+          if [ ! -d "$directory" ] || [ -L "$directory" ]; then
+            echo '::error::Expected a regular staged Core directory.'
+            exit 1
+          fi
+          invalid_files=$(find -P "$directory" \
+            \( -name .git -o \( ! -type f -a ! -type d \) \) -print -quit)
+          if [ -n "$invalid_files" ]; then
+            echo '::error::Assembled distribution contains unexpected Git metadata or special files.'
+            exit 1
+          fi
 
       - name: Upload distribution artifact
+        id: distribution
         uses: actions/upload-artifact@v6
         with:
-          name: nightly-dist-${{ github.sha }}
-          path: |
-            highcharts-dist/
-            !highcharts-dist/.git
-            !highcharts-dist/.git/**
+          name: nightly-dist-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/staged-core/
           include-hidden-files: true
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 30
+
+      - name: Record build evidence
+        id: record_evidence
+        if: ${{ inputs.validateDistribution || (github.event_name == 'schedule' && vars.NIGHTLY_PACKAGE_VALIDATION == 'true') }}
+        continue-on-error: true
+        working-directory: ./highcharts
+        env:
+          METADATA_REVISION: ${{ steps.metadata.outputs.commit }}
+        run: |
+          npm_version=$(npm --version)
+          node tools/nightly-package-validation-prototype/distribution.mjs record \
+            "$RUNNER_TEMP/staged-core" "$RUNNER_TEMP/build-manifest.json" \
+            "$METADATA_REVISION" "$npm_version" ../highcharts-dist
+
+      - name: Upload build evidence
+        id: build_evidence
+        if: ${{ steps.record_evidence.outcome == 'success' }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-package-build-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/build-manifest.json
+          if-no-files-found: error
+          retention-days: 30
+
+  nightly_package_validation:
+    name: Validate nightly npm package
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: nightly_dist
+    if: ${{ inputs.validateDistribution || (github.event_name == 'schedule' && vars.NIGHTLY_PACKAGE_VALIDATION == 'true') }}
+    outputs:
+      checks: ${{ steps.validate.outputs.verdict }}
+      results: ${{ steps.validate.outputs.results }}
+      setup_step: ${{ steps.artifacts.outcome == 'failure' && 'Check artifact references' || steps.pack.outcome == 'failure' && 'Verify and pack the distribution' || steps.chromium.outcome == 'failure' && 'Install Chromium' || '' }}
+      setup_error: ${{ steps.artifacts.outputs.diagnostic || steps.pack.outputs.diagnostic || steps.chromium.outputs.diagnostic }}
+      evidence: ${{ steps.evidence.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '26.13.0'
+          package-manager-cache: false
+
+      - name: Check artifact references
+        id: artifacts
+        env:
+          DISTRIBUTION: ${{ needs.nightly_dist.outputs.distribution }}
+          BUILD_EVIDENCE: ${{ needs.nightly_dist.outputs.build_evidence }}
+        run: |
+          if [ -z "$DISTRIBUTION" ] || [ -z "$BUILD_EVIDENCE" ]; then
+            diagnostic='The distribution artifact or its build manifest is missing. Check the nightly_dist job. '
+            diagnostic+='After resolving the cause, start a new validation run with distribution publishing disabled. '
+            diagnostic+="Run gh workflow run nightly.yml --ref \"\$REF\" -f validateDistribution=true -f pushToDist=false after choosing REF as described in .github/workflows/nightly.md."
+            echo "::error::$diagnostic"
+            echo "diagnostic=$diagnostic" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+      - name: Download distribution artifact
+        uses: actions/download-artifact@v7
+        with:
+          artifact-ids: ${{ needs.nightly_dist.outputs.distribution }}
+          path: ${{ runner.temp }}/assembled-distribution
+
+      - name: Download build evidence
+        uses: actions/download-artifact@v7
+        with:
+          artifact-ids: ${{ needs.nightly_dist.outputs.build_evidence }}
+          path: ${{ runner.temp }}/package-validation
+
+      - name: Verify and pack the distribution
+        id: pack
+        run: bash tools/nightly-package-validation-prototype/setup.sh pack
+
+      - name: Install Chromium
+        id: chromium
+        run: bash tools/nightly-package-validation-prototype/setup.sh chromium
+
+      - name: Run isolated consumer checks
+        id: validate
+        working-directory: ${{ runner.temp }}/package-validation
+        env:
+          CONSUMER: ${{ steps.pack.outputs.consumer }}
+        run: |
+          digest=$(awk '$2 ~ /\/candidate\/candidate\.tgz$/ { print $1 }' SHA256SUMS)
+          node "$GITHUB_WORKSPACE/tools/nightly-package-validation-prototype/run.mjs" --prepared "$CONSUMER" "$digest"
+
+      - name: Upload validation evidence
+        id: evidence
+        if: ${{ !cancelled() && steps.artifacts.outcome == 'success' }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-package-validation-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/package-validation/
+            !${{ runner.temp }}/package-validation/**/node_modules/**
+            !${{ runner.temp }}/package-validation/**/npm-cache/**
+          if-no-files-found: error
+          retention-days: 14
+
+  nightly_package_summary:
+    name: Summarize nightly package validation
+    runs-on: ubuntu-latest
+    needs: [nightly_dist, nightly_package_validation]
+    if: ${{ !cancelled() && (inputs.validateDistribution || (github.event_name == 'schedule' && vars.NIGHTLY_PACKAGE_VALIDATION == 'true')) }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: tools/nightly-package-validation-prototype
+      - name: Report advisory result
+        env:
+          BUILD: ${{ needs.nightly_dist.result }}
+          VALIDATION: ${{ needs.nightly_package_validation.result }}
+          CHECKS: ${{ needs.nightly_package_validation.outputs.checks }}
+          RESULTS: ${{ needs.nightly_package_validation.outputs.results }}
+          SETUP_STEP: ${{ needs.nightly_package_validation.outputs.setup_step }}
+          SETUP_ERROR: ${{ needs.nightly_package_validation.outputs.setup_error }}
+          EVIDENCE: ${{ needs.nightly_package_validation.outputs.evidence }}
+        run: node tools/nightly-package-validation-prototype/summary.mjs
+
+  nightly_grid_lite_validation:
+    name: Validate nightly Grid Lite npm package
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.validateGridLite }}
+    uses: ./.github/workflows/grid-package-validation.yml
+    with:
+      package: grid-lite
+      missing-css: ${{ inputs.gridLiteMissingCss }}
+
+  nightly_grid_pro_validation:
+    name: Validate nightly Grid Pro npm package
+    if: ${{ github.event_name == 'workflow_dispatch' && (inputs.validateGridPro || inputs.gridProMissingCss) }}
+    uses: ./.github/workflows/grid-package-validation.yml
+    with:
+      package: grid-pro
+      missing-css: ${{ inputs.gridProMissingCss }}
 
   nightly_dist_publish:
     runs-on: ubuntu-latest
-    needs: nightly_dist
-    if: ${{ github.ref == 'refs/heads/master' && (github.event_name == 'schedule' || inputs.pushToDist) }}
+    needs: [nightly_dist, nightly_unit_tests, nightly_cypress, nightly_playwright_all_browsers, nightly_visual_diff]
+    if: ${{ github.ref == 'refs/heads/master' && (github.event_name == 'schedule' || (inputs.pushToDist && !inputs.validateGridPro && !inputs.gridProMissingCss)) }}
     # Configure master-only access and environment secrets before enabling.
     # See nightly.md for the credential migration.
     environment: nightly-dist
@@ -330,10 +515,15 @@ jobs:
       group: nightly-dist
       cancel-in-progress: false
     steps:
+      - name: Check artifact reference
+        env:
+          DISTRIBUTION: ${{ needs.nightly_dist.outputs.distribution }}
+        run: test -n "$DISTRIBUTION"
+
       - name: Download distribution artifact
         uses: actions/download-artifact@v7
         with:
-          name: nightly-dist-${{ github.sha }}
+          artifact-ids: ${{ needs.nightly_dist.outputs.distribution }}
           path: nightly-dist
 
       - name: Validate distribution artifact

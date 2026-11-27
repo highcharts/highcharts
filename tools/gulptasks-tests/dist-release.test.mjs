@@ -9,6 +9,8 @@ import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { runInNewContext } from 'node:vm';
+import { fileURLToPath } from 'node:url';
+import { readPackResult } from '../nightly-package-validation-prototype/npm-pack.mjs';
 
 const require = createRequire(import.meta.url);
 const {
@@ -17,11 +19,11 @@ const {
     updateReleaseJSON
 } = require('../gulptasks/dist-release.js');
 
-async function writeFixtureFile(root, filePath) {
+async function writeFixtureFile(root, filePath, contents = 'fixture') {
     const fullPath = join(root, ...filePath.split('/'));
 
     await mkdir(join(fullPath, '..'), { recursive: true });
-    await writeFile(fullPath, 'fixture');
+    await writeFile(fullPath, contents);
 }
 
 describe('dist-release cleanup', () => {
@@ -111,6 +113,244 @@ describe('dist-release cleanup', () => {
     });
 });
 
+it('stages Core from committed metadata and built files in release order', async t => {
+    const root = await mkdtemp(join(tmpdir(), 'hc-stage-core-'));
+    t.after(() => rm(root, { recursive: true, force: true }));
+    const source = join(root, 'source');
+    const metadata = join(root, 'metadata');
+    const output = join(root, 'output');
+    for (const [file, contents] of Object.entries({
+        'code/highcharts.js': 'Core bundle',
+        'code/css/highcharts.css': 'generated styles',
+        'css/highcharts.css': 'release styles',
+        'code/es5/highcharts.js': 'archive only',
+        'code/es-modules/masters/highcharts.src.d.ts': 'public declaration',
+        'code/es-modules/Core/internal.d.ts': 'internal declaration',
+        'code/highcharts.js.map': 'source map',
+        'build/dist/products.js': 'var products = {"Highcharts":{"nr":"13.2.0"}}',
+        'SECURITY.md': 'source policy'
+    })) {
+        await writeFixtureFile(source, file, contents);
+    }
+    const original = '{"name":"highcharts","main":"highcharts.js","module":"esm/highcharts.js"}';
+    const largeAsset = Buffer.alloc(1024 * 1024 + 1, 0xff);
+    for (const [file, contents] of Object.entries({
+        'package.json': original, 'bower.json': original, 'SECURITY.md': 'old policy',
+        '.github/banner.bin': largeAsset,
+        '.github/workflows/publish.yml': 'retained metadata', 'obsolete.js': 'prior release'
+    })) {
+        await writeFixtureFile(metadata, file, contents);
+    }
+    function commit(cwd) {
+        const git = (...args) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim();
+        git('init', '-q');
+        git('add', '-f', '.');
+        git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+            '-c', 'commit.gpgSign=false', 'commit', '-qm', 'Fixture');
+        return git('rev-parse', 'HEAD');
+    }
+    const sourceSha = commit(source);
+    const revision = commit(metadata);
+    await writeFile(join(metadata, 'package.json'), 'uncommitted');
+    const cli = fileURLToPath(new URL('../nightly-package-validation-prototype/stage-core.mjs', import.meta.url));
+    const stage = dest => execFileSync(process.execPath, [cli, sourceSha, source, metadata, revision, dest], {
+        stdio: 'pipe'
+    });
+    stage(output);
+    const read = file => readFileSync(join(output, file), 'utf8');
+    strictEqual(read('css/highcharts.css'), 'release styles');
+    strictEqual(read('SECURITY.md'), 'source policy');
+    strictEqual(read('es-modules/masters/highcharts.src.d.ts'), 'public declaration');
+    strictEqual(read('.github/workflows/publish.yml'), 'retained metadata');
+    assert.deepEqual(readFileSync(join(output, '.github/banner.bin')), largeAsset);
+    for (const file of ['es5', 'es-modules/Core/internal.d.ts', 'highcharts.js.map', 'obsolete.js', '.git']) {
+        ok(!existsSync(join(output, file)), file);
+    }
+    for (const file of ['package.json', 'bower.json']) {
+        const pkg = JSON.parse(read(file));
+        strictEqual(pkg.version, '13.2.0');
+        strictEqual(pkg.types, 'highcharts.d.ts');
+        strictEqual(pkg.module, undefined);
+    }
+    strictEqual(readFileSync(join(metadata, 'package.json'), 'utf8'), 'uncommitted');
+    throws(() => stage(output));
+    strictEqual(read('highcharts.js'), 'Core bundle');
+    await rm(join(source, 'SECURITY.md'));
+    const incomplete = join(root, 'incomplete');
+    throws(() => stage(incomplete));
+    ok(!existsSync(incomplete));
+});
+
+describe('Grid release and pilot staging', () => {
+    const { stageGridPackage } = require('../gulptasks/lib/release-package');
+
+    it('reads a single npm pack result in both npm formats', () => {
+        const name = '@highcharts/grid-lite';
+        const packed = {
+            name,
+            filename: 'highcharts-grid-lite-3.2.1.tgz',
+            integrity: 'sha512-example'
+        };
+        assert.deepEqual(readPackResult(JSON.stringify([packed]), name), packed);
+        assert.deepEqual(readPackResult(JSON.stringify({ [name]: packed }), name), packed);
+        assert.throws(() => readPackResult(JSON.stringify([packed, packed]), name),
+            /Expected one npm pack result/u);
+    });
+
+    it('rejects a symlinked release manifest', {
+        skip: process.platform === 'win32' && 'symlink creation requires privileges on Windows'
+    }, async t => {
+        const root = await mkdtemp(join(tmpdir(), 'hc-grid-manifest-'));
+        t.after(() => rm(root, { recursive: true, force: true }));
+        const source = join(root, 'source');
+        const destination = join(root, 'destination');
+        const manifest = join(destination, 'package.json');
+        const original = '{"name":"@highcharts/grid-lite","version":"3.2.0"}';
+        await writeFixtureFile(root, 'metadata.json', original);
+        await mkdir(source);
+        await mkdir(destination);
+        fs.symlinkSync('../metadata.json', manifest);
+
+        assert.throws(() => stageGridPackage(source, destination, '3.2.1'),
+            /ELOOP|Expected Grid release manifest/u);
+        assert.equal(fs.readFileSync(join(root, 'metadata.json'), 'utf8'), original);
+        assert(fs.lstatSync(manifest).isSymbolicLink());
+    });
+
+    it('packs pinned release metadata and applies the same build filters', {
+        skip: process.platform === 'win32' && 'nightly npm pack uses a POSIX runner'
+    }, async t => {
+        const root = fs.mkdtempSync(join(tmpdir(), 'hc-grid-package-'));
+        t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+        const metadata = join(root, 'grid-lite-dist');
+        const dist = join(root, 'build/dist');
+        const code = join(dist, 'grid-lite/code');
+        const version = '3.2.1';
+        const css = '.grid { display: grid; }';
+        const stageCLI = fileURLToPath(new URL(
+            '../nightly-package-validation-prototype/stage-grid-lite.mjs', import.meta.url));
+        const env = { ...process.env, npm_config_cache: join(root, 'npm-cache') };
+        function git(cwd, ...args) {
+            return execFileSync('git', [
+                '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+                '-c', 'commit.gpgSign=false', ...args
+            ], { cwd, encoding: 'utf8' }).trim();
+        }
+        function pilot(output, ...flags) {
+            const directory = join(root, output);
+            execFileSync(process.execPath, [
+                stageCLI, sha, root, metadata, revision, directory, ...flags
+            ], { env, stdio: 'pipe' });
+            const manifest = JSON.parse(fs.readFileSync(join(directory, 'staging-manifest.json'), 'utf8'));
+            ok(fs.statSync(join(directory, manifest.tarball)).size > 0);
+            return manifest;
+        }
+
+        fs.mkdirSync(metadata);
+        for (const [file, contents] of Object.entries({
+            'package.json': JSON.stringify({
+                name: '@highcharts/grid-lite', version: '3.2.0', main: 'grid.js',
+                module: './esm/grid.js', types: './esm/grid.d.ts'
+            }),
+            '.github/workflows/release.yml': 'name: release',
+            '.npmignore': 'ignored.js',
+            'README.md': 'old README',
+            'bower.json': '{}',
+            'LICENSE.txt': 'license',
+            'stale.js': 'previous build'
+        })) {
+            await writeFixtureFile(metadata, file, contents);
+        }
+        git(metadata, 'init', '-q');
+        git(metadata, 'add', '.');
+        git(metadata, 'commit', '-qm', 'Metadata');
+        let revision = git(metadata, 'rev-parse', 'HEAD');
+
+        git(root, 'init', '-q');
+        git(root, 'commit', '--allow-empty', '-qm', 'Source');
+        const sha = git(root, 'rev-parse', 'HEAD');
+        for (const [file, contents] of Object.entries({
+            'grid.js': 'module.exports = {};',
+            'esm/grid.js': 'export default {};',
+            'esm/grid.d.ts': 'export {};',
+            'css/grid-lite.css': css,
+            'README.md': 'built README',
+            'package.json': '{}',
+            'esm/package.json': '{}',
+            'esm/ignored-package.json': '{}',
+            '.hidden-build-file': 'unused',
+            'ignored.js': 'npm exclusion'
+        })) {
+            await writeFixtureFile(code, file, contents);
+        }
+        fs.writeFileSync(join(dist, 'products.js'), 'var products = ' + JSON.stringify({
+            'Highcharts Grid Lite': { nr: version }, 'Highcharts Grid Pro': { nr: version }
+        }));
+
+        // The pilot must still use the committed metadata after a local edit.
+        const release = join(root, 'release');
+        git(root, 'clone', '-q', metadata, release);
+        fs.writeFileSync(join(metadata, 'bower.json'), 'uncommitted');
+        await removeFilesInFolder(release, releaseRepositoryMetadata);
+        stageGridPackage(code, release, version);
+        const packed = readPackResult(execFileSync('npm', [
+            'pack', release, '--ignore-scripts', '--json'
+        ], { cwd: root, env, encoding: 'utf8' }), '@highcharts/grid-lite');
+        const normal = pilot('normal');
+        strictEqual(normal.integrity, packed.integrity);
+        const files = normal.stagedFiles.map(([file]) => file);
+        deepEqual(files, [
+            '.github/workflows/release.yml', '.npmignore', 'LICENSE.txt',
+            'README.md', 'bower.json', 'css/grid-lite.css', 'esm/grid.d.ts',
+            'esm/grid.js', 'grid.js', 'ignored.js', 'package.json'
+        ]);
+        ok(!normal.packedFiles.includes('ignored.js'));
+        strictEqual(fs.readFileSync(join(release, 'README.md'), 'utf8'), 'built README');
+        const synthetic = pilot('synthetic', '--missing-css');
+        fs.rmSync(join(code, 'css/grid-lite.css'));
+        const real = pilot('missing');
+        strictEqual(real.integrity, synthetic.integrity);
+        ok(!real.packedFiles.includes('css/grid-lite.css'));
+        strictEqual(real.missingCssControl, false);
+        strictEqual(synthetic.missingCssControl, true);
+
+        await writeFixtureFile(code, 'css/grid-lite.css', css);
+        await writeFixtureFile(metadata, '.npmignore', 'css/grid-lite.css\nesm/grid.d.ts\n');
+        git(metadata, 'commit', '-qm', 'Omit CSS and declarations from npm', '--', '.npmignore');
+        revision = git(metadata, 'rev-parse', 'HEAD');
+        const ignored = pilot('ignored');
+        ok(ignored.stagedFiles.some(([path]) => path === 'css/grid-lite.css'));
+        ok(!ignored.packedFiles.includes('css/grid-lite.css'));
+        ok(ignored.stagedFiles.some(([path]) => path === 'esm/grid.d.ts'));
+        ok(!ignored.packedFiles.includes('esm/grid.d.ts'));
+        strictEqual(ignored.missingCssControl, false);
+
+        revision = normal.metadataRevision;
+        fs.rmSync(join(code, 'esm/grid.d.ts'));
+        const missingEntry = pilot('missing-entry');
+        ok(!missingEntry.stagedFiles.some(([path]) => path === 'esm/grid.d.ts'));
+        ok(!missingEntry.packedFiles.includes('esm/grid.d.ts'));
+
+        const proName = '@highcharts/grid-pro';
+        await writeFixtureFile(metadata, 'package.json', JSON.stringify({ name: proName, version: '3.2.0',
+            main: 'grid-pro.js' }));
+        git(metadata, 'commit', '-qm', 'Grid Pro metadata', '--', 'package.json');
+        revision = git(metadata, 'rev-parse', 'HEAD');
+        await writeFixtureFile(dist, 'grid-pro/code/grid-pro.js', 'module.exports = {};');
+        await writeFixtureFile(dist, 'grid-pro/code/css/grid-pro.css', css);
+        const pro = pilot('pro', '--package', 'grid-pro');
+        strictEqual(pro.package, proName);
+        strictEqual(pro.version, version);
+        strictEqual(pro.metadataRevision, revision);
+        ok(pro.packedFiles.includes('grid-pro.js'));
+        ok(pro.packedFiles.includes('css/grid-pro.css'));
+        ok(!pro.packedFiles.includes('css/grid-lite.css'));
+        const syntheticPro = pilot('pro-missing-css', '--package', 'grid-pro', '--missing-css');
+        strictEqual(syntheticPro.missingCssControl, true);
+        ok(!syntheticPro.packedFiles.includes('css/grid-pro.css'));
+    });
+});
+
 function loadRelease({ argv = {}, products = {} } = {}) {
     const module = { exports: {} };
     const calls = [];
@@ -127,6 +367,9 @@ function loadRelease({ argv = {}, products = {} } = {}) {
             }
             if (name === '../libs/log') {
                 return { message() {} };
+            }
+            if (name.startsWith('./lib/')) {
+                return require('../gulptasks/' + name.slice(2));
             }
             if (name === 'child_process') {
                 return {
