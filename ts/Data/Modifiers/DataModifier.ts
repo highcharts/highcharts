@@ -55,7 +55,7 @@ abstract class DataModifier implements DataEventEmitter<DataModifierEvent> {
      * Registry as a record object with modifier names and their class
      * constructor.
      */
-    public static types = {} as DataModifierTypes;
+    public static types = Object.create(null) as DataModifierTypes;
 
     /**
      * Adds a modifier class to the registry. The modifier class has to provide

@@ -65,7 +65,7 @@ abstract class DataConnector implements DataEventEmitter<Event> {
     /**
      * Registry as a record object with connector names and their class.
      */
-    public static types = {} as DataConnectorTypes;
+    public static types = Object.create(null) as DataConnectorTypes;
 
     /**
      * Adds a connector class to the registry. The connector has to provide the

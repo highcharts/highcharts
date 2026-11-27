@@ -35,7 +35,7 @@ import type { CellRendererTypeRegistry } from './CellRendererType';
 /**
  * Record of cell renderer classes
  */
-export const types = {} as CellRendererTypeRegistry;
+export const types = Object.create(null) as CellRendererTypeRegistry;
 
 
 /* *

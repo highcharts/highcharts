@@ -144,12 +144,14 @@ export interface JSON<T extends string> extends JSONObject {
 /**
  * Registry of serializable classes.
  */
-const classRegistry: Record<string, Serializable<AnyRecord, JSON<string>>> = {};
+const classRegistry: Record<string, Serializable<AnyRecord, JSON<string>>> =
+    Object.create(null);
 
 /**
  * Registry of function sets.
  */
-const helperRegistry: Record<string, Helper<AnyRecord, JSON<string>>> = {};
+const helperRegistry: Record<string, Helper<AnyRecord, JSON<string>>> =
+    Object.create(null);
 
 /* *
  *

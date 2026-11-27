@@ -286,6 +286,13 @@ class Validator {
             let err: ValidationNotification|undefined;
 
             if (typeof rule === 'string') {
+                if (!Object.hasOwnProperty.call(
+                    Validator.rulesRegistry,
+                    rule
+                )) {
+                    continue;
+                }
+
                 ruleDef = Validator.rulesRegistry[rule];
                 err = validationNotifications?.[rule];
             } else {
@@ -300,7 +307,12 @@ class Validator {
 
             if (typeof ruleDef.validate === 'string') {
                 const predefinedRules = (
-                    Validator.rulesRegistry[ruleDef.validate]
+                    Object.hasOwnProperty.call(
+                        Validator.rulesRegistry,
+                        ruleDef.validate
+                    ) ?
+                        Validator.rulesRegistry[ruleDef.validate] :
+                        void 0
                 ) as RuleDefinition;
                 validateFn =
                     predefinedRules?.validate as ValidateFunction;

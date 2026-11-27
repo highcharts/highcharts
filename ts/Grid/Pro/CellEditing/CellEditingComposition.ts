@@ -156,10 +156,14 @@ function createEditModeRenderer(column: Column): EditModeRendererType {
     const viewRendererTypeName =
         column.options?.cells?.renderer?.type || 'text';
 
-    if (selectedEditModeRendererTypeName) {
-        return new CellRendererRegistry.types[
-            selectedEditModeRendererTypeName
-        ](column, editModeOptions?.renderer || {});
+    const SelectedRendererType = selectedEditModeRendererTypeName &&
+        CellRendererRegistry.types[selectedEditModeRendererTypeName];
+
+    if (SelectedRendererType) {
+        return new SelectedRendererType(
+            column,
+            editModeOptions?.renderer || {}
+        );
     }
 
     const ViewRendererType =
