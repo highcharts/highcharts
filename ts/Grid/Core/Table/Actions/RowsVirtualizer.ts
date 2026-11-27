@@ -814,15 +814,6 @@ class RowsVirtualizer {
             return;
         }
 
-        // Rows are positioned by index, so content that does not wrap but is
-        // still taller, like line breaks, must not change the row height.
-        if (this.strictRowHeights) {
-            for (let i = 0; i < rowsLn; ++i) {
-                rows[i].htmlElement.style.height = defaultH + 'px';
-            }
-            return;
-        }
-
         let translateBuffer = rows[0].getDefaultTopOffset();
 
         for (let i = 0; i < rowsLn; ++i) {

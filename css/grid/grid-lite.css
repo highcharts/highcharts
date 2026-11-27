@@ -213,8 +213,7 @@
         border-right: none;
     }
 
-    /* The mocked row measures the default row height, border included. */
-    tbody tr:last-of-type:not(.hcg-mocked-row) > :where(.hcg-cell) {
+    tbody tr:last-of-type > :where(.hcg-cell) {
         border-bottom: none;
     }
 
@@ -233,14 +232,6 @@
 
     > tbody.hcg-rows-content-nowrap > tr > :where(.hcg-cell) {
         white-space: nowrap;
-    }
-
-    /* Strict row heights: cells fill the fixed row height and clip the
-    content inside their own borders. */
-    &.hcg-virtualization > tbody.hcg-rows-content-nowrap > tr:not(.hcg-mocked-row) > :where(.hcg-cell) {
-        display: inline-block;
-        vertical-align: top;
-        height: 100%;
     }
 
     > tbody > tr > :where(.hcg-cell):focus {

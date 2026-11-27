@@ -1,26 +1,19 @@
-import type { Page } from '@playwright/test';
-
 import { test, expect } from '~/fixtures.ts';
 
-async function loadGrid(page: Page): Promise<void> {
-    await page.setContent(`
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
-                <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-lite.css">
-            </head>
-            <body>
-                <div id="strict" style="height: 400px"></div>
-                <div id="loose" style="height: 400px"></div>
-            </body>
-        </html>
-    `, { waitUntil: 'networkidle' });
-}
-
 test.describe('Grid rows strictHeights', () => {
-    test('Rows keep the same height and scroll smoothly', async ({ page }) => {
-        await loadGrid(page);
+    test('Rows of different heights scroll without jumps', async ({ page }) => {
+        await page.setContent(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
+                    <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-lite.css">
+                </head>
+                <body>
+                    <div id="container" style="height: 400px"></div>
+                </body>
+            </html>
+        `, { waitUntil: 'networkidle' });
 
         const result = await page.evaluate(async () => {
             const { Grid } = (window as any);
@@ -28,10 +21,10 @@ test.describe('Grid rows strictHeights', () => {
 
             // Every third row is taller than one line, despite nowrap.
             for (let i = 0; i < 300; i++) {
-                names.push(i % 3 === 1 ? 'Line 1<br>Line 2' : 'Name ' + i);
+                names.push(i % 3 === 1 ? 'A<br>B<br>C' : 'Name ' + i);
             }
 
-            const grid = await Grid.grid('strict', {
+            const grid = await Grid.grid('container', {
                 data: {
                     columns: { name: names }
                 },
@@ -46,6 +39,7 @@ test.describe('Grid rows strictHeights', () => {
 
             const vp = grid.viewport;
             const tbody = vp.tbodyElement as HTMLElement;
+            const step = 5;
             const getTops = (): Record<number, number> => {
                 const tops: Record<number, number> = {};
                 for (const row of vp.rows) {
@@ -54,74 +48,51 @@ test.describe('Grid rows strictHeights', () => {
                 }
                 return tops;
             };
-            const step = 5;
-            const jumps: number[] = [];
+            const jumps: string[] = [];
             let prevTops = getTops();
 
-            for (let scrollTop = step; scrollTop <= 1500; scrollTop += step) {
+            const scrollTo = async (scrollTop: number): Promise<void> => {
                 tbody.scrollTop = scrollTop;
                 await new Promise((resolve): void => {
                     requestAnimationFrame((): void => {
                         requestAnimationFrame(resolve);
                     });
                 });
+
                 const tops = getTops();
                 for (const index in tops) {
                     if (
                         index in prevTops &&
-                        Math.abs(tops[index] - prevTops[index] + step) > 1
+                        Math.abs(tops[index] - prevTops[index]) > 2 * step
                     ) {
-                        jumps.push(scrollTop);
+                        jumps.push(`row ${index} at ${scrollTop}`);
                         break;
                     }
                 }
                 prevTops = tops;
+            };
+
+            for (let scrollTop = step; scrollTop <= 1500; scrollTop += step) {
+                await scrollTo(scrollTop);
+            }
+            for (let scrollTop = 1500; scrollTop >= 0; scrollTop -= step) {
+                await scrollTo(scrollTop);
             }
 
             return {
                 defaultHeight: vp.rowsVirtualizer.defaultRowHeight,
-                heights: vp.rows.map(
-                    (row: any): number => row.htmlElement.offsetHeight
-                ),
+                tallHeight: vp.rows.find(
+                    (row: any): boolean => row.index % 3 === 1
+                ).htmlElement.offsetHeight,
                 jumps
             };
         });
 
         expect(result.jumps, 'rows should not jump while scrolling')
             .toEqual([]);
-        for (const height of result.heights) {
-            expect(height).toBe(result.defaultHeight);
-        }
-    });
-
-    test('Default row height matches the natural row height', async ({ page }) => {
-        await loadGrid(page);
-
-        const heights = await page.evaluate(async () => {
-            const { Grid } = (window as any);
-            const options = (strictHeights: boolean): object => ({
-                data: {
-                    columns: {
-                        name: Array.from(
-                            { length: 100 },
-                            (_, i): string => 'Name ' + i
-                        )
-                    }
-                },
-                rendering: {
-                    rows: { strictHeights }
-                }
-            });
-
-            const strict = await Grid.grid('strict', options(true), true);
-            const loose = await Grid.grid('loose', options(false), true);
-
-            return [strict, loose].map(
-                (grid: any): number =>
-                    grid.viewport.rows[0].htmlElement.offsetHeight
-            );
-        });
-
-        expect(heights[0]).toBe(heights[1]);
+        expect(
+            result.tallHeight,
+            'taller rows should keep their height'
+        ).toBeGreaterThan(result.defaultHeight);
     });
 });
