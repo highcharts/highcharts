@@ -1,5 +1,5 @@
 /* eslint-disable playwright/no-conditional-in-test */
-import type { BrowserContextOptions, JSHandle, Page } from '@playwright/test';
+import type { BrowserContext, BrowserContextOptions, Page, TestInfo } from '@playwright/test';
 import { setupRoutes, test as base } from '~/fixtures.ts';
 import { getSample, transpileTS } from '~/utils.ts';
 import { join, dirname } from 'node:path';
@@ -49,6 +49,11 @@ function requiresFreshPage(source: string): boolean {
     return !!declaresBinding(file);
 }
 
+interface WarmPage {
+    page: Page;
+    source: Awaited<ReturnType<typeof initializeWarmPage>>;
+}
+
 const test = base.extend<{
     samplePage: {
         page: Page;
@@ -59,8 +64,7 @@ const test = base.extend<{
     setupFile: string;
     warmPage: {
         contextOptions: BrowserContextOptions;
-        page: Page;
-        source: JSHandle<{ source: string }>;
+        getPage(testInfo: TestInfo): Promise<WarmPage>;
     };
 }>({
     setupFile: [async ({}, use) => {
@@ -80,20 +84,53 @@ const test = base.extend<{
             ...projectUse,
             viewport: qunitViewport
         };
-        const context = await browser.newContext(options);
-        try {
+        let pendingContext: Promise<BrowserContext> | undefined;
+        let shared: WarmPage | undefined;
+        const openPage = async (): Promise<WarmPage> => {
+            pendingContext = browser.newContext(options);
+            const context = await pendingContext;
             const page = await context.newPage();
             await setupRoutes(page);
             const source = await initializeWarmPage(page, setupFile);
-            try {
-                await use({ page, source, contextOptions: options });
-            } finally {
-                if (!page.isClosed()) {
-                    await page.evaluate(() => window.__qunitWarmState.finish());
+            shared = { page, source };
+            return shared;
+        };
+
+        try {
+            await use({
+                contextOptions: options,
+                async getPage(testInfo) {
+                    if (shared) {
+                        return shared;
+                    }
+                    // Keep the worker's setup budget separate from the
+                    // first sample's execution budget.
+                    const { timeout } = testInfo;
+                    const setupTimeout = workerInfo.project.timeout;
+                    const start = performance.now();
+                    testInfo.setTimeout(timeout && setupTimeout ?
+                        timeout + setupTimeout : 0);
+                    try {
+                        return await test.step('Initialize shared QUnit page',
+                            openPage, { timeout: setupTimeout });
+                    } finally {
+                        const elapsed = Math.ceil(performance.now() - start);
+                        testInfo.setTimeout(timeout ? timeout + elapsed : 0);
+                    }
                 }
-            }
+            });
         } finally {
-            await context.close();
+            try {
+                if (shared && !shared.page.isClosed()) {
+                    await shared.page.evaluate(() =>
+                        window.__qunitWarmState.finish()
+                    );
+                }
+            } finally {
+                // Close even if setup failed or is still running.
+                const context = await pendingContext?.catch(() => undefined);
+                await context?.close();
+            }
         }
     }, { scope: 'worker' }],
     samplePage: process.env.QUNIT_FRESH_PAGE !== '1' ?
@@ -118,7 +155,7 @@ const test = base.extend<{
                 }
                 return;
             }
-            const { page, source } = warmPage;
+            const { page, source } = await warmPage.getPage(testInfo);
             const warm = await prepareWarmSample(page, source, testInfo.title);
             try {
                 await installWarmSampleHooks(page, warm);

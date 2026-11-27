@@ -67,6 +67,52 @@ test('QUnit fails the sample when asynchronous setup throws or rejects', async (
         .toEqual(['setup promise rejected', 'setup timer threw']);
 });
 
+test('QUnit warm samples retain their failure locations', async ({
+    qunitSetupFile,
+    page
+}) => {
+    await writeQUnitSetupFile(qunitSetupFile);
+    const source = await initializeWarmPage(page, qunitSetupFile);
+    try {
+        const warm = await prepareWarmSample(page, source, 'warm-stack-sample');
+        try {
+            await installWarmSampleHooks(page, warm);
+            await page.addScriptTag({ content: [
+                'QUnit.test("assertion", assert => {',
+                '    assert.strictEqual(3, 4);',
+                '});',
+                'QUnit.test("rejection", async () => {',
+                '    await Promise.reject(new Error("request failed"));',
+                '});',
+                '//# sourceURL=warm-stack-sample.js'
+            ].join('\n') });
+            await page.evaluate(() => window.QUnit.start());
+            await waitForQUnitWithTimeout(page, 'warm-stack-sample', 5000);
+            const { failedAssertions } = await captureQUnitErrorDetails(
+                page, 'warm-stack-sample'
+            );
+            expect(failedAssertions.map(({ name, stack }) => ({
+                name,
+                frames: stack?.split('\n').map(line => line.trim())
+                    .filter(line => line && !line.startsWith('Error: '))
+            }))).toEqual([
+                {
+                    name: 'assertion',
+                    frames: [expect.stringContaining('warm-stack-sample.js:2:')]
+                },
+                {
+                    name: 'rejection',
+                    frames: [expect.stringContaining('warm-stack-sample.js:5:')]
+                }
+            ]);
+        } finally {
+            await warm.dispose();
+        }
+    } finally {
+        await source.dispose();
+    }
+});
+
 test('Chart creation', async ({ page }) => {
     await page.setContent('<div id="container"></container>');
     await page.addScriptTag({ path: './code/highcharts.src.js' });
@@ -337,7 +383,11 @@ test('QUnit shared page resets samples and reports teardown errors', async ({
         clearTimeout: Reflect.get(window, 'clearTimeout')
     }));
 
-    async function runSample(name: string, script: string) {
+    async function runSample(
+        name: string,
+        script: string,
+        afterFinalResult?: () => Promise<void>
+    ) {
         const warm = await prepareWarmSample(page, source, name);
         try {
             await installWarmSampleHooks(page, warm);
@@ -346,6 +396,7 @@ test('QUnit shared page resets samples and reports teardown errors', async ({
             await waitForQUnitWithTimeout(page, name, 5000);
             await warm.evaluate(sample => sample.reset());
             await page.evaluate(() => window.getFinalQUnitResults());
+            await afterFinalResult?.();
             return await captureQUnitErrorDetails(page, name);
         } finally {
             try {
@@ -372,7 +423,19 @@ test('QUnit shared page resets samples and reports teardown errors', async ({
                 lolex.install({ toFake: ['setTimeout', 'clearTimeout'] });
                 assert.true(window.warmSampleProperty);
             });
-        `);
+        `, () => page.evaluate(async () => {
+            window.dispatchEvent(new ErrorEvent('error', {
+                message: 'error before restore',
+                error: new Error('error before restore')
+            }));
+            const delivered = new Promise<void>(resolve => {
+                window.addEventListener('unhandledrejection', () => resolve(), {
+                    once: true
+                });
+            });
+            void Promise.reject(new Error('rejection before restore'));
+            await delivered;
+        }));
         expect(first.qunitResults).toMatchObject({
             status: 'passed', passed: 1, failed: 0
         });
@@ -426,11 +489,15 @@ test('QUnit shared page resets samples and reports teardown errors', async ({
         expect(chartOnly.failedAssertions.map(({ message }) => message).sort())
             .toEqual(['chart destruction failed', 'rejected during destroy']);
 
-        const idleMessage = 'After shared sample changes state: idle rejection';
         const finishError = await page.evaluate(() =>
             window.__qunitWarmState.finish()
         ).then(() => '', (error: Error) => error.message);
-        expect(finishError.split(idleMessage)).toHaveLength(2);
+        const attributedErrors = finishError.match(/After shared sample .*/g);
+        expect(attributedErrors).toEqual([
+            'error before restore', 'rejection before restore', 'idle rejection'
+        ].map(message =>
+            `After shared sample changes state: ${message}`
+        ));
         await expect(page.evaluate(() => window.__qunitWarmState.finish()))
             .resolves.toBeUndefined();
     } finally {

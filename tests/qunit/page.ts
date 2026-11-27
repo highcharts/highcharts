@@ -148,6 +148,7 @@ export async function initializeWarmPage(
         const nativeSetTimeout = setTimeout;
         const state: Window['__qunitWarmState'] = {
             initialized: false,
+            resultsFinalized: false,
             checkErrors(): void {
                 if (errors.length) {
                     const error = new Error(errors.splice(0).join('\n'));
@@ -161,23 +162,26 @@ export async function initializeWarmPage(
             }
         };
         window.__qunitWarmState = state;
+        const shouldRecordError = (): boolean =>
+            state.resultsFinalized || !window.QUnit;
         const recordError = (message: string): void => {
-            if (!window.QUnit) {
-                const location = state.sample ?
-                    `After shared sample ${state.sample}` :
-                    state.initialized ? 'Before the first shared sample' :
-                        'During shared QUnit setup';
-                errors.push(`${location}: ${message}`);
-            }
+            const location = state.sample ?
+                `After shared sample ${state.sample}` :
+                state.initialized ? 'Before the first shared sample' :
+                    'During shared QUnit setup';
+            errors.push(`${location}: ${message}`);
         };
         window.addEventListener('error', event => {
             const error: unknown = event.error;
-            if (!(error instanceof Error && reported.has(error))) {
+            if (
+                shouldRecordError() &&
+                !(error instanceof Error && reported.has(error))
+            ) {
                 recordError(event.message);
             }
         });
         window.addEventListener('unhandledrejection', event => {
-            if (!window.QUnit) {
+            if (shouldRecordError()) {
                 const reason: unknown = event.reason;
                 // Firefox can surface a failed Playwright evaluation as an
                 // unhandled rejection in the page as well.
@@ -191,10 +195,11 @@ export async function initializeWarmPage(
     });
     await installSetupScripts(page, setupFile);
     const source = await readFile(qunitScript, 'utf8');
+    const sourceURL = pathToFileURL(qunitScript).href;
     return page.evaluateHandle(source => {
         window.__qunitWarmState.initialized = true;
         return { source };
-    }, source);
+    }, `${source}\n//# sourceURL=${sourceURL}`);
 }
 
 interface WarmSample {
@@ -216,7 +221,6 @@ export async function prepareWarmSample(
             // to the worker and must not stop the next sample from running.
             state.checkErrors();
         }
-        state.sample = samplePath;
         document.body.innerHTML = `${body}<div id="demo-html"></div>`;
         document.body.style.cssText = 'margin: 8px';
         window.__qunitResults__ = undefined;
@@ -263,6 +267,8 @@ export async function prepareWarmSample(
             };
         }
 
+        state.sample = samplePath;
+        state.resultsFinalized = false;
         window.QUnit = {
             config: {
                 autostart: false,
