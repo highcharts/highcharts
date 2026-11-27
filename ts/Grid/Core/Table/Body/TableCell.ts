@@ -497,6 +497,14 @@ export interface TableCellGetEditabilityEvent {
     editable: boolean;
 }
 
+/**
+ * Event fired before the text content of a cell is formatted. A listener can
+ * set `format` to replace the column `format` and `formatter`.
+ */
+export interface TableCellGetFormatEvent {
+    format?: string;
+}
+
 export interface TableCellAfterDataMutationEvent {
     requiresFullRowsUpdate: boolean;
     rowId: RowId;

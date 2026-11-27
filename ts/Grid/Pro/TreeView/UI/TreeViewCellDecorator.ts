@@ -23,6 +23,7 @@
 
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type { ResolvedTreeViewOptions } from '../TreeViewOptionsNormalizer';
+import type { TreeViewCellContext } from './TreeViewCellContext';
 
 import Globals from '../../../Core/Globals.js';
 import TreeViewGlobals from '../TreeViewGlobals.js';
@@ -70,6 +71,33 @@ function getPathSegmentDisplayValue(
     }
 
     return getLastPathSegment(value, input.separator);
+}
+
+/**
+ * Returns the `cells.groupFormat` of the cell column when the cell belongs to a
+ * generated group row.
+ *
+ * @param cell
+ * Table cell.
+ *
+ * @param context
+ * TreeView context of the cell.
+ *
+ * @returns
+ * The group format, or `undefined` when it does not apply to the cell.
+ */
+export function getGroupFormat(
+    cell: TableCell,
+    context: TreeViewCellContext | undefined = getTreeViewCellContext(cell)
+): string | undefined {
+    const groupFormat = cell.column.options.cells?.groupFormat;
+
+    if (
+        defined(groupFormat) &&
+        context?.controller.isGeneratedRow(context.rowId)
+    ) {
+        return groupFormat;
+    }
 }
 
 /**
@@ -130,17 +158,22 @@ export function decorateTreeViewCell(
         !!context?.controller.isCellDerived(context.rowId, cell.column.id)
     );
 
-    if (!context?.isTreeColumnCell || !rowState) {
+    if (!context || !rowState) {
+        return;
+    }
+
+    const cellOptions = cell.column.options.cells;
+    const rendererType = cellOptions?.renderer?.type;
+
+    if (
+        !context.isTreeColumnCell ||
+        (rendererType && rendererType !== 'text')
+    ) {
         return;
     }
 
     const { options } = context;
     const grid = cell.row.viewport.grid;
-
-    const rendererType = cell.column.options.cells?.renderer?.type;
-    if (rendererType && rendererType !== 'text') {
-        return;
-    }
 
     const cellElement = cell.htmlElement;
     const wrapper = document.createElement('div');
@@ -184,8 +217,9 @@ export function decorateTreeViewCell(
     );
 
     if (
-        !defined(cell.column.options.cells?.format) &&
-        !defined(cell.column.options.cells?.formatter) &&
+        !defined(getGroupFormat(cell, context)) &&
+        !defined(cellOptions?.format) &&
+        !defined(cellOptions?.formatter) &&
         defined(pathDisplayValue)
     ) {
         cellElement.textContent = '';
