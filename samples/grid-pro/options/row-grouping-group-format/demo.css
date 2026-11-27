@@ -1,0 +1,12 @@
+@import url("https://code.highcharts.com/grid-pro/css/grid-pro.css");
+
+#container {
+    padding: 8px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #e6ebf5;
+}

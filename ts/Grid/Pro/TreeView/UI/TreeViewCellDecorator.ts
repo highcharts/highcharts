@@ -25,11 +25,14 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 import type { ResolvedTreeViewOptions } from '../TreeViewOptionsNormalizer';
 
 import Globals from '../../../Core/Globals.js';
+import GridUtils from '../../../Core/GridUtils.js';
 import TreeViewGlobals from '../TreeViewGlobals.js';
 import { createGridIcon } from '../../../Core/UI/SvgIcons.js';
 import { getLastPathSegment } from '../TreeViewCommons.js';
 import { getTreeViewCellContext } from './TreeViewCellContext.js';
 import { defined } from '../../../../Shared/Utilities.js';
+
+const { setHTMLContent } = GridUtils;
 
 
 /* *
@@ -73,7 +76,8 @@ function getPathSegmentDisplayValue(
 }
 
 /**
- * Flags aggregated cells and decorates rendered tree cells.
+ * Flags aggregated cells, applies `cells.groupFormat` to generated group rows
+ * and decorates rendered tree cells.
  *
  * @param cell
  * Rendered table cell.
@@ -130,17 +134,30 @@ export function decorateTreeViewCell(
         !!context?.controller.isCellDerived(context.rowId, cell.column.id)
     );
 
-    if (!context?.isTreeColumnCell || !rowState) {
+    if (!context || !rowState) {
+        return;
+    }
+
+    const cellOptions = cell.column.options.cells;
+    const rendererType = cellOptions?.renderer?.type;
+    const isTextCell = !rendererType || rendererType === 'text';
+    const groupFormat = cellOptions?.groupFormat;
+    const useGroupFormat = (
+        isTextCell &&
+        defined(groupFormat) &&
+        context.controller.isGeneratedRow(context.rowId)
+    );
+
+    if (useGroupFormat) {
+        setHTMLContent(cell.htmlElement, cell.format(groupFormat));
+    }
+
+    if (!context.isTreeColumnCell || !isTextCell) {
         return;
     }
 
     const { options } = context;
     const grid = cell.row.viewport.grid;
-
-    const rendererType = cell.column.options.cells?.renderer?.type;
-    if (rendererType && rendererType !== 'text') {
-        return;
-    }
 
     const cellElement = cell.htmlElement;
     const wrapper = document.createElement('div');
@@ -184,8 +201,9 @@ export function decorateTreeViewCell(
     );
 
     if (
-        !defined(cell.column.options.cells?.format) &&
-        !defined(cell.column.options.cells?.formatter) &&
+        !useGroupFormat &&
+        !defined(cellOptions?.format) &&
+        !defined(cellOptions?.formatter) &&
         defined(pathDisplayValue)
     ) {
         cellElement.textContent = '';

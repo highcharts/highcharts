@@ -722,6 +722,23 @@ declare module '../../Core/Options' {
         treeView?: TreeViewColumnOptions;
     }
 
+    interface ColumnCellOptions {
+        /**
+         * The format of the cell content in group rows, the parent rows that
+         * `rowGrouping` and path-based `treeView` input generate. In an
+         * aggregated column, `{value}` is the aggregated value.
+         *
+         * When not set, group rows use the `format` or `formatter` of the
+         * column, like other rows. Set it to an empty string to leave the
+         * column empty in group rows.
+         *
+         * @sample grid-pro/options/row-grouping-group-format Group format
+         *
+         * @default undefined
+         */
+        groupFormat?: string;
+    }
+
     interface LangOptions {
         /**
          * Language options for the row grouping feature.

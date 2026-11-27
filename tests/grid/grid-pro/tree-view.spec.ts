@@ -1025,4 +1025,72 @@ test.describe('Grid Pro - tree view', () => {
         await expect(editedLeafCell).toContainText('100');
         await expect(stickyValueCell).toContainText('305');
     });
+
+    test('applies cells.groupFormat to generated group rows only', async ({ page }) => {
+        await loadGridPro(page);
+
+        await page.evaluate(async (): Promise<void> => {
+            (window as any).grid = await (window as any).Grid.grid('container', {
+                data: {
+                    columns: {
+                        department: ['HR', 'HR', 'Sales'],
+                        name: ['Anne', 'Luis', 'Mia'],
+                        salary: [10, 20, 40],
+                        units: [1, 2, 4]
+                    }
+                },
+                rowGrouping: {
+                    enabled: true,
+                    groupBy: 'department'
+                },
+                rendering: {
+                    rows: {
+                        expandedLevels: 'all',
+                        virtualization: false
+                    }
+                },
+                columns: [{
+                    id: 'name',
+                    cells: {
+                        format: '<b>{value}</b> and more',
+                        groupFormat: ''
+                    }
+                }, {
+                    id: 'salary',
+                    cells: {
+                        format: '{value}$'
+                    },
+                    rowAggregator: 'SUM'
+                }, {
+                    id: 'units',
+                    cells: {
+                        format: '{value} pcs',
+                        groupFormat: 'Total: {value}'
+                    },
+                    rowAggregator: 'SUM'
+                }]
+            }, true);
+        });
+
+        const groupRow = page.locator('tbody .hcg-row.hcg-row-expanded').first();
+        const leafRow = page
+            .locator('tbody .hcg-row:not(.hcg-row-expanded)')
+            .first();
+        const cell = (row: typeof groupRow, columnId: string) =>
+            row.locator(`td[data-column-id="${columnId}"]`);
+
+        // Empty groupFormat leaves the group cell empty.
+        await expect(cell(groupRow, 'name')).toHaveText('');
+        await expect(cell(groupRow, 'name').locator('b')).toHaveCount(0);
+
+        // Unset groupFormat falls back to format.
+        await expect(cell(groupRow, 'salary')).toHaveText('30$');
+
+        // groupFormat formats the aggregated value.
+        await expect(cell(groupRow, 'units')).toHaveText('Total: 3');
+
+        // Leaf rows keep format.
+        await expect(cell(leafRow, 'name')).toHaveText('Anne and more');
+        await expect(cell(leafRow, 'units')).toHaveText('1 pcs');
+    });
 });
