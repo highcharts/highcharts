@@ -377,25 +377,32 @@ class FilteringController {
     }
 
     /**
-     * Adds a new filtering condition to the specified column.
+     * Adds a new filtering condition to the specified column. Filters on
+     * other columns that can't be combined with it, as set by
+     * `filtering.multiColumn`, are cleared.
      *
      * @param columnId
      * The column ID to filter in.
      *
      * @param options
      * The filtering options.
+     *
+     * @return
+     * The IDs of the columns whose filters were cleared.
      */
     public addColumnFilterCondition(
         columnId: string,
         options: FilteringCondition
-    ): void {
-        if (this.querying.grid.columnPolicy.isColumnUnbound(columnId)) {
-            return;
+    ): string[] {
+        const columnPolicy = this.querying.grid.columnPolicy;
+        const clearedColumnIds: string[] = [];
+
+        if (columnPolicy.isColumnUnbound(columnId)) {
+            return clearedColumnIds;
         }
-        const sourceColumnId = this.querying.grid
-            .columnPolicy.getColumnSourceId(columnId);
+        const sourceColumnId = columnPolicy.getColumnSourceId(columnId);
         if (!sourceColumnId) {
-            return;
+            return clearedColumnIds;
         }
 
         const condition = this.createColumnCondition(
@@ -405,12 +412,35 @@ class FilteringController {
         );
 
         if (condition) {
+            const exclusive =
+                !columnPolicy.isColumnMultiFilteringEnabled(columnId);
+
+            for (const id of Object.keys(this.columnConditions)) {
+                if (
+                    id !== columnId && (
+                        exclusive ||
+                        !columnPolicy.isColumnMultiFilteringEnabled(id)
+                    )
+                ) {
+                    const filtering = columnPolicy
+                        .getIndividualColumnOptions(id)?.filtering;
+
+                    delete this.columnConditions[id];
+                    delete filtering?.rule;
+                    delete filtering?.condition;
+                    delete filtering?.value;
+                    clearedColumnIds.push(id);
+                }
+            }
+
             this.columnConditions[columnId] = condition;
         } else {
             delete this.columnConditions[columnId];
         }
 
         this.updateModifier();
+
+        return clearedColumnIds;
     }
 
     /**

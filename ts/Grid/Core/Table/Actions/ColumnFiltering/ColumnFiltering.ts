@@ -438,11 +438,21 @@ class ColumnFiltering {
             delete filteringOptions.conditions;
         }
 
-        filteringController.addColumnFilterCondition(columnId, condition);
+        const clearedColumnIds = filteringController.addColumnFilterCondition(
+            columnId,
+            condition
+        );
         this.disableInputIfNeeded();
 
         await querying.proceed();
         await viewport.updateRows();
+
+        for (const column of viewport.columns) {
+            if (clearedColumnIds.includes(column.id)) {
+                column.filtering?.refreshState();
+                column.header?.toolbar?.refreshState();
+            }
+        }
 
         a11y?.userFilteredColumn({
             ...condition,

@@ -812,3 +812,125 @@ test.describe('Grid datetime filtering', () => {
 
     });
 });
+
+test.describe('Multi-column filtering', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/inline-filtering', {
+            waitUntil: 'networkidle'
+        });
+        await page.waitForFunction(() => (window as any).grid?.viewport);
+    });
+
+    const createGrid = (page: Page, options: object): Promise<void> =>
+        page.evaluate(async (options) => {
+            const data = (window as any).grid.userOptions.data;
+            (window as any).grid.destroy();
+            (window as any).grid = await (window as any).Grid.grid(
+                'container',
+                { data, ...options },
+                true
+            );
+        }, options);
+    const getRules = (page: Page): Promise<Record<string, unknown>> =>
+        page.evaluate(() => {
+            const grid = (window as any).grid;
+            const rules: Record<string, unknown> = {};
+            for (const id of ['product', 'weight', 'price']) {
+                rules[id] = grid.viewport.getColumn(id)
+                    .options.filtering?.rule?.value;
+            }
+            return rules;
+        });
+    const setFilter = (
+        page: Page,
+        columnId: string,
+        value: string,
+        operator: string
+    ): Promise<void> => page.evaluate(([columnId, value, operator]) =>
+        (window as any).grid.viewport.getColumn(columnId)
+            .filtering.set(value, operator),
+    [columnId, value, operator]);
+
+    test('Disabled in columnDefaults keeps one filtered column', async ({
+        page
+    }) => {
+        await createGrid(page, {
+            columnDefaults: {
+                filtering: {
+                    enabled: true,
+                    inline: true,
+                    multiColumn: false
+                }
+            },
+            columns: [{
+                id: 'weight',
+                filtering: {
+                    rule: { operator: 'greaterThan', value: 1000 }
+                }
+            }]
+        });
+        await verifyRowCount(page, 3);
+
+        await typeFilterValue(page, inputProductFilter, 'an');
+
+        // Bananas, oranges, mangoes and cantaloupe, any weight.
+        await verifyRowCount(page, 4);
+        await expect(page.locator(inputWeightFilter)).toHaveValue('');
+        expect(await getRules(page)).toEqual({
+            product: 'an',
+            weight: void 0,
+            price: void 0
+        });
+
+        // Clearing a filter leaves the other columns alone.
+        await setFilter(page, 'weight', '1000', 'greaterThan');
+        await clearFilterInput(page, inputWeightFilter);
+        await verifyRowCount(page, 20);
+    });
+
+    test('Per-column overrides clear only conflicting filters', async ({
+        page
+    }) => {
+        await createGrid(page, {
+            columnDefaults: {
+                filtering: {
+                    enabled: true,
+                    inline: true
+                }
+            },
+            columns: [{
+                id: 'product',
+                filtering: {
+                    multiColumn: false
+                }
+            }]
+        });
+
+        await setFilter(page, 'weight', '1000', 'greaterThan');
+        await setFilter(page, 'price', '5', 'lessThan');
+        expect(await getRules(page)).toEqual({
+            product: void 0,
+            weight: 1000,
+            price: 5
+        });
+
+        // A column with multiColumn: false clears all other filters.
+        await setFilter(page, 'product', 'an', 'contains');
+        expect(await getRules(page)).toEqual({
+            product: 'an',
+            weight: void 0,
+            price: void 0
+        });
+        await expect(page.locator(inputWeightFilter)).toHaveValue('');
+
+        // A multi-column filter clears only the multiColumn: false ones.
+        await setFilter(page, 'price', '5', 'lessThan');
+        await setFilter(page, 'weight', '100', 'greaterThan');
+        expect(await getRules(page)).toEqual({
+            product: void 0,
+            weight: 100,
+            price: 5
+        });
+        await expect(page.locator(inputProductFilter)).toHaveValue('');
+    });
+});

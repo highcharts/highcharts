@@ -1153,6 +1153,23 @@ export interface ColumnFilteringOptions {
     inline?: boolean;
 
     /**
+     * Whether the filter of the column can be combined with filters on other
+     * columns. When `false`, applying a filter to the column clears the
+     * filters on all other columns, and applying a filter to another column
+     * clears the filter on this one.
+     *
+     * Set it in `columnDefaults` to allow only one filtered column in the
+     * grid, for example when the data source can't filter on several columns
+     * at once.
+     *
+     * @sample grid-lite/options/filtering-multi-column
+     *         Single-column filtering
+     *
+     * @default true
+     */
+    multiColumn?: boolean;
+
+    /**
      * Hides the operator select in filtering UI.
      *
      * Uses {@link ColumnFilteringOptions.rule} operator when valid, otherwise

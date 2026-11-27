@@ -320,6 +320,21 @@ class ColumnPolicyResolver {
     }
 
     /**
+     * Returns whether the filter of the column can be combined with filters
+     * on other columns.
+     *
+     * @param columnId
+     * Grid column id.
+     */
+    public isColumnMultiFilteringEnabled(columnId: string): boolean {
+        return (
+            this.getIndividualColumnOptions(columnId)?.filtering
+                ?.multiColumn ??
+            this.columnDefaults.filtering?.multiColumn
+        ) !== false;
+    }
+
+    /**
      * Returns whether the filter operator select is hidden.
      *
      * @param columnId
