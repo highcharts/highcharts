@@ -22,8 +22,7 @@ const gulp = require('gulp');
  */
 async function compileCSS(outputPath) {
     const fs = require('fs'),
-        logLib = require('../libs/log'),
-        postcss = require('postcss');
+        logLib = require('../libs/log');
     // Native import, the tsx require hook breaks cssnano's ESM interop
     // eslint-disable-next-line node/no-unsupported-features/es-syntax, node/no-unpublished-import
     const { default: cssnano } = await import('cssnano');
@@ -33,14 +32,14 @@ async function compileCSS(outputPath) {
         fs.copyFileSync(outputPath, inputPath);
     }
 
-    const { css } = await postcss([cssnano({
+    const { css } = await cssnano({
         preset: ['default', {
             discardComments: {
                 // Keep license banners, like `comments: 'some'` for JS
                 remove: comment => !/@license|SPDX-License/u.test(comment)
             }
         }]
-    })]).process(fs.readFileSync(inputPath, 'utf-8'), { from: inputPath });
+    }).process(fs.readFileSync(inputPath, 'utf-8'), { from: inputPath });
 
     fs.writeFileSync(outputPath, css);
 

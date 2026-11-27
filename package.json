@@ -133,7 +133,6 @@
     "node-fetch": "^2.6.12",
     "plugin-error": "^2.0.1",
     "pngjs": "^6.0.0",
-    "postcss": "8.5.33",
     "pretty": "^2.0.0",
     "proj4": "2.3.6",
     "qunit": "^2.21.0",
