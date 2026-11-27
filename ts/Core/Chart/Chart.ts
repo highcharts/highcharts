@@ -165,7 +165,6 @@ declare module './ChartOptions' {
     interface ChartOptions {
         forExport?: boolean;
         renderer?: string;
-        skipClone?: boolean;
     }
 }
 
@@ -919,10 +918,9 @@ class Chart {
                 (this.renderTo.closest('[lang]') as HTMLDOMElement|null)?.lang;
 
             /**
-             * The `Time` object associated with the chart. Since v6.0.5,
-             * time settings can be applied individually for each chart. If
-             * no individual settings apply, the `Time` object is shared by
-             * all instances.
+             * The `Time` object associated with the chart. Time settings can be
+             * applied individually for each chart. Time rendering also depends
+             * on lang settings, particularly the `locale`.
              *
              * @name Highcharts.Chart#time
              * @type {Highcharts.Time}
@@ -1897,6 +1895,15 @@ class Chart {
      * @function Highcharts.Chart#getContainerBox
      */
     public getContainerBox(): { width: number, height: number } {
+
+        // No need for expensive calculations if width and height are explicitly
+        // set in options. Noticeable performance improvement for the sparkline
+        // demo.
+        const { width, height } = this.options.chart;
+        if (isNumber(width) && width && isNumber(height) && height) {
+            return { width, height };
+        }
+
         // Temporarily hide support divs from a11y and others, #21888
         const nonContainers = [].map.call(
                 this.renderTo.children,
@@ -2097,9 +2104,9 @@ class Chart {
         // If the container doesn't have an offsetWidth, it has or is a child of
         // a node that has display:none. We need to temporarily move it out to a
         // visible state to determine the size, else the legend and tooltips
-        // won't render properly. The skipClone option is used in sparklines as
-        // a micro optimization, saving about 1-2 ms each chart.
-        if (!optionsChart.skipClone && !renderTo.offsetWidth) {
+        // won't render properly.
+        if (!renderTo.offsetWidth) {
+
             chart.temporaryDisplay();
         }
 

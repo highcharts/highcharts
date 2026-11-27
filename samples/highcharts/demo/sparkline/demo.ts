@@ -8,9 +8,6 @@ declare namespace Highcharts {
         b?: any,
         c?: any
     ): Highcharts.Chart;
-    interface ChartOptions {
-        skipClone?: boolean;
-    }
 }
 Highcharts.SparkLine = function (
     a: string|HTMLElement,
@@ -33,9 +30,10 @@ Highcharts.SparkLine = function (
             height: 20,
             style: {
                 overflow: 'visible'
-            },
-            // small optimalization, saves 1-2 ms each sparkline
-            skipClone: true
+            }
+        },
+        palette: {
+            injectCSS: false
         },
         title: {
             text: ''
@@ -52,7 +50,8 @@ Highcharts.SparkLine = function (
             },
             startOnTick: false,
             endOnTick: false,
-            tickPositions: []
+            tickPositions: [],
+            lineWidth: 0
         },
         yAxis: {
             endOnTick: false,
@@ -97,7 +96,7 @@ Highcharts.SparkLine = function (
             },
             column: {
                 negativeColor: '#910000',
-                borderColor: 'silver'
+                borderColor: '#aaa8'
             }
         }
     };
