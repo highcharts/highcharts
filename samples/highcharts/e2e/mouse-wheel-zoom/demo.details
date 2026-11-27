@@ -1,0 +1,6 @@
+---
+name: Highcharts mouse-wheel-zoom demo
+authors:
+  - Jedrzej Ruta
+js_wrap: b
+...

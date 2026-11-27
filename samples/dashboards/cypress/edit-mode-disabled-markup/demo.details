@@ -1,6 +1,0 @@
----
- name: Highcharts Demo
- authors:
-   - Paweł Lysy
- js_wrap: b
-...

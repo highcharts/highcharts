@@ -1,7 +1,0 @@
----
-name: Stock tools gui demo for cypress tests
-authors:
-  - Paweł Lysy
-skipTest: true
-js_wrap: b
-...

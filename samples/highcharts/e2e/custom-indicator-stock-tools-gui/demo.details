@@ -1,0 +1,7 @@
+---
+name: Stock tools gui with added custom indicator
+authors:
+  - Paweł Lysy
+skipTest: true
+js_wrap: b
+...

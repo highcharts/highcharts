@@ -16,6 +16,8 @@ on:
       - '!samples/grid-lite/**'
       - '!samples/grid-pro/**'
       - 'test/**'
+      - 'tests/fixtures.ts'
+      - 'tests/helpers.ts'
       - 'tests/highcharts/**'
       - 'tests/qunit/**'
       - 'ts/**'

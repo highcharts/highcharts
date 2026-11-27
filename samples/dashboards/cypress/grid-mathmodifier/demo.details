@@ -1,6 +1,0 @@
----
- name: Dashboards demo
- authors:
-   - Paweł Lysy
- js_wrap: b
-...

@@ -1,8 +1,0 @@
----
-name: Highcharts Dashboards connector polling
-authors:
-  - Kamil Kubik
-js_wrap: b
-tags:
-  - Highcharts Dashboards demo
-...
