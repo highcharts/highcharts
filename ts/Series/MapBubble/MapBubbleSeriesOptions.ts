@@ -136,15 +136,6 @@ export interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
     negativeColor?: SeriesOptions['negativeColor'];
 
     /**
-     * Whether the bubble's value should be represented by the area or the
-     * width of the bubble. The default, `area`, corresponds best to the human
-     * perception of the size of each bubble.
-     *
-     * @default area
-     */
-    sizeBy?: BubbleSeriesOptions['sizeBy'];
-
-    /**
      * When this is true, the absolute value of z determines the size of the
      * bubble. This means that with the default `zThreshold` of 0, a bubble of
      * value -1 will have the same size as a bubble of value 1, while a bubble

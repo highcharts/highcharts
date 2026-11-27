@@ -47,7 +47,6 @@ import type {
  * @private
  */
 export interface FormulaParserError extends Error {
-    message: string;
     name: 'FormulaParseError';
 }
 

@@ -90,8 +90,6 @@ export interface PiePointOptions extends LinePointOptions {
      */
     sliced?: boolean;
 
-    visible?: boolean;
-
 }
 
 export type PiePointDataLabelOptions =

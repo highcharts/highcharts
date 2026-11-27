@@ -39,6 +39,7 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 5. Verify docs/doclets/types:
 - New/changed options and public types should have doclets and type coverage.
 - Flag undocumented behavior changes.
+- For changed interfaces or doclets in `ts/`, run `node tools/find-redundant-members.mjs <changed .ts files>`. Flag each hit on a changed line: the member repeats the inherited type and doclet, so remove it.
 - For doclet wording and style, apply the `api-ref-tone` skill.
 
 6. Verify tests:

@@ -101,7 +101,6 @@ interface BoxObject extends R.BoxObject {
     boxWidth: number;
     isHeader?: boolean;
     point: Point;
-    pos?: number;
     tt: SVGElement;
     x: number;
 }

@@ -260,7 +260,6 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      *
      * */
 
-    dataSorting?: undefined;
     nodeAlignment?: undefined;
     nodeDistance?: undefined;
 

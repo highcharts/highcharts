@@ -337,7 +337,6 @@ class Fibonacci extends Tunnel {
 
 /** @internal */
 interface Fibonacci {
-    defaultOptions: Tunnel['defaultOptions'];
     options: Fibonacci.Options;
 }
 

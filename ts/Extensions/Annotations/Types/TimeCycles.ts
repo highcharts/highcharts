@@ -326,7 +326,6 @@ class TimeCycles extends CrookedLine {
 
 /** @internal */
 interface TimeCycles {
-    defaultOptions: CrookedLine['defaultOptions'];
     startX: number;
     pixelInterval: number;
     numberOfCircles: number;

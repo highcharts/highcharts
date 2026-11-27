@@ -45,8 +45,6 @@ namespace RangeDataLabel {
         lowPlot?: number;
         medianPlot?: number;
         plotClose?: number;
-        plotHigh?: number;
-        plotLow?: number;
         plotOpen?: number;
         q1Plot?: number;
         q3Plot?: number;

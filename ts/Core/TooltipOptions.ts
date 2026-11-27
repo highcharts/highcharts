@@ -75,7 +75,6 @@ export interface SeriesTooltipOptions extends Partial<TooltipOptions> {
     shadow?: undefined;
     shape?: undefined;
     shared?: undefined;
-    showDelay?: number
     snap?: undefined;
     split?: undefined;
     stickOnContact?: undefined;

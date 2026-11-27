@@ -85,7 +85,6 @@ export namespace ColorAxisComposition {
         data: Array<PointComposition>;
         points: Array<PointComposition>;
         options: SeriesCompositionOptions;
-        optionalAxis?: string;
         translateColors(): void;
     }
 

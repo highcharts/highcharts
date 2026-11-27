@@ -324,8 +324,6 @@ interface VariwideSeries {
     /** @internal */
     irregularWidths: boolean;
     /** @internal */
-    parallelArrays: Array<string>;
-    /** @internal */
     pointArrayMap: Array<string>;
     /** @internal */
     pointClass: typeof VariwidePoint;

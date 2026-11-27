@@ -58,8 +58,6 @@ export interface TimelinePointOptions extends LinePointOptions {
 
     radius?: number;
 
-    visible?: boolean;
-
 }
 
 export type TimelinePointDataLabelOptions =

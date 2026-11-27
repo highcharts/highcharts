@@ -518,7 +518,6 @@ interface NetworkgraphSeries
     pointClass: typeof NetworkgraphPoint;
     chart: NetworkgraphChart;
     data: Array<NetworkgraphPoint>;
-    directTouch: boolean;
     /**
      * Array of internal forces. Each force should be later defined in
      * integrations.js.
@@ -526,15 +525,11 @@ interface NetworkgraphSeries
      */
     forces: Array<string>;
     hasDraggableNodes: boolean;
-    isCartesian: boolean;
     layout: ReingoldFruchtermanLayout;
-    nodeLookup: NodesComposition.SeriesComposition['nodeLookup'];
     nodes: Array<NetworkgraphPoint>;
     noSharedTooltip: boolean;
     pointArrayMap: Array<string>;
-    requireSorting: boolean;
     trackerGroups: Array<string>;
-    createNode: NodesComposition.SeriesComposition['createNode'];
     drawGraph?(): void;
     drawDataLabels(): void;
     pointAttribs(

@@ -102,7 +102,6 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
 
 interface LinearRegressionInterceptIndicator {
     pointClass: typeof LinearRegressionInterceptPoint;
-    nameBase: string;
 }
 
 extend(LinearRegressionInterceptIndicator.prototype, {

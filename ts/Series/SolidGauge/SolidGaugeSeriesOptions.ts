@@ -208,28 +208,7 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      *
      * */
 
-    animationLimit?: undefined;
-    boostBlending?: undefined;
-    boostThreshold?: undefined;
-    connectEnds?: undefined;
-    connectNulls?: undefined;
-    cropThreshold?: undefined;
-    dashStyle?: undefined;
-    dataSorting?: undefined;
-    findNearestPointBy?: undefined;
-    getExtremesFromAll?: undefined;
-    negativeColor?: undefined;
-    pointPlacement?: undefined;
-    shadow?: undefined;
-    softThreshold?: undefined;
-    stack?: undefined;
-    stacking?: undefined;
-    step?: undefined;
-    turboThreshold?: undefined;
     wrap?: undefined;
-    zoneAxis?: undefined;
-    zones?: undefined;
-
 }
 
 /* *

@@ -75,13 +75,6 @@ export interface KeltnerChannelsOptions extends SMAOptions {
 
 export interface KeltnerChannelsParamsOptions extends SMAParamsOptions {
     /**
-     * The point index which indicator calculations will base. For
-     * example using OHLC data, index=2 means the indicator will be
-     * calculated using Low values.
-     */
-    index?: number;
-
-    /**
      * The ATR period.
      */
     periodATR: number;

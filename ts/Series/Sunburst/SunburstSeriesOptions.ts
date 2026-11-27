@@ -19,7 +19,6 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
@@ -84,17 +83,6 @@ export type SunburstDataLabelRotationValue = (
  * level.
  */
 export interface SunburstSeriesLevelColorVariationOptions extends TreemapSeriesLevelColorVariationOptions {
-
-    /**
-     * The key of a color variation. Currently supports `brightness` only.
-     */
-    key?: string;
-
-    /**
-     * The ending value of a color variation. The last sibling will receive
-     * this value.
-     */
-    to?: number;
 }
 
 
@@ -142,11 +130,6 @@ export interface SunburstSeriesLevelSizeOptions {
 }
 
 export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelOptions {
-
-    /**
-     * Can set a `borderColor` on all points which lies on the same level.
-     */
-    borderColor?: ColorString;
 
     /**
      * Can set a `borderDashStyle` on all points which lies on the same level.
@@ -238,18 +221,6 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
     allowDrillToNode?: boolean;
 
     /**
-     * When enabled the user can click on a point which is a parent and
-     * zoom in on its children.
-     *
-     * @default false
-     *
-     * @since 7.0.3
-     *
-     * @product highcharts
-     */
-    allowTraversingTree?: boolean;
-
-    /**
      * The center of the sunburst chart relative to the plot area. Can be
      * percentages or pixel values.
      *
@@ -268,9 +239,6 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * @default false
      */
     clip?: boolean;
-
-    /** @default false */
-    colorByPoint?: boolean;
 
     /**
      * @product highcharts

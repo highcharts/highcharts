@@ -51,7 +51,6 @@ export interface DragNodesChart extends Chart {
 export interface DragNodesPoint extends Point {
     fixedPosition?: Record<string, number>;
     hasDragged?: boolean;
-    inDragMode?: boolean;
     series: DragNodesSeries;
 }
 

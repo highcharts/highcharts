@@ -292,7 +292,6 @@ class BBIndicator extends SMAIndicator {
 
 /** @internal */
 interface BBIndicator extends MultipleLinesComposition.IndicatorComposition {
-    linesApiNames: Array<string>;
     nameComponents: Array<string>;
     pointArrayMap: Array<keyof BBPoint>;
     pointClass: typeof BBPoint;

@@ -361,9 +361,7 @@ class DMIIndicator extends SMAIndicator {
 interface DMIIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     pointArrayMap: Array<keyof DMIPoint>;
-    parallelArrays: Array<string>;
     pointValKey: string;
-    linesApiNames: Array<string>;
     pointClass: typeof DMIPoint;
 }
 extend(DMIIndicator.prototype, {

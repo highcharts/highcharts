@@ -236,9 +236,6 @@ export interface PackedBubbleSeriesOptions
      */
     useSimulation?: boolean;
 
-    /** @default 'y' */
-    zoneAxis?: ('x'|'y'|'z'|undefined);
-
 }
 
 export interface PackedBubbleSeriesTooltipOptions

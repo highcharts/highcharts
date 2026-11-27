@@ -1454,8 +1454,6 @@ export interface SeriesStateHoverOptions extends StateHoverOptions {
      */
     animation?: (boolean|DeepPartial<AnimationOptions>);
 
-    brightness?: number;
-
     /**
      * Enable separate styles for the hovered series to visualize
      * that the user hovers either the series itself or the legend.
@@ -1573,7 +1571,6 @@ export interface SeriesStateNormalOptions extends StateNormalOptions {
 }
 
 export interface SeriesStateSelectOptions extends StateSelectOptions {
-    enabled?: boolean;
 }
 
 export interface SeriesStatesOptions<T extends SeriesOptions> extends StatesOptions {

@@ -396,8 +396,6 @@ interface DependencyWheelSeries {
     /** @internal */
     getCenter: typeof PieSeries.prototype.getCenter;
     /** @internal */
-    orderNodes: boolean;
-    /** @internal */
     pointClass: typeof DependencyWheelPoint;
 }
 extend(DependencyWheelSeries.prototype, {

@@ -270,17 +270,6 @@ class Pitchfork extends InfinityLine {
 
 /* *
  *
- *  Class Prototype
- *
- * */
-
-/** @internal */
-interface Pitchfork {
-    defaultOptions: InfinityLine['defaultOptions'];
-}
-
-/* *
- *
  *  Class Namespace
  *
  * */

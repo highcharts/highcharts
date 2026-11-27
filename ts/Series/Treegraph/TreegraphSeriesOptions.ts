@@ -118,7 +118,6 @@ export interface TreegraphDataLabelOptions extends DataLabelOptions {
 type TreegraphSeriesLevelBase = TreemapSeriesLevelOptions &
     Omit<TreegraphSeriesOptions, 'data' | 'levels'>;
 export interface TreegraphSeriesLevelOptions extends TreegraphSeriesLevelBase {
-    collapseButton?: CollapseButtonOptions;
     collapsed?: boolean;
 }
 

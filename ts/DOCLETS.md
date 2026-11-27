@@ -62,6 +62,10 @@ When documenting a TS type, interface, or class some additional rules apply:
 - Doclet placed on an interface or class should be about the interface or class
   itself, not the related API option that is using it.
 
+- Do not redeclare an inherited member when its type and doclet stay the same,
+  e.g. only to repeat the parent's `@default`. To find such members, run
+  `node tools/find-redundant-members.mjs <file|dir>` (`--help` for options).
+
 - `@extends` and `@excluding` tags should be replaced with proper changes to the
   types. Tag `@extends` is to be resolved via `extends` keyword. Tag
   `@excluding` is to be resolved via `propX?: undefined;` for optional

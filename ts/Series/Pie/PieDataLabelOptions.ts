@@ -166,11 +166,6 @@ export interface PieDataLabelOptions extends DataLabelOptions {
      *         Long labels are wrapped
      */
     style?: DataLabelOptions['style'];
-
-    /**
-     * @default 0
-     */
-    x?: DataLabelOptions['x'];
 }
 
 /* *

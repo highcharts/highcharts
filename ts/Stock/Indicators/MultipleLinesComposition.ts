@@ -56,8 +56,6 @@ namespace MultipleLinesComposition {
     }
 
     export interface IndicatorOptions extends SMAOptions {
-        fillColor?: SVGAttributes['fill'];
-        gapSize?: number;
     }
 
     /* *

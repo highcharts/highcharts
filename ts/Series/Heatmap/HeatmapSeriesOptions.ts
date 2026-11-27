@@ -101,9 +101,6 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      */
     borderWidth?: number;
 
-    /** @default true */
-    clip?: boolean;
-
     /**
      * The main color of the series. In heat maps this color is rarely used, as
      * we mostly use the color to denote the value of each point. Unless options

@@ -33,6 +33,7 @@ If you are a reviewer subagent: review against this list, answer in the [reviewe
 - New functions have doclets. A new public option has a type, a default, a doclet with the product's tags, a sample and a test.
 - The product guide's rules hold: CSS class names and styling, lang strings, accessibility, and bundle placement.
 - Changed behavior or API is reflected in docs and doclets.
+- Changed interfaces or doclets: `node tools/find-redundant-members.mjs <changed .ts files>` reports nothing on changed lines. A hit is a member that repeats the inherited type and doclet; remove it.
 - Tests follow the product's test rules. Samples follow `samples/README.md`: only the options they need, readable in light and dark mode, usable at 320px wide and by keyboard.
 - Doclets and comments fill lines to 80 columns, with line breaks only between paragraphs.
 

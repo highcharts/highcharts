@@ -22,7 +22,6 @@ import type {
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 import type {
-    PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
@@ -225,8 +224,6 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
      * @default 0
      */
     lineWidth?: number;
-
-    marker?: PointMarkerOptions;
 
     states?: SeriesStatesOptions<ScatterSeriesOptions>;
 

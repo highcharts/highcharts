@@ -62,7 +62,6 @@ const {
  * @private
  */
 export interface FormulaProcessError extends Error {
-    message: string;
     name: 'FormulaProcessError';
 }
 

@@ -52,8 +52,6 @@ declare module '../../../Core/Renderer/SVG/SymbolType' {
 
 /** @internal */
 interface ControllableAlignObject extends AlignObject {
-    height?: number;
-    width?: number;
 }
 
 /* *

@@ -386,10 +386,8 @@ class KlingerIndicator extends SMAIndicator {
 
 /** @internal */
 interface KlingerIndicator extends MultipleLinesComposition.IndicatorComposition {
-    linesApiNames: Array<string>;
     nameBase: string;
     nameComponents: Array<string>;
-    parallelArrays: Array<string>;
     pointArrayMap: Array<keyof KlingerPoint>;
     pointClass: typeof KlingerPoint;
     pointValKey: string;

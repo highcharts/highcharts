@@ -366,7 +366,6 @@ class BasicAnnotation extends Annotation {
 /** @internal */
 interface BasicAnnotation {
     basicType: keyof BasicAnnotation.ControlPoints;
-    defaultOptions: Annotation['defaultOptions'];
 }
 
 /* *

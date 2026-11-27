@@ -64,15 +64,12 @@ export interface ControllableLabelOptions extends ControllableOptions {
     text?: string;
     useHTML?: boolean;
     verticalAlign?: VerticalAlignValue;
-    x?: number;
     xAxis?: number|string;
-    y?: number;
     yAxis?: number|string;
 }
 
 /** @internal */
 export interface ControllableOptions extends ControlTargetOptions {
-    className?: string;
     id?: (number|string);
     markerEnd?: string;
     markerStart?: string;
@@ -87,12 +84,10 @@ export interface ControllableShapeOptions extends ControllableOptions {
     d?: (string|Function|SVGPath);
     fill?: ColorType;
     height?: number;
-    r?: number;
     snap?: number;
     src?: string;
     stroke?: ColorType;
     strokeWidth?: number;
-    type?: string;
     width?: number;
     xAxis?: number;
     yAxis?: number;

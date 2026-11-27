@@ -19,7 +19,6 @@
 import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type {
-    PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -167,8 +166,6 @@ export interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
     stacking?: StackOverflowValue;
 
     states?: SeriesStatesOptions<StreamgraphSeriesOptions>;
-
-    marker?: PointMarkerOptions;
 
     /** @default 0 */
     lineWidth?: number;

@@ -98,8 +98,6 @@ export interface SupertrendParamsOptions extends SMAParamsOptions {
 /** @internal */
 export interface SupertrendLinkedParentPointObject extends LinePoint {
     close: number;
-    index: number;
-    x: number;
 }
 
 /** @internal */

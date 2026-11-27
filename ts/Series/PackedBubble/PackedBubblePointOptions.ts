@@ -40,8 +40,6 @@ export interface PackedBubblePointOptions
         Array<PackedBubblePointDataLabelOptions>
     );
 
-    mass?: number;
-
 }
 
 export type PackedBubblePointDataLabelOptions =

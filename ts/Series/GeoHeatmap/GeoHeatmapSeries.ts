@@ -599,7 +599,6 @@ addEvent(GeoHeatmapSeries, 'afterDataClassLegendClick', function (): void {
 
 interface GeoHeatmapSeries {
     pointClass: typeof GeoHeatmapPoint;
-    pointArrayMap: Array<string>;
     image?: SVGElement
 }
 extend(GeoHeatmapSeries.prototype, {

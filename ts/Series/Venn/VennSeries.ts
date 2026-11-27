@@ -664,10 +664,6 @@ class VennSeries extends ScatterSeries {
 
 interface VennSeries {
     /** @internal */
-    directTouch: boolean;
-    /** @internal */
-    isCartesian: boolean;
-    /** @internal */
     pointArrayMap: Array<string>;
     /** @internal */
     pointClass: typeof VennPoint;

@@ -708,10 +708,6 @@ interface XRangeSeries {
     /** @internal */
     getExtremesFromAll: boolean;
     /** @internal */
-    parallelArrays: Array<string>;
-    /** @internal */
-    requireSorting: boolean;
-    /** @internal */
     type: string;
     /** @internal */
     x2Data: Array<(number|undefined)>;

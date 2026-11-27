@@ -305,7 +305,6 @@ class FibonacciTimeZones extends CrookedLine {
 
 /** @internal */
 interface FibonacciTimeZones {
-    defaultOptions: CrookedLine['defaultOptions'];
     secondLineEdgePoints: [Function, Function];
 }
 

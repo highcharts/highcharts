@@ -232,17 +232,6 @@ class InfinityLine extends CrookedLine {
 
 /* *
  *
- *  Class Prototype
- *
- * */
-
-/** @internal */
-interface InfinityLine {
-    defaultOptions: CrookedLine['defaultOptions'];
-}
-
-/* *
- *
  *  Class Namespace
  *
  * */

@@ -527,8 +527,6 @@ interface MACDIndicator {
     /** @internal */
     nameComponents: Array<string>;
     /** @internal */
-    parallelArrays: Array<string>;
-    /** @internal */
     pointArrayMap: Array<string>;
     /** @internal */
     pointClass: typeof MACDPoint;

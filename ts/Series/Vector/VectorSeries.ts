@@ -249,7 +249,6 @@ class VectorSeries extends ScatterSeries {
  * */
 
 interface VectorSeries {
-    parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof VectorPoint;
 }

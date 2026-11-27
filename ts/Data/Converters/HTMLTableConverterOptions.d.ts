@@ -34,7 +34,6 @@ export interface HTMLTableConverterOptions extends DataConverterOptions {
     endRow: number;
     startColumn: number;
     endColumn: number;
-    decimalPoint?: string;
     exportIDColumn?: boolean;
     tableCaption?: string;
     tableElement?: (HTMLElement|null);

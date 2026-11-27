@@ -20,7 +20,6 @@ import type {
     ColorAxisComposition
 } from '../../Core/Axis/Color/ColorAxisComposition';
 import type { ColorType } from '../../Core/Color/ColorType';
-import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
 import type { MapPointOptions } from './MapPointOptions';
 import type {
     PointOptions,
@@ -169,13 +168,6 @@ export interface MapSeriesOptions
     colorKey?: string;
 
     data?: Array<(MapPointOptions|PointOptions|PointShortOptions)>;
-
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
-
-    /**
-     * @default 'rectangle'
-     */
-    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     /**
      * @productdesc {highmaps}

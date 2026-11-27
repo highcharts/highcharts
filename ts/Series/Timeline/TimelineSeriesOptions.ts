@@ -23,7 +23,6 @@ import type {
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
@@ -138,8 +137,6 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
      * @default 4
      */
     lineWidth?: number;
-
-    marker?: PointMarkerOptions;
 
     radius?: number;
 

@@ -60,7 +60,6 @@ export interface MACDOptions extends SMAOptions {
      * @type {number|null}
      */
     threshold?: number;
-    groupPadding?: number;
     pointPadding?: number;
     minPointLength?: number;
     /**
@@ -74,7 +73,6 @@ export interface MACDOptions extends SMAOptions {
 }
 
 export interface MACDParamsOptions extends SMAParamsOptions {
-    period?: number;
     /**
      * The short period for indicator calculations.
      */

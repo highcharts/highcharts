@@ -309,8 +309,6 @@ export interface HeatmapPointMarkerOptions extends PointMarkerOptions {
 
 export interface HeatmapPointOptions extends ScatterPointOptions {
 
-    borderWidth?: number;
-
     /**
      * The color of the point. In heat maps the point color is rarely set
      * explicitly, as we use the color to denote the `value`. Options for this

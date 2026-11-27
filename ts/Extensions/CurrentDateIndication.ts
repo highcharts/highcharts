@@ -79,9 +79,6 @@ interface CurrentDateIndicatorOptions extends PlotLineOptions {
 
     label?: CurrentDateIndicatorLabelOptions;
 
-    /** @default 2 */
-    width?: PlotLineOptions['width'];
-
     /* *
      *
      *  Excluded

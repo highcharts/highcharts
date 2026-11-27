@@ -100,7 +100,6 @@ declare module './AxisOptions' {
 
 /** @internal */
 interface ScrollbarAxis extends Axis {
-    scrollbar?: ScrollbarType;
 }
 
 /* *
