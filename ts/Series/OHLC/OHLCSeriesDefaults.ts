@@ -35,6 +35,7 @@ import type OHLCSeriesOptions from './OHLCSeriesOptions';
  *         OHLC chart
  *
  * @extends      plotOptions.hlc
+ * @excluding    useOhlcData
  * @product      highstock
  * @optionparent plotOptions.ohlc
  */

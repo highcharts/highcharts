@@ -149,6 +149,18 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
      * @apioption plotOptions.hlc.colorKey
      */
 
+    /**
+     * Allows using data in OHLC format, with open, high, low and close
+     * values, for the HLC series. The open values are ignored.
+     *
+     * @sample {highstock} stock/demo/hlc/
+     *         HLC chart using OHLC data
+     *
+     * @type      {boolean}
+     * @product   highstock
+     * @apioption plotOptions.hlc.useOhlcData
+     */
+
     stickyTracking: true
 
 };
