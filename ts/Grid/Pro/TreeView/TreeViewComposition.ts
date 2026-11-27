@@ -33,7 +33,8 @@ import type { RestoreCellFocusEvent } from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
 import type {
     TableCellAfterDataMutationEvent,
-    TableCellGetEditabilityEvent
+    TableCellGetEditabilityEvent,
+    TableCellGetFormatEvent
 } from '../../Core/Table/Body/TableCell';
 import type { RowId } from '../../Core/Data/DataProvider';
 import type {
@@ -66,7 +67,10 @@ import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import { setHTMLContent } from '../../Core/GridUtils.js';
 import TreeProjectionController from './Projection/TreeProjectionController.js';
 import TreeViewValidation from './TreeViewValidation.js';
-import { decorateTreeViewCell } from './UI/TreeViewCellDecorator.js';
+import {
+    decorateTreeViewCell,
+    getGroupFormat
+} from './UI/TreeViewCellDecorator.js';
 import {
     createTreeToggleListeners,
     removeTreeToggleListeners,
@@ -76,7 +80,12 @@ import {
     getTreeViewRowId,
     syncTreeViewRowId
 } from './TreeViewRowResolver.js';
-import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    merge,
+    pushUnique
+} from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -169,6 +178,7 @@ export function compose(
     addEvent(TableClass, 'afterDestroy', onTableAfterDestroy);
     addEvent(TableRow, 'afterUpdateAttributes', onRowAfterUpdateAttributes);
     addEvent(TableCellClass, 'getEditability', onCellGetEditability);
+    addEvent(TableCellClass, 'getFormat', onCellGetFormat);
     addEvent(TableCellClass, 'afterDataMutation', onCellAfterDataMutation);
     addEvent(TableCellClass, 'afterRender', onAfterCellRender);
     addEvent(HeaderCellClass, 'afterRender', onAfterHeaderCellRender);
@@ -389,6 +399,23 @@ function onProjectPresentationTable(
         this.columnPolicy.setHiddenSourceColumnIds();
         // eslint-disable-next-line no-console
         console.error((error as { message?: string }).message || error);
+    }
+}
+
+/**
+ * Applies `cells.groupFormat` to cells of generated group rows.
+ *
+ * @param e
+ * Cell format event payload.
+ */
+function onCellGetFormat(
+    this: TableCell,
+    e: TableCellGetFormatEvent
+): void {
+    const groupFormat = getGroupFormat(this);
+
+    if (defined(groupFormat)) {
+        e.format = groupFormat;
     }
 }
 
@@ -728,6 +755,7 @@ declare module '../../Core/Options' {
          * `rowGrouping` and path-based `treeView` input generate. In an
          * aggregated column, `{value}` is the aggregated value.
          *
+         * When set, it replaces both `format` and `formatter` in group rows.
          * When not set, group rows use the `format` or `formatter` of the
          * column, like other rows. Set it to an empty string to leave the
          * column empty in group rows.

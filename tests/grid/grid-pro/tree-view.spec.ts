@@ -1093,4 +1093,46 @@ test.describe('Grid Pro - tree view', () => {
         await expect(cell(leafRow, 'name')).toHaveText('Anne and more');
         await expect(cell(leafRow, 'units')).toHaveText('1 pcs');
     });
+
+    test('cells.groupFormat skips the formatter in group rows', async ({ page }) => {
+        await loadGridPro(page);
+
+        await page.evaluate(async (): Promise<void> => {
+            (window as any).grid = await (window as any).Grid.grid('container', {
+                data: {
+                    columns: {
+                        department: ['HR', 'Sales'],
+                        name: ['Anne', 'Mia']
+                    }
+                },
+                rowGrouping: {
+                    enabled: true,
+                    groupBy: 'department'
+                },
+                rendering: {
+                    rows: {
+                        expandedLevels: 'all',
+                        virtualization: false
+                    }
+                },
+                columns: [{
+                    id: 'name',
+                    cells: {
+                        // Throws on the null value of a group row.
+                        formatter: function (this: any): string {
+                            return this.value.toUpperCase();
+                        },
+                        groupFormat: ''
+                    }
+                }]
+            }, true);
+        });
+
+        await expect(
+            page.locator('tbody .hcg-row.hcg-row-expanded td[data-column-id="name"]')
+        ).toHaveText(['', '']);
+        await expect(
+            page.locator('tbody .hcg-row:not(.hcg-row-expanded) td[data-column-id="name"]')
+        ).toHaveText(['ANNE', 'MIA']);
+    });
 });

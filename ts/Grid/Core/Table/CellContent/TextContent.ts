@@ -23,6 +23,7 @@
  * */
 
 import type { ColumnDataType } from '../Column';
+import type { TableCellGetFormatEvent } from '../Body/TableCell';
 
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
@@ -32,7 +33,7 @@ import GridUtils from '../../GridUtils.js';
 const {
     setHTMLContent
 } = GridUtils;
-import { defined } from '../../../../Shared/Utilities.js';
+import { defined, fireEvent } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -87,15 +88,24 @@ class TextContent extends CellContent {
     }
 
     public override update(): void {
-        const { format, formatter } = this.cell.column.options.cells || {};
+        const { cell } = this;
+        const event: TableCellGetFormatEvent = {};
+        fireEvent(cell, 'getFormat', event);
+
+        if (defined(event.format)) {
+            setHTMLContent(cell.htmlElement, cell.format(event.format));
+            return;
+        }
+
+        const { format, formatter } = cell.column.options.cells || {};
         const content = this.format();
 
         // Only a format or a formatter is an opt-in to HTML, a raw value is
         // rendered as text.
         if (format || formatter) {
-            setHTMLContent(this.cell.htmlElement, content);
+            setHTMLContent(cell.htmlElement, content);
         } else {
-            this.cell.htmlElement.innerText = content;
+            cell.htmlElement.innerText = content;
         }
     }
 
