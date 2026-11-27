@@ -25,6 +25,11 @@ npm test
 For browser selection or individual test paths, use Playwright directly.
 `gulp test` rejects the former Karma browser, filtering and reporter options.
 
+Each sample runs as a classic script with a new QUnit instance. Samples
+reuse a Highcharts instance within each worker by default. Samples with
+top-level declarations use a fresh page. Run with `QUNIT_FRESH_PAGE=1`
+to isolate every sample.
+
 ### Running Timezone Tests
 
 Timezone tests verify that Highcharts handles time conversions correctly across
@@ -101,8 +106,6 @@ limit the number of charts in the test suite.
 - All the Highcharts files, including modules and indicators, are loaded in the
   test runner. A badly written module can cause errors downstream. If you
   can't pinpoint an error, try removing files from `test/karma-files.json`.
-- Similar to the above, all tests run in the same thread, so a badly written 
-  test may cause errors downstream.
 - Also keep in mind, that `TestTemplate` creates additional charts that are kept
   between tests. It is therefore advisable to limit DOM operations to your own
   `Chart.container` element.
@@ -114,9 +117,8 @@ limit the number of charts in the test suite.
 - Don't use global variables. ESLint should raise an error on this on
   pre-commit. If several of the tests in the same `demo.js` share a function or
   variables, wrap it all in an IIFE.
-- All the tests run on one Highcharts instance. When running
-  `Highcharts.setOptions()`, make sure to unset the changed options, otherwise
-  it may break tests downstream.
+- QUnit cases in the same sample share the chart defaults. Restore changes made with
+  `Highcharts.setOptions()` before the next case runs.
 - In visual tests, `plotOptions` and `callbacks` are reset after each test. If
   other properties of Highcharts are mutated, a file `aftereach.js` can be added
   to reset them. Since the visual tests double as educational demos for the

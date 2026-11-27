@@ -3,6 +3,7 @@
  */
 
 import colors from 'colors/safe';
+import { inspect } from 'node:util';
 import type { QUnitFailedAssertion, QUnitErrorDetails } from '~/qunit/types.ts';
 
 // Disables the line linking to the playwright trace file
@@ -61,6 +62,8 @@ export function formatQUnitErrorDetails(
    Total: ${errorDetails.qunitResults.total}
    Passed: ${errorDetails.qunitResults.passed}
    Failed: ${errorDetails.qunitResults.failed}
+   Skipped: ${errorDetails.qunitResults.skipped}
+   Todo: ${errorDetails.qunitResults.todo}
 
 ⏱️  Timing Information:
    Script Load: ${errorDetails.timing.scriptLoad}ms
@@ -68,15 +71,11 @@ export function formatQUnitErrorDetails(
    Total: ${errorDetails.timing.total}ms
 `;
 
-    // Deduplicate failed assertions by grouping them by test
-    const deduplicatedAssertions = 
-        deduplicateFailedAssertions(errorDetails.failedAssertions);
-
-    const failedAssertions = deduplicatedAssertions.length > 0
+    const failedAssertions = errorDetails.failedAssertions.length > 0
         ? `${
-            deduplicatedAssertions.map(
+            errorDetails.failedAssertions.map(
                 assertion => formatFailedAssertion(
-                    assertion, 
+                    assertion,
                     errorDetails.testPath
                 )
             ).join('\n\n')
@@ -117,43 +116,18 @@ export function formatQUnitErrorDetails(
 }
 
 /**
- * Deduplicates failed assertions to avoid showing the same assertion multiple times
- */
-function deduplicateFailedAssertions(
-    assertions: QUnitFailedAssertion[]
-): QUnitFailedAssertion[] {
-    const seen = new Set<string>();
-    return assertions.filter(assertion => {
-        // Create a unique key for each assertion based on test, message, and values
-        const key = `${assertion.module || 'Unknown'} > ${assertion.name} | ${assertion.message} | ${JSON.stringify(assertion.actual)} | ${JSON.stringify(assertion.expected)}`;
-        
-        if (seen.has(key)) {
-            return false; // Skip duplicate
-        }
-        
-        seen.add(key);
-        return true;
-    });
-}
-
-/**
  * Formats a value for display in error messages
  */
 function formatValue(value: unknown): string {
-    if (value === null) return 'null';
-    if (value === undefined) return 'undefined';
     if (typeof value === 'string') return `"${value}"`;
-    if (typeof value === 'number' || typeof value === 'boolean') {
-        return String(value);
-    }
     if (typeof value === 'object') {
         try {
             return JSON.stringify(value, null, 2);
         } catch {
-            return '[object Object]';
+            // JSON cannot represent circular references or BigInts.
         }
     }
-    return '[Unknown Type]';
+    return inspect(value);
 }
 
 /**

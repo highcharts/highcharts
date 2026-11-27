@@ -1,11 +1,116 @@
-import { test, expect, createChart } from '~/fixtures.ts';
+import type {} from 'qunit';
+import { rm } from 'node:fs/promises';
+import { relative, sep } from 'node:path';
+import { test as base, expect, createChart } from '~/fixtures.ts';
 import { getSample } from '~/utils.ts';
+import {
+    qunitAssetUrl,
+    qunitScript,
+    qunitStyles,
+    qunitVersion
+} from '~/qunit/assets.ts';
+import {
+    initializeFreshPage,
+    initializeWarmPage,
+    installWarmSampleHooks,
+    prepareWarmSample,
+    writeQUnitSetupFile
+} from '~/qunit/page.ts';
+import { captureQUnitErrorDetails } from '~/qunit/utils/error-capture.ts';
+import { formatQUnitErrorDetails } from '~/qunit/utils/error-formatter.ts';
+import { waitForQUnitWithTimeout } from '~/qunit/utils/timeout-handler.ts';
+
+const test = base.extend<{ qunitSetupFile: string }>({
+    qunitSetupFile: async ({}, use, testInfo) => {
+        const path = testInfo.outputPath('setup.json');
+        try {
+            await use(path);
+        } finally {
+            await rm(path, { force: true });
+        }
+    }
+});
 
 test.describe('getSample', () => {
     test('should get sample with Windows-style path', () => {
         const sample = getSample('samples\\unit-tests\\chart\\alignthresholds');
         expect(sample.script).toContain('QUnit.test(\'alignThresholds');
     });
+});
+
+test('QUnit fails the sample when asynchronous setup throws or rejects', async ({
+    qunitSetupFile,
+    page
+}) => {
+    await writeQUnitSetupFile(qunitSetupFile, [
+        `
+            setTimeout(() => { throw new Error('setup timer threw'); }, 0);
+            Promise.reject(new Error('setup promise rejected'));
+            //# sourceURL=async-qunit-setup.js
+        `
+    ]);
+    await initializeFreshPage(page, qunitSetupFile);
+    await page.waitForFunction(() =>
+        window.__qunitFailedAssertions__?.length === 2
+    );
+
+    await page.addScriptTag({
+        content: 'QUnit.test(\'passing case\', assert => assert.ok(true));'
+    });
+    await page.evaluate(() => window.QUnit.start());
+
+    const results = await waitForQUnitWithTimeout(page, 'async setup', 5000);
+    expect(results).toMatchObject({ status: 'failed', passed: 1, failed: 2 });
+
+    const details = await captureQUnitErrorDetails(page, 'async setup');
+    expect(details.failedAssertions.map(({ message }) => message).sort())
+        .toEqual(['setup promise rejected', 'setup timer threw']);
+});
+
+test('QUnit warm samples retain their failure locations', async ({
+    qunitSetupFile,
+    page
+}) => {
+    await writeQUnitSetupFile(qunitSetupFile);
+    const source = await initializeWarmPage(page, qunitSetupFile);
+    try {
+        const warm = await prepareWarmSample(page, source, 'warm-stack-sample');
+        try {
+            await installWarmSampleHooks(page, warm);
+            await page.addScriptTag({ content: [
+                'QUnit.test("assertion", assert => {',
+                '    assert.strictEqual(3, 4);',
+                '});',
+                'QUnit.test("rejection", async () => {',
+                '    await Promise.reject(new Error("request failed"));',
+                '});',
+                '//# sourceURL=warm-stack-sample.js'
+            ].join('\n') });
+            await page.evaluate(() => window.QUnit.start());
+            await waitForQUnitWithTimeout(page, 'warm-stack-sample', 5000);
+            const { failedAssertions } = await captureQUnitErrorDetails(
+                page, 'warm-stack-sample'
+            );
+            expect(failedAssertions.map(({ name, stack }) => ({
+                name,
+                frames: stack?.split('\n').map(line => line.trim())
+                    .filter(line => line && !line.startsWith('Error: '))
+            }))).toEqual([
+                {
+                    name: 'assertion',
+                    frames: [expect.stringContaining('warm-stack-sample.js:2:')]
+                },
+                {
+                    name: 'rejection',
+                    frames: [expect.stringContaining('warm-stack-sample.js:5:')]
+                }
+            ]);
+        } finally {
+            await warm.dispose();
+        }
+    } finally {
+        await source.dispose();
+    }
 });
 
 test('Chart creation', async ({ page }) => {
@@ -71,40 +176,55 @@ test('Redirects are applied for code', async ({ page }) => {
     });
 });
 
-test('QUnit assets are served locally', async ({ page }) => {
+test('QUnit sample assets are served locally', async ({ page }) => {
+    const sample = getSample('samples/unit-tests/chart/alignthresholds');
+    const resources = sample.details?.resources?.filter(url =>
+        url.includes('code.jquery.com/qunit/')
+    ) ?? [];
+    expect(resources).toEqual([
+        `${qunitAssetUrl}.js`,
+        `${qunitAssetUrl}.css`
+    ]);
+
+    const [script, stylesUrl] = resources;
+    const scriptUrl = `${script}?cache=1`;
     const template = `<html>
     <head>
-        <script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>
-        <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">
+        <script src="${scriptUrl}"></script>
+        <link rel="stylesheet" href="${stylesUrl}">
     </head>
     <body></body>
     </html>`;
 
     await page.setContent(template);
 
+    const localScript = relative(process.cwd(), qunitScript)
+        .split(sep).join('/');
+    const localStyles = relative(process.cwd(), qunitStyles)
+        .split(sep).join('/');
     await expect.poll(() => test.info().annotations).toContainEqual({
         type: 'redirect',
-        description: 'https://code.jquery.com/qunit/qunit-2.4.0.js --> tests/qunit/vendor/qunit-2.4.0.js'
+        description: `${scriptUrl} --> ${localScript}`
     });
 
     await expect.poll(() => test.info().annotations).toContainEqual({
         type: 'redirect',
-        description: 'https://code.jquery.com/qunit/qunit-2.4.0.css --> tests/qunit/vendor/qunit-2.4.0.css'
+        description: `${stylesUrl} --> ${localStyles}`
     });
 
     await expect.poll(() => page.evaluate(() => window.QUnit?.version))
-        .toBe('2.4.0');
+        .toBe(qunitVersion);
 });
 
-test('Legacy QUnit safely parses query parameter names', async ({ page }) => {
-    await page.route('**/legacy-qunit?*', route => route.fulfill({
+test('QUnit safely parses query parameter names', async ({ page }) => {
+    await page.route('**/qunit-parser?*', route => route.fulfill({
         contentType: 'text/html',
         body: `<html><head>
-            <script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
-            <script>QUnit.config.autostart = false;</script>
+            <script>window.QUnit = { config: { autostart: false } };</script>
+            <script src="${qunitAssetUrl}.js"></script>
             </head><body></body></html>`
     }));
-    await page.goto('/legacy-qunit?' +
+    await page.goto('/qunit-parser?' +
         '%5F%5Fproto%5F%5F=first&__proto__=second&constructor=literal&' +
         'toString=text&empty=&empty=second&repeat=one&repeat=two&' +
         'flag&greeting=hello+world%21');
@@ -116,7 +236,7 @@ test('Legacy QUnit safely parses query parameter names', async ({ page }) => {
         objectPrototypeKeys: Object.keys(Object.prototype)
     }));
     expect(result).toEqual({
-        version: '2.0.1',
+        version: qunitVersion,
         nullPrototype: true,
         entries: [
             ['__proto__', ['first', 'second']],
@@ -129,15 +249,261 @@ test('Legacy QUnit safely parses query parameter names', async ({ page }) => {
         ],
         objectPrototypeKeys: []
     });
-    const assertions = await page.evaluate(() => new Promise(resolve => {
-        QUnit.done(details => resolve({
-            failed: details.failed,
-            passed: details.passed
-        }));
+    const counts = await page.evaluate(() => new Promise(resolve => {
+        window.QUnit.on('runEnd', ({ testCounts }) => resolve(testCounts));
         QUnit.test('ordinary assertions still run', assert => assert.ok(true));
         QUnit.start();
     }));
-    expect(assertions).toEqual({ failed: 0, passed: 1 });
+    expect(counts).toEqual({
+        failed: 0, passed: 1, skipped: 0, todo: 0, total: 1
+    });
+});
+
+test('QUnit samples run as independent classic scripts', async ({
+    qunitSetupFile,
+    context
+}) => {
+    await writeQUnitSetupFile(qunitSetupFile);
+    async function runSample(name: string, source: string) {
+        const page = await context.newPage();
+        try {
+            await initializeFreshPage(page, qunitSetupFile);
+            await page.addScriptTag({ content: source });
+            await page.evaluate(() => window.QUnit.start());
+            await waitForQUnitWithTimeout(page, name, 5000);
+            await page.evaluate(() => window.getFinalQUnitResults());
+            return await captureQUnitErrorDetails(page, name);
+        } finally {
+            await page.close();
+        }
+    }
+
+    const first = await runSample('first sample', `
+        'use strict';
+        const label = 'first';
+        var qunitSampleGlobal = label;
+        function qunitSampleFunction() { return label; }
+        QUnit.test('first sample', assert => {
+            assert.strictEqual(window.qunitSampleGlobal, label);
+            assert.strictEqual(window.qunitSampleFunction(), label);
+            assert.notOk('label' in window);
+            Highcharts.setOptions({ time: { timezone: 'America/New_York' } });
+            const timestamp = Date.UTC(2024, 0, 1);
+            assert.strictEqual(
+                Highcharts.format('{timestamp:%H:%M}', { timestamp }), '19:00'
+            );
+            assert.strictEqual(label, 'expected', 'deliberate failure');
+        });
+        //# sourceURL=first-sample.js
+    `);
+    expect(first.qunitResults).toMatchObject({
+        status: 'failed', total: 1, failed: 1
+    });
+    expect(first.failedAssertions).toMatchObject([{
+        name: 'first sample',
+        message: 'deliberate failure',
+        actual: 'first',
+        expected: 'expected'
+    }]);
+    expect(first.failedAssertions[0].source).toContain('first-sample.js:15:');
+
+    const late = await runSample('late errors with fake timers', `
+        QUnit.test('passes before the rejection', assert => {
+            // Leave the fake timer installed to simulate interrupted cleanup.
+            lolex.install({ toFake: ['setTimeout'] });
+            assert.ok(true);
+        });
+        QUnit.on('runEnd', () => {
+            Promise.reject(new Error('rejected after runEnd'));
+            const reason = { value: 42n };
+            reason.self = reason;
+            Promise.reject(reason);
+        });
+    `);
+    expect(late.qunitResults).toMatchObject({
+        status: 'failed', total: 3, passed: 1, failed: 2
+    });
+    expect(late.failedAssertions.map(({ name }) => name)).toEqual([
+        'Uncaught error after QUnit runEnd',
+        'Uncaught error after QUnit runEnd'
+    ]);
+    const formatted = formatQUnitErrorDetails(late);
+    expect(formatted).toContain('rejected after runEnd');
+    expect(formatted).toContain('value: 42n');
+    expect(formatted).toContain('[Circular *1]');
+
+    const chartOnly = await runSample('chart-only destruction', `
+        QUnit.config.failOnZeroTests = false;
+        Highcharts.chart('container', {
+            chart: {
+                events: {
+                    destroy() {
+                        throw new Error('chart destruction failed');
+                    }
+                }
+            }
+        });
+    `);
+    expect(chartOnly.qunitResults).toMatchObject({
+        status: 'failed', total: 1, passed: 0, failed: 1
+    });
+    expect(chartOnly.failedAssertions).toMatchObject([{
+        name: 'Uncaught error after QUnit runEnd',
+        message: 'chart destruction failed'
+    }]);
+
+    const second = await runSample('second sample', `
+        const label = 'second';
+        QUnit.test('second sample', assert => {
+            assert.strictEqual(label, 'second');
+            assert.strictEqual(window.qunitSampleGlobal, undefined);
+            assert.strictEqual(window.qunitSampleFunction, undefined);
+        });
+        QUnit.test('time format is restored', assert => {
+            const timestamp = Date.UTC(2024, 0, 1);
+            assert.strictEqual(
+                Highcharts.format('{timestamp:%H:%M}', { timestamp }), '00:00'
+            );
+        });
+    `);
+    expect(second.qunitResults).toMatchObject({
+        status: 'passed', total: 2, passed: 2
+    });
+    expect(second.failedAssertions).toEqual([]);
+});
+
+test('QUnit shared page resets samples and reports teardown errors', async ({
+    page,
+    qunitSetupFile
+}) => {
+    await writeQUnitSetupFile(qunitSetupFile);
+    const source = await initializeWarmPage(page, qunitSetupFile);
+    const nativeTimers = await page.evaluateHandle(() => ({
+        setTimeout: Reflect.get(window, 'setTimeout'),
+        clearTimeout: Reflect.get(window, 'clearTimeout')
+    }));
+
+    async function runSample(
+        name: string,
+        script: string,
+        afterFinalResult?: () => Promise<void>
+    ) {
+        const warm = await prepareWarmSample(page, source, name);
+        try {
+            await installWarmSampleHooks(page, warm);
+            await page.addScriptTag({ content: script });
+            await page.evaluate(() => window.QUnit.start());
+            await waitForQUnitWithTimeout(page, name, 5000);
+            await warm.evaluate(sample => sample.reset());
+            await page.evaluate(() => window.getFinalQUnitResults());
+            await afterFinalResult?.();
+            return await captureQUnitErrorDetails(page, name);
+        } finally {
+            try {
+                await warm.evaluate(sample => sample.restore());
+            } finally {
+                await warm.dispose();
+            }
+        }
+    }
+
+    try {
+        const first = await runSample('changes state', `
+            QUnit.test('changes state', assert => {
+                window.warmSampleProperty = true;
+                window.addEventListener('warmSampleEvent', () => {
+                    window.warmSampleProperty = true;
+                });
+                setInterval(() => {
+                    window.warmSampleProperty = true;
+                }, 25);
+                Highcharts.setOptions({ time: { timezone: 'America/New_York' } });
+                Highcharts.animate(undefined, undefined, { duration: 10000 });
+                assert.strictEqual(Highcharts.Fx.timers.length, 1);
+                lolex.install({ toFake: ['setTimeout', 'clearTimeout'] });
+                assert.true(window.warmSampleProperty);
+            });
+        `, () => page.evaluate(async () => {
+            window.dispatchEvent(new ErrorEvent('error', {
+                message: 'error before restore',
+                error: new Error('error before restore')
+            }));
+            const delivered = new Promise<void>(resolve => {
+                window.addEventListener('unhandledrejection', () => resolve(), {
+                    once: true
+                });
+            });
+            void Promise.reject(new Error('rejection before restore'));
+            await delivered;
+        }));
+        expect(first.qunitResults).toMatchObject({
+            status: 'passed', passed: 1, failed: 0
+        });
+        expect(await nativeTimers.evaluate(timers =>
+            timers.setTimeout === window.setTimeout &&
+            timers.clearTimeout === window.clearTimeout
+        )).toBe(true);
+
+        await page.evaluate(() => new Promise<void>(resolve => {
+            window.addEventListener('unhandledrejection', () => resolve(), {
+                once: true
+            });
+            void Promise.reject(new Error('idle rejection'));
+        }));
+        const second = await runSample('observes fresh sample state', `
+            QUnit.test('observes fresh sample state', async assert => {
+                assert.timeout(1000);
+                window.dispatchEvent(new Event('warmSampleEvent'));
+                await new Promise(resolve => setTimeout(resolve, 60));
+                await new Promise(resolve => Highcharts.animate(
+                    undefined, undefined, { duration: 25, complete: resolve }
+                ));
+                assert.strictEqual(window.warmSampleProperty, undefined);
+                const timestamp = Date.UTC(2024, 0, 1);
+                assert.strictEqual(
+                    Highcharts.format('{timestamp:%H:%M}', { timestamp }), '00:00'
+                );
+            });
+        `);
+        expect(second.failedAssertions).toEqual([]);
+        expect(second.qunitResults).toMatchObject({
+            status: 'passed', passed: 1, failed: 0
+        });
+
+        const chartOnly = await runSample('chart-only destruction', `
+            QUnit.config.failOnZeroTests = false;
+            Highcharts.chart('container', {
+                chart: {
+                    events: {
+                        destroy() {
+                            Promise.reject(new Error('rejected during destroy'));
+                            throw new Error('chart destruction failed');
+                        }
+                    }
+                }
+            });
+        `);
+        expect(chartOnly.qunitResults).toMatchObject({
+            status: 'failed', total: 2, failed: 2
+        });
+        expect(chartOnly.failedAssertions.map(({ message }) => message).sort())
+            .toEqual(['chart destruction failed', 'rejected during destroy']);
+
+        const finishError = await page.evaluate(() =>
+            window.__qunitWarmState.finish()
+        ).then(() => '', (error: Error) => error.message);
+        const attributedErrors = finishError.match(/After shared sample .*/g);
+        expect(attributedErrors).toEqual([
+            'error before restore', 'rejection before restore', 'idle rejection'
+        ].map(message =>
+            `After shared sample changes state: ${message}`
+        ));
+        await expect(page.evaluate(() => window.__qunitWarmState.finish()))
+            .resolves.toBeUndefined();
+    } finally {
+        await nativeTimers.dispose();
+        await source.dispose();
+    }
 });
 
 test.describe('Redirects for data', () => {

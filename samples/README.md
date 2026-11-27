@@ -36,8 +36,9 @@ be placed in the `unit-tests` dir**.
 
 3. **Unit tests**. These samples are designed to run both in our sample viewer
 and via Playwright's QUnit runner. They load QUnit. Unit tests are recognized by
-a jigsaw puzzle piece next to the name. QUnit is loaded in the `demo.details`
-files and the required HTML must be present in `demo.html`. The recommended way
+a jigsaw puzzle piece next to the name. The QUnit JS and CSS URLs in
+`demo.details` must match the QUnit version pinned in the root `package.json`.
+The required HTML must be present in `demo.html`. The recommended way
 to add a new test is to copy and modify an existing one.
 
 The tests that are added to `/samples/unit-tests` are also part of the

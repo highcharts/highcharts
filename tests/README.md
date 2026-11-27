@@ -542,7 +542,7 @@ The following URL patterns are automatically rewritten:
 | `**/**/mapdata/**` | `node_modules/@highcharts/map-collection/` | Map data files |
 | `**/{samples/data}/**` | `samples/data/` | Sample data files |
 | `https://demo-live-data.highcharts.com/**` | `samples/data/` | Demo live data |
-| `https://code.jquery.com/qunit/**` | `tests/qunit/vendor/` | QUnit assets |
+| `https://code.jquery.com/qunit/qunit-<installed-version>.{js,css}` | `node_modules/qunit/qunit/` | Pinned QUnit browser assets |
 | `https://fonts.googleapis.com/**` | Empty stylesheet | Google Fonts |
 | `**/font-awesome/**` | Empty stylesheet | Font Awesome |
 | `**/grid-lite.js`, `**/grid-pro.js` | `code/grid/` | Grid modules |
@@ -703,6 +703,25 @@ validates complete results and writes `test/visual-test-complete`.
 
 ### QUnit browser logs
 
+QUnit reuses Highcharts and a browser page within each worker. Each sample
+still runs as a classic script with its own QUnit instance. Samples with
+top-level declarations use fresh pages. The packed-bubble parent-drag test
+also uses a fresh page because earlier charts can leave parent nodes in the
+layout. Set `QUNIT_FRESH_PAGE=1` to isolate
+every sample when investigating browser or Highcharts state carried between
+samples.
+
+Playwright gives each QUnit run 30 seconds, with up to five more seconds to
+recover a result. Use `assert.timeout()` to set a shorter limit for an
+individual case.
+
+Samples that declare QUnit in `demo.details` must register at least one case.
+Skipped cases count as registered cases. Chart-only demos can finish with
+zero cases. Errors in their scripts or chart destruction fail the sample.
+If an uncaught error or rejection arrives between shared samples, the next
+sample still runs. At worker teardown, Playwright reports the error with
+the preceding shared sample's path and fails the run.
+
 When QUnit tests fail, browser logs are written to per-worker files:
 
 ```text
@@ -738,6 +757,7 @@ npx playwright show-trace test-results/<test-folder>/trace.zip
 |----------|-------------|
 | `NO_REWRITES` | Skip route rewrites, test against live CDN |
 | `QUNIT_TEST_PATH` | Glob-enabled QUnit test path (e.g., `unit-tests/rangeselector/*`) |
+| `QUNIT_FRESH_PAGE` | Set to `1` to isolate every QUnit sample on a fresh page |
 | `QUNIT_VERBOSE` | Show detailed output for passing QUnit tests |
 | `VISUAL_TEST_PATH` | Filter visual tests by one or more path substrings |
 | `VISUAL_TEST_MANIFEST` | Select the exact visual sample IDs listed in a JSON manifest; mutually exclusive with `VISUAL_TEST_PATH` |

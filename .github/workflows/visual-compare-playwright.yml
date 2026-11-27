@@ -14,6 +14,7 @@ on:
       - 'test/visual-test-samples.js'
       - 'tests/fixtures.ts'
       - 'tests/globals.d.ts'
+      - 'tests/qunit/assets.ts'
       - 'tests/qunit/utils/browser-log-note-reporter.ts'
       - 'tests/setup-highcharts.mts'
       - 'tests/setup-dashboards.mts'
@@ -80,6 +81,7 @@ jobs:
             test/visual-test-samples.js \
             tests/fixtures.ts \
             tests/globals.d.ts \
+            tests/qunit/assets.ts \
             tests/qunit/utils/browser-log-note-reporter.ts \
             tests/setup-highcharts.mts \
             tests/setup-dashboards.mts \

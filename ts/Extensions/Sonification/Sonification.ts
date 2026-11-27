@@ -655,7 +655,19 @@ class Sonification {
                         this.audioContext.state === 'suspended'
                     ) {
                         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                        this.audioContext.resume().then(whenReady);
+                        this.audioContext.resume().then(
+                            whenReady,
+                            (error: unknown): void => {
+                                // Closing the context rejects a pending resume.
+                                if (
+                                    this.audioContext ||
+                                    !(error instanceof DOMException) ||
+                                    error.name !== 'InvalidStateError'
+                                ) {
+                                    throw error;
+                                }
+                            }
+                        );
                     } else {
                         whenReady();
                     }

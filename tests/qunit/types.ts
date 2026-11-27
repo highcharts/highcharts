@@ -1,32 +1,3 @@
-/**
- * QUnit 2.4.0 TypeScript type definitions
- * 
- * These types are specifically tailored for QUnit 2.4.0 API compatibility
- * and provide proper typing for the QUnit test runner integration.
- */
-
-export interface QUnit240TestDoneDetails {
-    name: string;
-    module?: string;
-    failed: number;
-    passed: number;
-    total: number;
-    runtime: number;
-    errors?: unknown[];
-    assertions?: unknown[];
-}
-
-export interface QUnit240LogDetails {
-    result: boolean;
-    actual: unknown;
-    expected: unknown;
-    message: string;
-    source?: string;
-    module?: string;
-    name?: string;
-    runtime?: number;
-}
-
 export interface QUnitFailedTest {
     module?: string;
     name: string;
@@ -62,37 +33,77 @@ export interface QUnitErrorDetails {
     };
 }
 
-export interface QUnit240TestCounts {
+type QUnitStatus = 'passed' | 'failed' | 'skipped' | 'todo';
+
+interface QUnitCounts {
     failed: number;
     passed: number;
+    skipped: number;
+    todo: number;
     total: number;
 }
 
-export interface QUnit240DoneDetails {
-    failed: number;
-    passed: number;
-    total: number;
+export interface QUnitTestCounts extends QUnitCounts {
+    status: QUnitStatus;
     runtime: number;
 }
 
-export interface QUnit240 {
-    done(callback: (details: QUnit240DoneDetails) => void): void;
-    testDone(callback: (details: QUnit240TestDoneDetails) => void): void;
-    log(callback: (details: QUnit240LogDetails) => void): void;
-    testStart(callback: () => void): void;
+interface QUnitTestEnd {
+    fullName: string[];
+    status: QUnitStatus;
+    runtime: number;
+    errors: {
+        actual: unknown;
+        expected: unknown;
+        message?: string;
+        stack?: string;
+    }[];
 }
 
-export type QUnitTestCounts = QUnit240TestCounts;
+interface QUnitEventMap {
+    error: unknown;
+    testStart: { fullName: string[] };
+    testEnd: QUnitTestEnd;
+    runEnd: {
+        testCounts: QUnitCounts;
+        status: QUnitStatus;
+        runtime: number;
+    };
+}
+
+interface BrowserQUnit {
+    config: {
+        autostart: boolean;
+        failOnZeroTests?: boolean;
+        testTimeout?: number;
+        reporters?: { perf: boolean };
+    };
+    version: string;
+    start(): void;
+    onUncaughtException(error: unknown): void;
+    on<K extends keyof QUnitEventMap>(
+        name: K,
+        callback: (details: QUnitEventMap[K]) => void
+    ): void;
+}
 
 declare global {
     interface Window {
-        __qunitResults__?: QUnitTestCounts | null;
-        __qunitFailedTests__?: QUnitFailedTest[] | null;
-        __qunitFailedAssertions__?: QUnitFailedAssertion[] | null;
-        __qunitErrorDetails__?: QUnitErrorDetails | null;
-        __qunitBrowserLogs__?: string[] | null;
-        __qunitConsoleErrors__?: string[] | null;
-        QUnit: QUnit240;
-        Highcharts: unknown;
+        __qunitResults__?: QUnitTestCounts;
+        __qunitFailedTests__?: QUnitFailedTest[];
+        __qunitFailedAssertions__?: QUnitFailedAssertion[];
+        __qunitBrowserLogs__?: string[];
+        __qunitConsoleErrors__?: string[];
+        __qunitWarmState: {
+            initialized: boolean;
+            resultsFinalized: boolean;
+            sample?: string;
+            checkErrors(): void;
+            finish(): Promise<void>;
+        };
+        QUnit: BrowserQUnit;
+        getFinalQUnitResults(): Promise<QUnitTestCounts>;
+        installQUnitHooks(): void;
+        resetQUnitSample(): void;
     }
 }

@@ -1,7 +1,7 @@
 ---
  resources:
-   - https://code.jquery.com/qunit/qunit-2.0.1.js
-   - https://code.jquery.com/qunit/qunit-2.0.1.css
+   - https://code.jquery.com/qunit/qunit-3.0.0.js
+   - https://code.jquery.com/qunit/qunit-3.0.0.css
  js_wrap: b
  authors:
     - Markus Knutson Barstad

@@ -1,5 +1,21 @@
+QUnit.hooks.beforeEach(function () {
+    this.arrayItem = Object.getOwnPropertyDescriptor(Array.prototype, 'item');
+    // eslint-disable-next-line no-extend-native
+    Array.prototype.item = function (i) {
+        return this[i];
+    };
+});
+
+QUnit.hooks.afterEach(function () {
+    if (this.arrayItem) {
+        // eslint-disable-next-line no-extend-native
+        Object.defineProperty(Array.prototype, 'item', this.arrayItem);
+    } else {
+        delete Array.prototype.item;
+    }
+});
+
 QUnit.test('Single touch drag should not zoom (#5790)', function (assert) {
-    /* eslint no-extend-native: 0 */
     var chart = Highcharts.chart('container', {
         chart: {
             zoomType: 'xy',
@@ -14,11 +30,6 @@ QUnit.test('Single touch drag should not zoom (#5790)', function (assert) {
         ]
     });
     var offset = Highcharts.offset(chart.container);
-
-    Array.prototype.item = function (i) {
-        // eslint-disable-line no-extend-native
-        return this[i];
-    };
 
     // Swipe across the plot area
     chart.pointer.onContainerTouchStart({
@@ -198,11 +209,6 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
             ]
         });
     }
-
-    Array.prototype.item = function (i) {
-        // eslint-disable-line no-extend-native
-        return this[i];
-    };
 
     chart = Highcharts.chart('container', {
         chart: {
@@ -427,11 +433,6 @@ QUnit.test('Touch and panning', function (assert) {
         offset = Highcharts.offset(chart.container);
 
     const initialRange = chart.xAxis[0].max - chart.xAxis[0].min;
-
-    Array.prototype.item = function (i) {
-        // eslint-disable-line no-extend-native
-        return this[i];
-    };
 
     chart.pointer.onContainerTouchStart({
         type: 'touchstart',

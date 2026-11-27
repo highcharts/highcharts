@@ -2,6 +2,8 @@
  * Output configuration utilities for QUnit test reporting
  */
 
+import type { QUnitTestCounts } from '~/qunit/types.ts';
+
 export interface OutputConfig {
     verbose: boolean;
 }
@@ -45,15 +47,9 @@ function formatTestName(testPath: string): string {
  */
 export function createVerbosePassedOutput(
     testPath: string, 
-    total: number, 
-    timing?: number
+    { passed, skipped, todo }: QUnitTestCounts,
+    timing: number
 ): string {
     const testName = formatTestName(testPath);
-    let output = `✅ ${testName}: All ${total} tests passed`;
-
-    if (timing !== undefined) {
-        output += ` (${timing}ms)`;
-    }
-
-    return output;
+    return `✅ ${testName}: ${passed} passed, ${skipped} skipped, ${todo} todo (${timing}ms)`;
 }
