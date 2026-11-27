@@ -32,7 +32,7 @@ import type { ComponentTypeRegistry } from './ComponentType';
  * @todo
  *
  */
-export const types = {} as ComponentTypeRegistry;
+export const types = Object.create(null) as ComponentTypeRegistry;
 
 /* *
  *

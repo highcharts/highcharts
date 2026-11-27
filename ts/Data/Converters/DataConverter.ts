@@ -70,7 +70,7 @@ class DataConverter implements DataEventEmitter<Event> {
     /**
      * Registry as a record object with converter names and their class.
      */
-    public static types = {} as DataConverterTypes;
+    public static types = Object.create(null) as DataConverterTypes;
 
     /**
      * Adds a converter class to the registry.
