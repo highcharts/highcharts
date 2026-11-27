@@ -210,6 +210,22 @@ function isSameType(a, b) {
 }
 
 
+/**
+ * Whether a member declaration has the `readonly` modifier.
+ *
+ * @param {TS.Declaration} declaration
+ * Member declaration to check.
+ *
+ * @return {boolean}
+ * True if the member is readonly.
+ */
+function isReadonly(declaration) {
+    return !!(
+        TS.getCombinedModifierFlags(declaration) & TS.ModifierFlags.Readonly
+    );
+}
+
+
 function checkInterface(node, checker, args, report) {
     const type = checker.getDeclaredTypeOfSymbol(
         checker.getSymbolAtLocation(node.name)
@@ -225,8 +241,14 @@ function checkInterface(node, checker, args, report) {
             continue;
         }
 
-        const name = member.name.getText();
         const ownSymbol = checker.getSymbolAtLocation(member.name);
+
+        if (!ownSymbol) {
+            continue;
+        }
+
+        // Symbol name, without the quotes of a quoted member name.
+        const name = ownSymbol.getName();
         const inherited = baseTypes
             .map(baseType => ({
                 baseSymbol: checker.getPropertyOfType(baseType, name),
@@ -234,7 +256,7 @@ function checkInterface(node, checker, args, report) {
             }))
             .filter(base => base.baseSymbol);
 
-        if (!ownSymbol || !inherited.length) {
+        if (!inherited.length) {
             continue;
         }
 
@@ -265,6 +287,11 @@ function checkInterface(node, checker, args, report) {
             !!member.questionToken ===
             !!(base.baseSymbol.flags & TS.SymbolFlags.Optional)
         ));
+        // Removing the member would change whether it can be written to.
+        const sameReadonly = inherited.every(base => (
+            isReadonly(member) ===
+            (base.baseSymbol.declarations || []).some(isReadonly)
+        ));
         const sameType = sameInAllBases;
         const own = getOwnDoclet(member);
         const base = getBaseDoclet(baseSymbol, checker);
@@ -280,13 +307,13 @@ function checkInterface(node, checker, args, report) {
             continue;
         }
 
-        if (sameOptional && sameType && docletAddsNothing) {
+        if (sameOptional && sameReadonly && sameType && docletAddsNothing) {
             report(member, `${node.name.text}.${name} is redundant, ` + (
                 own.hasDoclet ?
-                    `doclet repeats ${where}: ` + [
+                    `doclet repeats ${where}: ` + ([
                         ...(own.description ? ['description'] : []),
                         ...own.tags
-                    ].join(', ') || '(empty doclet)' :
+                    ].join(', ') || '(empty doclet)') :
                     `same as ${where}`
             ));
         } else if (args.tags && repeatedTags.length) {
