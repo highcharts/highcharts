@@ -61,7 +61,7 @@ const chart = Highcharts.chart('container', {
             width: 2
         }],
         title: {
-            enabled: false
+            text: null
         },
         labels: {
             format: '{text}°C'

@@ -119,7 +119,7 @@ const data: Highcharts.PointOptionsObject[] = [{
     previous: 104,
     current: 73
 }, {
-    name: 'graveyars',
+    name: 'graveyard',
     previous: 101,
     current: 70
 }, {

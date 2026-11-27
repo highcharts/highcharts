@@ -26,7 +26,7 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'organization',
-        name: 'Carnivora Phyologeny',
+        name: 'Carnivora Phylogeny',
         data: [
             { from: 'Carnivora', to: 'Felidae' },
             { from: 'Carnivora', to: 'Mustelidae' },

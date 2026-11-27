@@ -29,10 +29,10 @@ Highcharts.chart('container', {
         name: 'New York branch',
         data: [47, 32, -30, -21, 18]
     }, {
-        name: 'Chicaco branch',
+        name: 'Chicago branch',
         data: [33, 32, 35, 11, 4]
     }, {
-        name: 'Scranton Branch',
+        name: 'Scranton branch',
         data: [53, -92, 43, 22, 51]
     }]
 } satisfies Highcharts.Options);

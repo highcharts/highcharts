@@ -58,7 +58,7 @@ Dashboards.board('container', {
             },
             yAxis: {
                 title: {
-                    enabled: false
+                    text: null
                 }
             }
         }
@@ -97,7 +97,7 @@ Dashboards.board('container', {
             },
             yAxis: {
                 title: {
-                    enabled: false
+                    text: null
                 }
             }
         }
@@ -140,7 +140,7 @@ Dashboards.board('container', {
             },
             yAxis: {
                 title: {
-                    enabled: false
+                    text: null
                 }
             }
         }

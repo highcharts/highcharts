@@ -142,13 +142,11 @@ const afterDrillUp = function (e) {
                 textOutline: '1px #000000'
             },
             breadcrumbs: {
-                floating: true
-            },
-            drillUpButton: {
+                floating: true,
                 relativeTo: 'spacingBox',
                 position: {
                     x: 0,
-                    y: 60
+                    y: 20
                 }
             }
         }

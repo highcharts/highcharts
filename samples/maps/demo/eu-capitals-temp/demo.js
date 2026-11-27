@@ -77,7 +77,6 @@
             name: point[3],
             lat: point[1],
             lon: point[2],
-            colorKey: 'y',
             y: Number.isInteger(value) ? value : null,
             custom: {
                 label: Number.isInteger(value) ?
@@ -199,7 +198,7 @@
             }],
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{xDescription}, {point.temp}°C.'
+                    valueDescriptionFormat: '{xDescription}, {point.y}°C.'
                 }
             }
         }]

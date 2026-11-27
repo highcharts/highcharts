@@ -10,7 +10,6 @@ Highcharts.chart('container', {
     xAxis: {
         gridLineWidth: 1,
         title: {
-            enabled: true,
             text: 'Height (cm)'
         },
         startOnTick: true,

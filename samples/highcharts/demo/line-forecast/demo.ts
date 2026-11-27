@@ -7,8 +7,7 @@
                 new Date(el.time).getTime(),
                 el.data.instant.details.air_temperature
             ]),
-        todayDate = new Date(),
-        today = todayDate.getTime() - todayDate.getTimezoneOffset() * 60 * 1000;
+        today = Date.now();
 
     Highcharts.chart('container', {
 

@@ -25,7 +25,7 @@
         subtitle: {
             text: 'Ranges showing ± 2 standard deviations. Source: ' +
                 '<a href="https://www.who.int/tools/child-growth-standards/standards/length-height-for-age"' +
-                'target="_blank">WHO</a>.',
+                ' target="_blank">WHO</a>.',
             align: 'left'
         },
 
@@ -35,7 +35,8 @@
                 format: '{subtract (value:%y) 0} years'
             },
             minPadding: 0,
-            type: 'datetime'
+            type: 'datetime',
+            crosshair: true
         },
 
         yAxis: {
@@ -49,7 +50,6 @@
         },
 
         tooltip: {
-            crosshairs: true,
             headerFormat: `<table>
                 <caption>Age {subtract (point.x:%y) 0}
                     years{#if (lt (point.x:%y) 6)},

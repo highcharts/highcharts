@@ -4,8 +4,8 @@ authors:
   - Torstein Hønsi
 js_wrap: b
 alt_text: >-
-  Highcharts percentage area chart JavaScript example graph compares and
-  estimates global continental population growth over time.
+  Highcharts stacked area chart JavaScript example showing greenhouse gas
+  emissions from Norwegian economic activity over time.
 tags:
   - Highcharts demo
 categories:

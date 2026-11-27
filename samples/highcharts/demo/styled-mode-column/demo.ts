@@ -12,7 +12,7 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.worlddata.info/average-bodyheight.php"' +
-            'target="_blank">WorldData</a>'
+            ' target="_blank">WorldData</a>'
     },
 
     xAxis: {

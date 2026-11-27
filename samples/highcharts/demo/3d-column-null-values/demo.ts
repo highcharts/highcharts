@@ -14,7 +14,7 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.ssb.no/en/statbank/table/08804/"' +
-            'target="_blank">SSB</a>'
+            ' target="_blank">SSB</a>'
     },
     plotOptions: {
         column: {

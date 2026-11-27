@@ -18,8 +18,7 @@ function onChartLoad(this: Highcharts.Chart): void {
     let spike,
         angle,
         radius,
-        left,
-        right;
+        left;
 
     if (this.chartWidth < 530) {
         return;
@@ -56,7 +55,7 @@ function onChartLoad(this: Highcharts.Chart): void {
         })
         .add();
 
-    // Find timedifference in  year
+    // Find time difference in years
     let diff = (new Date().getTime() - new Date(2009, 10, 27).getTime()) / 1000;
     diff /= 60 * 60 * 24;
     const yearsSince = Math.abs(Math.round(diff / 365.25));
@@ -92,7 +91,6 @@ function onChartLoad(this: Highcharts.Chart): void {
         .add();
 
     left = centerX - label.getBBox().width / 2;
-    right = centerX + label.getBBox().width / 2;
 
     label.attr({
         x: left,
@@ -101,7 +99,7 @@ function onChartLoad(this: Highcharts.Chart): void {
 
     // The band
     left = centerX - 90;
-    right = centerX + 90;
+    const right = centerX + 90;
     this.renderer
         .path([
             ['M', left, centerY + 30],
@@ -138,7 +136,7 @@ function onChartLoad(this: Highcharts.Chart): void {
         })
         .add();
 
-    // 2009-2014
+    // 2009 to the current year
     const years = this.renderer
         .text('2009-' + new Date().getFullYear())
         .attr({
@@ -752,8 +750,8 @@ if (Highcharts.Series.types.flags) {
             data: [
                 {
                     x: '2012-11-01',
-                    text: 'Highsoft won "Entrepeneur of the Year" in Sogn og ' +
-                        'Fjordane, Norway',
+                    text: 'Highsoft won "Entrepreneur of the Year" in ' +
+                        'Sogn og Fjordane, Norway',
                     title: 'Award'
                 },
                 {

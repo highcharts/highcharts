@@ -30,6 +30,7 @@ Highcharts.chart('container', {
     },
     xAxis: {
         type: 'datetime',
+        crosshair: true,
         accessibility: {
             rangeDescription: 'Range: Jan 1st 2023 to Jan 1st 2024.'
         }
@@ -41,7 +42,6 @@ Highcharts.chart('container', {
     },
     tooltip: {
         fixed: true,
-        crosshairs: true,
         shared: true,
         valueSuffix: '°C',
         xDateFormat: '%A, %b %e'

@@ -84,7 +84,7 @@ Highcharts.chart('container', {
                 format: '{point.iso-a3}',
                 color: '#000000',
                 style: {
-                    textOutline: false
+                    textOutline: 'none'
                 }
             }
         }

@@ -16,7 +16,7 @@ const chart = new Highcharts.Chart({
     },
     yAxis: {
         title: {
-            enabled: false
+            text: null
         }
     },
     tooltip: {

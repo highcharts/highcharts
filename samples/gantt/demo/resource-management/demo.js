@@ -108,7 +108,9 @@ const series = cars.map(function (car, i) {
     return {
         name: car.model,
         data: data,
-        current: car.deals[car.current]
+        custom: {
+            current: car.deals[car.current]
+        }
     };
 });
 
@@ -183,21 +185,21 @@ Highcharts.ganttChart('container', {
                     text: 'Rented To'
                 },
                 categories: series.map(function (s) {
-                    return s.current.rentedTo;
+                    return s.custom.current.rentedTo;
                 })
             }, {
                 title: {
                     text: 'From'
                 },
                 categories: series.map(function (s) {
-                    return dateFormat('%e. %b', s.current.from);
+                    return dateFormat('%e. %b', s.custom.current.from);
                 })
             }, {
                 title: {
                     text: 'To'
                 },
                 categories: series.map(function (s) {
-                    return dateFormat('%e. %b', s.current.to);
+                    return dateFormat('%e. %b', s.custom.current.to);
                 })
             }]
         }

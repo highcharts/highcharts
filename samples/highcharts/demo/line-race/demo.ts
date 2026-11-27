@@ -58,6 +58,7 @@ const chart = Highcharts.chart('container', {
     },
     xAxis: {
         allowDecimals: false,
+        crosshair: true,
         min: startRound,
         max: endRound,
         title: {
@@ -78,8 +79,7 @@ const chart = Highcharts.chart('container', {
     tooltip: {
         split: true,
         headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
-        pointFormat: '{series.name}: {point.y} Points',
-        crosshairs: true
+        pointFormat: '{series.name}: {point.y} Points'
     },
     plotOptions: {
         line: {

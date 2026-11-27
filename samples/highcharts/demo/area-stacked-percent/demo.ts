@@ -54,7 +54,7 @@ Highcharts.chart('container', {
             format: '{value}%'
         },
         title: {
-            enabled: false
+            text: null
         }
     },
     tooltip: {

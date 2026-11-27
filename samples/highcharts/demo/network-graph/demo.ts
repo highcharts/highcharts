@@ -166,7 +166,7 @@ Highcharts.chart('container', {
             ['Osco-Umbrian', 'Umbrian'],
             ['Osco-Umbrian', 'Oscan'],
             ['Latino-Faliscan', 'Faliscan'],
-            ['Latin', 'Portugese'],
+            ['Latin', 'Portuguese'],
             ['Latin', 'Spanish'],
             ['Latin', 'French'],
             ['Latin', 'Romanian'],
@@ -177,7 +177,7 @@ Highcharts.chart('container', {
             ['Brythonic', 'Welsh'],
             ['Brythonic', 'Breton'],
             ['Brythonic', 'Cornish'],
-            ['Brythonic', 'Cuymbric'],
+            ['Brythonic', 'Cumbric'],
             ['Goidelic', 'Modern Irish'],
             ['Goidelic', 'Scottish Gaelic'],
             ['Goidelic', 'Manx'],
@@ -205,15 +205,15 @@ Highcharts.chart('container', {
             ['West Slavic', 'Slovak'],
             ['West Slavic', 'Czech'],
             ['West Slavic', 'Wendish'],
-            ['East Slavic', 'Bulgarian'],
-            ['East Slavic', 'Old Church Slavonic'],
-            ['East Slavic', 'Macedonian'],
-            ['East Slavic', 'Serbo-Croatian'],
-            ['East Slavic', 'Slovene'],
-            ['South Slavic', 'Russian'],
-            ['South Slavic', 'Ukrainian'],
-            ['South Slavic', 'Belarusian'],
-            ['South Slavic', 'Rusyn']
+            ['South Slavic', 'Bulgarian'],
+            ['South Slavic', 'Old Church Slavonic'],
+            ['South Slavic', 'Macedonian'],
+            ['South Slavic', 'Serbo-Croatian'],
+            ['South Slavic', 'Slovene'],
+            ['East Slavic', 'Russian'],
+            ['East Slavic', 'Ukrainian'],
+            ['East Slavic', 'Belarusian'],
+            ['East Slavic', 'Rusyn']
         ]
     }]
 } satisfies Highcharts.Options);

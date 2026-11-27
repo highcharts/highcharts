@@ -10,7 +10,6 @@ Highcharts.ganttChart('container', {
 
     navigator: {
         enabled: true,
-        liveRedraw: true,
         series: {
             type: 'gantt',
             groupPadding: 0.1,
