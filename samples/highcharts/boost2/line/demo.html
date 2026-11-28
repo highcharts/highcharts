@@ -1,0 +1,33 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/boost2.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.9.1" type="module"></script>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+    <!-- The preview serializes every data point, which this series cannot
+         afford. -->
+    <highcharts-controls show-preview="false">
+        <highcharts-group header="Update options">
+            <highcharts-control type="number" path="series[0].lineWidth" min="0" max="8"></highcharts-control>
+            <highcharts-control type="select" path="series[0].step" options="left,center,right" nullable></highcharts-control>
+            <highcharts-control type="boolean" path="series[0].marker.enabled" nullable></highcharts-control>
+            <highcharts-control type="number" path="series[0].marker.radius" min="1" max="8"></highcharts-control>
+            <highcharts-control type="color" path="series[0].marker.fillColor" nullable></highcharts-control>
+            <highcharts-control type="number" path="series[0].marker.lineWidth" min="0" max="4"></highcharts-control>
+            <highcharts-control type="color" path="series[0].marker.lineColor" value="#ffffff" nullable></highcharts-control>
+            <highcharts-control type="select" path="series[0].marker.symbol" options="circle,square,diamond,triangle,triangle-down" nullable></highcharts-control>
+            <highcharts-control type="boolean" path="series[0].connectNulls"></highcharts-control>
+            <highcharts-control type="boolean" path="series[0].nullInteraction"></highcharts-control>
+            <highcharts-control type="select" path="series[0].findNearestPointBy" options="x,xy"></highcharts-control>
+            <highcharts-control type="boolean" path="series[0].boostHairline"></highcharts-control>
+            <highcharts-control type="select" path="series[0].dashStyle" options="ShortDash,Dash,LongDash,DashDot" nullable></highcharts-control>
+            <highcharts-control type="boolean" path="chart.inverted"></highcharts-control>
+            <highcharts-control type="boolean" path="xAxis.reversed"></highcharts-control>
+            <highcharts-control type="boolean" path="yAxis.reversed"></highcharts-control>
+        </highcharts-group>
+    </highcharts-controls>
+</div>

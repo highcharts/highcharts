@@ -1,0 +1,6 @@
+---
+ name: Boost2 - data labels on a dense line series
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...

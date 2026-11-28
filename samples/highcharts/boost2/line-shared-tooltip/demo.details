@@ -1,0 +1,6 @@
+---
+ name: Boost2 - a shared tooltip across three dense line series
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...
