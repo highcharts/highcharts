@@ -812,3 +812,105 @@ test.describe('Grid datetime filtering', () => {
 
     });
 });
+
+test.describe('Grid filtering debounce', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/inline-filtering', {
+            waitUntil: 'networkidle'
+        });
+        await page.waitForFunction(() => (window as any).Grid?.grids?.length);
+    });
+
+    async function createGrid(page: Page, debounce?: number): Promise<void> {
+        await page.evaluate(async (debounce) => {
+            const win = window as any;
+            const data = win.grid.userOptions.data;
+            win.grid.destroy();
+            win.grid = await win.Grid.grid('container', {
+                data,
+                columnDefaults: {
+                    filtering: { enabled: true, inline: true, debounce }
+                },
+                columns: [{ id: 'product', dataType: 'string' }]
+            }, true);
+
+            // Count how many times the filter is applied.
+            const filtering = win.grid.viewport.getColumn('product').filtering;
+            const applyFilter = filtering.applyFilter;
+            win.applyFilterCalls = 0;
+            filtering.applyFilter = function (...args: unknown[]): unknown {
+                win.applyFilterCalls++;
+                return applyFilter.apply(this, args);
+            };
+        }, debounce);
+    }
+
+    const getCalls = (page: Page): Promise<number> =>
+        page.evaluate(() => (window as any).applyFilterCalls);
+
+    test('Filters on every keystroke by default for local data', async ({
+        page
+    }) => {
+        await createGrid(page);
+        await typeFilterValue(page, inputProductFilter, 'ap');
+        expect(await getCalls(page)).toBe(2);
+        await verifyRowCount(page, 4);
+    });
+
+    test('Debounced filter is applied once typing stops', async ({
+        page
+    }) => {
+        await createGrid(page, 300);
+        const clearButton = page.locator(
+            '.hcg-header-cell[data-column-id="product"] .hcg-clear-filter-button'
+        );
+
+        // Nothing is applied while typing, but Clear is already enabled.
+        await typeFilterValue(page, inputProductFilter, 'ap');
+        expect(await getCalls(page)).toBe(0);
+        await expect(clearButton).toBeEnabled();
+
+        // Applied once after the delay.
+        await verifyRowCount(page, 4);
+        expect(await getCalls(page)).toBe(1);
+
+        // Changing the operator applies pending input immediately.
+        await page.locator(inputProductFilter).press('p');
+        await setFilterCondition(page, selectProductFilter, 'beginsWith');
+        expect(await getCalls(page)).toBe(2);
+        await verifyRowCount(page, 1);
+    });
+
+    test('Pending filter is applied on re-render and dropped on destroy', async ({
+        page
+    }) => {
+        const errors: string[] = [];
+        page.on('pageerror', (e: Error) => errors.push(e.message));
+
+        await page.clock.install();
+        await createGrid(page, 10000);
+        await typeFilterValue(page, inputProductFilter, 'ap');
+
+        // Re-rendering the inputs (e.g. reopening the popup) applies it.
+        await page.evaluate(() => {
+            (window as any).grid.viewport.getColumn('product').filtering
+                .renderFilteringContent(document.createElement('div'));
+        });
+        expect(await getCalls(page)).toBe(1);
+
+        // Destroying the grid cancels a pending filter.
+        await page.locator(inputProductFilter).press('p');
+        const pendingAfterDestroy = await page.evaluate(() => {
+            const grid = (window as any).grid;
+            const filtering = grid.viewport.getColumn('product').filtering;
+            grid.destroy();
+            return filtering.debounceTimer;
+        });
+        expect(pendingAfterDestroy).toBeUndefined();
+
+        // Run past the delay, so a pending filter would have fired.
+        await page.clock.runFor(10000);
+        expect(await getCalls(page)).toBe(1);
+        expect(errors).toEqual([]);
+    });
+});

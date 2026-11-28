@@ -59,6 +59,7 @@ async function runRemoteScenario(
         }
 
         if (mode === 'cache') {
+            result.filterDebounce = dp.filterDebounce;
             result.v0 = await dp.getValue('name', 0);
             result.v1 = await dp.getValue('name', 1);
             result.v2 = await dp.getValue('name', 2);
@@ -117,6 +118,8 @@ test.describe('RemoteDataProvider', () => {
         expect(result.rowId2).toBe('row-2');
         expect(result.rowIndex2).toBe(2);
         expect(result.rowIndexMissing).toBeUndefined();
+        // Typed filter input is debounced by default for remote data.
+        expect(result.filterDebounce).toBe(300);
     });
 
     test('uses page size as chunk size with pagination enabled', async ({ page }) => {

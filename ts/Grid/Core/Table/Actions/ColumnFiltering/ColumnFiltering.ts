@@ -42,8 +42,10 @@ import {
     operatorAliases
 } from './FilteringTypes.js';
 import {
+    addEvent,
     defined,
-    fireEvent
+    fireEvent,
+    internalClearTimeout
 } from '../../../../../Shared/Utilities.js';
 
 /* *
@@ -172,6 +174,11 @@ class ColumnFiltering {
      */
     public clearButton?: HTMLButtonElement;
 
+    /**
+     * Timer of the pending debounced filter input.
+     */
+    private debounceTimer?: number;
+
 
     /* *
     *
@@ -187,6 +194,12 @@ class ColumnFiltering {
      */
     constructor(column: Column) {
         this.column = column;
+
+        // Drop a pending debounced filter when its table is destroyed, so it
+        // doesn't run against a re-rendered or destroyed grid.
+        addEvent(column.viewport, 'afterDestroy', (): void => {
+            this.cancelDebounce();
+        });
     }
 
 
@@ -206,6 +219,8 @@ class ColumnFiltering {
      * The operator to set.
      */
     public async set(value?: string, operator?: Condition): Promise<void> {
+        this.cancelDebounce();
+
         if (this.filterInput) {
             this.filterInput.value = value ?? '';
         }
@@ -280,6 +295,12 @@ class ColumnFiltering {
     public renderFilteringContent(container: HTMLElement): void {
         const column = this.column;
         const columnType = column.dataType;
+
+        // Apply pending typed input before the inputs are replaced, for
+        // example when the filter popup is reopened.
+        if (defined(this.debounceTimer)) {
+            this.applyFilterFromForm();
+        }
         if (
             !column.viewport.grid.columnPolicy.isColumnFilteringEnabled(
                 column.id
@@ -361,6 +382,8 @@ class ColumnFiltering {
      * to the column.
      */
     private applyFilterFromForm(): void {
+        this.cancelDebounce();
+
         const result: FilteringCondition = {
             condition: this.getActiveCondition()
         };
@@ -395,11 +418,7 @@ class ColumnFiltering {
             target: this.column
         });
 
-        const filteringApplied = this.isFilteringApplied();
-        const clearButton = this.clearButton;
-        if (clearButton && filteringApplied === clearButton.disabled) {
-            clearButton.disabled = !filteringApplied;
-        }
+        const filteringApplied = this.updateClearButton();
 
 
         if (defined(value) && value !== '' && typeof value !== 'number') {
@@ -541,9 +560,58 @@ class ColumnFiltering {
 
         for (const eventType of eventTypes[columnType]) {
             this.filterInput.addEventListener(eventType, (): void => {
-                this.applyFilterFromForm();
+                if (eventType === 'keyup') {
+                    this.debounceFilterFromForm();
+                } else {
+                    this.applyFilterFromForm();
+                }
             });
         }
+    }
+
+    /**
+     * Applies the filter from the inputs once the user stops typing, after the
+     * `filtering.debounce` delay.
+     */
+    private debounceFilterFromForm(): void {
+        const { column } = this;
+        const delay = column.options.filtering?.debounce ??
+            column.viewport.grid.dataProvider?.filterDebounce ?? 0;
+
+        if (!delay) {
+            this.applyFilterFromForm();
+            return;
+        }
+
+        this.cancelDebounce();
+        this.updateClearButton();
+        this.debounceTimer = setTimeout((): void => {
+            this.applyFilterFromForm();
+        }, delay);
+    }
+
+    /**
+     * Cancels the pending debounced filter, if any.
+     */
+    private cancelDebounce(): void {
+        internalClearTimeout(this.debounceTimer);
+        delete this.debounceTimer;
+    }
+
+    /**
+     * Enables the clear button when the inputs hold a filter, and disables it
+     * otherwise.
+     *
+     * @returns
+     * `true` if the inputs hold a filter, `false` otherwise.
+     */
+    private updateClearButton(): boolean {
+        const clearButton = this.clearButton;
+        const filteringApplied = this.isFilteringApplied();
+        if (clearButton && clearButton.disabled === filteringApplied) {
+            clearButton.disabled = !filteringApplied;
+        }
+        return filteringApplied;
     }
 
     /**

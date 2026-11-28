@@ -75,6 +75,13 @@ export class RemoteDataProvider extends DataProvider {
     public readonly options!: RemoteDataProviderOptions;
 
     /**
+     * Debounces typed filter input by default, so the server isn't queried on
+     * every keystroke.
+     * @internal
+     */
+    public readonly filterDebounce: number = 300;
+
+    /**
      * Total row count before pagination (from API metadata `totalRowCount`).
      */
     private prePaginationRowCount: number | null = null;

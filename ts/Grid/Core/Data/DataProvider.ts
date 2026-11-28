@@ -57,6 +57,13 @@ export abstract class DataProvider {
      */
     protected readonly options: DataProviderOptions;
 
+    /**
+     * Default delay in milliseconds before typed filter input is applied, used
+     * when `filtering.debounce` is not set.
+     * @internal
+     */
+    public readonly filterDebounce: number = 0;
+
 
     /* *
      *
