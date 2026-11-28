@@ -864,15 +864,6 @@ class BubbleSeries extends ScatterSeries {
     }
 
     /**
-     * Define hasData function for non-cartesian series.
-     * Returns true if the series has points at all.
-     * @internal
-     */
-    public hasData(): boolean {
-        return !!this.dataTable.rowCount;
-    }
-
-    /**
      * @internal
      */
     public markerAttribs(
