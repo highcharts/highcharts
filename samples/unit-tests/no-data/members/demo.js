@@ -42,3 +42,27 @@ QUnit.test('Updating no-data element.', assert => {
         '`noData` label should be shown for hidden pie data (#23235)'
     );
 });
+
+QUnit.test('Hidden bubble series', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'bubble',
+            data: [[1, 2, 3], [2, 3, 4]]
+        }]
+    });
+
+    chart.series[0].hide();
+
+    assert.ok(
+        chart.noDataLabel,
+        '`noData` label should be shown when the bubble series is hidden ' +
+        '(#25682)'
+    );
+
+    chart.series[0].show();
+
+    assert.notOk(
+        chart.noDataLabel,
+        '`noData` label should be hidden when the bubble series is shown'
+    );
+});
