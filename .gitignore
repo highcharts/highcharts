@@ -91,6 +91,8 @@ node_modules/
 /playwright/.cache/
 **/*.spec.*-snapshots/
 
+.claude/*.local.json
+
 # Old changelog artefact
 changelog/changelog.html
 
