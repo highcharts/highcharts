@@ -30,21 +30,53 @@ import type { Condition } from './FilteringTypes';
 import type FilterCell from './FilterCell';
 import type {
     FilteringCondition,
+    FilteringRuleValue,
     LangOptions
 } from '../../../Options';
 
-import { makeHTMLElement } from '../../../GridUtils.js';
+import { focusNextControl, makeHTMLElement } from '../../../GridUtils.js';
 import FilteringController from '../../../Querying/FilteringController.js';
 import Globals from '../../../Globals.js';
 import { defaultOptions } from '../../../Defaults.js';
 import {
+    conditionMappers,
     conditionsMap,
     operatorAliases
 } from './FilteringTypes.js';
 import {
     defined,
-    fireEvent
+    fireEvent,
+    isArray
 } from '../../../../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/**
+ * Event that lets a feature render its own value editor for the active
+ * filtering operator, in place of the built-in value input.
+ */
+export interface RenderFilterValueEditorEvent {
+
+    /**
+     * The operator the value editor is rendered for.
+     */
+    condition: Condition;
+
+    /**
+     * The element the value editor should be rendered in.
+     */
+    container: HTMLElement;
+
+    /**
+     * The controls the arrow keys navigate, in their order. Setting them
+     * skips the built-in value input.
+     */
+    elements?: HTMLElement[];
+}
 
 /* *
  *
@@ -172,6 +204,12 @@ class ColumnFiltering {
      */
     public clearButton?: HTMLButtonElement;
 
+    /**
+     * The value editor controls rendered by a feature in place of the
+     * built-in filter input.
+     */
+    public valueEditorElements?: HTMLElement[];
+
 
     /* *
     *
@@ -205,9 +243,12 @@ class ColumnFiltering {
      * @param operator
      * The operator to set.
      */
-    public async set(value?: string, operator?: Condition): Promise<void> {
+    public async set(
+        value?: FilteringRuleValue,
+        operator?: Condition
+    ): Promise<void> {
         if (this.filterInput) {
-            this.filterInput.value = value ?? '';
+            this.filterInput.value = isArray(value) ? '' : '' + (value ?? '');
         }
 
         const conditions = this.getAllowedConditions();
@@ -257,10 +298,7 @@ class ColumnFiltering {
         }
 
         if (this.filterInput) {
-            this.filterInput.value =
-                '' + (
-                    value ?? ''
-                );
+            this.filterInput.value = isArray(value) ? '' : '' + (value ?? '');
         }
 
         if (this.clearButton) {
@@ -307,7 +345,17 @@ class ColumnFiltering {
         ) {
             this.renderOperatorSelectSpacer(inputWrapper);
         }
-        if (columnType !== 'boolean') {
+        const e: RenderFilterValueEditorEvent = {
+            condition: this.getActiveCondition(),
+            container: inputWrapper
+        };
+
+        fireEvent(this, 'renderValueEditor', e);
+        this.valueEditorElements = e.elements;
+
+        if (e.elements) {
+            delete this.filterInput;
+        } else if (columnType !== 'boolean') {
             this.renderFilteringInput(inputWrapper, columnType);
         }
 
@@ -322,27 +370,9 @@ class ColumnFiltering {
      * The keyboard event.
      */
     public onKeyDown = (e: KeyboardEvent): void => {
-        const contentOrder: HTMLElement[] = [];
-        if (this.filterSelect && !this.filterSelect.disabled) {
-            contentOrder.push(this.filterSelect);
-        }
-        if (this.filterInput && !this.filterInput.disabled) {
-            contentOrder.push(this.filterInput);
-        }
-        if (this.clearButton && !this.clearButton.disabled) {
-            contentOrder.push(this.clearButton);
-        }
+        const contentOrder = this.getFocusableControls();
 
-        const direction = {
-            'ArrowDown': 1,
-            'ArrowUp': -1
-        }[e.key];
-
-        if (direction && contentOrder.length) {
-            e.preventDefault();
-            const currentIndex = contentOrder.indexOf(e.target as HTMLElement);
-            const n = contentOrder.length;
-            contentOrder[(currentIndex + direction + n) % n].focus();
+        if (focusNextControl(contentOrder, e)) {
             return;
         }
 
@@ -395,14 +425,10 @@ class ColumnFiltering {
             target: this.column
         });
 
-        const filteringApplied = this.isFilteringApplied();
-        const clearButton = this.clearButton;
-        if (clearButton && filteringApplied === clearButton.disabled) {
-            clearButton.disabled = !filteringApplied;
-        }
-
-
-        if (defined(value) && value !== '' && typeof value !== 'number') {
+        if (
+            defined(value) && value !== '' &&
+            typeof value !== 'number' && !isArray(value)
+        ) {
             switch (this.column.dataType) {
                 case 'number':
                     condition.value = Number(value);
@@ -436,6 +462,14 @@ class ColumnFiltering {
             delete filteringOptions.condition;
             delete filteringOptions.value;
             delete filteringOptions.conditions;
+        }
+
+        // The applied state is read after the options are written, so that it
+        // also covers the value editors keeping their value there.
+        const filteringApplied = this.isFilteringApplied();
+        const clearButton = this.clearButton;
+        if (clearButton && filteringApplied === clearButton.disabled) {
+            clearButton.disabled = !filteringApplied;
         }
 
         filteringController.addColumnFilterCondition(columnId, condition);
@@ -475,7 +509,7 @@ class ColumnFiltering {
         );
         const nextCondition = FilteringController.mapOptionsToFilter(
             columnId,
-            options
+            { rule: { operator: options.condition, value: options.value } }
         );
 
         return FilteringController.filterConditionsEqual(
@@ -517,11 +551,12 @@ class ColumnFiltering {
             this.filterInput.type = 'text';
         }
 
-        // Assign the default input value.
+        // Assign the default input value. A list of values belongs to an
+        // operator with its own editor, so an input shows nothing for it.
         const value =
             this.column.options.filtering?.rule?.value ??
             this.column.options.filtering?.value;
-        if (value || value === 0) {
+        if (!isArray(value) && (value || value === 0)) {
             this.filterInput.value = columnType === 'datetime' ?
                 column.viewport.grid.time.dateFormat(
                     '%Y-%m-%d',
@@ -639,6 +674,12 @@ class ColumnFiltering {
         const { dataType } = this.column;
         const condition = this.getActiveCondition();
 
+        if (this.valueEditorElements) {
+            // A feature-provided value editor keeps its value in the options.
+            const value = this.column.options.filtering?.rule?.value;
+            return isArray(value) ? value.length > 0 : defined(value);
+        }
+
         if (dataType === 'boolean') {
             return condition !== 'all';
         }
@@ -730,19 +771,34 @@ class ColumnFiltering {
      * Focuses the first filter control in tab order for inline filtering.
      */
     public focusFirstControl(): void {
-        if (!this.filterSelect?.disabled) {
-            this.filterSelect?.focus();
-            return;
+        this.getFocusableControls()[0]?.focus();
+    }
+
+    /**
+     * Returns the enabled filter controls, in the order the arrow keys
+     * navigate them.
+     */
+    private getFocusableControls(): HTMLElement[] {
+        const controls: HTMLElement[] = [];
+        const input = this.filterInput;
+
+        if (this.filterSelect && !this.filterSelect.disabled) {
+            controls.push(this.filterSelect);
         }
 
-        if (!this.filterInput?.disabled) {
-            this.filterInput?.focus();
-            return;
+        if (input) {
+            if (!input.disabled) {
+                controls.push(input);
+            }
+        } else if (this.valueEditorElements) {
+            controls.push(...this.valueEditorElements);
         }
 
-        if (!this.clearButton?.disabled) {
-            this.clearButton?.focus();
+        if (this.clearButton && !this.clearButton.disabled) {
+            controls.push(this.clearButton);
         }
+
+        return controls;
     }
 
     /**
@@ -771,6 +827,16 @@ class ColumnFiltering {
                     operator as Condition
             )
         );
+
+        // A registered operator brings its own value editor, so it takes over
+        // the filter UI of the column.
+        const optIn = [...allowedSet].filter(
+            (c): boolean => !!conditionMappers[c]
+        );
+        if (optIn.length) {
+            return optIn;
+        }
+
         const allowed = defaultTypeConditions.filter((c): boolean =>
             allowedSet.has(c)
         );

@@ -149,6 +149,17 @@ export abstract class DataProvider {
     public abstract destroy(): void;
 
     /**
+     * Returns the unique values of a column in the whole data set, regardless
+     * of the query.
+     *
+     * @param columnId
+     * The id of the column in the data source.
+     */
+    public abstract getUniqueValues(
+        columnId: string
+    ): Promise<DataTableCellType[]>;
+
+    /**
      * Returns the number of items before pagination has been applied.
      */
     public async getPrePaginationRowCount(): Promise<number> {

@@ -379,6 +379,14 @@ export class LocalDataProvider extends DataProvider {
         return Promise.resolve(this.presentationTable?.getRowCount() ?? 0);
     }
 
+    public override getUniqueValues(
+        columnId: string
+    ): Promise<DataTableCellType[]> {
+        return Promise.resolve(Array.from(new Set<DataTableCellType>(
+            this.dataTable?.getColumn(columnId, true)
+        )));
+    }
+
     public override getValue(
         columnId: string,
         rowIndex: number

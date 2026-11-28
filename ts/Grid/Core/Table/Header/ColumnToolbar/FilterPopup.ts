@@ -96,7 +96,7 @@ class FilterPopup extends Popup {
 
     public override show(anchorElement?: HTMLElement): void {
         super.show(anchorElement);
-        this.filtering.filterSelect?.focus();
+        this.filtering.focusFirstControl();
     }
 
     protected override renderContent(contentElement: HTMLElement): void {

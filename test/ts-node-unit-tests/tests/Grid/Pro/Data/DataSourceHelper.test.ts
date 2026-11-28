@@ -10,25 +10,23 @@ import {
 const TEMPLATE =
     'https://api.example.com/data?q={filter}&page={page}&token=SECRET';
 
-function stateWithFilter(value: string): AnyRecord {
+function stateWithCondition(condition: AnyRecord): AnyRecord {
     return {
         offset: 0,
         limit: 50,
         query: {
-            filtering: {
-                modifier: {
-                    options: {
-                        condition: {
-                            operator: 'contains',
-                            columnId: 'product',
-                            value
-                        }
-                    }
-                }
-            },
+            filtering: { modifier: { options: { condition } } },
             sorting: {}
         }
     };
+}
+
+function stateWithFilter(value: string): AnyRecord {
+    return stateWithCondition({
+        operator: 'contains',
+        columnId: 'product',
+        value
+    });
 }
 
 function params(url: string): Array<[string, string]> {
@@ -62,6 +60,43 @@ describe('buildUrl', () => {
                 `"${typed}" should not add or cut parameters`
             );
         }
+    });
+
+    it('maps set conditions and never drops a negation', () => {
+        const url = buildUrl(
+            { urlTemplate: TEMPLATE } as AnyRecord,
+            stateWithCondition({
+                operator: 'and',
+                conditions: [{
+                    operator: 'in',
+                    columnId: 'country',
+                    value: ['NO', null]
+                }, {
+                    operator: 'not',
+                    condition: {
+                        operator: 'in',
+                        columnId: 'city',
+                        value: ['Oslo']
+                    }
+                }, {
+                    operator: 'not',
+                    condition: {
+                        operator: 'endsWith',
+                        columnId: 'product',
+                        value: 'Pro'
+                    }
+                }]
+            })
+        );
+
+        deepStrictEqual(
+            JSON.parse(new URL(url).searchParams.get('q') || '{}').columns,
+            [
+                { id: 'country', condition: 'anyOf', value: ['NO', null] },
+                { id: 'city', condition: 'noneOf', value: ['Oslo'] },
+                { id: 'product', condition: 'notEndsWith', value: 'Pro' }
+            ]
+        );
     });
 
     it('omits an empty parameter, and keeps it when asked to', () => {
