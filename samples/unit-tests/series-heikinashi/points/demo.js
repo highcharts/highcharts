@@ -13,13 +13,15 @@ QUnit.test('Heikinashi point calculation.', function (assert) {
 
     assert.strictEqual(
         points[0].open,
-        5,
-        'The first point open should be recalculated.'
+        5.5,
+        'The first point open should be the average of open and close ' +
+        '(#25695).'
     );
     assert.strictEqual(
         points[0].close,
-        5.5,
-        'The first point close should be recalculated.'
+        5,
+        'The first point close should be the average of open, high, low ' +
+        'and close (#25695).'
     );
     assert.strictEqual(
         points[0].high,

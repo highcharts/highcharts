@@ -229,15 +229,15 @@ class HeikinAshiSeries extends CandlestickSeries {
      *        Current data point.
      */
     public modifyFirstPointValue(dataPoint: OHLCObject): void {
-        const avg = (
+        const open = (dataPoint.open + dataPoint.close) / 2,
+            close = (
                 dataPoint.open +
                 dataPoint.high +
                 dataPoint.low +
                 dataPoint.close
-            ) / 4,
-            close = (dataPoint.open + dataPoint.close) / 2;
+            ) / 4;
 
-        this.heikinashiData.push([avg, dataPoint.high, dataPoint.low, close]);
+        this.heikinashiData.push([open, dataPoint.high, dataPoint.low, close]);
     }
 
     /**
