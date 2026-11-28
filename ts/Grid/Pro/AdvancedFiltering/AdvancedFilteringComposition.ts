@@ -1,0 +1,282 @@
+/* *
+ *
+ *  Grid Advanced Filtering Composition
+ *
+ *  (c) 2020-2026 Highsoft AS
+ *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *  Authors:
+ *  - Andrzej Bułeczka
+ *
+ * */
+
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type DataTable from '../../../Data/DataTable';
+import type Grid from '../../Core/Grid';
+import type { ProcessUpdateDiffEvent } from '../../Core/Grid';
+import type { FilteringRule } from '../../Core/Options';
+import type {
+    FilterCondition
+} from '../../../Data/Modifiers/FilterModifierOptions';
+
+import Globals from '../../Core/Globals.js';
+import { hasDataTableProvider } from '../../Core/Data/DataProvider.js';
+import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/**
+ * Logical operator combining the rules of a filtering group.
+ */
+export type AdvancedFilteringLogic = 'and' | 'or';
+
+/**
+ * Filtering rule applied to a single column.
+ */
+export interface AdvancedFilteringRule extends FilteringRule {
+    /**
+     * The id of the column to filter.
+     */
+    columnId: string;
+
+    /**
+     * The operator to use for filtering the column.
+     */
+    operator: NonNullable<FilteringRule['operator']>;
+}
+
+/**
+ * Filtering rule or nested group of rules.
+ */
+export type AdvancedFilteringItem =
+    AdvancedFilteringGroup | AdvancedFilteringRule;
+
+/**
+ * Global filtering options, combining rules for multiple columns with
+ * logical operators. The result is combined with the column filters using
+ * the `and` operator.
+ *
+ * Not supported with the remote data provider yet.
+ */
+export interface AdvancedFilteringOptions {
+    /**
+     * Logical operator combining the rules.
+     *
+     * @default 'and'
+     */
+    logic?: AdvancedFilteringLogic;
+
+    /**
+     * Rules and nested groups of rules to combine.
+     *
+     * @example
+     * ```js
+     * filtering: {
+     *     rules: [{
+     *         columnId: 'age',
+     *         operator: 'greaterThan',
+     *         value: 20
+     *     }, {
+     *         logic: 'or',
+     *         rules: [{
+     *             columnId: 'country',
+     *             operator: 'equals',
+     *             value: 'PL'
+     *         }, {
+     *             columnId: 'country',
+     *             operator: 'equals',
+     *             value: 'NO'
+     *         }]
+     *     }]
+     * }
+     * ```
+     */
+    rules?: AdvancedFilteringItem[];
+}
+
+/**
+ * Nested group of filtering rules.
+ */
+export interface AdvancedFilteringGroup extends AdvancedFilteringOptions {
+    /**
+     * Logical operator combining the rules.
+     */
+    logic: AdvancedFilteringLogic;
+
+    /**
+     * Rules and nested groups of rules to combine.
+     */
+    rules: AdvancedFilteringItem[];
+}
+
+
+/* *
+ *
+ *  Composition
+ *
+ * */
+
+/**
+ * Composes Grid Pro with the global filtering.
+ *
+ * @param GridClass
+ * Grid class to extend.
+ */
+export function compose(GridClass: typeof Grid): void {
+    if (!pushUnique(Globals.composed, 'AdvancedFiltering')) {
+        return;
+    }
+
+    addEvent(GridClass, 'getFilterConditions', onGetFilterConditions);
+    addEvent(GridClass, 'processUpdateDiff', onProcessUpdateDiff);
+}
+
+/**
+ * Maps a filtering group to the filter condition. Rules for columns missing
+ * in the data and empty groups are skipped.
+ *
+ * @param grid
+ * Grid instance.
+ *
+ * @param table
+ * Source data table.
+ *
+ * @param group
+ * Filtering group to map.
+ */
+function mapGroup(
+    grid: Grid,
+    table: DataTable,
+    group: AdvancedFilteringOptions
+): FilterCondition | undefined {
+    const { columnPolicy } = grid;
+    const conditions: FilterCondition[] = [];
+
+    for (const item of group.rules || []) {
+        let condition: FilterCondition | undefined;
+
+        if ('rules' in item) {
+            condition = mapGroup(grid, table, item);
+        } else {
+            const sourceColumnId = columnPolicy.getColumnSourceId(
+                item.columnId
+            );
+
+            // Hidden `groupBy` columns exist only in the source table,
+            // materialized summary columns only in the queried one.
+            if (
+                sourceColumnId && (
+                    table.hasColumns([sourceColumnId]) ||
+                    !columnPolicy.isColumnUnbound(item.columnId)
+                )
+            ) {
+                condition = grid.querying.filtering.createColumnCondition(
+                    item.columnId,
+                    sourceColumnId,
+                    { rule: item }
+                );
+            }
+        }
+
+        if (condition) {
+            conditions.push(condition);
+        }
+    }
+
+    return conditions.length > 1 ? {
+        operator: group.logic || 'and',
+        conditions
+    } : conditions[0];
+}
+
+/**
+ * Adds the global filtering condition to the column conditions. Skipped for
+ * providers without a local data table, e.g. the remote one.
+ *
+ * @param e
+ * Event with the filter conditions.
+ *
+ * @param e.conditions
+ * Filter conditions combined with the `and` operator.
+ */
+function onGetFilterConditions(
+    this: Grid,
+    e: { conditions: FilterCondition[] }
+): void {
+    const { dataProvider, options } = this;
+    const table = (
+        hasDataTableProvider(dataProvider) &&
+        dataProvider.getDataTable()
+    );
+    const condition = (
+        table &&
+        options?.filtering &&
+        mapGroup(this, table, options.filtering)
+    );
+
+    if (condition) {
+        e.conditions.push(condition);
+    }
+}
+
+/**
+ * Requeries the data instead of re-rendering the grid when the global
+ * filtering options change.
+ *
+ * @param e
+ * Update diff event.
+ */
+function onProcessUpdateDiff(e: ProcessUpdateDiffEvent): void {
+    if ('filtering' in e.diff) {
+        delete e.diff.filtering;
+        e.flags.add('filtering');
+    }
+}
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Options' {
+    interface Options {
+        /**
+         * Global filtering options, combining rules for multiple columns with
+         * logical operators. On update, `rules` replaces the whole list of
+         * rules, so `rules: []` clears the filtering.
+         *
+         * For a single rule per column combined with `and`, use
+         * `columns[].filtering.rule` instead, also available in Grid Lite.
+         */
+        filtering?: AdvancedFilteringOptions;
+    }
+}
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default {
+    compose
+} as const;

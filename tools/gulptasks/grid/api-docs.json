@@ -37,6 +37,7 @@
         "../../../ts/Grid/Core/Table/CellContent/CellContent.ts",
         "../../../ts/Grid/Core/Table/CellContent/TextContent.ts",
 
+        "../../../ts/Grid/Pro/AdvancedFiltering/AdvancedFilteringComposition.ts",
         "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
         "../../../ts/Grid/Pro/CellEditing/CellEditMode.ts",
         "../../../ts/Grid/Pro/CellEditing/CellEditingComposition.ts",
